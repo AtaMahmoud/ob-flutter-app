@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "889155952746",
+    "firebase_url": "https://ocean-builder.firebaseio.com",
+    "project_id": "ocean-builder",
+    "storage_bucket": "ocean-builder.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:889155952746:android:c8772323b906965c",
+        "android_client_info": {
+          "package_name": "com.ss.oceanbuilders"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "889155952746-ntmhtdqrui1q7uv1pp0e9f25kqrbso7f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJnjxoL5W5acrezxPfp8QltdnUnaBY31Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "889155952746-ntmhtdqrui1q7uv1pp0e9f25kqrbso7f.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "889155952746-vv7s1ajvlno5p0r6tq8rpi6j3hrl9eun.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ss.oceanbuilders",
+                "app_store_id": "1470379146"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
