@@ -2,6 +2,7 @@ import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' as service;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ocean_builder/configs/config_reader.dart';
 import 'package:ocean_builder/core/notification/firebase_notification_handler.dart';
 import 'package:ocean_builder/core/providers/color_picker_data_provider.dart';
 import 'package:ocean_builder/core/providers/connection_status_provider.dart';
@@ -28,9 +29,16 @@ import 'package:provider/provider.dart';
 import 'constants/constants.dart';
 import 'core/providers/device_type_provider.dart';
 
-void main() {
+
+// Future<void> main() async {
+//   await mainCommon();
+// }
+
+Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
+  // Load the JSON config into memory
+  await ConfigReader.initialize();
   new FirebaseNotifications().setUpFirebase();
   setupLocator();
 

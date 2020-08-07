@@ -1,8 +1,12 @@
+import 'package:ocean_builder/configs/config_reader.dart';
+
 class Config {
   static const int CONNECTION_TIME_OUT = 10000 * 5;
   static const int READ_TIME_OUT = 10000 * 5;
 
-  static const String STORM_GLASS_API_KEY ='';
+  static String STORM_GLASS_API_KEY = ConfigReader.getStormGlassApiKey();
+
+  static var WEATHER_FLOW_API_KEY = ConfigReader.getStormGlassApiKey();
 
   static const String WORLD_WEATHER_ONLINE_API_KEY = '';
 
@@ -111,5 +115,5 @@ class Config {
   static GET_WEATHER_FLOW_STATION_OBS_DATA(String stationId) =>
       'https://swd.weatherflow.com/swd/rest/observations/station/$stationId';
 
-  static var WEATHER_FLOW_API_KEY = '';
+  
 }
