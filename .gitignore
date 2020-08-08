@@ -75,5 +75,7 @@ ios/Flutter/flutter_export_environment.sh
 pubspec.lock
 
 # secrete
+/releasekey
 /config/
 /outfile.txt
+/android/key.properties
