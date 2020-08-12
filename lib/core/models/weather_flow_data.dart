@@ -123,8 +123,7 @@ class StationObservationValues {
       this.dewPointIndoor,
       this.feelsLike,
       this.feelsLikeIndoor,
-      this.heatIndex
-      });
+      this.heatIndex});
 
   factory StationObservationValues.fromJson(Map<String, dynamic> json) =>
       _$StationObservationValuesFromJson(json);
@@ -133,6 +132,102 @@ class StationObservationValues {
 }
 
 /*
+
+Air (type="obs_air")
+Observation Layout
+0 - Epoch (seconds UTC)
+1 - Station Pressure (MB)
+2 - Air Temperature (C)
+3 - Relative Humidity (%)
+4 - Lightning Strike Count
+5 - Lightning Strike Average Distance (km)
+6 - Battery (volts)
+7 - Report Interval (minutes)
+
+Sky (type="obs_sky")
+Observation Layout
+0 - Epoch (seconds UTC)
+1 - Illuminance (lux)
+2 - UV (index)
+3 - Rain Accumulation (mm)
+4 - Wind Lull (m/s)
+5 - Wind Avg (m/s)
+6 - Wind Gust (m/s)
+7 - Wind Direction (degrees)
+8 - Battery (volts)
+9 - Report Interval (minutes)
+10 - Solar Radiation (W/m^2)
+11 - Local Day Rain Accumulation (mm)
+12 - Precipitation Type (0 = none, 1 = rain, 2 = hail)
+13 - Wind Sample Interval (seconds)
+14 - Rain Accumulation Final (Rain Check) (mm)
+15 - Local Day Rain Accumulation Final (Rain Check) (mm)
+16 - Precipitation Analysis Type (0 = none, 1 = Rain Check with user display on, 2 = Rain Check with user display off)
+
+Tempest (type="obs_st")
+Observation Layout
+0 - Epoch (Seconds UTC)
+1 - Wind Lull (m/s)
+2 - Wind Avg (m/s)
+3 - Wind Gust (m/s)
+4 - Wind Direction (degrees)
+5 - Wind Sample Interval (seconds)
+6 - Pressure (MB)
+7 - Air Temperature (C)
+8 - Relative Humidity (%)
+9 - Illuminance (lux)
+10 - UV (index)
+11 - Solar Radiation (W/m^2)
+12 - Rain Accumulation (mm)
+13 - Precipitation Type (0 = none, 1 = rain, 2 = hail)
+14 - Average Strike Distance (km)
+15 - Strike Count
+16 - Battery (volts)
+17 - Report Interval (minutes)
+18 - Local Day Rain Accumulation (mm)
+19 - Rain Accumulation Final (Rain Check) (mm)
+20 - Local Day Rain Accumulation Final (Rain Check) (mm)
+21 - Precipitation Aanalysis Type (0 = none, 1 = Rain Check with user display on, 2 = Rain Check with user display off)
+
+
+{
+    "status": {
+        "status_code": 0,
+        "status_message": "SUCCESS"
+    },
+    "device_id": 73674,
+    "type": "obs_st",
+    "bucket_step_minutes": 5,
+    "source": "db",
+    "obs": [
+        [
+            1595256600,
+            0,
+            1.47,
+            6.62,
+            26,
+            3,
+            915.7,
+            23.0,
+            91,
+            98710,
+            5.35,
+            823,
+            0,
+            0,
+            0,
+            0,
+            2.52,
+            5,
+            0,
+            null,
+            null,
+            0
+        ],
+      ]
+}
+
+
 
 timestamp (number, optional),
 air_temperature (number, optional),

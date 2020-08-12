@@ -90,7 +90,9 @@ class _ControlScreenState extends State<ControlScreen>
     var shortestSide = MediaQuery.of(context).size.shortestSide;
     useMobileLayout = shortestSide < 600;
 
-    _selectedSeaPod = _userProvider.authenticatedUser != null ? _userProvider.authenticatedUser.seaPods[0] : null;
+    _selectedSeaPod = _userProvider.authenticatedUser != null
+        ? _userProvider.authenticatedUser.seaPods[0]
+        : null;
 
     _selectedSeaPodFuture = _oceanBuilderProvider.getSeaPod(
         _selectedOBIdProvider.selectedObId, _userProvider);
@@ -99,8 +101,7 @@ class _ControlScreenState extends State<ControlScreen>
         future: _selectedSeaPodFuture,
         initialData: _selectedSeaPod,
         builder: (context, snapshot) {
-          if(snapshot.hasData)
-          _selectedSeaPod = snapshot.data;
+          if (snapshot.hasData) _selectedSeaPod = snapshot.data;
           return _mainContent();
         });
   }
@@ -1103,7 +1104,7 @@ class _ControlScreenState extends State<ControlScreen>
               value: _sliderValue,
               onChanged: (value) {
                 setState(() {
-                  // debugPrint('frost slider value  $value');
+                  debugPrint('frost slider value  $value');
                   _sliderValue = value;
                   _selectedSeaPod.controlData.frostWindowsPercentage =
                       value.toInt();
