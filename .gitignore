@@ -79,3 +79,4 @@ pubspec.lock
 /config/
 /outfile.txt
 /android/key.properties
+.flutter-plugins-dependencies
