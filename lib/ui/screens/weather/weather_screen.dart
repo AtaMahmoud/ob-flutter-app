@@ -6,6 +6,9 @@ import 'package:ocean_builder/bloc/source_priority_bloc.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/storm_glass_data.dart';
 import 'package:ocean_builder/core/models/user.dart';
+import 'package:ocean_builder/core/models/weather_flow_data.dart';
+import 'package:ocean_builder/core/models/weather_flow_device_observation.dart';
+import 'package:ocean_builder/core/providers/local_weather_flow_data_provider.dart';
 import 'package:ocean_builder/core/providers/storm_glass_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/ui/shared/grid_menu_helper.dart';
@@ -33,6 +36,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
   ScreenUtil _util = ScreenUtil();
   Future<StormGlassData> _futureWeatherData;
   // Future<WorldWeatherOnlineData> _futureWOWWeatherData;
+  Future<WeatherFlowData> _futureWeatherStationData;
+  Future<WeatherFlowDeviceObservationData> _futureWeatherFlowDeviceObservationData;
   Future<StormGlassData> _futureWOWWeatherDataSummary;
   Future<UvIndexData> _futureUvIndexData;
 
@@ -51,6 +56,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
           Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
 
       // _futureWOWWeatherData = Provider.of<WOWDataProvider>(context).fetchWeatherData();
+
+      _futureWeatherStationData = Provider.of<LocalWeatherDataProvider>(context).fetchStationObservationData();
+      _futureWeatherFlowDeviceObservationData = Provider.of<LocalWeatherDataProvider>(context).fetchDeviceObservationData();
 
       _futureWeatherData =
           Provider.of<StormGlassDataProvider>(context).fetchWeatherData();

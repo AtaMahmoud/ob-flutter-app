@@ -115,5 +115,7 @@ class Config {
   static GET_WEATHER_FLOW_STATION_OBS_DATA(String stationId) =>
       'https://swd.weatherflow.com/swd/rest/observations/station/$stationId';
 
+  static GET_WEATHER_FLOW_DEVICE_OBS_DATA(String deviceId) =>
+      'https://swd.weatherflow.com/swd/rest/observations/device/$deviceId';
   
 }

@@ -47,7 +47,7 @@ dependencies:
       url: https://github.com/btastic/flutter_native_image.git
       ref: fix/ios_compression
   flushbar: ^1.10.2
-  flutter_svg: ^0.18.0
+  flutter_svg: ^0.17.4
   flutter_screenutil: ^1.1.0
   rflutter_alert: ^1.0.3
   flutter_statusbarcolor: ^0.2.3

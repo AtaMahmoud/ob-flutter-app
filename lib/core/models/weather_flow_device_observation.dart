@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:json_annotation/json_annotation.dart';
 
 class WeatherFlowDeviceObservationData {
@@ -48,13 +50,13 @@ class DeviceObservationStatus {
 
 class DeviceObservation {
   List<dynamic> observation;
-  DeviceObservation(this.observation);
+  DeviceObservation({this.observation});
 
-  factory DeviceObservation.fromJson(Map<String, dynamic> json) {
+  factory DeviceObservation.fromJson(dynamic json) {
+
     List<dynamic> values = json != null ? List.from(json) : null;
     return DeviceObservation(
-        // status_code: json['status_code'],
-        // status_message: json['status_message']
+      observation: values,
         );
   }
 }
