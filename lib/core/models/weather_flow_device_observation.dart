@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 class WeatherFlowDeviceObservationData {
@@ -50,13 +51,42 @@ class DeviceObservationStatus {
 
 class DeviceObservation {
   List<dynamic> observation;
-  DeviceObservation({this.observation});
+  int epoch; 
+  int windLull;
+  double windAvg;
+  double windGust;
+  int windDirection;
+  int windSampleInterval;
+  double pressure;
+  double airTemperature;
+  int relativeHumidity;
+  int illuminance;
+  double unIndex;
+  int solarRadiation;
+  int rainAccumulation;
+  // (0 = none, 1 = rain, 2 = hail)
+  int precipitationType;
+  int averageStrikeDistance;
+  int strikeCount;
+  double battery;
+  int reportIntervals;
+  int localDayRainAccumulation;
+  int rainAccuulationFinal;
+  int localDayRainAccumulationFinal;
+  // (0 = none, 1 = Rain Check with user display on, 2 = Rain Check with user display off)
+  int precipitationAnalysisType;
+
+
+
+  DeviceObservation({this.observation,this.airTemperature,this.averageStrikeDistance,this.battery,this.epoch,this.illuminance,this.localDayRainAccumulation,this.localDayRainAccumulationFinal,this.precipitationAnalysisType,this.precipitationType,this.pressure,this.rainAccumulation,this.rainAccuulationFinal,this.relativeHumidity,this.reportIntervals,this.solarRadiation,this.strikeCount,this.unIndex,this.windAvg,this.windDirection,this.windGust,this.windLull,this.windSampleInterval});
 
   factory DeviceObservation.fromJson(dynamic json) {
-
+    debugPrint('json --------------  $json ');
     List<dynamic> values = json != null ? List.from(json) : null;
+     debugPrint('values --------------  $values ');
     return DeviceObservation(
       observation: values,
+      airTemperature: values[7],
         );
   }
 }

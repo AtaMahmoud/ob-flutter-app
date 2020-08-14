@@ -6,7 +6,7 @@ class Config {
 
   static String STORM_GLASS_API_KEY = ConfigReader.getStormGlassApiKey();
 
-  static var WEATHER_FLOW_API_KEY = ConfigReader.getStormGlassApiKey();
+  static var WEATHER_FLOW_API_KEY = ConfigReader.getWeatherFlowApiKey();
 
   static const String WORLD_WEATHER_ONLINE_API_KEY = '';
 

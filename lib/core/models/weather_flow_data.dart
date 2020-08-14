@@ -201,28 +201,28 @@ Observation Layout
     "source": "db",
     "obs": [
         [
-            1595256600,
-            0,
-            1.47,
-            6.62,
-            26,
-            3,
-            915.7,
-            23.0,
-            91,
-            98710,
-            5.35,
-            823,
-            0,
-            0,
-            0,
-            0,
-            2.52,
-            5,
-            0,
-            null,
-            null,
-            0
+        0    1595256600, int epoch
+         1   0, double windLull
+          2  1.47, double windAvg
+          3 6.62, double windGust
+          4 26, int windDirrection
+          5  3, int windSampleIn
+          6  915.7, double pressure
+          7  23.0, double airTemperature
+          8  91, int relativeHumidity
+          9  98710, int illuminance
+          10  5.35,
+          11  823,
+          12  0,
+          13  0,
+          14  0,
+          15  0,
+          16  2.52,
+          17  5,
+          18  0,
+          19  null,
+          20 null,
+          21  0
         ],
       ]
 }

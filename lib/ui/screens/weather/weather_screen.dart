@@ -57,14 +57,14 @@ class _WeatherScreenState extends State<WeatherScreen> {
 
       // _futureWOWWeatherData = Provider.of<WOWDataProvider>(context).fetchWeatherData();
 
-      _futureWeatherStationData = Provider.of<LocalWeatherDataProvider>(context).fetchStationObservationData();
+      // _futureWeatherStationData = Provider.of<LocalWeatherDataProvider>(context).fetchStationObservationData();
       _futureWeatherFlowDeviceObservationData = Provider.of<LocalWeatherDataProvider>(context).fetchDeviceObservationData();
 
-      _futureWeatherData =
-          Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
+      // _futureWeatherData =
+      //     Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
 
-      _futureUvIndexData =
-          Provider.of<StormGlassDataProvider>(context).fetchUvIndexData();
+      // _futureUvIndexData =
+      //     Provider.of<StormGlassDataProvider>(context).fetchUvIndexData();
 
       currentlySelectedSource = ListHelper.getSourceList()[0];
       _bloc.weatherSourceController.listen((onData) {});
