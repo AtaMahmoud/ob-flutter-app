@@ -14,8 +14,8 @@ class LocalWeatherDataRepository {
 
   final Map<String, dynamic> _deviceParams = {
     "api_key": Config.WEATHER_FLOW_API_KEY,
-    "time_start": DateTime.now().subtract(Duration(days: 5)).toIso8601String(),
-    "time_end": DateTime.now().toIso8601String(),
+    "time_start": (DateTime.now().subtract(Duration(days: 5)).millisecondsSinceEpoch/1000).toInt(),
+    "time_end": (DateTime.now().millisecondsSinceEpoch/1000).toInt(),
   };
 
   Future<WeatherFlowData> getStationObservationData(
@@ -33,9 +33,8 @@ class LocalWeatherDataRepository {
       {String deviceId = '75742'}) async {
     final response = await _apiBaseHelper.get(
       url: Config.GET_WEATHER_FLOW_DEVICE_OBS_DATA(deviceId),
-      parameters: _params,
+      parameters: _deviceParams,
     );
-    print(response);
     WeatherFlowDeviceObservationData weatherFlowData = WeatherFlowDeviceObservationData.fromJson(response);
     return weatherFlowData;
   }

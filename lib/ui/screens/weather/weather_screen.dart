@@ -60,8 +60,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
       // _futureWeatherStationData = Provider.of<LocalWeatherDataProvider>(context).fetchStationObservationData();
       _futureWeatherFlowDeviceObservationData = Provider.of<LocalWeatherDataProvider>(context).fetchDeviceObservationData();
 
-      // _futureWeatherData =
-      //     Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
+      _futureWeatherData =
+          Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
 
       // _futureUvIndexData =
       //     Provider.of<StormGlassDataProvider>(context).fetchUvIndexData();
