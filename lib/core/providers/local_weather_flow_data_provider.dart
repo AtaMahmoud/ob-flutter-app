@@ -63,9 +63,43 @@ class LocalWeatherDataProvider extends ChangeNotifier {
         hourData.precipitationList = attributeList;
 
         // precipitation
+        // attributeList = AttributeList();
+        // attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.));
+        // hourData.seaLevelList = attributeList;
+
+        // wind speed
         attributeList = AttributeList();
-        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.s));
-        hourData.seaLevelList = attributeList;
+        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.windAvg));
+        hourData.windSpeedList = attributeList;
+
+        // wind gust
+        attributeList = AttributeList();
+        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.windGust));
+        hourData.windGustList = attributeList;
+
+        // wind direction
+        attributeList = AttributeList();
+        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.windDirection));
+        hourData.windDirectionList = attributeList;
+
+        // wind direction
+        attributeList = AttributeList();
+        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.windDirection));
+        hourData.windDirectionList = attributeList;
+
+        //feels like
+        // attributeList = AttributeList();
+        // attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.));
+        // hourData. = attributeList;
+
+        // wave height -- missing
+        // water temperature -- missing
+        // visibility -- missing
+        // significant wave -- missing
+        // swell height -- missing 
+        // swell direciton
+        // swell period
+        // tides 
 
       }
 
