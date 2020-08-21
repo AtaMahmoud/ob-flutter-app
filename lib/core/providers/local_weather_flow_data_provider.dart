@@ -28,38 +28,46 @@ class LocalWeatherDataProvider extends ChangeNotifier {
     return weatherData;
   }
 
-    Future<WeatherFlowDeviceObservationData> fetchDeviceObservationData() async {
+    Future<StormGlassData> fetchDeviceObservationData() async {
     notifyListeners();
+     StormGlassData stormGlassData = StormGlassData();
     try {
       final WeatherFlowDeviceObservationData deviceObservationData =
           await _localWeatherDataRepository.getDeviceObservationData();
       _deviceObservationData = deviceObservationData;
       debugPrint('device observation data -----  ${_deviceObservationData.obs.length}');
-      StormGlassData stormGlassData = StormGlassData();
+     
       List<HourData> hours = [];
       for(int i=0;i< _deviceObservationData.obs.length; i++){
         DeviceObservation deviceObservation = _deviceObservationData.obs[i];
         HourData hourData = HourData();
+
         hourData.time = DateTime.fromMillisecondsSinceEpoch(deviceObservation.epoch.toInt()).toIso8601String();
 
         // air temperature
         AttributeList attributeList = AttributeList();
-        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.airTemperature));
+        List<AtrributeData> attributeDataList = [];
+
+        attributeList.attributeDataList = attributeDataList;
+        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.airTemperature.toDouble()));
         hourData.airTemperatureList = attributeList;
 
         // pressure
         attributeList = AttributeList();
-        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.pressure));
+        attributeList.attributeDataList = attributeDataList;
+        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.pressure.toDouble()));
         hourData.barometricPressureList = attributeList;
 
         // humidity
         attributeList = AttributeList();
-        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.relativeHumidity));
+        attributeList.attributeDataList = attributeDataList;
+        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.relativeHumidity.toDouble()));
         hourData.humidityList = attributeList;
 
         // precipitation
         attributeList = AttributeList();
-        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.rainAccumulation));
+        attributeList.attributeDataList = attributeDataList;
+        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.rainAccumulation.toDouble()));
         hourData.precipitationList = attributeList;
 
         // precipitation
@@ -69,22 +77,26 @@ class LocalWeatherDataProvider extends ChangeNotifier {
 
         // wind speed
         attributeList = AttributeList();
-        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.windAvg));
+        attributeList.attributeDataList = attributeDataList;
+        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.windAvg.toDouble()));
         hourData.windSpeedList = attributeList;
 
         // wind gust
         attributeList = AttributeList();
-        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.windGust));
+        attributeList.attributeDataList = attributeDataList;
+        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.windGust.toDouble()));
         hourData.windGustList = attributeList;
 
         // wind direction
         attributeList = AttributeList();
-        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.windDirection));
+        attributeList.attributeDataList = attributeDataList;
+        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.windDirection.toDouble()));
         hourData.windDirectionList = attributeList;
 
         // wind direction
         attributeList = AttributeList();
-        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.windDirection));
+        attributeList.attributeDataList = attributeDataList;
+        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.windDirection.toDouble()));
         hourData.windDirectionList = attributeList;
 
         //feels like
@@ -100,14 +112,16 @@ class LocalWeatherDataProvider extends ChangeNotifier {
         // swell direciton
         // swell period
         // tides 
+        hours.add(hourData);
 
       }
+      stormGlassData.hours = hours;
 
       notifyListeners();
     } catch (e) {
       print(e.toString());
       notifyListeners();
     }
-    return deviceObservationData;
+    return stormGlassData;
   }
 }

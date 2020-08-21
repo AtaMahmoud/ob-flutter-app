@@ -525,11 +525,10 @@ class _BeizerChartPopupState extends State<BeizerChartPopup> {
       if (date1.difference(DateTime.now()) < Duration(minutes: 59)) {
         selectedValue = pointValue;
       }
-
       return DataPoint<DateTime>(value: pointValue, xAxis: xAxisValue);
     }).toList();
 
-    // // debugPrint(' $title data -- ' + 'x value -- ' + selectedDate.toIso8601String() + 'selected value -- ' + selectedValue.toString() );
+    debugPrint(' $title data -- ' + 'x value -- ' + selectedDate.toIso8601String() + 'selected value -- ' + selectedValue.toString() );
 
     return Center(
       child: Container(

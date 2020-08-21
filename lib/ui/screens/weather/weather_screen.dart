@@ -58,10 +58,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
       // _futureWOWWeatherData = Provider.of<WOWDataProvider>(context).fetchWeatherData();
 
       // _futureWeatherStationData = Provider.of<LocalWeatherDataProvider>(context).fetchStationObservationData();
-      _futureWeatherFlowDeviceObservationData = Provider.of<LocalWeatherDataProvider>(context).fetchDeviceObservationData();
+      _futureWeatherData = Provider.of<LocalWeatherDataProvider>(context).fetchDeviceObservationData();
 
-      _futureWeatherData =
-          Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
+      // _futureWeatherData =
+      //     Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
 
       // _futureUvIndexData =
       //     Provider.of<StormGlassDataProvider>(context).fetchUvIndexData();
@@ -200,7 +200,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       if (date1.difference(DateTime.now()) < Duration(minutes: 59)) {
         _windSpeed = f.windSpeedList.attributeDataList[0].value;
         _windGusts = f.windGustList.attributeDataList[0].value;
-        _windDirection = f.waveHeightList.attributeDataList[0].value;
+        _windDirection = f.windDirectionList.attributeDataList[0].value;
         _biometricPressure =
             f.barometricPressureList.attributeDataList[0].value;
       }
@@ -324,6 +324,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 future: _futureWeatherData,
                 // initialData: stormGlassDataProvider.weatherDataToday,
                 builder: (context, snapshot) {
+                  debugPrint('------ ${snapshot.data.hours.length}');
                   return snapshot.hasData
                       // ? SharedChart.beizerChartWeather(
                       //     context: context,
