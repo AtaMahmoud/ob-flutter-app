@@ -449,8 +449,9 @@ class _BeizerChartPopupState extends State<BeizerChartPopup> {
     double selectedValue = 0.0;
 
     String indicatorValueUnit = ''; // = '${SymbolConstant.DEGREE}C';
-
+    int counter = 0;
     List<DataPoint<DateTime>> dataPointList = data.hours.map((f) {
+      counter++;
       // 2019-09-16T00:00:00+00:00
       var date1 = DateTime.parse(f.time);
       // double xAxisValue = date1.hour.toDouble();
@@ -458,19 +459,16 @@ class _BeizerChartPopupState extends State<BeizerChartPopup> {
       DateTime xAxisValue = date1;
       double pointValue;
       if (title.contains(AppStrings.temperature)) {
-        pointValue = f.airTemperatureList.attributeDataList[0].value
-            .round()
-            .toDouble();
+        pointValue =
+            f.airTemperatureList.attributeDataList[0].value.round().toDouble();
         indicatorValueUnit = '${SymbolConstant.DEGREE}C';
-      }else if (title.contains(AppStrings.chanceOfRain)) {
-        pointValue = f.precipitationList.attributeDataList[0].value
-            .round()
-            .toDouble();
+      } else if (title.contains(AppStrings.chanceOfRain)) {
+        pointValue =
+            f.precipitationList.attributeDataList[0].value.round().toDouble();
         indicatorValueUnit = ' %';
       } else if (title.contains(AppStrings.humidity)) {
-        pointValue = f.humidityList.attributeDataList[0].value
-            .round()
-            .toDouble();
+        pointValue =
+            f.humidityList.attributeDataList[0].value.round().toDouble();
         indicatorValueUnit = ' %';
       } else if (title.contains(AppStrings.waterTemp)) {
         pointValue = f.waterTemperatureList.attributeDataList[0].value
@@ -525,10 +523,10 @@ class _BeizerChartPopupState extends State<BeizerChartPopup> {
       if (date1.difference(DateTime.now()) < Duration(minutes: 59)) {
         selectedValue = pointValue;
       }
+      debugPrint(
+          '---counter ------ $counter--------- point value ----- $pointValue ------ x value -------- $xAxisValue');
       return DataPoint<DateTime>(value: pointValue, xAxis: xAxisValue);
     }).toList();
-
-    debugPrint(' $title data -- ' + 'x value -- ' + selectedDate.toIso8601String() + 'selected value -- ' + selectedValue.toString() );
 
     return Center(
       child: Container(

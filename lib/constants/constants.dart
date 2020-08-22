@@ -692,7 +692,7 @@ class ListHelper {
       ];
 
   static List<String> getSourceList() =>
-      ['WORLD WEATHER ONLINE', 'LOCAL SOURCE'];
+      ['EXTERNAL SOURCE', 'LOCAL SOURCE'];
 
   static List<String> getLightList() =>
       ["Lightstrip 1", "Lightstrip 2", "Light 3", "Counter 4", "Overhead 3"];

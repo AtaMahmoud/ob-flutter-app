@@ -37,7 +37,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
   Future<StormGlassData> _futureWeatherData;
   // Future<WorldWeatherOnlineData> _futureWOWWeatherData;
   Future<WeatherFlowData> _futureWeatherStationData;
-  Future<WeatherFlowDeviceObservationData> _futureWeatherFlowDeviceObservationData;
+  Future<WeatherFlowDeviceObservationData>
+      _futureWeatherFlowDeviceObservationData;
   Future<StormGlassData> _futureWOWWeatherDataSummary;
   Future<UvIndexData> _futureUvIndexData;
 
@@ -58,16 +59,28 @@ class _WeatherScreenState extends State<WeatherScreen> {
       // _futureWOWWeatherData = Provider.of<WOWDataProvider>(context).fetchWeatherData();
 
       // _futureWeatherStationData = Provider.of<LocalWeatherDataProvider>(context).fetchStationObservationData();
-      _futureWeatherData = Provider.of<LocalWeatherDataProvider>(context).fetchDeviceObservationData();
 
-      // _futureWeatherData =
-      //     Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
+      _futureWeatherData =
+          Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
 
       // _futureUvIndexData =
       //     Provider.of<StormGlassDataProvider>(context).fetchUvIndexData();
 
       currentlySelectedSource = ListHelper.getSourceList()[0];
-      _bloc.weatherSourceController.listen((onData) {});
+      // _bloc.weatherSourceController.listen((onData) {
+      //   debugPrint('------------- selected source ------ $onData');
+      // });
+      _sourcePriorityBloc.topProprity.listen((event) {
+        if (event.compareTo('local') == 0) {
+          debugPrint('------------- selected source ------ $event');
+          _futureWeatherData = Provider.of<LocalWeatherDataProvider>(context)
+              .fetchDeviceObservationData();
+        } else if (event.compareTo('external') == 0) {
+          debugPrint('------------- selected source ------ $event');
+          _futureWeatherData =
+              Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
+        }
+      });
     });
     super.initState();
     UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
@@ -141,7 +154,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           PopUpHelpers.showPopup(
               context,
               SourcePrioritySelectorModal(_sourcePriorityBloc),
-              'Lighting Screen');
+              'WEATHER SOURCE');
         }));
   }
 
@@ -324,7 +337,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 future: _futureWeatherData,
                 // initialData: stormGlassDataProvider.weatherDataToday,
                 builder: (context, snapshot) {
-                  debugPrint('------ ${snapshot.data.hours.length}');
+                  if (snapshot.hasData)
+                    debugPrint('------ ${snapshot.data.hours.length}');
+                  else
+                    debugPrint('------ no data for snapshot');
                   return snapshot.hasData
                       // ? SharedChart.beizerChartWeather(
                       //     context: context,

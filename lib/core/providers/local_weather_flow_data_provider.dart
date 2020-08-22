@@ -38,36 +38,73 @@ class LocalWeatherDataProvider extends ChangeNotifier {
       debugPrint('device observation data -----  ${_deviceObservationData.obs.length}');
      
       List<HourData> hours = [];
-      for(int i=0;i< _deviceObservationData.obs.length; i++){
+      for(int i=0;i < _deviceObservationData.obs.length; i = i+12){
+      
+       var chunk = _deviceObservationData.obs.sublist(i,i+12<_deviceObservationData.obs.length ? i+12 : _deviceObservationData.obs.length);
+        double sumAirTemp = 0.0;
+        double sunmPressure = 0.0;
+        double sumRelativeHumidity = 0.0;
+        double sumRainAccumulation = 0.0;
+        double sumWindAvg = 0.0;
+        double sumWindGust = 0.0;
+        double sumWindDirection = 0.0;
+        double sumSolarRadiation = 0.0;
+        double sumUvIndex = 0.0;
+
+        int counter = 0;
+      chunk.map((e){
+
+        print(counter++);
+      sumAirTemp = sumAirTemp + e.airTemperature.toDouble();
+      sunmPressure = sunmPressure + e.pressure.toDouble();
+      sumRelativeHumidity = sumRelativeHumidity + e.relativeHumidity.toDouble();
+      sumRainAccumulation = sumRainAccumulation + e.rainAccumulation.toDouble();
+      sumWindAvg = sumWindAvg + e.windAvg.toDouble();
+      sumWindGust = sumWindGust + e.windGust.toDouble();
+      sumWindDirection = sumWindDirection + e.windDirection.toDouble();
+      sumSolarRadiation = sumSolarRadiation + e.solarRadiation.toDouble();
+      sumUvIndex = sumUvIndex + e.unIndex.toDouble();
+
+      }).toList();
+      var avgAirTemp = sumAirTemp / chunk.length;
+      var avgPressure = sunmPressure / chunk.length;
+      var avgRltvHumidity = sumRelativeHumidity / chunk.length;
+      var avgRainAccumulation = sumRainAccumulation / chunk.length;
+      var avgWindAvg = sumWindAvg / chunk.length;
+      var avgWindGust = sumWindGust / chunk.length;
+      var avgWindDirection = sumWindDirection / chunk.length;
+      var avgSolarRad = sumSolarRadiation / chunk.length;
+      var avgUvIndex = sumUvIndex / chunk.length;
+
         DeviceObservation deviceObservation = _deviceObservationData.obs[i];
         HourData hourData = HourData();
-
-        hourData.time = DateTime.fromMillisecondsSinceEpoch(deviceObservation.epoch.toInt()).toIso8601String();
+        // debugPrint('-------------------------- device observation time ----- ${deviceObservation.epoch}');
+        hourData.time = DateTime.fromMillisecondsSinceEpoch(deviceObservation.epoch.toInt()*1000).toIso8601String();
 
         // air temperature
         AttributeList attributeList = AttributeList();
         List<AtrributeData> attributeDataList = [];
 
         attributeList.attributeDataList = attributeDataList;
-        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.airTemperature.toDouble()));
+        attributeList.attributeDataList.add(AtrributeData(value: avgAirTemp));
         hourData.airTemperatureList = attributeList;
 
         // pressure
         attributeList = AttributeList();
         attributeList.attributeDataList = attributeDataList;
-        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.pressure.toDouble()));
+        attributeList.attributeDataList.add(AtrributeData(value: avgPressure));
         hourData.barometricPressureList = attributeList;
 
         // humidity
         attributeList = AttributeList();
         attributeList.attributeDataList = attributeDataList;
-        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.relativeHumidity.toDouble()));
+        attributeList.attributeDataList.add(AtrributeData(value: avgRltvHumidity));
         hourData.humidityList = attributeList;
 
         // precipitation
         attributeList = AttributeList();
         attributeList.attributeDataList = attributeDataList;
-        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.rainAccumulation.toDouble()));
+        attributeList.attributeDataList.add(AtrributeData(value: avgRainAccumulation));
         hourData.precipitationList = attributeList;
 
         // precipitation
@@ -78,26 +115,34 @@ class LocalWeatherDataProvider extends ChangeNotifier {
         // wind speed
         attributeList = AttributeList();
         attributeList.attributeDataList = attributeDataList;
-        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.windAvg.toDouble()));
+        attributeList.attributeDataList.add(AtrributeData(value: avgWindAvg));
         hourData.windSpeedList = attributeList;
 
         // wind gust
         attributeList = AttributeList();
         attributeList.attributeDataList = attributeDataList;
-        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.windGust.toDouble()));
+        attributeList.attributeDataList.add(AtrributeData(value: avgWindGust));
         hourData.windGustList = attributeList;
 
         // wind direction
         attributeList = AttributeList();
         attributeList.attributeDataList = attributeDataList;
-        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.windDirection.toDouble()));
+        attributeList.attributeDataList.add(AtrributeData(value: avgWindDirection));
         hourData.windDirectionList = attributeList;
 
-        // wind direction
+        // solar radiation
         attributeList = AttributeList();
         attributeList.attributeDataList = attributeDataList;
-        attributeList.attributeDataList.add(AtrributeData(value: deviceObservation.windDirection.toDouble()));
-        hourData.windDirectionList = attributeList;
+        attributeList.attributeDataList.add(AtrributeData(value: avgSolarRad));
+        hourData.solarRadiation = attributeList;
+
+        // uv  index
+        attributeList = AttributeList();
+        attributeList.attributeDataList = attributeDataList;
+        attributeList.attributeDataList.add(AtrributeData(value: avgUvIndex));
+        hourData.solarRadiation = attributeList;
+
+
 
         //feels like
         // attributeList = AttributeList();
