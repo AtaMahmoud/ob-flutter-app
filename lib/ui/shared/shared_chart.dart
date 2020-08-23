@@ -458,7 +458,15 @@ class _BeizerChartPopupState extends State<BeizerChartPopup> {
 
       DateTime xAxisValue = date1;
       double pointValue;
-      if (title.contains(AppStrings.temperature)) {
+      if (title.contains(AppStrings.solarRadiation)) {
+        pointValue =
+            f.solarRadiation.attributeDataList[0].value.round().toDouble();
+        indicatorValueUnit = 'W/M2';
+      } else if (title.contains(AppStrings.uvRadiation)) {
+        pointValue =
+            f.unIndex.attributeDataList[0].value.round().toDouble();
+        indicatorValueUnit = 'Nm';
+      } else if (title.contains(AppStrings.temperature)) {
         pointValue =
             f.airTemperatureList.attributeDataList[0].value.round().toDouble();
         indicatorValueUnit = '${SymbolConstant.DEGREE}C';
@@ -523,8 +531,6 @@ class _BeizerChartPopupState extends State<BeizerChartPopup> {
       if (date1.difference(DateTime.now()) < Duration(minutes: 59)) {
         selectedValue = pointValue;
       }
-      debugPrint(
-          '---counter ------ $counter--------- point value ----- $pointValue ------ x value -------- $xAxisValue');
       return DataPoint<DateTime>(value: pointValue, xAxis: xAxisValue);
     }).toList();
 
