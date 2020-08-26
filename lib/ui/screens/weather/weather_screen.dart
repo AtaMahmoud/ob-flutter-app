@@ -35,10 +35,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
   User _user;
   ScreenUtil _util = ScreenUtil();
   Future<StormGlassData> _futureWeatherData;
+  Future<StormGlassData> _futuremissingData;
   // Future<WorldWeatherOnlineData> _futureWOWWeatherData;
   // Future<WeatherFlowData> _futureWeatherStationData;
   // Future<WeatherFlowDeviceObservationData>
-  //     _futureWeatherFlowDeviceObservationData;
+  // _futureWeatherFlowDeviceObservationData;
   // Future<StormGlassData> _futureWOWWeatherDataSummary;
   Future<UvIndexData> _futureUvIndexData;
 
@@ -54,7 +55,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
   void initState() {
     Future.delayed(Duration.zero).then((_) {
       // _futureWOWWeatherDataSummary =
-          // Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
+      // Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
 
       // _futureWeatherStationData = Provider.of<LocalWeatherDataProvider>(context).fetchStationObservationData();
 
@@ -75,6 +76,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
           currentlySelectedSource = ListHelper.getSourceList()[1];
         } else if (event.compareTo('external') == 0) {
           _futureWeatherData =
+              Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
+          _futuremissingData =
               Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
           currentlySelectedSource = ListHelper.getSourceList()[0];
         }
@@ -165,6 +168,14 @@ class _WeatherScreenState extends State<WeatherScreen> {
               ? _weatherItemContainer(snapshot.data) //movieGrid(snapshot.data)
               : Center(child: CircularProgressIndicator());
         });
+  }
+
+  Widget _weatherItemsFuture() {
+    Future.wait([_futureWeatherData, _futuremissingData])
+        .then((List<StormGlassData> datas) {
+      debugPrint(
+          '-------datas--------------${datas[0].hours.length}----------------${datas[1].hours.length}');
+    });
   }
 
   _weatherItemContainer(StormGlassData data) {
@@ -330,6 +341,35 @@ class _WeatherScreenState extends State<WeatherScreen> {
             //_popUpTitle(title, iconPath),
             FutureBuilder<StormGlassData>(
                 future: _futureWeatherData,
+                // initialData: stormGlassDataProvider.weatherDataToday,
+                builder: (context, snapshot) {
+                  return snapshot.hasData
+                      ? BeizerChartPopup(
+                          data: snapshot.data,
+                          title: title,
+                          iconPath: iconPath,
+                          bloc: _bloc)
+                      : Center(child: CircularProgressIndicator());
+                }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _weatherMissingDataWidgetFuture({String title, String iconPath}) {
+    return Center(
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16.0), color: Colors.white),
+        //  height: ScreenUtil().setHeight(512),
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            //_popUpTitle(title, iconPath),
+            FutureBuilder<StormGlassData>(
+                future: _futuremissingData,
                 // initialData: stormGlassDataProvider.weatherDataToday,
                 builder: (context, snapshot) {
                   return snapshot.hasData
