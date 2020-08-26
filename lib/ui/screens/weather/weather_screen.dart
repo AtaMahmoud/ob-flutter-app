@@ -62,6 +62,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
       _futureWeatherData =
           Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
 
+      _futuremissingData = Provider.of<LocalWeatherDataProvider>(context)
+          .fetchDeviceObservationData();
+
       // _futureUvIndexData =
       //     Provider.of<StormGlassDataProvider>(context).fetchUvIndexData();
 
@@ -77,8 +80,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
         } else if (event.compareTo('external') == 0) {
           _futureWeatherData =
               Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
-          _futuremissingData =
-              Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
+          _futuremissingData = Provider.of<LocalWeatherDataProvider>(context)
+              .fetchDeviceObservationData();
           currentlySelectedSource = ListHelper.getSourceList()[0];
         }
       });
@@ -170,14 +173,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
         });
   }
 
-  Widget _weatherItemsFuture() {
-    Future.wait([_futureWeatherData, _futuremissingData])
-        .then((List<StormGlassData> datas) {
-      debugPrint(
-          '-------datas--------------${datas[0].hours.length}----------------${datas[1].hours.length}');
-    });
-  }
-
   _weatherItemContainer(StormGlassData data) {
     if (data == null) {
       return Container(
@@ -229,36 +224,120 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  gridRowItemSVG(
-                      iconImagePath: ImagePaths.svgSolarRadiation,
-                      itemName: AppStrings.solarRadiation,
-                      value: '$_solarPower W/M2',
-                      onTap: () {
-                        if (currentlySelectedSource
-                                .compareTo(ListHelper.getSourceList()[1]) ==
-                            0) {
-                          PopUpHelpers.showChartPopup(
-                              context,
-                              _weatherDataWidgetFuture(
-                                  title: AppStrings.solarRadiation,
-                                  iconPath: ImagePaths.svgSolarRadiation));
-                        }
-                      }),
-                  gridRowItemSVG(
-                      iconImagePath: ImagePaths.svguvRadiation,
-                      itemName: AppStrings.uvRadiation,
-                      value: '$_uvIndex Nm',
-                      onTap: () {
-                        if (currentlySelectedSource
-                                .compareTo(ListHelper.getSourceList()[1]) ==
-                            0) {
-                          PopUpHelpers.showChartPopup(
-                              context,
-                              _weatherDataWidgetFuture(
-                                  title: AppStrings.uvRadiation,
-                                  iconPath: ImagePaths.svguvRadiation));
-                        }
-                      }),
+                  currentlySelectedSource
+                              .compareTo(ListHelper.getSourceList()[1]) ==
+                          0
+                      ? gridRowItemSVG(
+                          iconImagePath: ImagePaths.svgSolarRadiation,
+                          itemName: AppStrings.solarRadiation,
+                          value: '$_solarPower W/M2',
+                          onTap: () {
+                            if (currentlySelectedSource
+                                    .compareTo(ListHelper.getSourceList()[1]) ==
+                                0) {
+                              PopUpHelpers.showChartPopup(
+                                  context,
+                                  _weatherDataWidgetFuture(
+                                      title: AppStrings.solarRadiation,
+                                      iconPath: ImagePaths.svgSolarRadiation));
+                            }
+                          })
+                      : FutureBuilder<StormGlassData>(
+                          future: _futuremissingData,
+                          // initialData: stormGlassDataProvider.weatherDataToday,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              for (var f in snapshot.data.hours) {
+                                var date1 = DateTime.parse(f.time);
+
+                                if (date1.difference(DateTime.now()) <
+                                    Duration(minutes: 59)) {
+                                  _solarPower = f.solarRadiation != null
+                                      ? f.solarRadiation.attributeDataList[0]
+                                          .value
+                                      : 90;
+                                }
+                              }
+                            }
+                            return snapshot.hasData
+                                ? gridRowItemSVG(
+                                    iconImagePath: ImagePaths.svgSolarRadiation,
+                                    itemName: AppStrings.solarRadiation,
+                                    value: '$_solarPower W/M2',
+                                    onTap: () {
+                                      PopUpHelpers.showChartPopup(
+                                          context,
+                                          _weatherMissingDataWidgetFuture(
+                                              title: AppStrings.solarRadiation,
+                                              iconPath: ImagePaths
+                                                  .svgSolarRadiation));
+                                    }) //movieGrid(snapshot.data)
+                                : Center(child: CircularProgressIndicator());
+                          }),
+                  currentlySelectedSource
+                              .compareTo(ListHelper.getSourceList()[1]) ==
+                          0
+                      ? gridRowItemSVG(
+                          iconImagePath: ImagePaths.svguvRadiation,
+                          itemName: AppStrings.uvRadiation,
+                          value: '$_uvIndex Nm',
+                          onTap: () {
+                            if (currentlySelectedSource
+                                    .compareTo(ListHelper.getSourceList()[1]) ==
+                                0) {
+                              PopUpHelpers.showChartPopup(
+                                  context,
+                                  _weatherDataWidgetFuture(
+                                      title: AppStrings.uvRadiation,
+                                      iconPath: ImagePaths.svguvRadiation));
+                            }
+                          })
+                      : FutureBuilder<StormGlassData>(
+                          future: _futuremissingData,
+                          // initialData: stormGlassDataProvider.weatherDataToday,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              for (var f in snapshot.data.hours) {
+                                var date1 = DateTime.parse(f.time);
+
+                                if (date1.difference(DateTime.now()) <
+                                    Duration(minutes: 59)) {
+                                  _uvIndex = f.unIndex != null
+                                      ? f.unIndex.attributeDataList[0].value
+                                      : 0.05;
+                                }
+                              }
+                            }
+                            return snapshot.hasData
+                                ? gridRowItemSVG(
+                                    iconImagePath: ImagePaths.svguvRadiation,
+                                    itemName: AppStrings.uvRadiation,
+                                    value: '$_uvIndex Nm',
+                                    onTap: () {
+                                      PopUpHelpers.showChartPopup(
+                                          context,
+                                          _weatherMissingDataWidgetFuture(
+                                              title: AppStrings.uvRadiation,
+                                              iconPath:
+                                                  ImagePaths.svguvRadiation));
+                                    }) //movieGrid(snapshot.data)
+                                : Center(child: CircularProgressIndicator());
+                          }),
+                  // gridRowItemSVG(
+                  //     iconImagePath: ImagePaths.svguvRadiation,
+                  //     itemName: AppStrings.uvRadiation,
+                  //     value: '$_uvIndex Nm',
+                  //     onTap: () {
+                  //       if (currentlySelectedSource
+                  //               .compareTo(ListHelper.getSourceList()[1]) ==
+                  //           0) {
+                  //         PopUpHelpers.showChartPopup(
+                  //             context,
+                  //             _weatherDataWidgetFuture(
+                  //                 title: AppStrings.uvRadiation,
+                  //                 iconPath: ImagePaths.svguvRadiation));
+                  //       }
+                  //     }),
                 ],
               ),
             ),
