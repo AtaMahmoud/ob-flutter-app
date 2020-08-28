@@ -1096,6 +1096,7 @@ class UIHelper {
       children: <Widget>[
         SvgPicture.asset(
           imagePath,
+          color: ColorConstants.SVG_ICON_COLOR,
           width: ScreenUtil().setWidth(196),
           height: ScreenUtil().setWidth(196),
         ),

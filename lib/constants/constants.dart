@@ -33,6 +33,7 @@ class ColorConstants {
   static const MARINE_ITEM_TEXT_COLOR = Color(0xFF0D48A3);
   static const TOP_CLIPPER_END_DARK = Color(0xFF084AAA);
   static const TOP_CLIPPER_START_DARK = Color(0xFF184192);
+  static const SVG_ICON_COLOR = Color(0xFF3363A3);
 
   static const CONTROL_LIST_ITEM_BKG = Color(0xFF0590D3);
   static const CONTROL_LIST_BKG = Color(0xFF165AB7);

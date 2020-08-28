@@ -67,7 +67,7 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
   _customContainer() {
     return Container(
       height: useMobileLayout
-          ? MediaQuery.of(context).size.height * 0.5
+          ? MediaQuery.of(context).size.height * 0.52
           : MediaQuery.of(context).size.height *
               0.65, //ScreenUtil().setHeight(990),
       decoration: BoxDecoration(gradient: topGradientDark),
