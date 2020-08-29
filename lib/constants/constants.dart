@@ -185,6 +185,7 @@ class ButtonText {
 class ScreenTitle {
   static const LANDING_SCREEN = 'Landing Screen';
   static const HOME = 'Home';
+  static const SMART_HOME = 'Smart Home';
   static const DASHBOARD = 'Dashboard';
   static const REGISTER = 'Register';
   static const LOGIN = 'Login';
@@ -1223,6 +1224,10 @@ class AppStrings {
   static String humidity = 'Humidity';
 
   static String chanceOfRain = 'Chance of Rain';
+
+  static String smartHome = 'Smart Home';
+
+  static String smartHomeMessage = 'Get latest update\nand control your\nseapod devices';
 }
 
 class NotificationConstants {
