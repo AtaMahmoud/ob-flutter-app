@@ -15,6 +15,7 @@ import 'package:ocean_builder/core/providers/local_noti_data_provider.dart';
 import 'package:ocean_builder/core/providers/local_weather_flow_data_provider.dart';
 import 'package:ocean_builder/core/providers/ocean_builder_provider.dart';
 import 'package:ocean_builder/core/providers/qr_code_data_provider.dart';
+import 'package:ocean_builder/core/providers/smart_home_data_provider.dart';
 import 'package:ocean_builder/core/providers/storm_glass_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
@@ -29,13 +30,11 @@ import 'package:provider/provider.dart';
 import 'constants/constants.dart';
 import 'core/providers/device_type_provider.dart';
 
-
 // Future<void> main() async {
 //   await mainCommon();
 // }
 
 Future<void> main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   // Load the JSON config into memory
   await ConfigReader.initialize();
@@ -63,62 +62,57 @@ Future<void> main() async {
   //     );
   // }, onError: Crashlytics.instance.recordError);
 
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: MyApp() ,
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: MyApp(),
     ),
   );
-  
 }
-
 
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
-
 }
 
 class _MyAppState extends State<MyApp> {
-
   bool isConnected;
   // static FirebaseAnalytics analytics = FirebaseAnalytics();
   // static FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
 
-
   @override
   void initState() {
     super.initState();
-  
-  GlobalListeners.listener = DataConnectionChecker().onStatusChange.listen((status) {
-    switch (status) {
-      case DataConnectionStatus.connected:
-        // // print('Data connection is available.');
-        if(GlobalContext.internetStatus!=null && !GlobalContext.internetStatus)
-        {
-        displayInternetInfoBar(context,AppStrings.internetConnection);
-        GlobalContext.internetStatus = true;
-        }
-        break;
-      case DataConnectionStatus.disconnected:
-        // // print('You are disconnected from the internet.');
-        displayInternetInfoBar(context,AppStrings.noInternetConnection);
-         GlobalContext.internetStatus = false;
-        break;
-    }
-  });  
 
+    GlobalListeners.listener =
+        DataConnectionChecker().onStatusChange.listen((status) {
+      switch (status) {
+        case DataConnectionStatus.connected:
+          // // print('Data connection is available.');
+          if (GlobalContext.internetStatus != null &&
+              !GlobalContext.internetStatus) {
+            displayInternetInfoBar(context, AppStrings.internetConnection);
+            GlobalContext.internetStatus = true;
+          }
+          break;
+        case DataConnectionStatus.disconnected:
+          // // print('You are disconnected from the internet.');
+          displayInternetInfoBar(context, AppStrings.noInternetConnection);
+          GlobalContext.internetStatus = false;
+          break;
+      }
+    });
   }
-  
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context,allowFontScaling: true);
+    ScreenUtil.init(context, allowFontScaling: true);
     service.SystemChrome.setPreferredOrientations([
       service.DeviceOrientation.portraitUp,
       service.DeviceOrientation.portraitDown,
     ]);
 
-   UIHelper.setStatusBarColor(color:ColorConstants.TOP_CLIPPER_START);
+    UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -169,9 +163,11 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (context) => LocalWeatherDataProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => SmartHomeDataProvider(),
+        ),
         // Provider<FirebaseAnalytics>.value(value: analytics),
         // Provider<FirebaseAnalyticsObserver>.value(value: observer),
-        
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -188,10 +184,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
-void dispose() {
-  // _listener.cancel();
-  GlobalListeners.listener.cancel();
-  super.dispose();
-}
-
+  void dispose() {
+    // _listener.cancel();
+    GlobalListeners.listener.cancel();
+    super.dispose();
+  }
 }
