@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/ocean_builder.dart';
 import 'package:ocean_builder/core/providers/design_data_provider.dart';
+import 'package:ocean_builder/core/providers/smart_home_data_provider.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper_2.dart';
 import 'package:ocean_builder/ui/screens/designSteps/exterior_finish_screen.dart';
@@ -20,10 +22,14 @@ class SmartHomeScreen extends StatefulWidget {
 }
 
 class _SmartHomeScreenState extends State<SmartHomeScreen> {
+  Future<MqttServerClient> _mqttServerClient;
   @override
   void initState() {
     super.initState();
     UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
+    Future.delayed(Duration.zero).then((_) {
+      _mqttServerClient = Provider.of<SmartHomeDataProvider>(context).connect();
+    });
   }
 
   @override
@@ -49,7 +55,8 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
                   fontSize: ScreenUtil().setSp(48),
                   color: ColorConstants.TEXT_COLOR),
             ),
-            BottomClipper(ButtonText.BACK, '',goBack, () {}, isNextEnabled: false)     
+            BottomClipper(ButtonText.BACK, '', goBack, () {},
+                isNextEnabled: false)
           ],
         ),
       ),
@@ -59,5 +66,4 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
   goBack() {
     Navigator.pop(context);
   }
-
 }

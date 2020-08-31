@@ -117,5 +117,15 @@ class Config {
 
   static GET_WEATHER_FLOW_DEVICE_OBS_DATA(String deviceId) =>
       'https://swd.weatherflow.com/swd/rest/observations/device/$deviceId';
+
+  // mqtt related
+
+  static var MQTT_SERVER = ConfigReader.getMqttServer();
+  static var MQTT_IDENTIFIER = ConfigReader.getMqttIdentifier();
+  static var MQTT_PORT = ConfigReader.getMqttPort();
+  static var MQTT_USER = ConfigReader.getMqttUserName();
+  static var MQTT_PASSWORD = ConfigReader.getMqttPassword();
+  static var MQTT_TOPIC = ConfigReader.getMqttTopic();
+
   
 }

@@ -15,6 +15,7 @@ import 'package:ocean_builder/core/providers/local_noti_data_provider.dart';
 import 'package:ocean_builder/core/providers/local_weather_flow_data_provider.dart';
 import 'package:ocean_builder/core/providers/ocean_builder_provider.dart';
 import 'package:ocean_builder/core/providers/qr_code_data_provider.dart';
+import 'package:ocean_builder/core/providers/smart_home_data_provider.dart';
 import 'package:ocean_builder/core/providers/storm_glass_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
@@ -168,6 +169,9 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider(
           create: (context) => LocalWeatherDataProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SmartHomeDataProvider(),
         ),
         // Provider<FirebaseAnalytics>.value(value: analytics),
         // Provider<FirebaseAnalyticsObserver>.value(value: observer),
