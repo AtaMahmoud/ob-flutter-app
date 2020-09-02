@@ -14,6 +14,7 @@ import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/custom_clipper/custom_clipper.dart';
 import 'package:ocean_builder/helper/url_launcher_helper.dart';
 import 'package:ocean_builder/map/darksky_map.dart';
+import 'package:ocean_builder/ui/screens/weather/weather_formulas.dart';
 import 'package:ocean_builder/ui/screens/weather/weather_more_widget.dart';
 import 'package:ocean_builder/ui/shared/app_colors.dart';
 import 'package:ocean_builder/ui/shared/popup.dart';
@@ -378,8 +379,14 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
         _weatherCondition = WeatherDescMap.weatherCodeMap['116'].first;
         _temperature =
             f.airTemperatureList.attributeDataList[0].value.toString();
-        _feelsLikeTemperature = data
-            .hours[0].airTemperatureList.attributeDataList[0].value
+        // _feelsLikeTemperature = data
+        //     .hours[0].airTemperatureList.attributeDataList[0].value
+        //     .round()
+        //     .toString();
+        _feelsLikeTemperature = getFeelsLikeTemperature(
+                f.airTemperatureList.attributeDataList[0].value,
+                f.humidityList.attributeDataList[0].value,
+                f.windSpeedList.attributeDataList[0].value)
             .round()
             .toString();
       }
@@ -390,8 +397,14 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
       _weatherCondition = WeatherDescMap.weatherCodeMap[116].first;
       _temperature = data.hours[0].airTemperatureList.attributeDataList[0].value
           .toString();
-      _feelsLikeTemperature = data
-          .hours[0].airTemperatureList.attributeDataList[0].value
+      // _feelsLikeTemperature = data
+      //     .hours[0].airTemperatureList.attributeDataList[0].value
+      //     .round()
+      //     .toString();
+      _feelsLikeTemperature = getFeelsLikeTemperature(
+              data.hours[0].airTemperatureList.attributeDataList[0].value,
+              data.hours[0].humidityList.attributeDataList[0].value,
+              data.hours[0].windSpeedList.attributeDataList[0].value)
           .round()
           .toString();
     }
