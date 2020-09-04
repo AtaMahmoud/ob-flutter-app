@@ -53,7 +53,9 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
   @override
   void initState() {
     super.initState();
-    _bloc.weatherSourceController.listen((onData) {});
+    _bloc.weatherSourceController.listen((onData) {
+      debugPrint('------------- weather soruce change detected in top cliper weather ');
+    });
   }
 
   @override

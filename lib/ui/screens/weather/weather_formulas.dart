@@ -46,3 +46,11 @@ double getFeelsLikeTemperature(t,rh,v){
   return feelsLikeTemp;
 
 }
+
+int getWeatherType(temperature, atmosphericPressure, wind, humidity, precipitation,cloudiness){
+  
+  
+  return 123;
+
+}
+
