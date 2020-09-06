@@ -118,18 +118,14 @@ class Config {
   static GET_WEATHER_FLOW_DEVICE_OBS_DATA(String deviceId) =>
       'https://swd.weatherflow.com/swd/rest/observations/device/$deviceId';
 
-  // smart home configs
+  // mqtt related
 
-  /*
-  My public mqtt server is mqtt.technoid.info
-Username is Byron
-Password is ferret
-Port is 1883
-I'm currently publishing to byron/gauge
-  */
-  static const MQTT_SERVER = 'mqtt.technoid.info';
-  static const MQTT_USER_NAME = 'Byron';
-  static const MQTT_PASSWORD = 'ferret';
-  static const MQTT_PORT = 1883;
-  static const MQTT_TOPIC = 'byron/gauge';
+  static var MQTT_SERVER = ConfigReader.getMqttServer();
+  static var MQTT_IDENTIFIER = ConfigReader.getMqttIdentifier();
+  static var MQTT_PORT = ConfigReader.getMqttPort();
+  static var MQTT_USER = ConfigReader.getMqttUserName();
+  static var MQTT_PASSWORD = ConfigReader.getMqttPassword();
+  static var MQTT_TOPIC = ConfigReader.getMqttTopic();
+
+  
 }

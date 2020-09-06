@@ -7,6 +7,7 @@ import 'package:ocean_builder/core/providers/user_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/ui/screens/designSteps/design_screen.dart';
 import 'package:ocean_builder/ui/screens/designSteps/smart_home_screen.dart';
+import 'package:ocean_builder/ui/screens/designSteps/smart_home_screen_node_js.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/login_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/registration_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/registration_screen_accept_invitation.dart';
@@ -59,57 +60,70 @@ class _LandingScreenState extends State<LandingScreen> {
             enableSkipLogin: true,
           ),
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                userProvider.isLoading
-                    ? CircularProgressIndicator()
-                    : InkWell(
-                        child: Padding(
-                          padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
-                          child: UIHelper.imageTextColumn(
-                              ImagePaths.loginToDashboard,
-                              AppStrings.loginToDashboard),
+            child: SingleChildScrollView(
+                          child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  userProvider.isLoading
+                      ? CircularProgressIndicator()
+                      : InkWell(
+                          child: Padding(
+                            padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
+                            child: UIHelper.imageTextColumn(
+                                ImagePaths.loginToDashboard,
+                                AppStrings.loginToDashboard),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).pushNamed(LoginScreen.routeName,
+                                arguments: ScreenTitle.LANDING_SCREEN);
+                          },
                         ),
-                        onTap: () {
-                          Navigator.of(context).pushNamed(LoginScreen.routeName,
-                              arguments: ScreenTitle.LANDING_SCREEN);
-                        },
-                      ),
-                InkWell(
-                  child: Padding(
-                    padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
-                    child: UIHelper.imageTextColumn(ImagePaths.svgAccessKey,
-                        AppStrings.requestAcceptHomeAccess),
+                  InkWell(
+                    child: Padding(
+                      padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
+                      child: UIHelper.imageTextColumn(ImagePaths.svgAccessKey,
+                          AppStrings.requestAcceptHomeAccess),
+                    ),
+                    onTap: () {
+                      // Navigator.of(context)
+                      //     .pushNamed(RegistrationScreen.routeName);
+                      _showAddOBDialog(userProvider, context);
+                    },
                   ),
-                  onTap: () {
-                    // Navigator.of(context)
-                    //     .pushNamed(RegistrationScreen.routeName);
-                    _showAddOBDialog(userProvider, context);
-                  },
-                ),
-                InkWell(
-                  child: Padding(
-                    padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
-                    child: UIHelper.imageTextColumn(
-                        ImagePaths.svgSeapod, AppStrings.design),
+                  InkWell(
+                    child: Padding(
+                      padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
+                      child: UIHelper.imageTextColumn(
+                          ImagePaths.svgSeapod, AppStrings.design),
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pushNamed(DesignScreen.routeName);
+                    },
                   ),
-                  onTap: () {
-                    Navigator.of(context).pushNamed(DesignScreen.routeName);
-                  },
-                ),
-                InkWell(
-                  child: Padding(
-                    padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
-                    child: UIHelper.imageTextColumn(
-                        ImagePaths.svgSeapod, AppStrings.smartHome),
+                  InkWell(
+                    child: Padding(
+                      padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
+                      child: UIHelper.imageTextColumn(
+                          ImagePaths.svgSeapod, AppStrings.smartHome),
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pushNamed(SmartHomeScreen.routeName);
+                    },
                   ),
-                  onTap: () {
-                    Navigator.of(context).pushNamed(SmartHomeScreen.routeName);
-                  },
-                ),
-              ],
+                                  InkWell(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.w),
+                      child: UIHelper.imageTextColumn(
+                          ImagePaths.svgSeapod, AppStrings.smartHome_local_server),
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pushNamed(SmartHomeScreenNodeServer.routeName);
+                    },
+                  ),
+                  
+                ],
+              ),
             ),
           )
         ],

@@ -1227,6 +1227,8 @@ class AppStrings {
 
   static String smartHome = 'Smart Home';
 
+  static String smartHome_local_server = 'Smart Home(Server)';
+
   static String smartHomeMessage = 'Get latest update\nand control your\nseapod devices';
 }
 

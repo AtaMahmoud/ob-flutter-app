@@ -17,4 +17,28 @@ abstract class ConfigReader {
   static String getWeatherFlowApiKey() {
     return _config['apiKeyWeatherFlow'] as String;
   }
+
+  static String getMqttServer(){
+    return _config['mqttServer'] as String;
+  }
+
+  static int getMqttPort(){
+    return _config['mqttPort'] as int;
+  }
+
+  static String getMqttIdentifier(){
+    return _config['mqttIdentifier'] as String;
+  }
+
+  static String getMqttUserName(){
+    return _config['mqttUserName'] as String;
+  }
+
+  static String getMqttPassword(){
+    return _config['mqttPassword'] as String;
+  }
+
+  static String getMqttTopic(){
+    return _config['mqttTopic'] as String;
+  }
 }

@@ -14,28 +14,27 @@ import 'package:ocean_builder/ui/widgets/appbar.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 
-class SmartHomeScreen extends StatefulWidget {
-  static const String routeName = '/smart_home';
+class SmartHomeScreenNodeServer extends StatefulWidget {
+  static const String routeName = '/smart_home_node';
 
   @override
-  _SmartHomeScreenState createState() => _SmartHomeScreenState();
+  _SmartHomeScreenNodeServerState createState() => _SmartHomeScreenNodeServerState();
 }
 
-class _SmartHomeScreenState extends State<SmartHomeScreen> {
-  Future<MqttServerClient> _mqttServerClient;
+class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
+
   @override
   void initState() {
     super.initState();
     UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
     Future.delayed(Duration.zero).then((_) {
-      _mqttServerClient = Provider.of<SmartHomeDataProvider>(context).connect();
+      
     });
   }
 
   @override
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
-    _smartHomeDataProvider = Provider.of<SmartHomeDataProvider>(context);
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(gradient: ColorConstants.BKG_GRADIENT),
