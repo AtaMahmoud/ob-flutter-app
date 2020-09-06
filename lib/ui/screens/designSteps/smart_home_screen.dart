@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:ocean_builder/constants/constants.dart';
+import 'package:ocean_builder/core/models/iot_event_data.dart';
 import 'package:ocean_builder/core/models/ocean_builder.dart';
 import 'package:ocean_builder/core/providers/design_data_provider.dart';
 import 'package:ocean_builder/core/providers/smart_home_data_provider.dart';
@@ -23,19 +24,21 @@ class SmartHomeScreen extends StatefulWidget {
 
 class _SmartHomeScreenState extends State<SmartHomeScreen> {
   Future<MqttServerClient> _mqttServerClient;
+
+
   @override
   void initState() {
     super.initState();
     UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
     Future.delayed(Duration.zero).then((_) {
       _mqttServerClient = Provider.of<SmartHomeDataProvider>(context).connect();
+
     });
   }
 
   @override
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
-    _smartHomeDataProvider = Provider.of<SmartHomeDataProvider>(context);
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(gradient: ColorConstants.BKG_GRADIENT),
