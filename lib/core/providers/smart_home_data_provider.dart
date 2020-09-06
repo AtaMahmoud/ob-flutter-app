@@ -7,11 +7,9 @@ import 'package:ocean_builder/core/repositories/smart_home_node_repository.dart'
 
 class SmartHomeDataProvider extends ChangeNotifier {
   Future<MqttServerClient> connect() async {
-    debugPrint(
-        '----${Config.MQTT_SERVER}-----------${Config.MQTT_IDENTIFIER}----${Config.MQTT_PORT}----${Config.MQTT_USER}----${Config.MQTT_PASSWORD}----${Config.MQTT_TOPIC}');
     MqttServerClient client = MqttServerClient(Config.MQTT_SERVER, '');
     //  MqttServerClient client = MqttServerClient.withPort(Config.MQTT_SERVER, Config.MQTT_IDENTIFIER, Config.MQTT_PORT);
-    client.logging(on: true);
+    client.logging(on: false);
     client.onConnected = onConnected;
     client.onDisconnected = onDisconnected;
     client.onUnsubscribed = onUnsubscribed;
@@ -36,11 +34,14 @@ class SmartHomeDataProvider extends ChangeNotifier {
     }
 
     client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
+      print(c.toString());
       final MqttPublishMessage message = c[0].payload;
       final payload =
           MqttPublishPayload.bytesToStringAsString(message.payload.message);
 
       print('Received message:$payload from topic: ${c[0].topic}>');
+    }).onError((e){
+      print(e);
     });
 
     return client;
@@ -48,6 +49,7 @@ class SmartHomeDataProvider extends ChangeNotifier {
 
 // connection succeeded
   void onConnected() {
+    notifyListeners();
     print('-------------------Connected---------------------');
   }
 

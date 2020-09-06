@@ -7,18 +7,21 @@ import 'package:intl/intl.dart';
 class SmartHomeServerRepository {
   ApiBaseHelper _apiBaseHelper = ApiBaseHelper();
 
-  String _allSensorData = 'http://opensteading.ddns.net:8000/api/events';
+  String _allSensorData = 'https://opensteading.ddns.net:8000/api/events';
   String _getSensorDataBetweenDates =
-      'http://opensteading.ddns.net:8000/api/events/';
-  String _getSensorDataById = 'http://opensteading.ddns.net:8000/api/events/';
+      'https://opensteading.ddns.net:8000/api/events/';
+  String _getSensorDataById = 'https://opensteading.ddns.net:8000/api/events/';
+
+  final Map<String, dynamic> _headers = {
+    "x-auth-token": Config.IOT_SERVER_API_KEY,
+  };
 
   Future<List<IotEventData>> getAllSensorData() async {
     List<IotEventData> iotEventDataList = [];
-    final response = await _apiBaseHelper.get(
-      url: _allSensorData,
-    );
+    final response =
+        await _apiBaseHelper.get(url: _allSensorData, headers: _headers);
     print(response);
-    var responseMap = response.data as List;
+    var responseMap = response as List;
 
     responseMap.map((json) {
       IotEventData iotEventData = IotEventData.fromJson(json);
@@ -38,9 +41,11 @@ class SmartHomeServerRepository {
     };
 
     final response = await _apiBaseHelper.get(
-        url: _getSensorDataBetweenDates, parameters: _params);
+        url: _getSensorDataBetweenDates,
+        headers: _headers,
+        parameters: _params);
     print(response);
-    var responseMap = response.data as List;
+    var responseMap = response as List;
 
     responseMap.map((json) {
       IotEventData iotEventData = IotEventData.fromJson(json);
@@ -57,16 +62,16 @@ class SmartHomeServerRepository {
       "eventId": eventID,
     };
 
-    final response =
-        await _apiBaseHelper.get(url: _getSensorDataById, parameters: _params);
+    final response = await _apiBaseHelper.get(
+        url: _getSensorDataById, headers: _headers, parameters: _params);
     print(response);
-    var responseMap = response.data as List;
+    var responseMap = response as List;
 
     responseMap.map((json) {
       IotEventData iotEventData = IotEventData.fromJson(json);
       iotEventDataList.add(iotEventData);
     }).toList();
-    
+
     return iotEventDataList;
   }
 }

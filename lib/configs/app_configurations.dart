@@ -127,5 +127,8 @@ class Config {
   static var MQTT_PASSWORD = ConfigReader.getMqttPassword();
   static var MQTT_TOPIC = ConfigReader.getMqttTopic();
 
-  
+  // node server
+
+  static var IOT_SERVER_API_KEY = ConfigReader.getIotServerApiKey();
+
 }
