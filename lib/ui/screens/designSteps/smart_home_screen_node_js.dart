@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/iot_event_data.dart';
@@ -49,7 +50,7 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
       body: Container(
         decoration: BoxDecoration(gradient: ColorConstants.BKG_GRADIENT),
         child: Column(
-          // mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Appbar(
@@ -57,18 +58,158 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
               isDesignScreen: true,
             ),
             // Spacer(),
-            Text(
-              AppStrings.smartHomeMessage,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontFamily: Fonts.fontVarela,
-                  fontSize: ScreenUtil().setSp(48),
-                  color: ColorConstants.TEXT_COLOR),
+            Expanded(
+              child: Container(
+                child: CustomScrollView(
+                  slivers: [
+                    FutureBuilder<List<IotEventData>>(
+                        future: _allSensorData,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return SliverToBoxAdapter(
+                              child: Container(),
+                            );
+                          }
+                          if (snapshot.hasData) {
+                            return _sensorDataList(
+                                snapshot.data, 'All Sensor List');
+                          }
+                          return SliverToBoxAdapter(
+                            child: Container(),
+                          );
+                        }),
+                    FutureBuilder<List<IotEventData>>(
+                        future: _sensorDataById,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return SliverToBoxAdapter(
+                              child: Container(),
+                            );
+                          }
+                          if (snapshot.hasData) {
+                            return _sensorDataList(
+                                snapshot.data, 'Sensor Data By Id');
+                          }
+                          return SliverToBoxAdapter(
+                            child: Container(),
+                          );
+                        }),
+                    FutureBuilder<List<IotEventData>>(
+                        future: _last3dayssensorData,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return SliverToBoxAdapter(
+                              child: Container(),
+                            );
+                          }
+                          if (snapshot.hasData) {
+                            return _sensorDataList(
+                                snapshot.data, 'Last 3 Day Sensor Data');
+                          }
+                          return SliverToBoxAdapter(
+                            child: Container(),
+                          );
+                        })
+                  ],
+                ),
+              ),
             ),
             BottomClipper(ButtonText.BACK, '', goBack, () {},
                 isNextEnabled: false)
           ],
         ),
+      ),
+    );
+  }
+
+  // _sensorDataWithInDatesList
+
+  // _sensorDataByIDList
+
+  _sensorDataList(List<IotEventData> sensorDataList, String title) {
+    return SliverStickyHeader(
+      header: _buildHeader(title),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 16.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Wrap(
+                  children: [
+                    Text('EventId: ${sensorDataList[index].eventID.toString()}')
+                  ],
+                ),
+                Wrap(
+                  children: [
+                    Text(
+                        'Temperature: ${sensorDataList[index].temperature.toString()}')
+                  ],
+                ),
+                Wrap(
+                  children: [
+                    Text(
+                        'Timestamp: ${sensorDataList[index].tiemStamp.toString()}')
+                  ],
+                )
+              ],
+            ),
+          );
+        }, childCount: sensorDataList.length),
+      ),
+    );
+  }
+
+  _allSensorDataList(List<IotEventData> sensorDataList) {
+    return SliverStickyHeader(
+      header: _buildHeader('All Sensor Data'),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 16.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Wrap(
+                  children: [
+                    Text('EventId: ${sensorDataList[index].eventID.toString()}')
+                  ],
+                ),
+                Wrap(
+                  children: [
+                    Text(
+                        'Temperature: ${sensorDataList[index].temperature.toString()}')
+                  ],
+                ),
+                Wrap(
+                  children: [
+                    Text(
+                        'Timestamp: ${sensorDataList[index].tiemStamp.toString()}')
+                  ],
+                )
+              ],
+            ),
+          );
+        }, childCount: sensorDataList.length),
+      ),
+    );
+  }
+
+  Widget _buildHeader(String text) {
+    return new Container(
+      color: Colors.white,
+      padding:
+          EdgeInsets.only(top: 16.h, bottom: 16.h, left: 32.w, right: 32.w),
+      alignment: Alignment.centerLeft,
+      child: new Text(
+        text,
+        style: TextStyle(
+            fontSize: 48.sp,
+            color: ColorConstants.ACCESS_MANAGEMENT_LIST_TITLE),
       ),
     );
   }
