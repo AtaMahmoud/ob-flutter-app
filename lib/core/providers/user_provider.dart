@@ -1679,6 +1679,7 @@ class UserProvider extends BaseProvider {
 
   Future<ResponseStatus> createLightScene(
       String seapodId, Scene lighScene) async {
+        print('Create new light scene');
     isLoading = true;
     notifyListeners();
     ResponseStatus responseStatus = ResponseStatus();
@@ -1693,9 +1694,9 @@ class UserProvider extends BaseProvider {
       f.remove('_id');
     }).toList();
 
-// print('------------------------------');
+print('---------------------------------------------------');
 
-// // print(lighSceneMap);
+print(lighSceneMap.toString());
 
     await _headerManager.initalizeAuthenticatedUserHeaders();
 
@@ -1742,6 +1743,7 @@ class UserProvider extends BaseProvider {
 
   Future<ResponseStatus> updateLightingScene(
       String seapodId, Scene lighScene) async {
+        print('Update light scene');
     isLoading = true;
     notifyListeners();
     ResponseStatus responseStatus = ResponseStatus();

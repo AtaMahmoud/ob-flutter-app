@@ -84,10 +84,14 @@ Light _$LightFromJson(Map json) {
   return Light(
     lightName: json['lightName'] as String,
     lightColor: json['lightColor'] as String,
+    status: json['status'] as bool,
+    brightness: json['brightness'] as int,
   );
 }
 
 Map<String, dynamic> _$LightToJson(Light instance) => <String, dynamic>{
       'lightName': instance.lightName,
       'lightColor': instance.lightColor,
+      'status': instance.status,
+      'brightness': instance.brightness,
     };

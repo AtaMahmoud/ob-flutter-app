@@ -1261,35 +1261,35 @@ class _LightingScreenState extends State<LightingScreen> {
 
   Scene _getNewScene() {
     List<Light> _lightsBedroom = [
-      new Light(lightName: 'Lightstrip 1', lightColor: '0xFF959B1B'),
-      new Light(lightName: 'Lightstrip 2', lightColor: '0xFF1322FF'),
-      new Light(lightName: 'Ligh 3', lightColor: '0xFFFF1EEE'),
-      new Light(lightName: 'Counter 4', lightColor: '0xFFFFBE93'),
-      new Light(lightName: 'Ocerhead 3', lightColor: '0xFFC1FFE5')
+      new Light(lightName: 'Lightstrip 1', lightColor: '0xFF959B1B',status: true,brightness: 100),
+      new Light(lightName: 'Lightstrip 2', lightColor: '0xFF1322FF',status: true,brightness: 100),
+      new Light(lightName: 'Ligh 3', lightColor: '0xFFFF1EEE',status: true,brightness: 100),
+      new Light(lightName: 'Counter 4', lightColor: '0xFFFFBE93',status: true,brightness: 100),
+      new Light(lightName: 'Ocerhead 3', lightColor: '0xFFC1FFE5',status: true,brightness: 100)
     ];
 
     List<Light> _lightsLivingRoom = [
-      new Light(lightName: 'Lightstrip 1', lightColor: '0xFF959B1B'),
-      new Light(lightName: 'Lightstrip 2', lightColor: '0xFF1322FF'),
-      new Light(lightName: 'Ligh 3', lightColor: '0xFFFF1EEE'),
-      new Light(lightName: 'Counter 4', lightColor: '0xFFFFBE93'),
-      new Light(lightName: 'Ocerhead 3', lightColor: '0xFFC1FFE5')
+      new Light(lightName: 'Lightstrip 1', lightColor: '0xFF959B1B',status: true,brightness: 100),
+      new Light(lightName: 'Lightstrip 2', lightColor: '0xFF1322FF',status: true,brightness: 100),
+      new Light(lightName: 'Ligh 3', lightColor: '0xFFFF1EEE',status: true,brightness: 100),
+      new Light(lightName: 'Counter 4', lightColor: '0xFFFFBE93',status: true,brightness: 100),
+      new Light(lightName: 'Ocerhead 3', lightColor: '0xFFC1FFE5',status: true,brightness: 100)
     ];
 
     List<Light> _lightsKitchen = [
-      new Light(lightName: 'Lightstrip 1', lightColor: '0xFF959B1B'),
-      new Light(lightName: 'Lightstrip 2', lightColor: '0xFF1322FF'),
-      new Light(lightName: 'Ligh 3', lightColor: '0xFFFF1EEE'),
-      new Light(lightName: 'Counter 4', lightColor: '0xFFFFBE93'),
-      new Light(lightName: 'Ocerhead 3', lightColor: '0xFFC1FFE5')
+      new Light(lightName: 'Lightstrip 1', lightColor: '0xFF959B1B',status: true,brightness: 100),
+      new Light(lightName: 'Lightstrip 2', lightColor: '0xFF1322FF',status: true,brightness: 100),
+      new Light(lightName: 'Ligh 3', lightColor: '0xFFFF1EEE',status: true,brightness: 100),
+      new Light(lightName: 'Counter 4', lightColor: '0xFFFFBE93',status: true,brightness: 100),
+      new Light(lightName: 'Ocerhead 3', lightColor: '0xFFC1FFE5',status: true,brightness: 100)
     ];
 
     List<Light> _lightsUnderWaterRoom = [
-      new Light(lightName: 'Lightstrip 1', lightColor: '0xFF959B1B'),
-      new Light(lightName: 'Lightstrip 2', lightColor: '0xFF1322FF'),
-      new Light(lightName: 'Ligh 3', lightColor: '0xFFFF1EEE'),
-      new Light(lightName: 'Counter 4', lightColor: '0xFFFFBE93'),
-      new Light(lightName: 'Ocerhead 3', lightColor: '0xFFC1FFE5')
+      new Light(lightName: 'Lightstrip 1', lightColor: '0xFF959B1B',status: true,brightness: 100),
+      new Light(lightName: 'Lightstrip 2', lightColor: '0xFF1322FF',status: true,brightness: 100),
+      new Light(lightName: 'Ligh 3', lightColor: '0xFFFF1EEE',status: true,brightness: 100),
+      new Light(lightName: 'Counter 4', lightColor: '0xFFFFBE93',status: true,brightness: 100),
+      new Light(lightName: 'Ocerhead 3', lightColor: '0xFFC1FFE5',status: true,brightness: 100)
     ];
 
     List<Room> rooms = [

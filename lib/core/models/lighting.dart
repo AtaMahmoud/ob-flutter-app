@@ -81,7 +81,14 @@ class Light {
   @JsonKey(nullable: true)
   String lightColor;
 
-  Light({this.lightName, this.lightColor});
+  @JsonKey(nullable: true)
+  bool status;
+
+  @JsonKey(nullable: true)
+  int brightness;
+
+
+  Light({this.lightName, this.lightColor,this.status,this.brightness});
 
   factory Light.fromJson(Map<String, dynamic> json) => _$LightFromJson(json);
 
