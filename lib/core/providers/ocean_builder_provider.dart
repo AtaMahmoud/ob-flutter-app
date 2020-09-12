@@ -235,7 +235,7 @@ class OceanBuilderProvider extends BaseProvider {
     return responseStatus;
   }
 
-  // ------------------------------------------------------- Toogle light  -----------------------------------------------------------------
+  // ------------------------------------------------------- Toogle light scene status  -----------------------------------------------------------------
 
   Future<ResponseStatus> toogleLightSceneStatus({String seapodId}) async {
     isLoading = true;
@@ -271,6 +271,57 @@ class OceanBuilderProvider extends BaseProvider {
     } on BadRequestException catch (e) {
       AppException ea = e;
       responseStatus.code = 'Toogle Light Scene Status Failed';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+    }
+
+    isLoading = false;
+    notifyListeners();
+
+    return responseStatus;
+  }
+
+    // ------------------------------------------------------- Toogle light status -----------------------------------------------------------------
+
+  Future<ResponseStatus> toogleLightStatus({String sceneId, String lightId}) async {
+    isLoading = true;
+    notifyListeners();
+    ResponseStatus responseStatus = ResponseStatus();
+    responseStatus.status = 200;
+
+    print(
+        '------------------------------toogle light scene on/off--------------------');
+
+// // print(lighSceneMap);      
+
+    await _headerManager.initalizeAuthenticatedUserHeaders();
+
+    Map<String,dynamic> reqMap = {
+      "lightId":lightId,
+    };
+
+    try {
+      Response toogleLightSceneResponse = await _apiBaseHelper.put(
+        url: APP_CONFIG.Config.TOOGLE_LIGHT_STATUS(sceneId),
+        headers: _headerManager.authUserHeaders,
+        data: reqMap
+      );
+
+      if (toogleLightSceneResponse.statusCode == 200) {
+        responseStatus.status = 200;
+      } else {
+        responseStatus.code = 'Toogle Light Status Failed';
+        responseStatus.message = toogleLightSceneResponse.statusMessage;
+        responseStatus.status = toogleLightSceneResponse.statusCode;
+      }
+    } on FetchDataException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Toogle Light Status Failed';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+    } on BadRequestException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Toogle Light Status Failed';
       responseStatus.message = ea.message;
       responseStatus.status = ea.statusCode;
     }

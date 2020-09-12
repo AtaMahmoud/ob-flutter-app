@@ -454,6 +454,20 @@ class _LightingScreenState extends State<LightingScreen> {
     });
   }
 
+    void _onLightSwitchChanged() {
+    _oceanBuilderProvider
+        .toogleLightStatus(
+      sceneId:  _oceanBuilderUser.lighting.selectedScene,
+      lightId: selectedLight.lightName
+    ).then((responseStatus) {
+      if(responseStatus.status == 200){
+        showInfoBar('Toggle Light Status', 'Light status toogled', context);
+      }else{
+        showInfoBar(responseStatus.code,responseStatus.message,context);
+      }
+    });
+  }
+
   _colorPickerWidget() {
     // // debugPrint('Color picker widget rebuilding');
     return Container(
@@ -490,6 +504,9 @@ class _LightingScreenState extends State<LightingScreen> {
             _selectedScene.rooms.elementAt(roomIndex).lightModes =
                 _selectedRoom.lightModes;
           });
+        },
+        onLightSwitchChanged: (value){
+          _onLightSwitchChanged();
         },
       ),
     );
