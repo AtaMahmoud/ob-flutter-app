@@ -93,7 +93,6 @@ class SmartHomeDataProvider extends ChangeNotifier {
       print(e.toString());
       notifyListeners();
     }
-    print(allSensorData.toString());
     return allSensorData;
   }
 
@@ -107,7 +106,6 @@ class SmartHomeDataProvider extends ChangeNotifier {
       print(e.toString());
       notifyListeners();
     }
-    print(allSensorData.toString());
     return allSensorData;
   }
 
@@ -122,7 +120,6 @@ class SmartHomeDataProvider extends ChangeNotifier {
       print(e.toString());
       notifyListeners();
     }
-    print(allSensorData.toString());
     return allSensorData;
   }
 }
