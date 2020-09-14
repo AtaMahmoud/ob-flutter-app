@@ -1406,19 +1406,19 @@ class _LightingScreenState extends State<LightingScreen> {
     List<Room> rooms = [
       new Room(
           roomName: 'Bedroom',
-          light: _lightsBedroom[0],
+          // light: _lightsBedroom[0],
           lightModes: _lightsBedroom),
       new Room(
           roomName: 'Livingroom',
-          light: _lightsLivingRoom[1],
+          // light: _lightsLivingRoom[1],
           lightModes: _lightsLivingRoom),
       new Room(
           roomName: 'Kitchen',
-          light: _lightsKitchen[2],
+          // light: _lightsKitchen[2],
           lightModes: _lightsKitchen),
       new Room(
           roomName: 'UnderWaterRoom',
-          light: _lightsUnderWaterRoom[3],
+          // light: _lightsUnderWaterRoom[3],
           lightModes: _lightsUnderWaterRoom),
     ];
 

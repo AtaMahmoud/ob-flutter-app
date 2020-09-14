@@ -692,8 +692,7 @@ class ListHelper {
         'UNDERAWATER ROOM',
       ];
 
-  static List<String> getSourceList() =>
-      ['EXTERNAL SOURCE', 'LOCAL SOURCE'];
+  static List<String> getSourceList() => ['EXTERNAL SOURCE', 'LOCAL SOURCE'];
 
   static List<String> getLightList() =>
       ["Lightstrip 1", "Lightstrip 2", "Light 3", "Counter 4", "Overhead 3"];
@@ -1569,19 +1568,19 @@ class PredefinedLightData {
   static List<Room> rooms = [
     new Room(
         roomName: 'Bedroom',
-        light: lightsBedroom[0],
+        // light: lightsBedroom[0],
         lightModes: lightsBedroom),
     new Room(
         roomName: 'Livingroom',
-        light: lightsLivingRoom[1],
+        // light: lightsLivingRoom[1],
         lightModes: lightsLivingRoom),
     new Room(
         roomName: 'Kitchen',
-        light: lightsKitchen[2],
+        // light: lightsKitchen[2],
         lightModes: lightsKitchen),
     new Room(
         roomName: 'UnderWaterRoom',
-        light: lightsUnderWaterRoom[3],
+        // light: lightsUnderWaterRoom[3],
         lightModes: lightsUnderWaterRoom),
   ];
 

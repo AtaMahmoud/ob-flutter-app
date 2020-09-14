@@ -61,12 +61,13 @@ class Room {
   @JsonKey(name: 'label')
   String roomName;
 
-  Light light;
+  // Light light;
 
   @JsonKey(nullable: true, name: 'moodes')
   List<Light> lightModes;
 
-  Room({this.roomName, this.light, this.lightModes});
+  // Room({this.roomName, this.light, this.lightModes});
+  Room({this.roomName, this.lightModes});
 
   factory Room.fromJson(Map<String, dynamic> json) => _$RoomFromJson(json);
 
@@ -87,8 +88,7 @@ class Light {
   @JsonKey(nullable: true)
   int brightness;
 
-
-  Light({this.lightName, this.lightColor,this.status,this.brightness});
+  Light({this.lightName, this.lightColor, this.status, this.brightness});
 
   factory Light.fromJson(Map<String, dynamic> json) => _$LightFromJson(json);
 

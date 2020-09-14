@@ -58,11 +58,6 @@ Map<String, dynamic> _$SceneToJson(Scene instance) => <String, dynamic>{
 Room _$RoomFromJson(Map json) {
   return Room(
     roomName: json['label'] as String,
-    light: json['light'] == null
-        ? null
-        : Light.fromJson((json['light'] as Map)?.map(
-            (k, e) => MapEntry(k as String, e),
-          )),
     lightModes: (json['moodes'] as List)
         ?.map((e) => e == null
             ? null
@@ -76,7 +71,6 @@ Room _$RoomFromJson(Map json) {
 Map<String, dynamic> _$RoomToJson(Room instance) => <String, dynamic>{
       '_id': instance.id,
       'label': instance.roomName,
-      'light': instance.light?.toJson(),
       'moodes': instance.lightModes?.map((e) => e?.toJson())?.toList(),
     };
 
