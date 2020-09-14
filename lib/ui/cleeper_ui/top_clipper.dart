@@ -302,11 +302,11 @@ class _TopClipperState extends State<TopClipper> {
 
     UserProvider userProvider = Provider.of<UserProvider>(context);
 
-    userProvider.logIn(email, password).then((status) {
+    userProvider.logIn(email, password).then((status) async {
       if (status.status == 200) {
         MethodHelper.parseNotifications(context);
 
-        MethodHelper.selectOnlyOBasSelectedOB();
+        await MethodHelper.selectOnlyOBasSelectedOB();
 
         // debugPrint('--     ----------- ^^^^^^^^^^^^^^^^^^ ----- ${userProvider.authenticatedUser.userOceanBuilder.length}');
 

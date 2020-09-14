@@ -67,8 +67,8 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   void initState() {
-    Future.delayed(Duration.zero).then((_) {
-      MethodHelper.selectOnlyOBasSelectedOB();
+    Future.delayed(Duration.zero).then((_) async {
+      await MethodHelper.selectOnlyOBasSelectedOB();
 
       // ###########################################################################
 

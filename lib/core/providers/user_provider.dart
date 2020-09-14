@@ -83,7 +83,7 @@ class UserProvider extends BaseProvider {
             userOceanBuilder.accessTime =
                 seapodUser.accessTime; //Duration(hours: 48);
             userOceanBuilder.checkInDate = seapodUser.checkInDate;
-            userOceanBuilder.reqStatus = seapodUser.reqStatus;
+            userOceanBuilder.reqStatus = 'NA';
             userOceanBuilder.vessleCode = f.vessleCode;
             userOceanBuilderList.add(userOceanBuilder);
           }).toList();
@@ -93,21 +93,22 @@ class UserProvider extends BaseProvider {
         --> UserOfSeapod ( UserOceanBuilder )
 */
 
-        // userData.accessRequests.map((f) {
-        //    // debugPrint('accessRequests --------  ${f.toJson()}');
-        //   UserOceanBuilder userOceanBuilder = UserOceanBuilder();
-        //   userOceanBuilder.accessRequestID = f.id;
-        //   userOceanBuilder.oceanBuilderName = f.seaPod.name;
-        //   userOceanBuilder.vessleCode = f.seaPod.vessleCode;
-        //   userOceanBuilder.oceanBuilderId = f.seaPod.id;
-        //   userOceanBuilder.userType = f.type;
-        //   userOceanBuilder.accessTime = Duration(milliseconds: f.period);
-        //   userOceanBuilder.checkInDate =
-        //       DateTime.fromMicrosecondsSinceEpoch(f.checkIn);
-        //   userOceanBuilder.reqStatus = f.status;
-        //   if(userOceanBuilder.reqStatus.compareTo(NotificationConstants.pending)==0)
-        //   userOceanBuilderList.add(userOceanBuilder);
-        // }).toList();
+        userData.accessRequests.map((f) {
+          // debugPrint('accessRequests --------  ${f.toJson()}');
+          UserOceanBuilder userOceanBuilder = UserOceanBuilder();
+          userOceanBuilder.accessRequestID = f.id;
+          userOceanBuilder.oceanBuilderName = f.seaPod.name;
+          userOceanBuilder.vessleCode = f.seaPod.vessleCode;
+          userOceanBuilder.oceanBuilderId = f.seaPod.id;
+          userOceanBuilder.userType = f.type;
+          userOceanBuilder.accessTime = Duration(milliseconds: f.period);
+          userOceanBuilder.checkInDate =
+              DateTime.fromMicrosecondsSinceEpoch(f.checkIn);
+          userOceanBuilder.reqStatus = f.status;
+          if (userOceanBuilder.reqStatus
+                  .compareTo(NotificationConstants.pending) ==
+              0) userOceanBuilderList.add(userOceanBuilder);
+        }).toList();
 
         userOceanBuilderList.map((f) {
           // debugPrint('LOGIN -- userOceanBuilder --------  ${f.oceanBuilderName}');
@@ -205,21 +206,22 @@ class UserProvider extends BaseProvider {
         userOceanBuilderList.add(userOceanBuilder);
       }).toList();
 
-      // userData.accessRequests.map((f) {
-      //   // debugPrint('accessRequests --------  ${f.toJson()}');
-      //   UserOceanBuilder userOceanBuilder = UserOceanBuilder();
-      //   userOceanBuilder.accessRequestID = f.id;
-      //   userOceanBuilder.oceanBuilderName = f.seaPod.name;
-      //   userOceanBuilder.vessleCode = f.seaPod.vessleCode;
-      //   userOceanBuilder.oceanBuilderId = f.seaPod.id;
-      //   userOceanBuilder.userType = f.type;
-      //   userOceanBuilder.accessTime = Duration(milliseconds: f.period);
-      //   userOceanBuilder.checkInDate =
-      //       DateTime.fromMicrosecondsSinceEpoch(f.checkIn);
-      //   userOceanBuilder.reqStatus = f.status;
-      //   if(userOceanBuilder.reqStatus.compareTo(NotificationConstants.pending)==0)
-      //   userOceanBuilderList.add(userOceanBuilder);
-      // }).toList();
+      userData.accessRequests.map((f) {
+        // debugPrint('accessRequests --------  ${f.toJson()}');
+        UserOceanBuilder userOceanBuilder = UserOceanBuilder();
+        userOceanBuilder.accessRequestID = f.id;
+        userOceanBuilder.oceanBuilderName = f.seaPod.name;
+        userOceanBuilder.vessleCode = f.seaPod.vessleCode;
+        userOceanBuilder.oceanBuilderId = f.seaPod.id;
+        userOceanBuilder.userType = f.type;
+        userOceanBuilder.accessTime = Duration(milliseconds: f.period);
+        userOceanBuilder.checkInDate =
+            DateTime.fromMicrosecondsSinceEpoch(f.checkIn);
+        userOceanBuilder.reqStatus = f.status;
+        if (userOceanBuilder.reqStatus
+                .compareTo(NotificationConstants.pending) ==
+            0) userOceanBuilderList.add(userOceanBuilder);
+      }).toList();
 
       userOceanBuilderList.map((f) {
         // debugPrint('AUTO LOGIN -- userOceanBuilder --------  ${f.oceanBuilderName}');
@@ -1679,7 +1681,7 @@ class UserProvider extends BaseProvider {
 
   Future<ResponseStatus> createLightScene(
       String seapodId, Scene lighScene) async {
-        print('Create new light scene');
+    print('Create new light scene');
     isLoading = true;
     notifyListeners();
     ResponseStatus responseStatus = ResponseStatus();
@@ -1694,9 +1696,9 @@ class UserProvider extends BaseProvider {
       f.remove('_id');
     }).toList();
 
-print('---------------------------------------------------');
+    print('---------------------------------------------------');
 
-print(lighSceneMap.toString());
+    print(lighSceneMap.toString());
 
     await _headerManager.initalizeAuthenticatedUserHeaders();
 
@@ -1743,7 +1745,7 @@ print(lighSceneMap.toString());
 
   Future<ResponseStatus> updateLightingScene(
       String seapodId, Scene lighScene) async {
-        print('Update light scene');
+    print('Update light scene');
     isLoading = true;
     notifyListeners();
     ResponseStatus responseStatus = ResponseStatus();

@@ -247,7 +247,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (email != null && password != null)
       // userProvider.signIn(email, password).then((status) {
-         userProvider.logIn(email, password).then((status) {
+         userProvider.logIn(email, password).then((status) async {
         if (status.status == 200) {
           MethodHelper.parseNotifications(context);
           if (widget.sourceScreen.contains(ScreenTitle.REGISTER) ) {
@@ -262,7 +262,7 @@ class _LoginScreenState extends State<LoginScreen> {
           else if (widget.sourceScreen.contains(ScreenTitle.YOUR_INFO) ) {
             _createNewObForExistingUser(userProvider);
           } else {
-           MethodHelper.selectOnlyOBasSelectedOB();
+          await MethodHelper.selectOnlyOBasSelectedOB();
             if (userProvider.authenticatedUser.userOceanBuilder == null ||
                 userProvider.authenticatedUser.userOceanBuilder.length > 1) {
               Navigator.of(context)

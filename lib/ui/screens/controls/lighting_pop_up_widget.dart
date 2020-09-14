@@ -91,6 +91,7 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
           }
 
           // print(_oceanBuilderUser.lighting.toJson());
+          debugPrint('selected scene id --------- $_selectedSceneId');
 
           if (_oceanBuilderUser != null &&
               _oceanBuilderUser.lighting.sceneList != null)
@@ -123,118 +124,139 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(top: 32.h),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        AppStrings.lights,
-                        style: TextStyle(
-                            fontSize: 36.sp,
-                            color: ColorConstants.LIGHT_POPUP_TITLE),
-                      ),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      right: 16.w,
-                      top: 16.h,
-                    ),
-                    child: Image.asset(
-                      ImagePaths.cross,
-                      width: 36.w,
-                      height: 36.w,
-                      color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                    ),
-                  ),
-                )
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 32.h, bottom: 32.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Transform.scale(
-                    scale: 3.62.h,
-                    child: Switch(
-                      onChanged: _onSwitchChanged,
-                      value: switchOn,
-                      activeColor: Colors.green,
-                      activeTrackColor: Colors.white,
-                      inactiveThumbColor: Colors.grey,
-                      inactiveTrackColor: Colors.white,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  AppStrings.intensity,
-                  style: TextStyle(
-                      fontSize: 36.sp, color: ColorConstants.LIGHT_POPUP_TEXT),
-                ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 16.h, bottom: 32.h),
-              child: _intesitySlider(),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                top: 48.h,
-                bottom: 48.h,
-              ),
-              child: _lightingScenes.isNotEmpty
-                  ? _getDropdown(_lightingScenes, _bloc.lightScene,
-                      _bloc.lightSceneChanged, true,
-                      label: 'Select Scene')
-                  : Container(),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pushNamed(LightingScreen.routeName,
-                    arguments: LightingScreenParams(
-                        _oceanBuilderUser,
-                        _userProvider,
-                        _selectedOBIdProvider,
-                        _selectedSceneId) //_oceanBuilderUser
-                    );
-              },
-              child: Padding(
-                padding: EdgeInsets.only(
-                  top: 32.h,
-                  bottom: 32.h,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      AppStrings.goTOLightingSceen,
-                      style: TextStyle(
-                          fontSize: 36.sp,
-                          color: ColorConstants.LIGHT_POPUP_TEXT),
-                    ),
-                  ],
-                ),
-              ),
-            )
+            _headingBar(),
+            _lightSwitch(),
+            _intensityTitle(),
+            _intensitySlider(),
+            _selectLightSceneDropdown(),
+            _goToLightingPageButton()
           ],
         ),
       ),
+    );
+  }
+
+  InkWell _goToLightingPageButton() {
+    return InkWell(
+      onTap: () {
+        debugPrint(
+            '--LightingScreenParams----------${_oceanBuilderUser.userName}---------${_userProvider.authenticatedUser.firstName}----------${_selectedOBIdProvider}----------${_selectedSceneId}');
+        Navigator.of(context).pop();
+        Navigator.of(context).pushNamed(LightingScreen.routeName,
+            arguments: LightingScreenParams(_oceanBuilderUser, _userProvider,
+                _selectedOBIdProvider, _selectedSceneId) //_oceanBuilderUser
+            );
+      },
+      child: Padding(
+        padding: EdgeInsets.only(
+          top: 32.h,
+          bottom: 32.h,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              AppStrings.goTOLightingSceen,
+              style: TextStyle(
+                  fontSize: 36.sp, color: ColorConstants.LIGHT_POPUP_TEXT),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Padding _selectLightSceneDropdown() {
+    return Padding(
+      padding: EdgeInsets.only(
+        top: 48.h,
+        bottom: 48.h,
+      ),
+      child: _lightingScenes.isNotEmpty
+          ? _getDropdown(
+              _lightingScenes, _bloc.lightScene, _bloc.lightSceneChanged, true,
+              label: 'Select Scene')
+          : Container(),
+    );
+  }
+
+  Padding _intensitySlider() {
+    return Padding(
+      padding: EdgeInsets.only(top: 16.h, bottom: 32.h),
+      child: _intesitySlider(),
+    );
+  }
+
+  Row _intensityTitle() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          AppStrings.intensity,
+          style: TextStyle(
+              fontSize: 36.sp, color: ColorConstants.LIGHT_POPUP_TEXT),
+        ),
+      ],
+    );
+  }
+
+  Padding _lightSwitch() {
+    return Padding(
+      padding: EdgeInsets.only(top: 32.h, bottom: 32.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Transform.scale(
+            scale: 3.62.h,
+            child: Switch(
+              onChanged: _onSwitchChanged,
+              value: switchOn,
+              activeColor: Colors.green,
+              activeTrackColor: Colors.white,
+              inactiveThumbColor: Colors.grey,
+              inactiveTrackColor: Colors.white,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Row _headingBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(top: 32.h),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                AppStrings.lights,
+                style: TextStyle(
+                    fontSize: 36.sp, color: ColorConstants.LIGHT_POPUP_TITLE),
+              ),
+            ],
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+          child: Padding(
+            padding: EdgeInsets.only(
+              right: 16.w,
+              top: 16.h,
+            ),
+            child: Image.asset(
+              ImagePaths.cross,
+              width: 36.w,
+              height: 36.w,
+              color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+            ),
+          ),
+        )
+      ],
     );
   }
 
@@ -420,6 +442,8 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
       // debugPrint('---f.id-- ${f.id} -===========- lightingSceneId- $lightingSceneId');
       if (f.id.compareTo(lightingSceneId) == 0) lightScene = f;
     }).toList();
+
+    debugPrint('selected light scene ---------- ${lightScene.name}');
 
     return lightScene;
   }

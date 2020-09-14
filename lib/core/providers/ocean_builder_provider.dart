@@ -5,6 +5,7 @@ import 'package:barcode_scan/barcode_scan.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:ocean_builder/core/models/ocean_builder.dart';
 import 'package:ocean_builder/core/models/ocean_builder_user.dart';
 import 'package:ocean_builder/core/models/permission.dart';
@@ -25,7 +26,8 @@ class OceanBuilderProvider extends BaseProvider {
   HeadersManager _headerManager = HeadersManager.getInstance();
 
   Future<SeaPod> getSeaPod(String obId, UserProvider userProvider) async {
-    // // debugPrint('get SeaPod info for  ' + obId);
+    debugPrint('get SeaPod info for  ' + obId);
+
     SeaPod seapod;
 
     userProvider.authenticatedUser.seaPods.map((f) {
@@ -34,12 +36,13 @@ class OceanBuilderProvider extends BaseProvider {
         seapod = f;
       }
     }).toList();
-    // // print("got SeaPod  =====================================================");
-    // // print(seapod.toJson());
 
-    if (seapod == null) {
-      seapod = userProvider.authenticatedUser.seaPods[0];
-    }
+    print("got SeaPod  =====================================================");
+    print(seapod?.toJson());
+
+    seapod ??= userProvider.authenticatedUser.seaPods[0];
+
+    debugPrint('returning seapod -- $seapod');
 
     return seapod;
   }
@@ -281,9 +284,10 @@ class OceanBuilderProvider extends BaseProvider {
     return responseStatus;
   }
 
-    // ------------------------------------------------------- Toogle light status -----------------------------------------------------------------
+  // ------------------------------------------------------- Toogle light status -----------------------------------------------------------------
 
-  Future<ResponseStatus> toogleLightStatus({String sceneId, String lightId}) async {
+  Future<ResponseStatus> toogleLightStatus(
+      {String sceneId, String lightId}) async {
     isLoading = true;
     notifyListeners();
     ResponseStatus responseStatus = ResponseStatus();
@@ -292,20 +296,19 @@ class OceanBuilderProvider extends BaseProvider {
     print(
         '------------------------------toogle light scene on/off--------------------');
 
-// // print(lighSceneMap);      
+// // print(lighSceneMap);
 
     await _headerManager.initalizeAuthenticatedUserHeaders();
 
-    Map<String,dynamic> reqMap = {
-      "lightId":lightId,
+    Map<String, dynamic> reqMap = {
+      "lightId": lightId,
     };
 
     try {
       Response toogleLightSceneResponse = await _apiBaseHelper.put(
-        url: APP_CONFIG.Config.TOOGLE_LIGHT_STATUS(sceneId),
-        headers: _headerManager.authUserHeaders,
-        data: reqMap
-      );
+          url: APP_CONFIG.Config.TOOGLE_LIGHT_STATUS(sceneId),
+          headers: _headerManager.authUserHeaders,
+          data: reqMap);
 
       if (toogleLightSceneResponse.statusCode == 200) {
         responseStatus.status = 200;

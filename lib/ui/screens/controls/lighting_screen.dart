@@ -454,16 +454,16 @@ class _LightingScreenState extends State<LightingScreen> {
     });
   }
 
-    void _onLightSwitchChanged() {
+  void _onLightSwitchChanged() {
     _oceanBuilderProvider
         .toogleLightStatus(
-      sceneId:  _oceanBuilderUser.lighting.selectedScene,
-      lightId: selectedLight.lightName
-    ).then((responseStatus) {
-      if(responseStatus.status == 200){
+            sceneId: _oceanBuilderUser.lighting.selectedScene,
+            lightId: selectedLight.lightName)
+        .then((responseStatus) {
+      if (responseStatus.status == 200) {
         showInfoBar('Toggle Light Status', 'Light status toogled', context);
-      }else{
-        showInfoBar(responseStatus.code,responseStatus.message,context);
+      } else {
+        showInfoBar(responseStatus.code, responseStatus.message, context);
       }
     });
   }
@@ -505,7 +505,7 @@ class _LightingScreenState extends State<LightingScreen> {
                 _selectedRoom.lightModes;
           });
         },
-        onLightSwitchChanged: (value){
+        onLightSwitchChanged: (value) {
           _onLightSwitchChanged();
         },
       ),
@@ -514,12 +514,15 @@ class _LightingScreenState extends State<LightingScreen> {
 
   Scene getLightScene(String lightingSceneId) {
     Scene lightScene;
-    // print('getLightScene');
-    // print(lightingSceneId);
+    print('getLightScene');
+    debugPrint(
+        '$lightingSceneId -------------------- ${_allLightScenes.length} ');
     // _user.lightiningScenes.map((f) {
     _allLightScenes.map((f) {
       if (f.id != null && f.id.compareTo(lightingSceneId) == 0) lightScene = f;
     }).toList();
+
+    debugPrint('$lightingSceneId----------------- $lightScene');
 
     return lightScene;
   }

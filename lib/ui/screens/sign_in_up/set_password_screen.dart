@@ -212,9 +212,9 @@ class _PasswordScreenState extends State<PasswordScreen> {
       userProvider
       .registrationWithSeaPodCreation(userDataProvider.user, designDataProvider.oceanBuilder)
           // .signUpAndCreateNewOB(userDataProvider.user.toJson(), designDataProvider.oceanBuilder)
-          .then((responseStatus) {
+          .then((responseStatus) async {
         if (responseStatus.status == 200) {
-          MethodHelper.selectOnlyOBasSelectedOB();
+         await MethodHelper.selectOnlyOBasSelectedOB();
           Navigator.of(context).pushNamed(HomeScreen.routeName);
         } else {
           // debugPrint('Signup as new user failed');
@@ -230,9 +230,9 @@ class _PasswordScreenState extends State<PasswordScreen> {
           qrCodeDataProvider.qrCodeData; //'-LhmsP9Mc-E_VREoTYfV';
       userProvider
           .sendAccessReqForNewuser(userDataProvider.user, oceanBuilderId)
-          .then((responseStatus) {
+          .then((responseStatus) async {
         if (responseStatus.status == 200) {
-          MethodHelper.selectOnlyOBasSelectedOB();
+         await MethodHelper.selectOnlyOBasSelectedOB();
 
           if (!(_selectedOBIdProvider.selectedObId
                   .compareTo(AppStrings.selectOceanBuilder) ==

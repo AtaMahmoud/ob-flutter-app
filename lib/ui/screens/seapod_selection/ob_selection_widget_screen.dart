@@ -52,8 +52,8 @@ class _OBSelectionScreenWidgetModalState
     super.initState();
 
     Future.delayed(Duration.zero).then((_) {
-      userProvider.autoLogin().then((onValue) {
-        MethodHelper.selectOnlyOBasSelectedOB();
+      userProvider.autoLogin().then((onValue) async {
+        await MethodHelper.selectOnlyOBasSelectedOB();
       });
     });
 
