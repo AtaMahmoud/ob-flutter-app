@@ -190,7 +190,8 @@ class UIHelper {
       FocusNode node,
       VoidCallback stringCallback(String data),
       VoidCallback callback(bool show),
-      VoidCallback onCompleteCallback) {
+      VoidCallback onCompleteCallback,
+      {bool shorErrorText = true}) {
     return StreamBuilder<bool>(
       stream: showStream,
       builder: (context, snap) {
@@ -223,7 +224,7 @@ class UIHelper {
                           decoration: InputDecoration(
                               hintText: label,
                               errorMaxLines: 16,
-                              errorText: snapshot.error,
+                              errorText: shorErrorText ? snapshot.error : '',
                               errorStyle: TextStyle(color: Colors.red),
                               suffixIcon: IconButton(
                                 onPressed: () => callback(!snap.data),
