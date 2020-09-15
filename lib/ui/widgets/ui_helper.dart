@@ -723,7 +723,7 @@ class UIHelper {
       child: Container(
         // height: h,
         width: w,
-        padding: EdgeInsets.all(ScreenUtil().setWidth(16)),
+        padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           borderRadius:
               new BorderRadius.circular(ScreenUtil().setWidth(borderRadius)),
@@ -740,6 +740,7 @@ class UIHelper {
         child: Center(
             child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             iconPath != null
                 ? ImageIcon(
@@ -747,9 +748,7 @@ class UIHelper {
                     color: Colors.white,
                   )
                 : Container(),
-            iconPath != null
-                ? SizedBox(width: ScreenUtil().setWidth(16))
-                : Container(),
+            iconPath != null ? SizedBox(width: 16.w) : Container(),
             Text(
               text,
               textAlign: TextAlign.center,

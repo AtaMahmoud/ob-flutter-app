@@ -8,6 +8,7 @@ part of 'lighting.dart';
 
 Lighting _$LightingFromJson(Map json) {
   return Lighting(
+    id: json['_id'] as String,
     isLightON: json['isOn'] as bool,
     intensity: (json['intensity'] as num)?.toDouble() ?? 0.0,
     selectedScene: json['selectedScene'] as String,
@@ -18,7 +19,7 @@ Lighting _$LightingFromJson(Map json) {
                 (k, e) => MapEntry(k as String, e),
               )))
         ?.toList(),
-  )..id = json['_id'] as String;
+  );
 }
 
 Map<String, dynamic> _$LightingToJson(Lighting instance) => <String, dynamic>{
@@ -32,6 +33,9 @@ Map<String, dynamic> _$LightingToJson(Lighting instance) => <String, dynamic>{
 Scene _$SceneFromJson(Map json) {
   return Scene(
     id: json['_id'] as String,
+    userId: json['userId'] as String,
+    seapodId: json['seapodId'] as String,
+    source: json['source'] as String,
     name: json['sceneName'] as String,
     rooms: (json['rooms'] as List)
         ?.map((e) => e == null
@@ -40,10 +44,7 @@ Scene _$SceneFromJson(Map json) {
                 (k, e) => MapEntry(k as String, e),
               )))
         ?.toList(),
-  )
-    ..userId = json['userId'] as String
-    ..seapodId = json['seapodId'] as String
-    ..source = json['source'] as String;
+  );
 }
 
 Map<String, dynamic> _$SceneToJson(Scene instance) => <String, dynamic>{
@@ -57,6 +58,7 @@ Map<String, dynamic> _$SceneToJson(Scene instance) => <String, dynamic>{
 
 Room _$RoomFromJson(Map json) {
   return Room(
+    id: json['_id'] as String,
     roomName: json['label'] as String,
     lightModes: (json['moodes'] as List)
         ?.map((e) => e == null
@@ -65,7 +67,7 @@ Room _$RoomFromJson(Map json) {
                 (k, e) => MapEntry(k as String, e),
               )))
         ?.toList(),
-  )..id = json['_id'] as String;
+  );
 }
 
 Map<String, dynamic> _$RoomToJson(Room instance) => <String, dynamic>{
@@ -76,6 +78,7 @@ Map<String, dynamic> _$RoomToJson(Room instance) => <String, dynamic>{
 
 Light _$LightFromJson(Map json) {
   return Light(
+    id: json['_id'] as String,
     lightName: json['lightName'] as String,
     lightColor: json['lightColor'] as String,
     status: json['status'] as bool,
@@ -84,6 +87,7 @@ Light _$LightFromJson(Map json) {
 }
 
 Map<String, dynamic> _$LightToJson(Light instance) => <String, dynamic>{
+      '_id': instance.id,
       'lightName': instance.lightName,
       'lightColor': instance.lightColor,
       'status': instance.status,

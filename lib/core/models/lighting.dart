@@ -4,7 +4,7 @@ part 'lighting.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Lighting {
-  @JsonKey(name: '_id')
+  @JsonKey(name: '_id', nullable: true)
   String id;
 
   @JsonKey(name: 'isOn')
@@ -20,7 +20,11 @@ class Lighting {
   List<Scene> sceneList;
 
   Lighting(
-      {this.isLightON, this.intensity, this.selectedScene, this.sceneList});
+      {this.id,
+      this.isLightON,
+      this.intensity,
+      this.selectedScene,
+      this.sceneList});
 
   factory Lighting.fromJson(Map<String, dynamic> json) =>
       _$LightingFromJson(json);
@@ -34,8 +38,10 @@ class Scene {
   @JsonKey(name: '_id', nullable: true)
   String id;
 
+  @JsonKey(nullable: true)
   String userId;
 
+  @JsonKey(nullable: true)
   String seapodId;
 
   @JsonKey(name: 'source', nullable: true)
@@ -46,7 +52,13 @@ class Scene {
 
   List<Room> rooms;
 
-  Scene({this.id, this.name, this.rooms});
+  Scene(
+      {this.id,
+      this.userId,
+      this.seapodId,
+      this.source,
+      this.name,
+      this.rooms});
 
   factory Scene.fromJson(Map<String, dynamic> json) => _$SceneFromJson(json);
 
@@ -67,7 +79,7 @@ class Room {
   List<Light> lightModes;
 
   // Room({this.roomName, this.light, this.lightModes});
-  Room({this.roomName, this.lightModes});
+  Room({this.id, this.roomName, this.lightModes});
 
   factory Room.fromJson(Map<String, dynamic> json) => _$RoomFromJson(json);
 
@@ -76,6 +88,9 @@ class Room {
 
 @JsonSerializable()
 class Light {
+  @JsonKey(name: '_id', nullable: true)
+  String id;
+
   @JsonKey(nullable: true)
   String lightName;
 
@@ -88,7 +103,8 @@ class Light {
   @JsonKey(nullable: true)
   int brightness;
 
-  Light({this.lightName, this.lightColor, this.status, this.brightness});
+  Light(
+      {this.id, this.lightName, this.lightColor, this.status, this.brightness});
 
   factory Light.fromJson(Map<String, dynamic> json) => _$LightFromJson(json);
 
