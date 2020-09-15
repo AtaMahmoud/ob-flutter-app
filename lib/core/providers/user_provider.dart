@@ -1689,6 +1689,8 @@ class UserProvider extends BaseProvider {
 
     Map<String, dynamic> lighSceneMap = lighScene.toJson();
     lighSceneMap.remove('_id');
+    lighSceneMap.remove('userId');
+    lighSceneMap.remove('seapodId');
 
     List<Map<String, dynamic>> r_ooms = lighSceneMap['rooms'];
 

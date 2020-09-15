@@ -310,6 +310,8 @@ class OceanBuilderProvider extends BaseProvider {
           headers: _headerManager.authUserHeaders,
           data: reqMap);
 
+      print(toogleLightSceneResponse.statusCode);
+
       if (toogleLightSceneResponse.statusCode == 200) {
         responseStatus.status = 200;
       } else {

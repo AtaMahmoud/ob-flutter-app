@@ -458,7 +458,7 @@ class _LightingScreenState extends State<LightingScreen> {
     _oceanBuilderProvider
         .toogleLightStatus(
             sceneId: _oceanBuilderUser.lighting.selectedScene,
-            lightId: selectedLight.lightName)
+            lightId: selectedLight.id)
         .then((responseStatus) {
       if (responseStatus.status == 200) {
         showInfoBar('Toggle Light Status', 'Light status toogled', context);
@@ -1009,9 +1009,7 @@ class _LightingScreenState extends State<LightingScreen> {
                 ],
               ),
             ),
-            SizedBox(
-              height: _util.setHeight(32),
-            ),
+            SpaceH32(),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -1021,9 +1019,7 @@ class _LightingScreenState extends State<LightingScreen> {
                         fontSize: _util.setSp(42)))
               ],
             ),
-            SizedBox(
-              height: _util.setHeight(32),
-            ),
+            SpaceH32(),
             StatefulBuilder(
                 builder: (BuildContext context, StateSetter stateSetter) {
               return Column(
@@ -1132,9 +1128,7 @@ class _LightingScreenState extends State<LightingScreen> {
                 ],
               );
             }),
-            SizedBox(
-              height: _util.setHeight(32),
-            ),
+            SpaceH32(),
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
