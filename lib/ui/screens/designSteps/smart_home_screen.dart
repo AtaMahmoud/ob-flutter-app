@@ -10,6 +10,7 @@ import 'package:ocean_builder/core/models/iot_event_data.dart';
 import 'package:ocean_builder/core/models/ocean_builder.dart';
 import 'package:ocean_builder/core/providers/design_data_provider.dart';
 import 'package:ocean_builder/core/providers/smart_home_data_provider.dart';
+import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper_2.dart';
 import 'package:ocean_builder/ui/screens/designSteps/exterior_finish_screen.dart';
@@ -27,23 +28,24 @@ class SmartHomeScreen extends StatefulWidget {
 
 class _SmartHomeScreenState extends State<SmartHomeScreen> {
   Future<MqttServerClient> _mqttServerClient;
+  SmartHomeDataProvider _smartHomeDataProvider;
   bool _isConnecting = false;
-
 
   @override
   void initState() {
     super.initState();
     UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
     Future.delayed(Duration.zero).then((_) {
-      _mqttServerClient = Provider.of<SmartHomeDataProvider>(context).connect();
+      _mqttServerClient = _smartHomeDataProvider.connect();
       _mqttServerClient.then((client) {
-        
-        if(client.connectionStatus.returnCode == MqttConnectReturnCode.connectionAccepted){
-            _isConnecting = true;
-            client.subscribe(Config.MQTT_TOPIC, MqttQos.atLeastOnce);
-            showInfoBar('Connected', 'Connected with MQTT broker', context);
-        }else{
-           showInfoBar('Not Connected', 'Could not connected with MQTT broker', context);
+        if (client.connectionStatus.returnCode ==
+            MqttConnectReturnCode.connectionAccepted) {
+          _isConnecting = true;
+          client.subscribe(Config.MQTT_TOPIC, MqttQos.atLeastOnce);
+          showInfoBar('Connected', 'Connected with MQTT broker', context);
+        } else {
+          showInfoBar(
+              'Not Connected', 'Could not connected with MQTT broker', context);
           _isConnecting = false;
         }
       });
@@ -53,11 +55,12 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
   @override
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
+    _smartHomeDataProvider = Provider.of<SmartHomeDataProvider>(context);
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(gradient: ColorConstants.BKG_GRADIENT),
         child: Stack(
-                  children: [
+          children: [
             Column(
               // mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -75,22 +78,78 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
                       fontSize: ScreenUtil().setSp(48),
                       color: ColorConstants.TEXT_COLOR),
                 ),
+                _buildConnectionStateText(_prepareStateMessageFrom(
+                    _smartHomeDataProvider.getAppConnectionState)),
+                _buildScrollableTextWith(_smartHomeDataProvider.getHistoryText),
                 BottomClipper(ButtonText.BACK, '', goBack, () {},
                     isNextEnabled: false)
               ],
             ),
-            _isConnecting ?
-            Container()
-            :Center(
-              child: CircularProgressIndicator(),
-            )
-
+            _isConnecting
+                ? Container()
+                : Center(
+                    child: CircularProgressIndicator(),
+                  )
           ],
         ),
       ),
     );
   }
 
+  // Utility functions
+  String _prepareStateMessageFrom(MQTTAppConnectionState state) {
+    switch (state) {
+      case MQTTAppConnectionState.connected:
+        return 'Connected With MQTT Broker';
+      case MQTTAppConnectionState.connecting:
+        return 'Connecting With MQTT Broker';
+      case MQTTAppConnectionState.disconnected:
+        return 'Disconnected From MQTT Broker';
+    }
+  }
+
+  Widget _buildConnectionStateText(String status) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(32.w),
+                color: AppTheme.chipBackground,
+              ),
+              padding: EdgeInsets.all(32.w),
+              child: Text(
+                status,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1,
+                    color: ColorConstants.TEXT_COLOR),
+              )),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildScrollableTextWith(String text) {
+    return Padding(
+      padding: EdgeInsets.all(32.w),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(32.w),
+          color: AppTheme.chipBackground,
+        ),
+        height: 600.h,
+        child: SingleChildScrollView(
+          child: Text(
+            text,
+            style: TextStyle(
+                fontWeight: FontWeight.w600, color: ColorConstants.TEXT_COLOR),
+          ),
+        ),
+      ),
+    );
+  }
 
   goBack() {
     Navigator.pop(context);
