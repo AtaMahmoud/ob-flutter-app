@@ -42,6 +42,10 @@ abstract class ConfigReader {
     return _config['mqttTopic'] as String;
   }
 
+  static String getMqttWildCardTopic(){
+    return _config['mqttWlidCard'] as String;
+  }
+
     static String getIotServerApiKey(){
     return _config['apiKeyIotServer'] as String;
   }

@@ -126,6 +126,7 @@ class Config {
   static var MQTT_USER = ConfigReader.getMqttUserName();
   static var MQTT_PASSWORD = ConfigReader.getMqttPassword();
   static var MQTT_TOPIC = ConfigReader.getMqttTopic();
+  static var MQTT_TOPIC_WILD_CARD = ConfigReader.getMqttWildCardTopic();
 
   // node server
 

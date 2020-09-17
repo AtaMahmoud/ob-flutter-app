@@ -70,6 +70,7 @@ class SmartHomeDataProvider extends ChangeNotifier {
   void onConnected() {
     print('-------------------Connected---------------------');
     setAppConnectionState(MQTTAppConnectionState.connected);
+    _client.subscribe(Config.MQTT_TOPIC_WILD_CARD, MqttQos.atMostOnce);
     _client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       print('------------lsitenning to  message -----------');
       // print(c.toString());
@@ -77,7 +78,10 @@ class SmartHomeDataProvider extends ChangeNotifier {
       final payload =
           MqttPublishPayload.bytesToStringAsString(message.payload.message);
       print('------------got broadcasted message -----------');
-      print('Received message:$payload from topic: ${c[0].topic}>');
+      // print('Received message:$payload from topic: ${c[0].topic}>');
+      for (var i = 0; i < c.length; i++) {
+          print('Received message:$payload from topic: ${c[i].topic}>');
+      }
       setReceivedText('Received payload:$payload from topic: ${c[0].topic}');
       notifyListeners();
     }).onError((e) {
