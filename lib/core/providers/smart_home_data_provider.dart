@@ -70,6 +70,12 @@ class SmartHomeDataProvider extends ChangeNotifier {
   void onConnected() {
     print('-------------------Connected---------------------');
     setAppConnectionState(MQTTAppConnectionState.connected);
+    // send message to all topics
+      final builder1 = MqttClientPayloadBuilder();
+  builder1.addString('Every');
+  // print('EXAMPLE:: <<<< PUBLISH 1 >>>>');
+  _client.publishMessage("byron/#", MqttQos.exactlyOnce, builder1.payload,retain: true);
+
     _client.subscribe(Config.MQTT_TOPIC_WILD_CARD, MqttQos.atMostOnce);
     _client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       print('------------lsitenning to  message -----------');
