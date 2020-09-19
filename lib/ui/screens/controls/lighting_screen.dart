@@ -112,7 +112,7 @@ class _LightingScreenState extends State<LightingScreen> {
         _allLightScenes.add(lc);
       }).toList();
     }
-    switchOn = _oceanBuilderUser.lighting.isLightON;
+    switchOn = _oceanBuilderUser.lighting.isLightON ?? false;
 
     if (widget.selectedLightSceneIdFromPopup != null) {
       // debugPrint('widget.selectedLightSceneIdFromPopup --------- ');
