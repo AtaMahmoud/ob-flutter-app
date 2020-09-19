@@ -97,7 +97,7 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
               _oceanBuilderUser.lighting.sceneList != null)
             _lightingScenes.addAll(_oceanBuilderUser.lighting.sceneList);
 
-          switchOn = _oceanBuilderUser.lighting.isLightON;
+          switchOn = _oceanBuilderUser.lighting.isLightON ?? false;
           debugPrint('light scene on/off status ------ $switchOn');
 
           _sliderValue = _oceanBuilderUser.lighting.intensity != null

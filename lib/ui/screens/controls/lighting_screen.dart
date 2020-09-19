@@ -475,11 +475,11 @@ class _LightingScreenState extends State<LightingScreen> {
         color: _colorPickerDataProvider
             .initialColor, //Color(0xffffed27), //Color(0xFF2741D3),
         onChanged: (value) {
-          // // debugPrint('Selected color -- ' + value.toString().substring(10,16).toUpperCase());
+          debugPrint('Selected color -- ' + value.toString().substring(6,16));
           setState(() {
             selectedColor = value;
             selectedLight.lightColor =
-                value.toString().substring(6, 16).toUpperCase();
+                value.toString().substring(6,16);
 
             Light light;
             _selectedRoom.lightModes.map((f) {
