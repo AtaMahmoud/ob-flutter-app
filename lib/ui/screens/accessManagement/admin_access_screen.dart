@@ -14,6 +14,7 @@ import 'package:ocean_builder/helper/method_helper.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
 import 'package:ocean_builder/ui/screens/permission/edit_permission_screen.dart';
 import 'package:ocean_builder/ui/shared/drop_downs.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 
@@ -87,17 +88,17 @@ class _AdminAccessScreenState extends State<AdminAccessScreen> {
                   )
                 : SliverList(
                     delegate: SliverChildListDelegate([
-                    SizedBox(height: _util.setHeight(48)),
+                    SpaceH48(),
                     _avatarWidget(),
-                    SizedBox(height: _util.setHeight(48)),
+                    SpaceH48(),
                     _nameWidget(),
-                    SizedBox(height: _util.setHeight(48)),
+                    SpaceH48(),
                     _accessNameWidget(),
-                    SizedBox(height: _util.setHeight(64)),
+                    SpaceH48(),
                     _permissionSetRow(),
-                    SizedBox(height: _util.setHeight(64)),
+                    SpaceH48(),
                     _editPermissionRow(),
-                    SizedBox(height: _util.setHeight(64)),
+                    SpaceH48(),
                   ])),
             UIHelper.getTopEmptyContainer(90, false),
           ],
@@ -112,8 +113,7 @@ class _AdminAccessScreenState extends State<AdminAccessScreen> {
       children: <Widget>[
         Text(widget.oceanBuilderUser.userName,
             style: TextStyle(
-                fontSize: _util.setSp(72),
-                color: ColorConstants.TOP_CLIPPER_END_DARK))
+                fontSize: 72.sp, color: ColorConstants.TOP_CLIPPER_END_DARK))
       ],
     );
   }
@@ -124,8 +124,7 @@ class _AdminAccessScreenState extends State<AdminAccessScreen> {
       children: <Widget>[
         Text('Administrator Access',
             style: TextStyle(
-                fontSize: _util.setSp(48),
-                color: ColorConstants.TOP_CLIPPER_END_DARK))
+                fontSize: 48.sp, color: ColorConstants.TOP_CLIPPER_END_DARK))
       ],
     );
   }
@@ -144,7 +143,7 @@ class _AdminAccessScreenState extends State<AdminAccessScreen> {
 
   _permissionSetRow() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: _util.setWidth(48)),
+      padding: EdgeInsets.symmetric(horizontal: 48.w),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -162,7 +161,7 @@ class _AdminAccessScreenState extends State<AdminAccessScreen> {
 
   _editPermissionRow() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: _util.setWidth(48)),
+      padding: EdgeInsets.symmetric(horizontal: 48.w),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.end,
@@ -184,7 +183,7 @@ class _AdminAccessScreenState extends State<AdminAccessScreen> {
                 Text(
                   'EDIT PERMISSIONS',
                   style: TextStyle(
-                      fontSize: _util.setSp(48),
+                      fontSize: 48.sp,
                       color: ColorConstants.COLOR_NOTIFICATION_ITEM),
                 ),
               ],

@@ -148,14 +148,6 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
 
     _selectedPermissionSet =
         _userProvider.authenticatedUser.seaPods[0].permissionSets;
-    /*
-          if (_userProvider.authenticatedUser != null) {
-            _userProvider
-                .resetAuthenticatedUser(_userProvider.authenticatedUser.userID);
-          }
-
-          */
-
     _user = _userProvider.authenticatedUser;
     return Container(
         padding:
