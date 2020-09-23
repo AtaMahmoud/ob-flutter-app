@@ -55,17 +55,15 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
   Widget _lightingPopupContentFuture() {
     return FutureBuilder<SeaPod>(
         future: _selectedOceanBuilder,
-        // initialData: stormGlassDataProvider.weatherDataToday,
         builder: (context, snapshot) {
           if (snapshot.hasData) _getLighitingSceneInfo(snapshot.data);
           return snapshot.hasData
-              ? _lightingPopupContent() //movieGrid(snapshot.data)
+              ? _lightingPopupContent()
               : Center(child: CircularProgressIndicator());
         });
   }
 
   _getLighitingSceneInfo(SeaPod selectedOceanBuilder) {
-    // debugPrint('_getOceanBuilder');
     _lightingScenes.clear();
 
     if (selectedOceanBuilder.lightScenes != null &&
@@ -75,10 +73,6 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
 
     if (selectedOceanBuilder.users.length != null) {
       for (var i = 0; i < selectedOceanBuilder.users.length; i++) {
-        // debugPrint('user name --- ${selectedOceanBuilder.users[i].userName}');
-        // print(_user.userID);
-        // print(selectedOceanBuilder.users[i].userId);
-
         if (selectedOceanBuilder.users[i].userId.contains(_user.userID)) {
           _oceanBuilderUser = selectedOceanBuilder.users[i];
           _selectedSceneId = _oceanBuilderUser.lighting.selectedScene;
@@ -87,19 +81,12 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
               _oceanBuilderUser.lighting.sceneList.isNotEmpty) {
             _selectedSceneId = _oceanBuilderUser.lighting.sceneList[0].id;
             _oceanBuilderUser.lighting.selectedScene = _selectedSceneId;
-            // getLightSceneById(_selectedSceneId);
           }
-
-          // print(_oceanBuilderUser.lighting.toJson());
-          debugPrint('selected scene id --------- $_selectedSceneId');
-
           if (_oceanBuilderUser != null &&
               _oceanBuilderUser.lighting.sceneList != null)
             _lightingScenes.addAll(_oceanBuilderUser.lighting.sceneList);
 
           switchOn = _oceanBuilderUser.lighting.isLightON ?? false;
-          debugPrint('light scene on/off status ------ $switchOn');
-
           _sliderValue = _oceanBuilderUser.lighting.intensity != null
               ? _oceanBuilderUser.lighting.intensity
               : 50;
@@ -110,8 +97,6 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
       }
     }
   }
-
-  // lighting popup
 
   Widget _lightingPopupContent() {
     return Center(
@@ -139,8 +124,6 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
   InkWell _goToLightingPageButton() {
     return InkWell(
       onTap: () {
-        debugPrint(
-            '--LightingScreenParams----------${_oceanBuilderUser.userName}---------${_userProvider.authenticatedUser.firstName}----------${_selectedOBIdProvider}----------${_selectedSceneId}');
         Navigator.of(context).pop();
         Navigator.of(context).pushNamed(LightingScreen.routeName,
             arguments: LightingScreenParams(_oceanBuilderUser, _userProvider,
@@ -277,7 +260,6 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
   }
 
   _intesitySlider() {
-    debugPrint('slider value ---------- $_sliderValue ');
     return Stack(
       children: <Widget>[
         Align(
@@ -346,7 +328,6 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
   Widget _getDropdown(
       List<Scene> list, Observable<String> stream, changed, bool addPadding,
       {String label = 'Label'}) {
-    // debugPrint('dropdown list length ------  ${list.length}');
     return StreamBuilder<String>(
         stream: stream,
         builder: (context, snapshot) {
@@ -360,7 +341,6 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
               contentPadding:
                   EdgeInsets.only(top: 16.h, bottom: 16.h, left: 32.w),
               labelText: label,
-              // hintStyle: TextStyle(color: Colors.red),
               labelStyle: TextStyle(
                   color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
                   fontSize: 36.sp),
@@ -374,7 +354,7 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
                       color: snapshot.hasData
                           ? ColorConstants.ACCESS_MANAGEMENT_TITLE
                           : ColorConstants
-                              .ACCESS_MANAGEMENT_SUBTITLE //ColorConstants.INVALID_TEXTFIELD,
+                              .ACCESS_MANAGEMENT_SUBTITLE 
                       ),
                   value: snapshot.hasData ? snapshot.data : list[0].name,
                   isExpanded: true,
@@ -383,11 +363,9 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
                     color: snapshot.hasData
                         ? ColorConstants.ACCESS_MANAGEMENT_TITLE
                         : ColorConstants
-                            .ACCESS_MANAGEMENT_SUBTITLE, //ColorConstants.INVALID_TEXTFIELD,
+                            .ACCESS_MANAGEMENT_SUBTITLE, 
                     fontSize: 36.sp,
                     fontWeight: FontWeight.w400,
-                    // letterSpacing: 1.2,
-                    // wordSpacing: 4
                   ),
                   onChanged: (changedString) async {
                     _oceanBuilderUser.lighting.selectedScene =
@@ -396,10 +374,6 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
                         seapodId: _selectedOBIdProvider.selectedObId,
                         lightSceneId: _oceanBuilderUser.lighting.selectedScene);
 
-/*                 _oceanBuilderProvider.updateOceanBuilderUser(
-                        currentUserID: _user.userID,
-                        oceanBuilderID: _selectedOBIdProvider.selectedObId,
-                        oceanBuilderUser: _oceanBuilderUser); */
                     changed(changedString);
                   },
                   items: list.map((data) {
@@ -431,7 +405,6 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
     }).toList();
 
     _selectedSceneId = selectedScene.id;
-    // debugPrint('_selectedSceneId ----------- ${_selectedSceneId} ---------- name -----  ${ selectedScene.name}  ');
     return selectedScene;
   }
 
@@ -439,7 +412,6 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
     Scene lightScene;
 
     _lightingScenes.map((f) {
-      // debugPrint('---f.id-- ${f.id} -===========- lightingSceneId- $lightingSceneId');
       if (f.id.compareTo(lightingSceneId) == 0) lightScene = f;
     }).toList();
 

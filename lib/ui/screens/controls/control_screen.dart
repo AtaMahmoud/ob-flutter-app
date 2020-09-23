@@ -131,7 +131,7 @@ class _ControlScreenState extends State<ControlScreen>
   }
 
   _topEmptyContainer() {
-    UIHelper.getTopEmptyContainer(
+    return UIHelper.getTopEmptyContainer(
         useMobileLayout
             ? MediaQuery.of(context).size.height * 0.5
             : MediaQuery.of(context).size.height * 0.65,
