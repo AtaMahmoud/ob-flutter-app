@@ -66,7 +66,7 @@ class _ExteriorColorScreenState extends State<ExteriorColorScreen> {
       }
     }
 
-    var _util = ScreenUtil();
+    // var _util = ScreenUtil();
 
     return Container(
       decoration: BoxDecoration(gradient: blueBackgroundGradient),
@@ -91,8 +91,8 @@ class _ExteriorColorScreenState extends State<ExteriorColorScreen> {
                             children: <Widget>[
                               Image.asset(
                                 ImagePaths.defaultIcon,
-                                width: _util.setWidth(380),
-                                height: _util.setWidth(380),
+                                width:380.w,
+                                height:380.w,
                               ),
                               SizedBox(height: 16.0),
                               UIHelper.getCustomRadioButtonVertical(
@@ -107,8 +107,8 @@ class _ExteriorColorScreenState extends State<ExteriorColorScreen> {
                             children: <Widget>[
                               Image.asset(
                                 ImagePaths.defaultIcon,
-                                width: _util.setWidth(380),
-                                height: _util.setWidth(380),
+                                width: 380.w,
+                                height: 380.w,
                               ),
                               SizedBox(height: 16.0),
                               UIHelper.getCustomRadioButtonVertical(
@@ -162,24 +162,35 @@ class _ExteriorColorScreenState extends State<ExteriorColorScreen> {
                                   : Container(),
                             );
                           });
-                    }),
-                UIHelper.getTopEmptyContainer(90, false),
+                    }
+                    ),
+                _endSpace(),
               ],
             ),
-            Appbar(
-              ScreenTitle.EXTERIOR_COLOR,
-              isDesignScreen: true,
-            ),
-            Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: BottomClipper(ButtonText.BACK, ButtonText.NEXT,
-                    () => goBack(), () => goNext(designDataProvider)))
+            _topBar(),
+            _bottomBar(designDataProvider)
           ],
         ),
       ),
     );
+  }
+
+  _endSpace() => UIHelper.getTopEmptyContainer(90, false);
+
+  Positioned _bottomBar(DesignDataProvider designDataProvider) {
+    return Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: BottomClipper(ButtonText.BACK, ButtonText.NEXT,
+                  () => goBack(), () => goNext(designDataProvider)));
+  }
+
+  Appbar _topBar() {
+    return Appbar(
+            ScreenTitle.EXTERIOR_COLOR,
+            isDesignScreen: true,
+          );
   }
 
   goNext(DesignDataProvider designDataProvider) {
