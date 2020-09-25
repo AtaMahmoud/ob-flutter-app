@@ -18,15 +18,16 @@ class BottomClipper2 extends StatefulWidget {
 }
 
 class _BottomClipper2State extends State<BottomClipper2> {
-
+ double bottomClipperRatio = Platform.isIOS ? (113) / 813 : (90) / 813;
   ScreenUtil _util = ScreenUtil();
 
   @override
   Widget build(BuildContext context) {
+  Size screenSize = MediaQuery.of(context).size;
     return ClipPath(
       clipper: CustomBottomShapeClipper(),
       child: Container(
-        padding: EdgeInsets.only(top: _util.setHeight(48)),
+        // padding: EdgeInsets.only(top: _util.setHeight(48)),
         // height: _util.setHeight(270),
         decoration: BoxDecoration(
           gradient: LinearGradient(colors: [
@@ -36,7 +37,8 @@ class _BottomClipper2State extends State<BottomClipper2> {
         ),
         child: IntrinsicHeight(
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 48.h),
+                          padding: EdgeInsets.fromLTRB(
+                    0.0, ((screenSize.height * bottomClipperRatio) - 15) / 2, 0.0, 48.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
