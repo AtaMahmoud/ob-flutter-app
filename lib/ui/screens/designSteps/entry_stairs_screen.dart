@@ -109,7 +109,7 @@ class _EntryStairsScreenState extends State<EntryStairsScreen> {
   _endSpace() => UIHelper.getTopEmptyContainer(90, false);
 
   _startSpace(BuildContext context) {
-    UIHelper.getTopEmptyContainer(MediaQuery.of(context).size.height / 2, true);
+    return UIHelper.getTopEmptyContainer(MediaQuery.of(context).size.height / 2, true);
   }
 
   goNext(DesignDataProvider designDataProvider) {
