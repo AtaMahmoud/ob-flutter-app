@@ -82,46 +82,67 @@ class _MarineScreenState extends State<MarineScreen> {
       children: <Widget>[
         Container(
           decoration: BoxDecoration(color: ColorConstants.BCKG_COLOR_START),
-          child: CustomScrollView(
-            slivers: <Widget>[
-              UIHelper.getTopEmptyContainer(
-                  useMobileLayout
-                      ? MediaQuery.of(context).size.height * 0.5
-                      : MediaQuery.of(context).size.height * 0.7,
-                  false),
-              SliverPadding(
-                padding: EdgeInsets.only(
-                  bottom: _util.setHeight(256),
-                ),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      // _fathometerContainer(),
-                      _marineItemsWidgetFuture()
-                      // _marineItemContainer(),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+          child: _body(),
         ),
-        AppbarMarine(
-          ScreenTitle.MARINE,
-          scaffoldKey: widget.scaffoldKey,
-          futureWOWWeatherData: _futureWeatherData,
-        ),
+        _topBar(),
         _sourceSelectionPositioned()
       ],
     );
   }
 
-    _sourceSelectionPositioned() {
+  CustomScrollView _body() {
+    return CustomScrollView(
+      slivers: <Widget>[
+        _startSpace(),
+        _itemsGrid(),
+      ],
+    );
+  }
+
+  AppbarMarine _topBar() {
+    return AppbarMarine(
+      ScreenTitle.MARINE,
+      scaffoldKey: widget.scaffoldKey,
+      futureWOWWeatherData: _futureWeatherData,
+    );
+  }
+
+  SliverPadding _itemsGrid() {
+    return SliverPadding(
+      padding: EdgeInsets.only(
+        bottom: _util.setHeight(256),
+      ),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate(
+          [
+            // _fathometerContainer(),
+            _marineItemsWidgetFuture()
+            // _marineItemContainer(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _startSpace() {
+    UIHelper.getTopEmptyContainer(
+        useMobileLayout
+            ? MediaQuery.of(context).size.height * 0.5
+            : MediaQuery.of(context).size.height * 0.7,
+        false);
+  }
+
+  _sourceSelectionPositioned() {
     return Positioned(
         top: ScreenUtil.statusBarHeight + 8.h,
         right: 32.h,
-        child: UIHelper.sourceSelectorButtons(_sourcePriorityBloc.topProprity,(){PopUpHelpers.showPopup(
-                  context, SourcePrioritySelectorModal(_sourcePriorityBloc), 'Lighting Screen');}));
+        child:
+            UIHelper.sourceSelectorButtons(_sourcePriorityBloc.topProprity, () {
+          PopUpHelpers.showPopup(
+              context,
+              SourcePrioritySelectorModal(_sourcePriorityBloc),
+              'Lighting Screen');
+        }));
   }
 
   _marineItemContainer(StormGlassData data) {
@@ -780,5 +801,4 @@ class _MarineScreenState extends State<MarineScreen> {
       ),
     );
   }
-
 }

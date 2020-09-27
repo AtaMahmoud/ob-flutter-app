@@ -38,29 +38,18 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
   @override
   void initState() {
     UIHelper.setStatusBarColor(color: Colors.white);
-    // Future.delayed(Duration.zero).then((_) {
-    //   UserProvider userProvider = Provider.of<UserProvider>(context);
-    //   userProvider.getNotifications();
-    // });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // GlobalContext.currentScreenContext = context;
     _util = ScreenUtil();
     final UserProvider userProvider = Provider.of<UserProvider>(context);
-
-    //         if (userProvider.authenticatedUser != null) {
-    // userProvider.resetAuthenticatedUser(userProvider.authenticatedUser.userID);
-    //     }
 
     int len = userProvider?.authenticatedUser?.notifications?.length ?? 0;
     List<ServerNotification> notificationList = [];
 
     if (len > 0) {
-      // notificationList =  userProvider.authenticatedUser.notifications.reversed.toList();
-
       notificationList = new List<ServerNotification>.from(
           userProvider.authenticatedUser.notifications);
 
@@ -72,13 +61,10 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
               noti.data.user.id.contains(currentUserID);
         });
         len = notificationList.length;
-        // debugPrint('access request count -- $len');
       }
 
-      // notificationList = notificationList.reversed.toList();
     }
 
-    // debugPrint('parseNotificationsCallCout $parseNotificationsCallCout');
     if (parseNotificationsCallCout == 0) {
       MethodHelper.parseNotifications(context);
       parseNotificationsCallCout++;
