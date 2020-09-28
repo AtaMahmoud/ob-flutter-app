@@ -1,4 +1,4 @@
-rrimport 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -98,7 +98,7 @@ class _NotificationHistoryScreenWidgetState
           children: <Widget>[
             CustomScrollView(
               slivers: <Widget>[
-e                _startSpace(),
+                _startSpace(),
                 len > 0
                     ? SliverList(
                         delegate: SliverChildBuilderDelegate((context, index) {
