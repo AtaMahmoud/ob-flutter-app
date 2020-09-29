@@ -32,9 +32,6 @@ class _SettingsWidgetState extends State<SettingsWidget> {
   @override
   void initState() {
     UIHelper.setStatusBarColor(color: Colors.white);
-    // Future.delayed(Duration.zero).then((_) {
-
-    // });
     _getProfilePicture();
     super.initState();
   }

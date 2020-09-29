@@ -18,6 +18,7 @@ import 'package:ocean_builder/ui/screens/accessManagement/ob_events_screen.dart'
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
 import 'package:ocean_builder/ui/shared/shared_pref_data.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -75,16 +76,9 @@ class _OBSelectionScreenWidgetModalState
     GlobalContext.currentScreenContext = context;
     userProvider = Provider.of<UserProvider>(context);
     _oceanBuilderProvider = Provider.of<OceanBuilderProvider>(context);
-
-    // debugPrint('ob_selection_widget_screen ------  ${userProvider?.authenticatedUser?.seaPods?.length}');
-
     SelectedOBIdProvider selectedOBIdProvider =
         Provider.of<SelectedOBIdProvider>(context);
-
     _currentlySelectedObId = selectedOBIdProvider.selectedObId;
-    // debugPrint('_currentlySelectedObId   $_currentlySelectedObId');
-
-    ScreenUtil _util = ScreenUtil();
     List<UserOceanBuilder> pendigOceanBuilderList = [];
     List<UserOceanBuilder> myOceanBuilderList = [];
 
@@ -111,287 +105,279 @@ class _OBSelectionScreenWidgetModalState
         decoration: BoxDecoration(
             color: ColorConstants.MODAL_BKG.withOpacity(.95),
             borderRadius: BorderRadius.circular(8)),
-        child: Stack(
-          children: <Widget>[
-            CustomScrollView(
-              slivers: <Widget>[
-                UIHelper.getTopEmptyContainer(
-                    MediaQuery.of(context).size.height / 16, false),
-                SliverToBoxAdapter(
-                  child: Container(
-                    // color: ColorConstants.MODAL_BKG.withOpacity(.375),
-                    padding: EdgeInsets.only(left: 8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              'Select A Home',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: _util.setSp(64)),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(vertical: _util.setHeight(48)),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
+        child: _mainContent(context, pendigOceanBuilderList, len,
+            myOceanBuilderList, selectedOBIdProvider),
+      ),
+    );
+  }
+
+  Stack _mainContent(
+      BuildContext context,
+      List<UserOceanBuilder> pendigOceanBuilderList,
+      int len,
+      List<UserOceanBuilder> myOceanBuilderList,
+      SelectedOBIdProvider selectedOBIdProvider) {
+    return Stack(
+      children: <Widget>[
+        CustomScrollView(
+          slivers: <Widget>[
+            _startSpace(context),
+            _textSelectHome(),
+            _designButtonAndPendingSeapodList(context, pendigOceanBuilderList),
+            len > 0
+                ? _gridSeaPod(myOceanBuilderList, selectedOBIdProvider)
+                : _noSeaPodFound(),
+            _endSpace()
+          ],
+        ),
+        _bottomBar()
+      ],
+    );
+  }
+
+  SliverPadding _designButtonAndPendingSeapodList(
+      BuildContext context, List<UserOceanBuilder> pendigOceanBuilderList) {
+    return SliverPadding(
+      padding: EdgeInsets.symmetric(vertical: 48.h),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate([
+          _buttonDesignOrRequestAccess(context),
+          SpaceH32(),
+          pendigOceanBuilderList.length > 0
+              ? PendingRequestList(ColorConstants.PROFILE_BKG_1)
+              : Container(),
+        ]),
+      ),
+    );
+  }
+
+  Positioned _bottomBar() {
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: BottomClipper(ButtonText.BACK, '', () {
+        goBack();
+      }, () {}, isNextEnabled: false),
+    );
+  }
+
+  SliverToBoxAdapter _endSpace() {
+    return SliverToBoxAdapter(
+      child: SizedBox(
+        height: 256.h,
+      ),
+    );
+  }
+
+  SliverGrid _gridSeaPod(List<UserOceanBuilder> myOceanBuilderList,
+      SelectedOBIdProvider selectedOBIdProvider) {
+    return SliverGrid(
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 512.w,
+        mainAxisSpacing: 4.0,
+        crossAxisSpacing: 4.0,
+        childAspectRatio: .60,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          UserOceanBuilder uob = myOceanBuilderList[index];
+          String obName = uob.oceanBuilderName;
+          String userType = uob.userType;
+          String reqStatus = uob.reqStatus;
+          String uobId = uob.oceanBuilderId;
+          return InkWell(
+            onTap: () {
+              if (reqStatus != null &&
+                  reqStatus.contains(NotificationConstants.initiated)) {
+                _showCancelAlert(userProvider,
+                    userProvider.authenticatedUser.userOceanBuilder[index]);
+              } else {
+                _currentlySelectedObId =
+                    myOceanBuilderList[index].oceanBuilderId;
+                selectedOBIdProvider.selectedObId = _currentlySelectedObId;
+                SharedPrefHelper.setCurrentOB(
+                    myOceanBuilderList[index].oceanBuilderId);
+                UIHelper.setStatusBarColor(
+                    color: ColorConstants.TOP_CLIPPER_START_DARK);
+                Navigator.of(context)
+                    .pushReplacementNamed(HomeScreen.routeName);
+              }
+            },
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+              padding: EdgeInsets.symmetric(vertical: 4.0),
+              decoration: _currentlySelectedObId != null &&
+                      uobId.contains(_currentlySelectedObId)
+                  ? UIHelper.customDecoration(2, 8, ColorConstants.SPLASH_BKG,
+                      bkgColor: ColorConstants.SPLASH_BKG)
+                  : UIHelper.customDecoration(
+                      2, 8, ColorConstants.BCKG_COLOR_START),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
                       InkWell(
                         onTap: () {
-                          // Navigator.of(context)
-                          //     .pushNamed(DesignScreen.routeName);
-                          showAddOBDialog(userProvider, context);
+                          // debugPrint('options dot tapped');
+                          if (uob.userType.toLowerCase().contains('owner')) {
+                            _showUpdateOBNameDialog(uob, userProvider);
+                          }
                         },
-                        child: Container(
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 4.0, vertical: 4.0),
-                          padding: EdgeInsets.symmetric(vertical: 8.0),
-                          decoration: UIHelper.customDecoration(
-                              2, 4, ColorConstants.BCKG_COLOR_START),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                        child: Padding(
+                          padding: EdgeInsets.all(24.w),
+                          child: SvgPicture.asset(
+                            ImagePaths.vdotsSvg,
+                            width: 10.w,
+                            height: 36.h,
+                            color: _currentlySelectedObId != null &&
+                                    uobId.contains(_currentlySelectedObId)
+                                ? Colors.white
+                                : Color(0XFF3363A3),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Image.asset(
+                    ImagePaths.latestOb,
+                    width: 172.w,
+                    height: 172.h,
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: 8.0,
+                        right: 8.0,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Icon(
-                                Icons.add,
-                                color: ColorConstants.MODAL_ICON_COLOR,
-                              ),
-                              Text('DESIGN/REQUEST ACCESS',
+                              Text(obName,
                                   style: TextStyle(
-                                      color: ColorConstants.TOP_CLIPPER_END)),
+                                      fontSize: 36.sp,
+                                      color: _currentlySelectedObId != null &&
+                                              uobId.contains(
+                                                  _currentlySelectedObId)
+                                          ? Colors.white
+                                          : Colors.black)),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Text(userType.toUpperCase(),
+                                  style: TextStyle(
+                                      fontSize: 24.sp,
+                                      color: _currentlySelectedObId != null &&
+                                              uobId.contains(
+                                                  _currentlySelectedObId)
+                                          ? Colors.white
+                                          : Colors.black)),
                             ],
                           ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: _util.setHeight(24),
-                      ),
-                      pendigOceanBuilderList.length > 0
-                          ? PendingRequestList(ColorConstants.PROFILE_BKG_1)
-                          : Container(),
-                    ]),
-                  ),
-                ),
-                // SliverToBoxAdapter(
-                //   child:
-                // ),
-                len > 0
-                    ? SliverGrid(
-                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: ScreenUtil().setWidth(512),
-                          mainAxisSpacing: 4.0,
-                          crossAxisSpacing: 4.0,
-                          childAspectRatio: .60,
-                        ),
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            UserOceanBuilder uob = myOceanBuilderList[index];
-                            // String vesselCode = MethodHelper.getVesselCode(
-                            //     uob.oceanBuilderId);
-                            String obName = uob.oceanBuilderName;
-                            String userType = uob.userType;
-                            String reqStatus = uob.reqStatus;
-                            String uobId = uob.oceanBuilderId;
-
-                            // debugPrint('----------uobId--------$uobId ----------_currentlySelectedObId---------------$_currentlySelectedObId');
-
-                            return InkWell(
-                              onTap: () {
-                                if (reqStatus != null &&
-                                    reqStatus.contains(
-                                        NotificationConstants.initiated)) {
-                                  _showCancelAlert(
-                                      userProvider,
-                                      userProvider.authenticatedUser
-                                          .userOceanBuilder[index]);
-                                } else {
-                                  // // debugPrint('selected OB name ${myOceanBuilderList[index].oceanBuilderName} and code ${myOceanBuilderList[index].oceanBuilderId}');
-                                  _currentlySelectedObId =
-                                      myOceanBuilderList[index].oceanBuilderId;
-                                  selectedOBIdProvider.selectedObId =
-                                      _currentlySelectedObId;
-                                  SharedPrefHelper.setCurrentOB(
-                                      myOceanBuilderList[index].oceanBuilderId);
-                                  UIHelper.setStatusBarColor(
-                                      color: ColorConstants
-                                          .TOP_CLIPPER_START_DARK);
-                                  Navigator.of(context).pushReplacementNamed(
-                                      HomeScreen.routeName);
-                                }
-                              },
-                              child: Container(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 4.0, vertical: 4.0),
-                                padding: EdgeInsets.symmetric(vertical: 4.0),
-                                decoration: _currentlySelectedObId != null &&
-                                        uobId.contains(_currentlySelectedObId)
-                                    ? UIHelper.customDecoration(
-                                        2, 8, ColorConstants.SPLASH_BKG,
-                                        bkgColor: ColorConstants.SPLASH_BKG)
-                                    : UIHelper.customDecoration(
-                                        2, 8, ColorConstants.BCKG_COLOR_START),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                          uob.userType.contains('owner')
+                              ? Container()
+                              : Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
+                                    Wrap(
+                                      direction: Axis.horizontal,
+                                      alignment: WrapAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
                                       children: <Widget>[
-                                        InkWell(
-                                          onTap: () {
-                                            // debugPrint('options dot tapped');
-                                            if (uob.userType
-                                                .toLowerCase()
-                                                .contains('owner')) {
-                                              _showUpdateOBNameDialog(
-                                                  uob, userProvider);
-                                            }
-                                          },
-                                          child: Padding(
-                                            padding: EdgeInsets.all(
-                                                _util.setWidth(24)),
-                                            child: SvgPicture.asset(
-                                              ImagePaths.vdotsSvg,
-                                              width: ScreenUtil().setWidth(10),
-                                              height:
-                                                  ScreenUtil().setHeight(36),
-                                              color: _currentlySelectedObId !=
-                                                          null &&
-                                                      uobId.contains(
-                                                          _currentlySelectedObId)
-                                                  ? Colors.white
-                                                  : Color(0XFF3363A3),
-                                            ),
-                                          ),
+                                        Image.asset(
+                                          ImagePaths.sandClock,
+                                          color: _currentlySelectedObId !=
+                                                      null &&
+                                                  uobId.contains(
+                                                      _currentlySelectedObId)
+                                              ? Colors.white
+                                              : Colors.black,
+                                          width: 36.w,
+                                          height: 36.w,
                                         ),
+                                        _timeWidget(uob),
                                       ],
                                     ),
-                                    Image.asset(
-                                      ImagePaths.latestOb,
-                                      width: ScreenUtil().setWidth(172),
-                                      height: ScreenUtil().setWidth(172),
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          left: 8.0,
-                                          right: 8.0,
-                                        ),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: <Widget>[
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Text(obName,
-                                                    style: TextStyle(
-                                                        fontSize: ScreenUtil()
-                                                            .setSp(36),
-                                                        color: _currentlySelectedObId !=
-                                                                    null &&
-                                                                uobId.contains(
-                                                                    _currentlySelectedObId)
-                                                            ? Colors.white
-                                                            : Colors.black)),
-                                                SizedBox(
-                                                  height: 8,
-                                                ),
-                                                Text(userType.toUpperCase(),
-                                                    style: TextStyle(
-                                                        fontSize: ScreenUtil()
-                                                            .setSp(24),
-                                                        color: _currentlySelectedObId !=
-                                                                    null &&
-                                                                uobId.contains(
-                                                                    _currentlySelectedObId)
-                                                            ? Colors.white
-                                                            : Colors.black)),
-                                              ],
-                                            ),
-                                            uob.userType.contains('owner')
-                                                ? Container()
-                                                : Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: <Widget>[
-                                                      Wrap(
-                                                        direction:
-                                                            Axis.horizontal,
-                                                        alignment: WrapAlignment
-                                                            .spaceBetween,
-                                                        crossAxisAlignment:
-                                                            WrapCrossAlignment
-                                                                .center,
-                                                        children: <Widget>[
-                                                          Image.asset(
-                                                            ImagePaths
-                                                                .sandClock,
-                                                            color: _currentlySelectedObId !=
-                                                                        null &&
-                                                                    uobId.contains(
-                                                                        _currentlySelectedObId)
-                                                                ? Colors.white
-                                                                : Colors.black,
-                                                            width: ScreenUtil()
-                                                                .setWidth(36),
-                                                            height: ScreenUtil()
-                                                                .setWidth(36),
-                                                          ),
-                                                          _timeWidget(uob),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                          ],
-                                        ),
-                                      ),
-                                    )
                                   ],
                                 ),
-                              ),
-                            );
-                          },
-                          childCount: myOceanBuilderList.length,
-                        ),
-                      )
-                    : SliverToBoxAdapter(
-                        child: Center(
-                          child: Text(
-                            'No SeaPod Found!!',
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        ),
+                        ],
                       ),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: _util.setHeight(256),
-                  ),
-                )
-                // UIHelper.getTopEmptyContainer(90, false),
-              ],
+                    ),
+                  )
+                ],
+              ),
             ),
-            // Appbar(ScreenTitle.OB_SELECTION),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: BottomClipper(ButtonText.BACK, '', () {
-                goBack();
-              }, () {}, isNextEnabled: false),
+          );
+        },
+        childCount: myOceanBuilderList.length,
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _noSeaPodFound() {
+    return SliverToBoxAdapter(
+      child: Center(
+        child: Text(
+          'No SeaPod Found!!',
+          style: TextStyle(fontSize: 20),
+        ),
+      ),
+    );
+  }
+
+  InkWell _buttonDesignOrRequestAccess(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        showAddOBDialog(userProvider, context);
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+        padding: EdgeInsets.symmetric(vertical: 8.0),
+        decoration:
+            UIHelper.customDecoration(2, 4, ColorConstants.BCKG_COLOR_START),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              Icons.add,
+              color: ColorConstants.MODAL_ICON_COLOR,
+            ),
+            Text('DESIGN/REQUEST ACCESS',
+                style: TextStyle(color: ColorConstants.TOP_CLIPPER_END)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _textSelectHome() {
+    return SliverToBoxAdapter(
+      child: Container(
+        padding: EdgeInsets.only(left: 24.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Select A Home',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 64.sp),
+                )
+              ],
             )
           ],
         ),
@@ -399,10 +385,13 @@ class _OBSelectionScreenWidgetModalState
     );
   }
 
+  _startSpace(BuildContext context) {
+    return UIHelper.getTopEmptyContainer(
+        MediaQuery.of(context).size.height / 16, false);
+  }
+
   _showCancelAlert(
       UserProvider userProvider, UserOceanBuilder userOceanBuilder) {
-    // Navigator.of(context).pushReplacementNamed(PendingOBScreen.routeName,arguments: userOceanBuilder);
-    // _showCancelAlert(userOceanBuilder);
     _cancelUserProvider = userProvider;
     _cancelUserOceanBuilder = userOceanBuilder;
 
@@ -426,11 +415,6 @@ class _OBSelectionScreenWidgetModalState
       Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
     } else {
       Navigator.of(context, rootNavigator: true).pop();
-      //               Navigator.pushAndRemoveUntil(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => ProfileScreen()),
-      //   (Route<dynamic> route) => false,
-      // );
     }
   }
 
@@ -446,29 +430,9 @@ class _OBSelectionScreenWidgetModalState
 
   _cancelRequest(
       UserProvider userProvider, UserOceanBuilder userOceanBuilder) async {
-/*     ServerNotification fcmNotification;
-    List<ServerNotification> notifications =
-        userProvider.authenticatedUser.notifications;
-    int len = userProvider.authenticatedUser.notifications.length;
-    for (int i = 0; i < len; i++) {
-      ServerNotification noti = notifications[i];
-
-      if (noti.data.seaPod.id != null &&
-          noti.data.seaPod.id.contains(userOceanBuilder.oceanBuilderId)) {
-        fcmNotification = noti;
-        break;
-      }
-    }
-
-    String notificationId = fcmNotification.data.id; */
     String accessRequestId = userOceanBuilder.accessRequestID;
-
-    // debugPrint('access request to cancel ------  ' + accessRequestId);
-
     userProvider.cancelAccessReqeust(accessRequestId).then((f) async {
       if (f.status == 200) {
-        // Navigator.of(context).pushReplacementNamed(OBEventScreen.routeName);
-
         await userProvider.autoLogin();
         setState(() {
           showInfoBar('Access Request Cancel',
@@ -490,8 +454,6 @@ class _OBSelectionScreenWidgetModalState
       DateTime checkInDate = uob.checkInDate;
       DateTime checkOutDate = checkInDate.add(uob.accessTime);
       Duration remainingDays = checkOutDate.difference(now);
-      // Check in Date
-      // N days remaining.
       if (uob.checkInDate.isAfter(DateTime.now())) {
         timeText = '${remainingDays.inDays} days remaining';
       } else {
@@ -500,7 +462,7 @@ class _OBSelectionScreenWidgetModalState
       return Text(
         timeText,
         style: TextStyle(
-            fontSize: ScreenUtil().setSp(18),
+            fontSize: 18.sp,
             color: _currentlySelectedObId != null &&
                     uob.oceanBuilderId.contains(_currentlySelectedObId)
                 ? Colors.white
@@ -513,8 +475,6 @@ class _OBSelectionScreenWidgetModalState
 
   _showUpdateOBNameDialog(
       UserOceanBuilder uob, UserProvider userProvider) async {
-    // debugPrint('showUpdateOBNameDialog');
-
     SeaPod seapod =
         await _oceanBuilderProvider.getSeaPod(uob.oceanBuilderId, userProvider);
     _obNameController = TextEditingController(text: '');
@@ -616,7 +576,6 @@ class _OBSelectionScreenWidgetModalState
               Navigator.of(context, rootNavigator: true).pop();
               _showWarning(uob, userProvider);
             },
-            // color: Color.fromRGBO(0, 179, 134, 1.0),
             gradient: LinearGradient(colors: [
               ColorConstants.BOTTOM_CLIPPER_START,
               ColorConstants.BOTTOM_CLIPPER_END
@@ -630,10 +589,7 @@ class _OBSelectionScreenWidgetModalState
             ),
             onPressed: () {
               Navigator.of(context, rootNavigator: true).pop();
-              // Navigator.pop(context);
-              // Navigator.of(context).pop();
             },
-            // color: Color.fromRGBO(0, 179, 134, 1.0),
             gradient: LinearGradient(colors: [
               ColorConstants.BOTTOM_CLIPPER_START,
               ColorConstants.BOTTOM_CLIPPER_END
@@ -662,7 +618,6 @@ class _OBSelectionScreenWidgetModalState
         ColorConstants.TOP_CLIPPER_END
       ]),
       isDismissible: true,
-      // duration: Duration(seconds: 4),
       icon: Icon(
         Icons.warning,
         color: Colors.red,
@@ -676,30 +631,21 @@ class _OBSelectionScreenWidgetModalState
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
       ),
-
       showProgressIndicator: true,
       progressIndicatorBackgroundColor: AppTheme.notWhite,
     );
 
     _flush.show(context).then((result) async {
-      // print(result);
-
       if (result != null && result) {
         uob.oceanBuilderName = _changedObName;
-        // ResponseStatus responseStatus = await _userProvider.updateUserOceanBuilder(uob);
         ResponseStatus responseStatus = await _userProvider.updateSeapodName(
             uob.oceanBuilderId, uob.oceanBuilderName);
         if (responseStatus.status == 200) {
-          // Navigator.of(context).pop();
-          // await _userProvider
-          //     .resetAuthenticatedUser(_userProvider.authenticatedUser.userID);
           await _userProvider.autoLogin();
           setState(() {
             showInfoBar('Seapod Name Updated', 'SeaPod name updated', context);
           });
         } else {
-          // Navigator.of(context).pop();
-          //  Navigator.pop(context);
           showInfoBar(parseErrorTitle(responseStatus.code),
               responseStatus.message, context);
         }

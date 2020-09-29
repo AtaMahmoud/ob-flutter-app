@@ -7,6 +7,7 @@ import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/core/singletons/headers_manager.dart';
 import 'package:ocean_builder/helper/method_helper.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +20,6 @@ class ChangeEmailPopupContent extends StatefulWidget {
 }
 
 class _ChangeEmailPopupContentState extends State<ChangeEmailPopupContent> {
-  ScreenUtil _util = ScreenUtil();
   UserProvider _userProvider;
 
   User _user;
@@ -56,15 +56,12 @@ class _ChangeEmailPopupContentState extends State<ChangeEmailPopupContent> {
     );
   }
 
-  // lighting popup
-
   Widget _changeEmailPopupContent() {
     return Center(
       child: Container(
-        padding: EdgeInsets.symmetric(
-            horizontal: _util.setWidth(48), vertical: _util.setHeight(16)),
+        padding: EdgeInsets.symmetric(horizontal: 48.w, vertical: 16.h),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(_util.setWidth(32)),
+            borderRadius: BorderRadius.circular(32.w),
             color: ColorConstants.LIGHT_POPUP_BKG),
         width: MediaQuery.of(context).size.width,
         child: Column(
@@ -72,88 +69,94 @@ class _ChangeEmailPopupContentState extends State<ChangeEmailPopupContent> {
           children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(
-                      top: _util.setHeight(32), left: _util.setSp(32)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        AppStrings.changeEmail,
-                        style: TextStyle(
-                            fontSize: _util.setSp(48),
-                            color: ColorConstants.LIGHT_POPUP_TITLE),
-                      ),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      right: _util.setWidth(16),
-                      top: _util.setHeight(16),
-                    ),
-                    child: Image.asset(
-                      ImagePaths.cross,
-                      width: _util.setWidth(36),
-                      height: _util.setHeight(36),
-                      color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                    ),
-                  ),
-                )
-              ],
+              children: <Widget>[_textChangeMail(), _buttonCross()],
             ),
-            SizedBox(
-              height: _util.setHeight(64),
-            ),
-             _userProvider.isLoading
-                        ? Padding(
-                            padding: EdgeInsets.all(_util.setWidth(8)),
-                            child: CircularProgressIndicator(),
-                          )
-                        : UIHelper.getRegistrationTextField(
-                context,
-                _bloc.email,
-                _bloc.emailChanged,
-                TextFieldHints.EMAIL,
-                _emailController,
-                InputTypes.EMAIL,
-                null,
-                true,
-                TextInputAction.next,
-                _emailNode,
-                null),
-            SizedBox(
-              height: _util.setHeight(64),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                RaisedButton(
-                    onPressed: () {
-                      // Navigator.of(context).pop();
-                      _changeEmail(_emailController.text);
-                    },
-                    child:Text('CHANGE EMAIL'),
-                    shape: RoundedRectangleBorder(
-                        borderRadius:
-                            new BorderRadius.circular(_util.setWidth(48)),
-                        side: BorderSide(
-                          color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
-                        )),
-                    textColor: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                    color: Colors.white),
-              ],
-            ),
-            SizedBox(
-              height: _util.setHeight(32),
-            ),
+            SpaceH64(),
+            _userProvider.isLoading ? _progressIndicator() : _inputEmail(),
+            SpaceH64(),
+            _buttonChangeMail(),
+            SpaceH32(),
           ],
         ),
+      ),
+    );
+  }
+
+  Padding _progressIndicator() {
+    return Padding(
+      padding: EdgeInsets.all(8.w),
+      child: CircularProgressIndicator(),
+    );
+  }
+
+  Widget _inputEmail() {
+    return UIHelper.getRegistrationTextField(
+        context,
+        _bloc.email,
+        _bloc.emailChanged,
+        TextFieldHints.EMAIL,
+        _emailController,
+        InputTypes.EMAIL,
+        null,
+        true,
+        TextInputAction.next,
+        _emailNode,
+        null);
+  }
+
+  Row _buttonChangeMail() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        RaisedButton(
+            onPressed: () {
+              // Navigator.of(context).pop();
+              _changeEmail(_emailController.text);
+            },
+            child: Text('CHANGE EMAIL'),
+            shape: RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(48.w),
+                side: BorderSide(
+                  color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
+                )),
+            textColor: ColorConstants.ACCESS_MANAGEMENT_TITLE,
+            color: Colors.white),
+      ],
+    );
+  }
+
+  InkWell _buttonCross() {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).pop();
+      },
+      child: Padding(
+        padding: EdgeInsets.only(
+          right: 16.w,
+          top: 16.h,
+        ),
+        child: Image.asset(
+          ImagePaths.cross,
+          width: 36.w,
+          height: 36.h,
+          color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+        ),
+      ),
+    );
+  }
+
+  Padding _textChangeMail() {
+    return Padding(
+      padding: EdgeInsets.only(top: 32.h, left: 32.sp),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            AppStrings.changeEmail,
+            style: TextStyle(
+                fontSize: 48.sp, color: ColorConstants.LIGHT_POPUP_TITLE),
+          ),
+        ],
       ),
     );
   }
@@ -165,15 +168,12 @@ class _ChangeEmailPopupContentState extends State<ChangeEmailPopupContent> {
       _emailController.text = '';
       _userProvider.updateUserProfile(_user).then((responseStatus) {
         if (responseStatus.status == 200) {
-          // _userProvider.resetAuthenticatedUser(_user.userID);
           showInfoBar('Email Updated', 'Email address updated', context);
         } else {
           showInfoBar(parseErrorTitle(responseStatus.code),
               responseStatus.message, context);
         }
       });
-    } else {
-      // debugPrint('is laoding ...');
-    }
+    } else {}
   }
 }
