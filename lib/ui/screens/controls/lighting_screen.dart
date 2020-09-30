@@ -143,6 +143,9 @@ class _LightingScreenState extends State<LightingScreen> {
     _bloc.lightSceneController.listen((onData) {
       _renameTextController.text = onData;
       // isSeaPodSourceSelected
+      if(_selectedScene == null)
+      isSeaPodSourceSelected = false;
+      else
       isSeaPodSourceSelected =
           _selectedScene.source.compareTo('seapod') == 0 ?? false;
     });

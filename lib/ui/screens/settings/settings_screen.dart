@@ -17,7 +17,6 @@ import 'package:provider/provider.dart';
 
 class SettingsWidget extends StatefulWidget {
   static const String routeName = '/settingsWidget';
-
   @override
   _SettingsWidgetState createState() => _SettingsWidgetState();
 }
@@ -25,8 +24,6 @@ class SettingsWidget extends StatefulWidget {
 class _SettingsWidgetState extends State<SettingsWidget> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   UserProvider userProvider;
-  ScreenUtil _util;
-
   File _profileImageFile;
 
   @override
@@ -44,11 +41,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
   @override
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
-
     userProvider = Provider.of<UserProvider>(context);
-
-    _util = ScreenUtil();
-
     return _mainContent(); //customDrawer(_innerDrawerKey, _mainContent());
   }
 
@@ -71,17 +64,13 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             children: <Widget>[
               CustomScrollView(
                 slivers: <Widget>[
-                  UIHelper.getTopEmptyContainerWithColor(
-                      ScreenUtil()
-                          .setHeight(256), //ScreenUtil.statusBarHeight * 3,
-                      Colors.white),
+                  _startSpace(),
                   _profilePicture(),
                   SliverPadding(
                     padding: EdgeInsets.symmetric(
-                        vertical: _util.setHeight(48), horizontal: 8.0),
+                        vertical: 48.h, horizontal: 8.0),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
-                        // _next7DaysweatherDataFuture()
                         _horizontalLine(),
                         _changeEmail(),
                         _horizontalLine(),
@@ -102,6 +91,10 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     );
   }
 
+  _startSpace() {
+    return UIHelper.getTopEmptyContainerWithColor(256.h, Colors.white);
+  }
+
   Positioned _titleBar() {
     return Positioned(
       top: ScreenUtil.statusBarHeight,
@@ -109,7 +102,6 @@ class _SettingsWidgetState extends State<SettingsWidget> {
       right: 0,
       child: Container(
         color: Colors.white,
-        // padding: EdgeInsets.only(top: 8.0, right: 12.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -129,7 +121,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                     ),
                     child: ImageIcon(
                       AssetImage(ImagePaths.icHamburger),
-                      size: _util.setWidth(50),
+                      size:50.w,
                       color: ColorConstants.WEATHER_MORE_ICON_COLOR,
                     ),
                   ),
@@ -189,7 +181,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 style: TextStyle(
                     color: ColorConstants.TOP_CLIPPER_END,
                     fontWeight: FontWeight.normal,
-                    fontSize: _util.setSp(64))),
+                    fontSize: 64.sp)),
           ],
         ),
       ),
@@ -248,8 +240,6 @@ class _SettingsWidgetState extends State<SettingsWidget> {
   SliverToBoxAdapter _profilePicture() {
     return SliverToBoxAdapter(
       child: Container(
-        // color: ColorConstants.MODAL_BKG.withOpacity(.375),
-        // padding: EdgeInsets.only(top: 16.0),
         child: CircleAvatar(
           backgroundColor: Colors.white,
           radius: 256.w,
@@ -274,28 +264,19 @@ class _SettingsWidgetState extends State<SettingsWidget> {
       ImagePaths.svgWeatherInfoDividerLine,
       fit: BoxFit.fitWidth,
       color: ColorConstants.TOP_CLIPPER_END,
-      // width: MediaQuery.of(context).size.width*.95,
     );
   }
 
   goBack() {
     UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
-    // Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
     Navigator.of(context).pop();
-    // Navigator.of(context).pushNamedAndRemoveUntil(
-    //     LandingScreen.routeName, (Route<dynamic> route) => false);
   }
 
   _getProfilePicture() async {
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // String path = prefs.getString(SharedPreferanceKeys.KEY_PROFILE_PIC);
-
     String path = await SharedPrefHelper.getProfilePicFilePath();
-
     if (path != null) {
       final File imageFile = File(path);
       if (await imageFile.exists()) {
-        // Use the cached images if it exists
         setState(() {
           _profileImageFile = imageFile;
         });

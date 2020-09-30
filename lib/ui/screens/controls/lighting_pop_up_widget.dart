@@ -124,6 +124,7 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
   InkWell _goToLightingPageButton() {
     return InkWell(
       onTap: () {
+        debugPrint('Selected scene id ------ $_selectedSceneId');
         Navigator.of(context).pop();
         Navigator.of(context).pushNamed(LightingScreen.routeName,
             arguments: LightingScreenParams(_oceanBuilderUser, _userProvider,
