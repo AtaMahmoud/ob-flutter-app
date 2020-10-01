@@ -11,6 +11,7 @@ import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper_2.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/login_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/request_access_screen.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +23,6 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  
   UserProvider _userProvider;
 
   TextEditingController _firstNameController,
@@ -69,16 +69,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
     GlobalContext.currentScreenContext = context;
 
     final UserDataProvider userDataProvider =
         Provider.of<UserDataProvider>(context);
 
     _userProvider = Provider.of<UserProvider>(context);
-
-
-    double sizedBoxHeight = 30;
 
     return Scaffold(
       resizeToAvoidBottomPadding: true,
@@ -92,107 +88,147 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               shrinkWrap: true,
               controller: _controller,
               slivers: <Widget>[
-                UIHelper.getTopEmptyContainer(_util.setHeight(500), false),
-                SliverList(
-                    delegate: SliverChildListDelegate([
-                  UIHelper.getRegistrationTextField(
-                      context,
-                      _bloc.firstName,
-                      _bloc.firstNameChanged,
-                      TextFieldHints.FIRST_NAME,
-                      _firstNameController,
-                      null,
-                      30,
-                      true,
-                      TextInputAction.next,
-                      _firstNameNode,
-                      () => FocusScope.of(context).requestFocus(_lastNameNode)),
-                  SizedBox(height: sizedBoxHeight),
-                  UIHelper.getRegistrationTextField(
-                      context,
-                      _bloc.lastName,
-                      _bloc.lastNameChanged,
-                      TextFieldHints.LAST_NAME,
-                      _lastNameController,
-                      null,
-                      30,
-                      true,
-                      TextInputAction.next,
-                      _lastNameNode,
-                      () => FocusScope.of(context).requestFocus(_emailNode)),
-                  SizedBox(height: sizedBoxHeight),
-                  UIHelper.getRegistrationTextField(
-                      context,
-                      _bloc.email,
-                      _bloc.emailChanged,
-                      TextFieldHints.ENTER_EMAIL,
-                      _emailController,
-                      InputTypes.EMAIL,
-                      null,
-                      true,
-                      TextInputAction.next,
-                      _emailNode,
-                      () => FocusScope.of(context).requestFocus(_phoneNode)),
-                  SizedBox(height: sizedBoxHeight),
-                  UIHelper.getCountryDropdown(ListHelper.getCountryList(),
-                      _bloc.country, _bloc.countryChanged, true),    
-                  SizedBox(height: sizedBoxHeight),
-                  UIHelper.getRegistrationTextField(
-                      context,
-                      _bloc.phone,
-                      _bloc.phoneChanged,
-                      TextFieldHints.PHONE,
-                      _phoneController,
-                      InputTypes.NUMBER,
-                      null,
-                      true,
-                      TextInputAction.done,
-                      _phoneNode,
-                      null),
-                ])),
-              SliverToBoxAdapter(
-                  child: Container(
-                    padding: EdgeInsets.only(
-                        top: 48.0, //util.setHeight(64),
-                        right: 16.0,
-                        bottom: 16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        InkWell(
-                          onTap: () {
-                            _goToLogInPageFromRegistraion();
-                          },
-                          child: Text(
-                            'ALREADY A MEMBER ?',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w900,
-                                color: ColorConstants.PROFILE_BKG_1),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                UIHelper.getTopEmptyContainer(_util.setHeight(330), false),
+                _startSpace(),
+                _mainContent(context),
+                _buttonAlreadyMember(),
+                _endSpace(),
               ],
             ),
           ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Appbar(ScreenTitle.REGISTER),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: registerButton(userDataProvider),
-          )
+          _topBar(),
+          _bottomBar(userDataProvider)
         ],
       ),
     );
+  }
+
+  SliverList _mainContent(BuildContext context) {
+    return SliverList(
+        delegate: SliverChildListDelegate([
+      _inputFirstName(context),
+      SpaceH48(),
+      _inputLastName(context),
+      SpaceH48(),
+      _inputEmail(context),
+      SpaceH48(),
+      _dropDownCountry(),
+      SpaceH48(),
+      _inputPhone(context),
+    ]));
+  }
+
+  _startSpace() => UIHelper.getTopEmptyContainer(_util.setHeight(500), false);
+
+  Positioned _bottomBar(UserDataProvider userDataProvider) {
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: registerButton(userDataProvider),
+    );
+  }
+
+  Positioned _topBar() {
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      child: Appbar(ScreenTitle.REGISTER),
+    );
+  }
+
+  _endSpace() => UIHelper.getTopEmptyContainer(_util.setHeight(330), false);
+
+  SliverToBoxAdapter _buttonAlreadyMember() {
+    return SliverToBoxAdapter(
+      child: Container(
+        padding: EdgeInsets.only(
+            top: 48.0, //util.setHeight(64),
+            right: 16.0,
+            bottom: 16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            InkWell(
+              onTap: () {
+                _goToLogInPageFromRegistraion();
+              },
+              child: Text(
+                'ALREADY A MEMBER ?',
+                style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    color: ColorConstants.PROFILE_BKG_1),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _inputPhone(BuildContext context) {
+    return UIHelper.getRegistrationTextField(
+        context,
+        _bloc.phone,
+        _bloc.phoneChanged,
+        TextFieldHints.PHONE,
+        _phoneController,
+        InputTypes.NUMBER,
+        null,
+        true,
+        TextInputAction.done,
+        _phoneNode,
+        null);
+  }
+
+  Widget _dropDownCountry() {
+    return UIHelper.getCountryDropdown(
+        ListHelper.getCountryList(), _bloc.country, _bloc.countryChanged, true);
+  }
+
+  Widget _inputEmail(BuildContext context) {
+    return UIHelper.getRegistrationTextField(
+        context,
+        _bloc.email,
+        _bloc.emailChanged,
+        TextFieldHints.ENTER_EMAIL,
+        _emailController,
+        InputTypes.EMAIL,
+        null,
+        true,
+        TextInputAction.next,
+        _emailNode,
+        () => FocusScope.of(context).requestFocus(_phoneNode));
+  }
+
+  Widget _inputLastName(BuildContext context) {
+    return UIHelper.getRegistrationTextField(
+        context,
+        _bloc.lastName,
+        _bloc.lastNameChanged,
+        TextFieldHints.LAST_NAME,
+        _lastNameController,
+        null,
+        30,
+        true,
+        TextInputAction.next,
+        _lastNameNode,
+        () => FocusScope.of(context).requestFocus(_emailNode));
+  }
+
+  Widget _inputFirstName(BuildContext context) {
+    return UIHelper.getRegistrationTextField(
+        context,
+        _bloc.firstName,
+        _bloc.firstNameChanged,
+        TextFieldHints.FIRST_NAME,
+        _firstNameController,
+        null,
+        30,
+        true,
+        TextInputAction.next,
+        _firstNameNode,
+        () => FocusScope.of(context).requestFocus(_lastNameNode));
   }
 
   Widget registerButton(UserDataProvider userDataProvider) {
@@ -210,42 +246,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   _goToLogInPageFromRegistraion() {
-
-    Navigator.of(context).pushNamed(LoginScreen.routeName, arguments: ScreenTitle.REGISTER);
-  
+    Navigator.of(context)
+        .pushNamed(LoginScreen.routeName, arguments: ScreenTitle.REGISTER);
   }
-  
+
   _goBack() {
     Navigator.pop(context);
   }
 
   _goNext(UserDataProvider userDataProvider) async {
-
     userDataProvider.user = _user;
     Navigator.of(context).pushNamed(RequestAccessScreen.routeName);
-
-// #################################################################################3
-
-/*     String existingUserId =
-        await _userProvider.checkForEmailAlreadyExist(_user.email);
-    if (existingUserId.length > 1) {
-
-    // showInfoBarWithDissmissCallback(ErrorConstants.TITLE_USER_ALREADY_EXISTS,
-    // ErrorConstants.USER_ALREADY_EXISTS, context,_goToLogInPageFromRegistraion);
-
-    showInfoBar(ErrorConstants.TITLE_USER_ALREADY_EXISTS,
-    ErrorConstants.USER_ALREADY_EXISTS_USE_ALREADY_BUTTON, context);
-
-    }else{
-
-    userDataProvider.user = _user;
-    Navigator.of(context).pushNamed(RequestAccessScreen.routeName);
-
-    } */
-
-
-
-
   }
 
   _setUserDataListener() {
