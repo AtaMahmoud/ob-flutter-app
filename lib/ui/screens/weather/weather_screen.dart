@@ -33,14 +33,8 @@ class WeatherScreen extends StatefulWidget {
 class _WeatherScreenState extends State<WeatherScreen> {
   UserProvider _userProvider;
   User _user;
-  ScreenUtil _util = ScreenUtil();
   Future<StormGlassData> _futureWeatherData;
   Future<StormGlassData> _futuremissingData;
-  // Future<WorldWeatherOnlineData> _futureWOWWeatherData;
-  // Future<WeatherFlowData> _futureWeatherStationData;
-  // Future<WeatherFlowDeviceObservationData>
-  // _futureWeatherFlowDeviceObservationData;
-  // Future<StormGlassData> _futureWOWWeatherDataSummary;
   Future<UvIndexData> _futureUvIndexData;
 
   SourceListBloc _bloc = SourceListBloc();
@@ -54,24 +48,13 @@ class _WeatherScreenState extends State<WeatherScreen> {
   @override
   void initState() {
     Future.delayed(Duration.zero).then((_) {
-      // _futureWOWWeatherDataSummary =
-      // Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
-
-      // _futureWeatherStationData = Provider.of<LocalWeatherDataProvider>(context).fetchStationObservationData();
-
       _futureWeatherData =
           Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
 
       _futuremissingData = Provider.of<LocalWeatherDataProvider>(context)
           .fetchDeviceObservationData();
 
-      // _futureUvIndexData =
-      //     Provider.of<StormGlassDataProvider>(context).fetchUvIndexData();
-
       currentlySelectedSource = ListHelper.getSourceList()[0];
-      // _bloc.weatherSourceController.listen((onData) {
-      //   debugPrint('------------- selected source ------ $onData');
-      // });
       _sourcePriorityBloc.topProprity.listen((event) {
         if (event.compareTo('local') == 0) {
           _futureWeatherData = Provider.of<LocalWeatherDataProvider>(context)
@@ -98,17 +81,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
   @override
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
-
-    // final UserProvider userProvider = Provider.of<UserProvider>(context);
     _userProvider = Provider.of<UserProvider>(context);
     _user = _userProvider.authenticatedUser;
 
     var shortestSide = MediaQuery.of(context).size.shortestSide;
     useMobileLayout = shortestSide < 600;
-
-    // UIHelper.setStatusBarColor(color:ColorConstants.CONTROL_BKG);
-
-    return _mainContent(); //_stackWithDrawerandBottomBar(); //customDrawer(_innerDrawerKey, _mainContent());
+    return _mainContent();
   }
 
   _mainContent() {
@@ -118,35 +96,46 @@ class _WeatherScreenState extends State<WeatherScreen> {
           decoration: BoxDecoration(color: ColorConstants.BCKG_COLOR_START),
           child: CustomScrollView(
             slivers: <Widget>[
-              UIHelper.getTopEmptyContainer(
-                  useMobileLayout
-                      ? MediaQuery.of(context).size.height * 0.55
-                      : MediaQuery.of(context).size.height * 0.75,
-                  true),
-              SliverPadding(
-                padding: EdgeInsets.only(
-                  bottom: _util.setHeight(256),
-                ), //EdgeInsets.symmetric(vertical: util.setHeight(48)),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      // _weatherItemContainer(),
-                      _weatherItemsWidgetFuture(),
-                    ],
-                  ),
-                ),
-              ),
+              _topSpace(),
+              _itemGrid(),
             ],
           ),
         ),
-        AppbarWeather(
-          ScreenTitle.WEATHER,
-          scaffoldKey: widget.scaffoldKey,
-          futureWOWWeatherData: _futureWeatherData,
-        ),
+        _topBar(),
         _sourceSelectionPositioned()
       ],
     );
+  }
+
+  SliverPadding _itemGrid() {
+    return SliverPadding(
+      padding: EdgeInsets.only(
+        bottom: 256.h,
+      ),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate(
+          [
+            _weatherItemsWidgetFuture(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  AppbarWeather _topBar() {
+    return AppbarWeather(
+      ScreenTitle.WEATHER,
+      scaffoldKey: widget.scaffoldKey,
+      futureWOWWeatherData: _futureWeatherData,
+    );
+  }
+
+  _topSpace() {
+    return UIHelper.getTopEmptyContainer(
+        useMobileLayout
+            ? MediaQuery.of(context).size.height * 0.55
+            : MediaQuery.of(context).size.height * 0.75,
+        true);
   }
 
   _sourceSelectionPositioned() {
@@ -180,8 +169,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           child: Text(
             AppStrings.noData,
             style: TextStyle(
-                fontSize: ScreenUtil().setWidth(48),
-                color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
+                fontSize: 48.w, color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
           ),
         ),
       );
@@ -412,7 +400,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.0), color: Colors.white),
-        //  height: ScreenUtil().setHeight(512),
         width: MediaQuery.of(context).size.width,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -441,7 +428,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.0), color: Colors.white),
-        //  height: ScreenUtil().setHeight(512),
         width: MediaQuery.of(context).size.width,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -470,7 +456,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.0), color: Colors.white),
-        //  height: ScreenUtil.getInstance().setHeight(512),
         width: MediaQuery.of(context).size.width,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -536,8 +521,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.0), color: Colors.white),
-        // color: Colors.white,
-        // height: ScreenUtil.getInstance().setHeight(512),
         width: MediaQuery.of(context).size.width,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -545,7 +528,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
             PopUpHelpers.popUpTitle(
                 context, title, iconPath, '$selectedValue Meters'),
             Container(
-              height: ScreenUtil().setHeight(380),
+              height: 380.h,
               width: MediaQuery.of(context).size.width,
               child: BezierChart(
                 bezierChartScale: BezierChartScale.HOURLY,
@@ -570,9 +553,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   showDataPoints: false,
                   displayLinesXAxis: true,
                   bubbleIndicatorValueStyle: TextStyle(
-                      color:
-                          ColorConstants.WEATHER_MORE_DAY_INFO_ICON_COLOR_LIGHT,
-                      fontSize: ScreenUtil().setSp(72)),
+                    color:
+                        ColorConstants.WEATHER_MORE_DAY_INFO_ICON_COLOR_LIGHT,
+                    fontSize: 72.sp,
+                  ),
                   xAxisTextStyle: TextStyle(
                     color:
                         ColorConstants.WEATHER_MORE_DAY_INFO_ITEM_COLOR_HEAVY,
