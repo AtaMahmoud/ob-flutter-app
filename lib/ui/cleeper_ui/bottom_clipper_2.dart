@@ -11,19 +11,19 @@ class BottomClipper2 extends StatefulWidget {
   final VoidCallback callbackBack, callback;
   final bool partiallyTransparent;
 
-  const BottomClipper2(this.leftText, this.rightText,this.partiallyTransparent,this.callbackBack, this.callback);
+  const BottomClipper2(this.leftText, this.rightText, this.partiallyTransparent,
+      this.callbackBack, this.callback);
 
   @override
   _BottomClipper2State createState() => _BottomClipper2State();
 }
 
 class _BottomClipper2State extends State<BottomClipper2> {
- double bottomClipperRatio = Platform.isIOS ? (113) / 813 : (90) / 813;
-  ScreenUtil _util = ScreenUtil();
+  double bottomClipperRatio = Platform.isIOS ? (113) / 813 : (90) / 813;
 
   @override
   Widget build(BuildContext context) {
-  Size screenSize = MediaQuery.of(context).size;
+    Size screenSize = MediaQuery.of(context).size;
     return ClipPath(
       clipper: CustomBottomShapeClipper(),
       child: Container(
@@ -37,8 +37,8 @@ class _BottomClipper2State extends State<BottomClipper2> {
         ),
         child: IntrinsicHeight(
           child: Padding(
-                          padding: EdgeInsets.fromLTRB(
-                    0.0, ((screenSize.height * bottomClipperRatio) - 15) / 2, 0.0, 48.h),
+            padding: EdgeInsets.fromLTRB(0.0,
+                ((screenSize.height * bottomClipperRatio) - 15) / 2, 0.0, 48.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -47,7 +47,8 @@ class _BottomClipper2State extends State<BottomClipper2> {
                   child: UIHelper.getBackLayout(widget.leftText),
                 ),
                 InkWell(
-                  child: UIHelper.getNextLayout(widget.rightText,partiallyTransparent: widget.partiallyTransparent),
+                  child: UIHelper.getNextLayout(widget.rightText,
+                      partiallyTransparent: widget.partiallyTransparent),
                   onTap: !widget.partiallyTransparent ? widget.callback : null,
                 )
               ],

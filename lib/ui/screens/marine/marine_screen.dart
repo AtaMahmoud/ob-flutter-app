@@ -125,7 +125,7 @@ class _MarineScreenState extends State<MarineScreen> {
   }
 
   _startSpace() {
-    UIHelper.getTopEmptyContainer(
+    return UIHelper.getTopEmptyContainer(
         useMobileLayout
             ? MediaQuery.of(context).size.height * 0.5
             : MediaQuery.of(context).size.height * 0.7,

@@ -106,13 +106,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return SliverList(
         delegate: SliverChildListDelegate([
       _inputFirstName(context),
-      SpaceH48(),
+      SpaceH32(),
       _inputLastName(context),
-      SpaceH48(),
+      SpaceH32(),
       _inputEmail(context),
-      SpaceH48(),
+      SpaceH64(),
       _dropDownCountry(),
-      SpaceH48(),
+      SpaceH32(),
       _inputPhone(context),
     ]));
   }

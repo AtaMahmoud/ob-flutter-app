@@ -12,11 +12,7 @@ import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 
 class PendingRequestList extends StatefulWidget {
-  // final String title;
-  // final List<UserOceanBuilder> list;
-
   final Color backgroundColor;
-
   const PendingRequestList(this.backgroundColor);
 
   @override
@@ -28,9 +24,6 @@ class _PendingRequestListState extends State<PendingRequestList> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil _util = ScreenUtil();
-    // final OceanBuilderProvider oceanBuilderProvider =
-    //     Provider.of<OceanBuilderProvider>(context);
     final UserProvider userProvider = Provider.of<UserProvider>(context);
     List<UserOceanBuilder> pendigOceanBuilderList = [];
     int _len = userProvider?.authenticatedUser?.userOceanBuilder?.length ?? 0;
@@ -182,8 +175,7 @@ class _PendingRequestListState extends State<PendingRequestList> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(
-              _util.setHeight(48), _util.setHeight(130), _util.setHeight(48), 0),
+          padding: EdgeInsets.fromLTRB(48.h, 130.h, 48.h, 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[],
