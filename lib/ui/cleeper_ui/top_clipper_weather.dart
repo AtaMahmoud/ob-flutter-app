@@ -356,8 +356,16 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
       var currentDate = DateFormat('yMd').format(_whichDate);
 
       if (dDate.compareTo(currentDate) == 0) {
-        _weatherIconUrl = WeatherDescMap.weatherCodeMap['116'].last;
-        _weatherCondition = WeatherDescMap.weatherCodeMap['116'].first;
+        var weatherType = getWeatherType(
+            f.airTemperatureList.attributeDataList[0].value,
+            f.barometricPressureList.attributeDataList[0].value,
+            f.windSpeedList.attributeDataList[0].value,
+            f.humidityList.attributeDataList[0].value,
+            f.precipitationList.attributeDataList[0].value);
+        _weatherIconUrl =
+            WeatherDescMap.weatherCodeMap[weatherType.toString()].last;
+        _weatherCondition =
+            WeatherDescMap.weatherCodeMap[weatherType.toString()].first;
         _temperature =
             f.airTemperatureList.attributeDataList[0].value.toString();
         // _feelsLikeTemperature = data
@@ -374,8 +382,16 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
     }
 
     if (_temperature == null && _whichDay == DayState.TODAY) {
-      _weatherIconUrl = WeatherDescMap.weatherCodeMap[116].last;
-      _weatherCondition = WeatherDescMap.weatherCodeMap[116].first;
+      var weatherType = getWeatherType(
+          data.hours[0].airTemperatureList.attributeDataList[0].value,
+          data.hours[0].barometricPressureList.attributeDataList[0].value,
+          data.hours[0].windSpeedList.attributeDataList[0].value,
+          data.hours[0].humidityList.attributeDataList[0].value,
+          data.hours[0].precipitationList.attributeDataList[0].value);
+      _weatherIconUrl =
+          WeatherDescMap.weatherCodeMap[weatherType.toString()].last;
+      _weatherCondition =
+          WeatherDescMap.weatherCodeMap[weatherType.toString()].first;
       _temperature = data.hours[0].airTemperatureList.attributeDataList[0].value
           .toString();
       // _feelsLikeTemperature = data
