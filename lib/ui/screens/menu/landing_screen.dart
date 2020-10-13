@@ -26,12 +26,6 @@ class _LandingScreenState extends State<LandingScreen> {
   Future initState() {
     UIHelper.setStatusBarColor();
     super.initState();
-
-/*     ConnectionStatusSingleton.getInstance()
-        .checkConnection()
-        .then((bool newConnectionStatus) {
-      _connectionStatus.toogleInternetConnectionStatus(newConnectionStatus);
-    }); */
   }
 
   final GlobalKey<InnerDrawerState> _innerDrawerKey =
@@ -52,57 +46,73 @@ class _LandingScreenState extends State<LandingScreen> {
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[_topBar(), _mainContent()],
+      ),
+    );
+  }
+
+  Expanded _mainContent() {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Appbar(
-            ScreenTitle.WELCOME,
-            enableSkipLogin: true,
-          ),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                userProvider.isLoading
-                    ? CircularProgressIndicator()
-                    : InkWell(
-                        child: Padding(
-                          padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
-                          child: UIHelper.imageTextColumn(
-                              ImagePaths.loginToDashboard,
-                              AppStrings.loginToDashboard),
-                        ),
-                        onTap: () {
-                          Navigator.of(context).pushNamed(LoginScreen.routeName,
-                              arguments: ScreenTitle.LANDING_SCREEN);
-                        },
-                      ),
-                InkWell(
-                  child: Padding(
-                    padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
-                    child: UIHelper.imageTextColumn(ImagePaths.svgAccessKey,
-                        AppStrings.requestAcceptHomeAccess),
-                  ),
-                  onTap: () {
-                    // Navigator.of(context)
-                    //     .pushNamed(RegistrationScreen.routeName);
-                    _showAddOBDialog(userProvider, context);
-                  },
-                ),
-                InkWell(
-                  child: Padding(
-                    padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
-                    child: UIHelper.imageTextColumn(
-                        ImagePaths.svgSeapod, AppStrings.design),
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pushNamed(DesignScreen.routeName);
-                  },
-                ),
-              ],
-            ),
-          )
+          userProvider.isLoading
+              ? CircularProgressIndicator()
+              : _loginToDashboard(),
+          _requestOrAcceptAccess(),
+          _design(),
         ],
       ),
+    );
+  }
+
+  InkWell _design() {
+    return InkWell(
+      child: Padding(
+        padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
+        child:
+            UIHelper.imageTextColumn(ImagePaths.svgSeapod, AppStrings.design),
+      ),
+      onTap: () {
+        Navigator.of(context).pushNamed(DesignScreen.routeName);
+      },
+    );
+  }
+
+  InkWell _requestOrAcceptAccess() {
+    return InkWell(
+      child: Padding(
+        padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
+        child: UIHelper.imageTextColumn(
+            ImagePaths.svgAccessKey, AppStrings.requestAcceptHomeAccess),
+      ),
+      onTap: () {
+        // Navigator.of(context)
+        //     .pushNamed(RegistrationScreen.routeName);
+        _showAddOBDialog(userProvider, context);
+      },
+    );
+  }
+
+  InkWell _loginToDashboard() {
+    return InkWell(
+      child: Padding(
+        padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
+        child: UIHelper.imageTextColumn(
+            ImagePaths.loginToDashboard, AppStrings.loginToDashboard),
+      ),
+      onTap: () {
+        Navigator.of(context).pushNamed(LoginScreen.routeName,
+            arguments: ScreenTitle.LANDING_SCREEN);
+      },
+    );
+  }
+
+  Appbar _topBar() {
+    return Appbar(
+      ScreenTitle.WELCOME,
+      enableSkipLogin: true,
     );
   }
 
@@ -113,36 +123,48 @@ class _LandingScreenState extends State<LandingScreen> {
       context: cntxt,
       title: '',
       style: AlertStyle(isCloseButton: false, isOverlayTapDismiss: true),
-      content: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          InkWell(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: UIHelper.imageTextColumn(
-                  ImagePaths.svgRequestAccess, AppStrings.requestHomeAccess),
-            ),
-            onTap: () {
-              Navigator.of(cntxt, rootNavigator: true).pop();
-              Navigator.of(cntxt).pushNamed(RegistrationScreen.routeName);
-            },
-          ),
-          InkWell(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: UIHelper.imageTextColumn(ImagePaths.svgSendInvitation,
-                  AppStrings.acceptHomeAccessInvitation),
-            ),
-            onTap: () {
-              Navigator.of(cntxt, rootNavigator: true).pop();
-              Navigator.of(cntxt)
-                  .pushNamed(RegistrationScreenAcceptInvitation.routeName);
-            },
-          ),
-        ],
-      ),
+      content: _alertContent(cntxt),
       buttons: [],
     ).show();
+  }
+
+  Column _alertContent(BuildContext cntxt) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        _buttonRequestAccess(cntxt),
+        _buttonAcceptInvitation(cntxt),
+      ],
+    );
+  }
+
+  InkWell _buttonAcceptInvitation(BuildContext cntxt) {
+    return InkWell(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: UIHelper.imageTextColumn(ImagePaths.svgSendInvitation,
+            AppStrings.acceptHomeAccessInvitation),
+      ),
+      onTap: () {
+        Navigator.of(cntxt, rootNavigator: true).pop();
+        Navigator.of(cntxt)
+            .pushNamed(RegistrationScreenAcceptInvitation.routeName);
+      },
+    );
+  }
+
+  InkWell _buttonRequestAccess(BuildContext cntxt) {
+    return InkWell(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: UIHelper.imageTextColumn(
+            ImagePaths.svgRequestAccess, AppStrings.requestHomeAccess),
+      ),
+      onTap: () {
+        Navigator.of(cntxt, rootNavigator: true).pop();
+        Navigator.of(cntxt).pushNamed(RegistrationScreen.routeName);
+      },
+    );
   }
 }

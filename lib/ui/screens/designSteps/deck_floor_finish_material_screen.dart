@@ -10,6 +10,7 @@ import 'package:ocean_builder/ui/screens/sign_in_up/your_info_screen.dart';
 import 'package:ocean_builder/ui/shared/app_colors.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
+import 'package:ocean_builder/ui/widgets/progress_indicator.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 
@@ -66,54 +67,68 @@ class _DeckFloorFinishMaterialsScreenState
       child: Scaffold(
         body: Stack(
           children: <Widget>[
-            CustomScrollView(
-              slivers: <Widget>[
-                UIHelper.getTopEmptyContainer(
-                    MediaQuery.of(context).size.height / 2, true),
-                userProvider.isLoading
-                    ? SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                      )
-                    : SliverPadding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        sliver: SliverList(
-                            delegate:
-                                SliverChildBuilderDelegate((context, index) {
-                          return InkWell(
-                            onTap: () => _bloc.sink.add(list[index]),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0, vertical: 12.0),
-                              child: UIHelper.getCustomRadioButtonHorizontal(
-                                  _bloc.stream, list[index], price[index]),
-                            ),
-                          );
-                        }, childCount: list.length)),
-                      ),
-                UIHelper.getTopEmptyContainer(90, false),
-              ],
-            ),
-            Appbar(
-              ScreenTitle.DECK_FLOOR_FINISH_MATERIALS,
-              isDesignScreen: true,
-            ),
-            Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: BottomClipper(
-                    ButtonText.BACK,
-                    ButtonText.NEXT,
-                    () => goBack(userProvider),
-                    () => goNext(designDataProvider, userProvider))),
+            _mainContent(context, userProvider),
+            _topbar(),
+            _bottombar(userProvider, designDataProvider),
           ],
         ),
       ),
+    );
+  }
+
+  CustomScrollView _mainContent(
+      BuildContext context, UserProvider userProvider) {
+    return CustomScrollView(
+      slivers: <Widget>[
+        _startSpace(context),
+        userProvider.isLoading ? ProgressIndicatorBoxAdapter() : _buttonList(),
+        _endSpace(),
+      ],
+    );
+  }
+
+  _endSpace() => UIHelper.getTopEmptyContainer(90, false);
+
+  Positioned _bottombar(
+      UserProvider userProvider, DesignDataProvider designDataProvider) {
+    return Positioned(
+        bottom: 0,
+        left: 0,
+        right: 0,
+        child: BottomClipper(
+            ButtonText.BACK,
+            ButtonText.NEXT,
+            () => goBack(userProvider),
+            () => goNext(designDataProvider, userProvider)));
+  }
+
+  Appbar _topbar() {
+    return Appbar(
+      ScreenTitle.DECK_FLOOR_FINISH_MATERIALS,
+      isDesignScreen: true,
+    );
+  }
+
+  _startSpace(BuildContext context) {
+    return UIHelper.getTopEmptyContainer(
+        MediaQuery.of(context).size.height / 2, true);
+  }
+
+  SliverPadding _buttonList() {
+    return SliverPadding(
+      padding: const EdgeInsets.only(top: 8.0),
+      sliver: SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+        return InkWell(
+          onTap: () => _bloc.sink.add(list[index]),
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            child: UIHelper.getCustomRadioButtonHorizontal(
+                _bloc.stream, list[index], price[index]),
+          ),
+        );
+      }, childCount: list.length)),
     );
   }
 

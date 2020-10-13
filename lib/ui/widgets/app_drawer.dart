@@ -25,7 +25,6 @@ import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:provider/provider.dart';
 
 class AppDrawer extends StatelessWidget {
-  final ScreenUtil _util = ScreenUtil();
   UserProvider _userProvider;
   User _user;
   final Gradient gradient;
@@ -74,110 +73,140 @@ class AppDrawer extends StatelessWidget {
                   _profilePicFuture(), //_createHeader(context),
                   _obNameFuture(),
                   _creteDivider(),
-                  _createDrawerItem(
-                    iconPath: ImagePaths.icControls,
-                    text: AppStrings.controls,
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context)
-                          .pushReplacementNamed(ControlScreen.routeName);
-                    },
-                    isInactive: _selectedOBIdProvider.selectedObId
-                            .compareTo(AppStrings.selectOceanBuilder) ==
-                        0,
-                  ),
-                  _createDrawerItem(
-                    iconPath: ImagePaths.icMarine,
-                    text: AppStrings.marine,
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pushNamed(MarineScreen.routeName);
-                    },
-                    isInactive: _selectedOBIdProvider.selectedObId
-                            .compareTo(AppStrings.selectOceanBuilder) ==
-                        0,
-                  ),
-                  _createDrawerItem(
-                    iconPath: ImagePaths.icWeather,
-                    text: AppStrings.weather,
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pushNamed(WeatherScreen.routeName);
-                    },
-                    isInactive: _selectedOBIdProvider.selectedObId
-                            .compareTo(AppStrings.selectOceanBuilder) ==
-                        0,
-                  ),
-                  _createDrawerItem(
-                    iconPath: ImagePaths.icSteering,
-                    text: AppStrings.steering,
-                    isInactive: _selectedOBIdProvider.selectedObId
-                            .compareTo(AppStrings.selectOceanBuilder) ==
-                        0,
-                  ),
-                  _createDrawerItem(
-                    iconPath: ImagePaths.icNotificationHistory,
-                    text: AppStrings.notiHistory,
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      _showNotificationHistoryPopup(
-                          context,
-                          NotificationHistoryScreenWidget(),
-                          ScreenTitle.OB_EVENTS);
-                    },
-                  ),
-                  _createDrawerItem(
-                    iconPath: ImagePaths.icAccessRequest,
-                    text: AppStrings.accessRequests,
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      _showNotificationHistoryPopup(
-                          context,
-                          NotificationHistoryScreenWidget(
-                            showOnlyAccessRequests: true,
-                          ),
-                          ScreenTitle.OB_ACCESS_REQUESTS);
-                    },
-                    isInactive: _selectedOBIdProvider.selectedObId
-                            .compareTo(AppStrings.selectOceanBuilder) ==
-                        0,
-                  ),
-                  _createDrawerItem(
-                      iconPath: ImagePaths.icSettings,
-                      text: AppStrings.settings,
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context)
-                            .pushNamed(SettingsWidget.routeName);
-                      }),
-                  _createDrawerItem(
-                      iconPath: ImagePaths.icProfile,
-                      text: AppStrings.profile,
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context)
-                            .pushNamed(ProfileScreen.routeName);
-                      }),
+                  _drawerItemControls(context),
+                  _drawerItemMarine(context),
+                  _drawerItemWeather(context),
+                  _drawerItemSteering(),
+                  _drawerItemNotificationHistory(context),
+                  _drawerItemAccessRequest(context),
+                  _drawerItemSettings(context),
+                  _drawerItemProfile(context),
                 ],
               ),
             ),
-            _createDrawerFooter(onTap: () {
-              _userProvider.signOut().then((onValue) {
-                // Navigator.of(context).pushReplacementNamed(LandingScreen.routeName);
-                _selectedOBIdProvider.selectedObId =
-                    AppStrings.selectOceanBuilder;
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => LandingScreen(),
-                      settings: RouteSettings(name: LandingScreen.routeName)),
-                  (Route<dynamic> route) => false,
-                );
-              });
-            }),
+            _drawerFooter(context),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _drawerFooter(BuildContext context) {
+    return _createDrawerFooter(onTap: () {
+      _userProvider.signOut().then((onValue) {
+        // Navigator.of(context).pushReplacementNamed(LandingScreen.routeName);
+        _selectedOBIdProvider.selectedObId = AppStrings.selectOceanBuilder;
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LandingScreen(),
+              settings: RouteSettings(name: LandingScreen.routeName)),
+          (Route<dynamic> route) => false,
+        );
+      });
+    });
+  }
+
+  Widget _drawerItemProfile(BuildContext context) {
+    return _createDrawerItem(
+        iconPath: ImagePaths.icProfile,
+        text: AppStrings.profile,
+        onTap: () {
+          Navigator.of(context).pop();
+          Navigator.of(context).pushNamed(ProfileScreen.routeName);
+        });
+  }
+
+  Widget _drawerItemSettings(BuildContext context) {
+    return _createDrawerItem(
+        iconPath: ImagePaths.icSettings,
+        text: AppStrings.settings,
+        onTap: () {
+          Navigator.of(context).pop();
+          Navigator.of(context).pushNamed(SettingsWidget.routeName);
+        });
+  }
+
+  Widget _drawerItemAccessRequest(BuildContext context) {
+    return _createDrawerItem(
+      iconPath: ImagePaths.icAccessRequest,
+      text: AppStrings.accessRequests,
+      onTap: () {
+        Navigator.of(context).pop();
+        _showNotificationHistoryPopup(
+            context,
+            NotificationHistoryScreenWidget(
+              showOnlyAccessRequests: true,
+            ),
+            ScreenTitle.OB_ACCESS_REQUESTS);
+      },
+      isInactive: _selectedOBIdProvider.selectedObId
+              .compareTo(AppStrings.selectOceanBuilder) ==
+          0,
+    );
+  }
+
+  Widget _drawerItemNotificationHistory(BuildContext context) {
+    return _createDrawerItem(
+      iconPath: ImagePaths.icNotificationHistory,
+      text: AppStrings.notiHistory,
+      onTap: () {
+        Navigator.of(context).pop();
+        _showNotificationHistoryPopup(
+            context, NotificationHistoryScreenWidget(), ScreenTitle.OB_EVENTS);
+      },
+    );
+  }
+
+  Widget _drawerItemSteering() {
+    return _createDrawerItem(
+      iconPath: ImagePaths.icSteering,
+      text: AppStrings.steering,
+      isInactive: _selectedOBIdProvider.selectedObId
+              .compareTo(AppStrings.selectOceanBuilder) ==
+          0,
+    );
+  }
+
+  Widget _drawerItemWeather(BuildContext context) {
+    return _createDrawerItem(
+      iconPath: ImagePaths.icWeather,
+      text: AppStrings.weather,
+      onTap: () {
+        Navigator.of(context).pop();
+        Navigator.of(context).pushNamed(WeatherScreen.routeName);
+      },
+      isInactive: _selectedOBIdProvider.selectedObId
+              .compareTo(AppStrings.selectOceanBuilder) ==
+          0,
+    );
+  }
+
+  Widget _drawerItemMarine(BuildContext context) {
+    return _createDrawerItem(
+      iconPath: ImagePaths.icMarine,
+      text: AppStrings.marine,
+      onTap: () {
+        Navigator.of(context).pop();
+        Navigator.of(context).pushNamed(MarineScreen.routeName);
+      },
+      isInactive: _selectedOBIdProvider.selectedObId
+              .compareTo(AppStrings.selectOceanBuilder) ==
+          0,
+    );
+  }
+
+  Widget _drawerItemControls(BuildContext context) {
+    return _createDrawerItem(
+      iconPath: ImagePaths.icControls,
+      text: AppStrings.controls,
+      onTap: () {
+        Navigator.of(context).pop();
+        Navigator.of(context).pushReplacementNamed(ControlScreen.routeName);
+      },
+      isInactive: _selectedOBIdProvider.selectedObId
+              .compareTo(AppStrings.selectOceanBuilder) ==
+          0,
     );
   }
 
@@ -282,10 +311,10 @@ class AppDrawer extends StatelessWidget {
                   children: <Widget>[
                     CircleAvatar(
                       backgroundColor: Colors.white,
-                      radius: _util.setWidth(100),
+                      radius: 100.w,
                       child: CircleAvatar(
                         backgroundColor: Colors.white,
-                        radius: _util.setWidth(100),
+                        radius: 100.w,
                         backgroundImage: imageFile != null
                             ? FileImage(
                                 imageFile,
@@ -304,7 +333,7 @@ class AppDrawer extends StatelessWidget {
                             : ' ',
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: _util.setSp(64), //20.0,
+                            fontSize: 64.sp,
                             fontWeight: FontWeight.w500)),
                   ],
                 ),
@@ -338,13 +367,13 @@ class AppDrawer extends StatelessWidget {
                 ListTile(
                   leading: ImageIcon(
                     AssetImage(ImagePaths.icLogout),
-                    size: _util.setWidth(96),
+                    size: 96.w,
                     color: Colors.redAccent,
                   ),
                   title: Text(
                     AppStrings.logout,
                     style: TextStyle(
-                        fontSize: _util.setSp(48),
+                        fontSize: 48.sp,
                         color: Colors.redAccent,
                         fontWeight: FontWeight.w700),
                   ),
@@ -373,7 +402,7 @@ class AppDrawer extends StatelessWidget {
         children: <Widget>[
           ImageIcon(
             AssetImage(iconPath),
-            size: _util.setWidth(96),
+            size: 96.w,
             color: ColorConstants.TOP_CLIPPER_START,
           ),
           Expanded(
@@ -382,7 +411,7 @@ class AppDrawer extends StatelessWidget {
               child: Text(
                 text,
                 style: TextStyle(
-                    fontSize: _util.setSp(48),
+                    fontSize: 48.sp,
                     color: isInactive
                         ? ColorConstants.CONTROL_END
                         : ColorConstants.TOP_CLIPPER_END),
@@ -412,7 +441,7 @@ class AppDrawer extends StatelessWidget {
           padding: EdgeInsets.all(8.0),
           child: Text(
             title,
-            style: TextStyle(fontSize: _util.setSp(48)),
+            style: TextStyle(fontSize: 48.sp),
           ),
         ),
         InkWell(
@@ -424,8 +453,8 @@ class AppDrawer extends StatelessWidget {
                 child: SvgPicture.asset(
                   ImagePaths.svgSeapod,
                   color: ColorConstants.TOP_CLIPPER_START,
-                  width: _util.setHeight(128),
-                  height: _util.setHeight(128),
+                  width: 128.h,
+                  height: 128.h,
                 ),
               ),
               Padding(
@@ -433,8 +462,7 @@ class AppDrawer extends StatelessWidget {
                 child: Text(
                   text,
                   style: TextStyle(
-                      fontSize: _util.setSp(64),
-                      color: ColorConstants.TOP_CLIPPER_START),
+                      fontSize: 64.sp, color: ColorConstants.TOP_CLIPPER_START),
                 ),
               )
             ],

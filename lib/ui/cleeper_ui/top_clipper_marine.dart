@@ -35,7 +35,6 @@ enum DayState { YESTERDAY, TODAY, TOMORROW }
 
 class _TopClipperMarineState extends State<TopClipperMarine> {
   UserProvider _userProvider;
-  ScreenUtil _util;
   DayState _whichDay = DayState.TODAY;
   DateTime _whichDate = DateTime.now();
   var useMobileLayout;
@@ -50,7 +49,6 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
   @override
   Widget build(BuildContext context) {
     _userProvider = Provider.of<UserProvider>(context);
-    _util = ScreenUtil();
     var shortestSide = MediaQuery.of(context).size.shortestSide;
     useMobileLayout = shortestSide < 600;
 
@@ -67,26 +65,17 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
   _customContainer() {
     return Container(
       height: useMobileLayout
-          ? MediaQuery.of(context).size.height * 0.5
-          : MediaQuery.of(context).size.height *
-              0.65, //ScreenUtil().setHeight(990),
+          ? MediaQuery.of(context).size.height * 0.52
+          : MediaQuery.of(context).size.height * 0.65,
       decoration: BoxDecoration(gradient: topGradientDark),
       child: Padding(
-        padding: EdgeInsets.fromLTRB(
-            0.0, //_util.setWidth(32),
-            0.0, //_util.setHeight(32),
-            0.0, //_util.setWidth(32),
-            _util.setHeight(32)),
+        padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 32.h),
         child: widget.scaffoldKey != null
             ? Column(
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.fromLTRB(
-                        _util.setWidth(16),
-                        0.0, //_util.setHeight(32),
-                        0.0, //_util.setWidth(32),
-                        _util.setHeight(32)),
+                    padding: EdgeInsets.fromLTRB(16.w, 0.0, 0.0, 32.h),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
@@ -97,10 +86,11 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
                           },
                           child: Padding(
                             padding: EdgeInsets.fromLTRB(
-                                _util.setWidth(32),
-                                _util.setHeight(32),
-                                _util.setWidth(32),
-                                _util.setHeight(32)),
+                              32.w,
+                              32.h,
+                              32.w,
+                              32.h,
+                            ),
                             child: ImageIcon(
                               AssetImage(ImagePaths.icHamburger),
                               color: Colors.white,
@@ -108,16 +98,12 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.fromLTRB(
-                              _util.setWidth(32),
-                              _util.setHeight(32),
-                              0.0, //_util.setWidth(32),
-                              _util.setHeight(32)),
+                          padding: EdgeInsets.fromLTRB(32.w, 32.h, 0.0, 32.h),
                           child: Text(
                             widget.title.toUpperCase(),
                             style: TextStyle(
                                 color: Colors.white,
-                                fontSize: ScreenUtil().setSp(48),
+                                fontSize: 48.sp,
                                 fontWeight: FontWeight.w400),
                           ),
                         ),
@@ -151,7 +137,7 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
                                   'TODAY'.toUpperCase(),
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: ScreenUtil().setSp(48),
+                                      fontSize: 48.sp,
                                       fontWeight: _whichDay == DayState.TODAY
                                           ? FontWeight.w900
                                           : FontWeight.w400),
@@ -178,7 +164,7 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
                                   'TOMORROW'.toUpperCase(),
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: ScreenUtil().setSp(48),
+                                      fontSize: 48.sp,
                                       fontWeight: _whichDay == DayState.TOMORROW
                                           ? FontWeight.w900
                                           : FontWeight.w400),
@@ -190,10 +176,10 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
                       ),
                       Container(
                           padding: EdgeInsets.fromLTRB(
-                            ScreenUtil().setWidth(0.0),
-                            ScreenUtil().setHeight(32.0),
-                            ScreenUtil().setWidth(32.0),
-                            ScreenUtil().setHeight(32.0),
+                            0.0,
+                            32.h,
+                            32.w,
+                            32.h,
                           ),
                           child: _marineSummeryContainer()),
                     ],
@@ -204,7 +190,7 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
                 widget.title.toUpperCase(),
                 style: TextStyle(
                     color: Colors.white,
-                    fontSize: ScreenUtil().setSp(48),
+                    fontSize: 48.sp,
                     fontWeight: FontWeight.w400),
               ),
       ),
@@ -222,7 +208,7 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
               maxRadius: constraint.maxWidth / 4,
               backgroundColor: ColorConstants.WEATHER_BKG_CIRCLE,
               child: Container(
-                margin: EdgeInsets.only(left: ScreenUtil().setWidth(64.0)),
+                margin: EdgeInsets.only(left: 64.w),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -257,17 +243,15 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
           Align(
             alignment: Alignment.center,
             child: Container(
-              margin: EdgeInsets.only(top: ScreenUtil().setHeight(24)),
-              // height: constraint.maxWidth / 1.5,
-              // color: Colors.red,
+              margin: EdgeInsets.only(top: 24.h),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   CircleAvatar(
                     maxRadius: constraint.maxWidth / 4.5,
                     backgroundColor: ColorConstants.WEATHER_TEMP_CIRCLE,
-                    child: _waterTempDataWidgetFuture(
-                        constraint.maxWidth / 4.5), //_temDataColumn(),
+                    child:
+                        _waterTempDataWidgetFuture(constraint.maxWidth / 4.5),
                   ),
                   Container(
                     height: constraint.maxWidth / 10,
@@ -307,8 +291,7 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
           child: Text(
             AppStrings.noData,
             style: TextStyle(
-                fontSize: _util.setWidth(48),
-                color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
+                fontSize: 48.w, color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
           ),
         ),
       );
@@ -344,9 +327,7 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16.0),
                     color: Colors.white),
-                //  height: ScreenUtil().setHeight(512),
                 width: MediaQuery.of(context).size.width,
-
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -365,7 +346,7 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
+            padding: EdgeInsets.all(32.w),
             child: SvgPicture.asset(
               ImagePaths.svgWaterTemp,
               color: Colors.white,
@@ -376,13 +357,13 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
           ),
           Text(
             AppStrings.waterTemp,
-            style: TextStyle(fontSize: ScreenUtil().setSp(36)),
+            style: TextStyle(fontSize: 36.sp),
           ),
           Padding(
-            padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
+            padding: EdgeInsets.all(32.w),
             child: Text(
               '$_temperature\u{00B0}C',
-              style: TextStyle(fontSize: ScreenUtil().setSp(108)),
+              style: TextStyle(fontSize: 108.sp),
             ),
           ),
         ],
@@ -408,8 +389,7 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
           child: Text(
             AppStrings.noData,
             style: TextStyle(
-                fontSize: _util.setWidth(48),
-                color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
+                fontSize: 48.w, color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
           ),
         ),
       );
@@ -444,9 +424,7 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16.0),
                     color: Colors.white),
-                //  height: ScreenUtil().setHeight(512),
                 width: MediaQuery.of(context).size.width,
-
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -465,7 +443,7 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
+            padding: EdgeInsets.all(32.w),
             child: SvgPicture.asset(
               ImagePaths.svgVisibility,
               // fit: BoxFit.scaleDown,
@@ -476,13 +454,13 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
           ),
           Text(
             '$_visibility Meters',
-            style: TextStyle(fontSize: ScreenUtil().setSp(48)),
+            style: TextStyle(fontSize: 48.sp),
           ),
           Padding(
-            padding: EdgeInsets.all(ScreenUtil().setWidth(8)),
+            padding: EdgeInsets.all(8.w),
             child: Text(
               AppStrings.visibility,
-              style: TextStyle(fontSize: ScreenUtil().setSp(24)),
+              style: TextStyle(fontSize: 24.sp),
             ),
           ),
         ],
@@ -508,8 +486,7 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
           child: Text(
             AppStrings.noData,
             style: TextStyle(
-                fontSize: _util.setWidth(48),
-                color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
+                fontSize: 48.w, color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
           ),
         ),
       );
@@ -544,9 +521,7 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16.0),
                     color: Colors.white),
-                //  height: ScreenUtil().setHeight(512),
                 width: MediaQuery.of(context).size.width,
-
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -567,7 +542,7 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.all(ScreenUtil().setWidth(16)),
+                padding: EdgeInsets.all(16.w),
                 child: SvgPicture.asset(
                   ImagePaths.svgWaveHeight,
                   // fit: BoxFit.scaleDown,
@@ -578,7 +553,7 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
               ),
               Text(
                 '$_waveHeight Meters',
-                style: TextStyle(fontSize: ScreenUtil().setSp(32)),
+                style: TextStyle(fontSize: 32.sp),
               ),
             ],
           ),
@@ -593,16 +568,15 @@ class _TopClipperMarineState extends State<TopClipperMarine> {
                     text: Text(
                       " WAVE HEIGHT",
                       style: TextStyle(
-                        fontSize: _util.setSp(96),
+                        fontSize: 96.sp,
                       ),
                     ),
                     startAngle: 145,
                     direction: CircularTextDirection.anticlockwise),
               ],
 
-              radius: _util.setWidth(296),
+              radius: 296.w,
               position: CircularTextPosition.outside,
-              // spacing: _util.setSp(32),
             ),
           )
         ],

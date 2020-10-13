@@ -53,14 +53,10 @@ class PopupLayout extends ModalRoute {
 
     return GestureDetector(
       onTap: () {
-        // call this method here to hide soft keyboard
         SystemChannels.textInput.invokeMethod('TextInput.hide');
       },
       child: Material(
-        // This makes sure that text and other content follows the material style
         type: MaterialType.transparency,
-        //type: MaterialType.canvas,
-        // make sure that the overlay content is not cut off
         child: SafeArea(
           bottom: true,
           child: _buildOverlayContent(context),
@@ -98,22 +94,19 @@ class PopupLayout extends ModalRoute {
 }
 
 class PopUpHelpers {
-
   static showPopup(BuildContext context, Widget widget, String title,
       {BuildContext popupContext,
       double paddingTop,
-      double paddingLeft, 
-      double paddingright, 
-      double paddingBottom
-      }
-      ) {
+      double paddingLeft,
+      double paddingright,
+      double paddingBottom}) {
     Navigator.push(
       context,
       PopupLayout(
-        top: paddingTop ==null ? ScreenUtil().setHeight(32) : paddingTop,
-        left: paddingLeft ==null ? ScreenUtil().setHeight(32) : paddingLeft,
-        right: paddingright ==null ? ScreenUtil().setHeight(32) : paddingright,
-        bottom: paddingBottom ==null ? ScreenUtil().setHeight(32) : paddingBottom,
+        top: paddingTop == null ? 32.h : paddingTop,
+        left: paddingLeft == null ? 32.w : paddingLeft,
+        right: paddingright == null ? 32.w : paddingright,
+        bottom: paddingBottom == null ? 32.h : paddingBottom,
         child: widget,
       ),
     );
@@ -124,10 +117,10 @@ class PopUpHelpers {
     Navigator.push(
       context,
       PopupLayout(
-        top: ScreenUtil().setHeight(32),//12,
-        left: ScreenUtil().setWidth(32),//12,
-        right: ScreenUtil().setWidth(32),//12,
-        bottom: ScreenUtil().setHeight(32),//12,
+        top: 32.h,
+        left: 32.w,
+        right: 32.w,
+        bottom: 32.h,
         child: widget,
       ),
     );
@@ -135,7 +128,6 @@ class PopUpHelpers {
 
   static Widget popUpTitle(BuildContext context, String title,
       String iconImagePath, String valueNow) {
-    var util = ScreenUtil();
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -146,7 +138,7 @@ class PopUpHelpers {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.all(util.setHeight(16)),
+                  padding: EdgeInsets.all(16.h),
                   child: iconImagePath.contains('svg')
                       ? SvgPicture.asset(
                           iconImagePath,
@@ -163,21 +155,21 @@ class PopUpHelpers {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.all(util.setHeight(8)),
+                      padding: EdgeInsets.all(8.h),
                       child: Text(
                         title,
                         style: TextStyle(
                             color: ColorConstants.MARINE_ITEM_TEXT_COLOR,
-                            fontSize: util.setSp(32)),
+                            fontSize: 32.sp),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.all(util.setHeight(8)),
+                      padding: EdgeInsets.all(8.h),
                       child: Text(
                         valueNow.toUpperCase(),
                         style: TextStyle(
                             color: ColorConstants.MARINE_ITEM_TEXT_COLOR,
-                            fontSize: util.setSp(40)),
+                            fontSize: 40.sp),
                       ),
                     ),
                   ],
@@ -198,8 +190,8 @@ class PopUpHelpers {
                   child: Image.asset(
                     ImagePaths.cross,
                     color: ColorConstants.MARINE_ITEM_COLOR,
-                    width: util.setWidth(48),
-                    height: util.setHeight(48),
+                    width: 48.w,
+                    height: 48.h,
                   ),
                 ),
               )

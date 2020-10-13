@@ -1220,7 +1220,7 @@ class _HexPickerState extends State<HexPicker> {
       //TextField
       new Expanded(
           child: new TextField(
-        enabled: switchOn,    
+        enabled: true,    
         style: TextStyle(
             color: ColorConstants.LIGHTING_HEXCODE,
             fontSize: ScreenUtil().setSp(
@@ -1769,9 +1769,10 @@ class _IPicker {
 class ColorPicker extends StatefulWidget {
   final Color color;
   final ValueChanged<Color> onChanged;
+  final ValueChanged<bool> onLightSwitchChanged;
 
   const ColorPicker(
-      {Key key, this.color = Colors.blue, @required this.onChanged})
+      {Key key, this.color = Colors.blue,this.onLightSwitchChanged, @required this.onChanged})
       : super(key: key);
 
   @override
@@ -1949,6 +1950,7 @@ class ColorPickerState extends State<ColorPicker> {
     
 
   void _onSwitchChanged(bool value) {
+    super.widget.onLightSwitchChanged(value);
     setState(() {
       switchOn = value;
     });

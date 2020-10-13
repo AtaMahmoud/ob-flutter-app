@@ -5,6 +5,7 @@ import 'package:ocean_builder/core/providers/current_ob_id_provider.dart';
 import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:ocean_builder/custom_drawer/homeDrawer.dart';
 import 'package:ocean_builder/ui/shared/shared_pref_data.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
@@ -35,7 +36,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   File _profileImageFile;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  ScreenUtil _util;
 
   UserProvider _userProvider;
   User _user;
@@ -161,15 +161,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _bloc.phoneChanged(_user.phone);
     // _editBloc.profileInfoChanged(false);
 
-    _util = ScreenUtil();
-
     if (_user.emergencyContacts != null && _user.emergencyContacts.length > 0) {
-      // debugPrint('------emergencyContacts------------  ${_user.emergencyContacts.length}');
-
       _user.emergencyContact = _user.emergencyContacts[0];
-
-      // print( _user.emergencyContact.phone);
-
     }
 
     if (_user.emergencyContact == null) {
@@ -192,153 +185,188 @@ class _ProfileScreenState extends State<ProfileScreen> {
           screenIndex: DrawerIndex.PROFILE,
         ),
         drawerScrimColor: AppTheme.drawerScrimColor.withOpacity(.65),
-        body: Stack(
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(gradient: profileGradient),
-              child: CustomScrollView(
-                controller: _scrollController,
-                slivers: <Widget>[
-                  UIHelper.getTopEmptyContainer(_util.setHeight(64), false),
-                  SliverPadding(
-                    padding: EdgeInsets.only(
-                      top: _util.setHeight(8),
-                      bottom: _util.setHeight(128),
-                    ),
-                    sliver: SliverList(
-                      delegate: SliverChildListDelegate(
-                        [
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 16.0, top: 16.0),
-                            child: Row(
-                              children: <Widget>[
-                                InkWell(
-                                  onTap: () {
-                                    _scaffoldKey.currentState.openDrawer();
-                                  },
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(
-                                      0,
-                                      _util.setHeight(32),
-                                      _util.setWidth(32),
-                                      _util.setHeight(32),
-                                    ),
-                                    child: ImageIcon(
-                                      AssetImage(ImagePaths.icHamburger),
-                                      size: _util.setWidth(50),
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          CircleAvatar(
-                            backgroundColor: Colors.white,
-                            radius: _util.setWidth(196),
-                            child: InkWell(
-                              onTap: () {
-                                _pickProfilePicture();
-                              },
-                              child: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: _profileImageFile != null
-                                    ? _util.setWidth(196)
-                                    : _util.setWidth(128),
-                                backgroundImage: _profileImageFile != null
-                                    ? FileImage(
-                                        _profileImageFile,
-                                      )
-                                    : AssetImage(
-                                        ImagePaths.icAvatar,
-                                      ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: _util.setHeight(60)),
-                          UIHelper.getProfileOBUnit(
-                            context,
-                            TextFieldHints.PROFILE_FIRST_NAME,
-                            _bloc.firstName,
-                            _bloc.firstNameChanged,
-                            _firstNameController,
-                            null,
-                            true,
-                            _firstNameNode,
-                            _lastNameNode,
-                            maxLength: 30,
-                          ),
-                          SizedBox(height: _util.setHeight(120)),
-                          UIHelper.getProfileOBUnit(
-                            context,
-                            TextFieldHints.PROFILE_LAST_NAME,
-                            _bloc.lastName,
-                            _bloc.lastNameChanged,
-                            _lastNameController,
-                            null,
-                            true,
-                            _lastNameNode,
-                            _phoneNode,
-                            maxLength: 30,
-                          ),
-                          SizedBox(height: _util.setHeight(120)),
-                          UIHelper.getProfileOBUnitPhone(
-                              context,
-                              TextFieldHints.PHONE,
-                              _bloc.phone,
-                              _bloc.phoneChanged,
-                              _phoneController,
-                              InputTypes.NUMBER,
-                              true,
-                              _phoneNode,
-                              _emailNode),
-                          SizedBox(height: _util.setHeight(120)),
-                          UIHelper.getProfileOBUnit(
-                              context,
-                              TextFieldHints.PROFILE_EMAIL,
-                              _bloc.email,
-                              _bloc.emailChanged,
-                              _emailController,
-                              InputTypes.EMAIL,
-                              true,
-                              _emailNode,
-                              null),
-                          SizedBox(height: _util.setHeight(60)),
-                          ClipperProfileOBDropdown(
-                              TextFieldHints.OCEAN_BUILDER_ACCESS,
-                              getList(),
-                              ColorConstants.PROFILE_BKG_1,
-                              _scrollController),
-                          Container(
-                            transform: Matrix4.translationValues(
-                                0.0, _util.setHeight(-175), 0.0), // 192 + 64
-                            child: ClipperProfileEmergencyDropdown(
-                                TextFieldHints.MY_EMERGENCY_CONTACT,
-                                ColorConstants.PROFILE_BKG_2,
-                                _scrollController,
-                                _editBloc,
-                                _user),
-                          ),
-                          // SizedBox(height: util.setHeight(175)),
-                        ],
-                      ),
-                    ),
+        body: _body(),
+      ),
+    );
+  }
+
+  Stack _body() {
+    return Stack(
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(gradient: profileGradient),
+          child: CustomScrollView(
+            controller: _scrollController,
+            slivers: <Widget>[
+              _startSpace(),
+              SliverPadding(
+                padding: EdgeInsets.only(
+                  top: 8.h,
+                  bottom: 128.h,
+                ),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate(
+                    [
+                      _buttonHamburgerMenu(),
+                      _profilePicture(),
+                      SpaceH64(),
+                      _inputFirstName(),
+                      SizedBox(height: 120.h),
+                      _inputLastName(),
+                      SizedBox(height: 120.h),
+                      _inputPhone(),
+                      SizedBox(height: 120.h),
+                      _inputEmail(),
+                      SizedBox(height: 60.h),
+                      _dropdownSeaPod(),
+                      _emergencyContactDetails(),
+                      // SizedBox(height: util.setHeight(175)),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: bottomBarButtons(),
-            )
-          ],
+            ],
+          ),
+        ),
+        _bottomBar()
+      ],
+    );
+  }
+
+  Positioned _bottomBar() {
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: bottomBarButtons(),
+    );
+  }
+
+  Container _emergencyContactDetails() {
+    return Container(
+      transform: Matrix4.translationValues(0.0, -175.h, 0.0), // 192 + 64
+      child: ClipperProfileEmergencyDropdown(
+          TextFieldHints.MY_EMERGENCY_CONTACT,
+          ColorConstants.PROFILE_BKG_2,
+          _scrollController,
+          _editBloc,
+          _user),
+    );
+  }
+
+  ClipperProfileOBDropdown _dropdownSeaPod() {
+    return ClipperProfileOBDropdown(TextFieldHints.OCEAN_BUILDER_ACCESS,
+        getList(), ColorConstants.PROFILE_BKG_1, _scrollController);
+  }
+
+  Widget _inputEmail() {
+    return UIHelper.getProfileOBUnit(
+        context,
+        TextFieldHints.PROFILE_EMAIL,
+        _bloc.email,
+        _bloc.emailChanged,
+        _emailController,
+        InputTypes.EMAIL,
+        true,
+        _emailNode,
+        null);
+  }
+
+  Widget _inputPhone() {
+    return UIHelper.getProfileOBUnitPhone(
+        context,
+        TextFieldHints.PHONE,
+        _bloc.phone,
+        _bloc.phoneChanged,
+        _phoneController,
+        InputTypes.NUMBER,
+        true,
+        _phoneNode,
+        _emailNode);
+  }
+
+  Widget _inputLastName() {
+    return UIHelper.getProfileOBUnit(
+      context,
+      TextFieldHints.PROFILE_LAST_NAME,
+      _bloc.lastName,
+      _bloc.lastNameChanged,
+      _lastNameController,
+      null,
+      true,
+      _lastNameNode,
+      _phoneNode,
+      maxLength: 30,
+    );
+  }
+
+  Widget _inputFirstName() {
+    return UIHelper.getProfileOBUnit(
+      context,
+      TextFieldHints.PROFILE_FIRST_NAME,
+      _bloc.firstName,
+      _bloc.firstNameChanged,
+      _firstNameController,
+      null,
+      true,
+      _firstNameNode,
+      _lastNameNode,
+      maxLength: 30,
+    );
+  }
+
+  CircleAvatar _profilePicture() {
+    return CircleAvatar(
+      backgroundColor: Colors.white,
+      radius: 196.w,
+      child: InkWell(
+        onTap: () {
+          _pickProfilePicture();
+        },
+        child: CircleAvatar(
+          backgroundColor: Colors.white,
+          radius: _profileImageFile != null ? 196.w : 128.w,
+          backgroundImage: _profileImageFile != null
+              ? FileImage(
+                  _profileImageFile,
+                )
+              : AssetImage(
+                  ImagePaths.icAvatar,
+                ),
         ),
       ),
     );
   }
+
+  Padding _buttonHamburgerMenu() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16.0, top: 16.0),
+      child: Row(
+        children: <Widget>[
+          InkWell(
+            onTap: () {
+              _scaffoldKey.currentState.openDrawer();
+            },
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                0,
+                32.h,
+                32.w,
+                32.h,
+              ),
+              child: ImageIcon(
+                AssetImage(ImagePaths.icHamburger),
+                size: 50.w,
+                color: Colors.white,
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  _startSpace() => UIHelper.getTopEmptyContainer(64.h, false);
 
   Widget bottomBarButtons() {
     return StreamBuilder<bool>(
@@ -540,7 +568,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   _pickProfilePicture() async {
-    double radius = ScreenUtil().setWidth(512);
+    double radius = 512.w;
     // Step 1: Retrieve image from picker
     final File image = await ImagePicker.pickImage(source: ImageSource.gallery);
 // Step 2: Check for valid file

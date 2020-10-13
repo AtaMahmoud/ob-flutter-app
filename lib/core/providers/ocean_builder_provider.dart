@@ -5,6 +5,7 @@ import 'package:barcode_scan/barcode_scan.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:ocean_builder/core/models/ocean_builder.dart';
 import 'package:ocean_builder/core/models/ocean_builder_user.dart';
 import 'package:ocean_builder/core/models/permission.dart';
@@ -25,7 +26,8 @@ class OceanBuilderProvider extends BaseProvider {
   HeadersManager _headerManager = HeadersManager.getInstance();
 
   Future<SeaPod> getSeaPod(String obId, UserProvider userProvider) async {
-    // // debugPrint('get SeaPod info for  ' + obId);
+    debugPrint('get SeaPod info for  ' + obId);
+
     SeaPod seapod;
 
     userProvider.authenticatedUser.seaPods.map((f) {
@@ -34,12 +36,13 @@ class OceanBuilderProvider extends BaseProvider {
         seapod = f;
       }
     }).toList();
-    // // print("got SeaPod  =====================================================");
-    // // print(seapod.toJson());
 
-    if (seapod == null) {
-      seapod = userProvider.authenticatedUser.seaPods[0];
-    }
+    print("got SeaPod  =====================================================");
+    print(seapod?.toJson());
+
+    seapod ??= userProvider.authenticatedUser.seaPods[0];
+
+    debugPrint('returning seapod -- $seapod');
 
     return seapod;
   }
@@ -235,7 +238,7 @@ class OceanBuilderProvider extends BaseProvider {
     return responseStatus;
   }
 
-  // ------------------------------------------------------- Toogle light  -----------------------------------------------------------------
+  // ------------------------------------------------------- Toogle light scene status  -----------------------------------------------------------------
 
   Future<ResponseStatus> toogleLightSceneStatus({String seapodId}) async {
     isLoading = true;
@@ -271,6 +274,59 @@ class OceanBuilderProvider extends BaseProvider {
     } on BadRequestException catch (e) {
       AppException ea = e;
       responseStatus.code = 'Toogle Light Scene Status Failed';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+    }
+
+    isLoading = false;
+    notifyListeners();
+
+    return responseStatus;
+  }
+
+  // ------------------------------------------------------- Toogle light status -----------------------------------------------------------------
+
+  Future<ResponseStatus> toogleLightStatus(
+      {String sceneId, String lightId}) async {
+    isLoading = true;
+    notifyListeners();
+    ResponseStatus responseStatus = ResponseStatus();
+    responseStatus.status = 200;
+
+    print(
+        '------------------------------toogle light scene on/off--------------------');
+
+// // print(lighSceneMap);
+
+    await _headerManager.initalizeAuthenticatedUserHeaders();
+
+    Map<String, dynamic> reqMap = {
+      "lightId": lightId,
+    };
+
+    try {
+      Response toogleLightSceneResponse = await _apiBaseHelper.put(
+          url: APP_CONFIG.Config.TOOGLE_LIGHT_STATUS(sceneId),
+          headers: _headerManager.authUserHeaders,
+          data: reqMap);
+
+      print(toogleLightSceneResponse.statusCode);
+
+      if (toogleLightSceneResponse.statusCode == 200) {
+        responseStatus.status = 200;
+      } else {
+        responseStatus.code = 'Toogle Light Status Failed';
+        responseStatus.message = toogleLightSceneResponse.statusMessage;
+        responseStatus.status = toogleLightSceneResponse.statusCode;
+      }
+    } on FetchDataException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Toogle Light Status Failed';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+    } on BadRequestException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Toogle Light Status Failed';
       responseStatus.message = ea.message;
       responseStatus.status = ea.statusCode;
     }

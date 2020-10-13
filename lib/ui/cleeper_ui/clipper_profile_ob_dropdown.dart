@@ -11,6 +11,7 @@ import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/custom_clipper/custom_clipper.dart';
 import 'package:ocean_builder/helper/method_helper.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -66,7 +67,6 @@ class _ClipperProfileOBDropdownState extends State<ClipperProfileOBDropdown> {
     _userProvider = Provider.of<UserProvider>(context);
     _oceanBuilderProvider = Provider.of<OceanBuilderProvider>(context);
 
-    ScreenUtil _util = ScreenUtil();
     return Stack(
       children: <Widget>[
         ClipPath(
@@ -74,9 +74,7 @@ class _ClipperProfileOBDropdownState extends State<ClipperProfileOBDropdown> {
           child: Container(
             color: widget.backgroundColor,
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                  vertical: ScreenUtil().setHeight(164),
-                  horizontal: ScreenUtil().setWidth(16)),
+              padding: EdgeInsets.symmetric(vertical: 164.h, horizontal: 16.w),
               child: Center(
                 child: Theme(
                   child: ExpansionTile(
@@ -84,7 +82,7 @@ class _ClipperProfileOBDropdownState extends State<ClipperProfileOBDropdown> {
                         isExpanded
                             ? Icons.arrow_drop_up
                             : Icons.arrow_drop_down,
-                        size: ScreenUtil().setWidth(128),
+                        size: 128.w,
                         color: Colors.white,
                       ),
                       onExpansionChanged: (b) {
@@ -111,7 +109,7 @@ class _ClipperProfileOBDropdownState extends State<ClipperProfileOBDropdown> {
                         widget.title,
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: _util.setSp(48),
+                            fontSize: 48.sp,
                             letterSpacing: 1.3),
                       ),
                       children: widget.list != null && widget.list.length > 0
@@ -157,27 +155,17 @@ class _ClipperProfileOBDropdownState extends State<ClipperProfileOBDropdown> {
             ),
           ),
         ),
-        // Padding(
-        //   padding: EdgeInsets.fromLTRB(
-        //       util.setHeight(48), util.setHeight(130), util.setHeight(48), 0),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: <Widget>[],
-        //   ),
-        // )
       ],
     );
   }
 
   _showUpdateOBNameDialog(UserOceanBuilder uob) async {
-    ScreenUtil _util = ScreenUtil();
     SeaPod seapod = await _oceanBuilderProvider.getSeaPod(
         uob.oceanBuilderId, _userProvider);
 
     _obNameController = TextEditingController(text: '');
     var alertStyle = AlertStyle(
       isCloseButton: false,
-      //  isOverlayTapDismiss: true,
       titleStyle: TextStyle(
           color: ColorConstants.TOP_CLIPPER_START,
           fontSize: 86.sp,
@@ -191,11 +179,9 @@ class _ClipperProfileOBDropdownState extends State<ClipperProfileOBDropdown> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SizedBox(
-              height: _util.setHeight(32),
-            ),
+            SpaceH32(),
             Padding(
-              padding: EdgeInsets.all(_util.setHeight(16)),
+              padding: EdgeInsets.all(16.h),
               child: Center(
                 child: Image.network(
                   seapod.qRCodeImageUrl,
@@ -203,13 +189,9 @@ class _ClipperProfileOBDropdownState extends State<ClipperProfileOBDropdown> {
                 ),
               ),
             ),
-            SizedBox(
-              height: _util.setHeight(32),
-            ),
+            SpaceH32(),
             UIHelper.getTitleSubtitleWidget('Vesseel Code', seapod.vessleCode),
-            SizedBox(
-              height: _util.setHeight(32),
-            ),
+            SpaceH32(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text('Name',
@@ -233,31 +215,21 @@ class _ClipperProfileOBDropdownState extends State<ClipperProfileOBDropdown> {
                   _obNameNode,
                   () => {}),
             ),
-            SizedBox(
-              height: _util.setHeight(32),
-            ),
+            SpaceH32(),
             UIHelper.getTitleSubtitleWidget('ID', uob.oceanBuilderId),
-            SizedBox(
-              height: _util.setHeight(32),
-            ),
+            SpaceH32(),
             UIHelper.getTitleSubtitleWidget('User Type', uob.userType),
-            SizedBox(
-              height: _util.setHeight(32),
-            ),
+            SpaceH32(),
             uob.accessTime.inHours != 0
                 ? UIHelper.getTitleSubtitleWidget('Access Duration',
                     '${uob.accessTime.inDays.toString()} days')
                 : Container(),
-            SizedBox(
-              height: _util.setHeight(32),
-            ),
+            SpaceH32(),
             uob.checkInDate != null
                 ? UIHelper.getTitleSubtitleWidget('Check in Date',
                     DateFormat('yMMMMd').format(uob.checkInDate))
                 : Container(),
-            SizedBox(
-              height: _util.setHeight(32),
-            ),
+            SpaceH32(),
             uob.reqStatus.contains('INITIATED')
                 ? UIHelper.getTitleSubtitleWidget('Status', 'Pending approval')
                 : Container(),
@@ -273,7 +245,6 @@ class _ClipperProfileOBDropdownState extends State<ClipperProfileOBDropdown> {
               Navigator.of(context, rootNavigator: true).pop();
               _showWarning(uob);
             },
-            // color: Color.fromRGBO(0, 179, 134, 1.0),
             gradient: LinearGradient(colors: [
               ColorConstants.BOTTOM_CLIPPER_START,
               ColorConstants.BOTTOM_CLIPPER_END
@@ -336,20 +307,14 @@ class _ClipperProfileOBDropdownState extends State<ClipperProfileOBDropdown> {
     );
 
     _flush.show(context).then((result) async {
-      // print(result);
-
       if (result != null && result) {
         uob.oceanBuilderName = _changedObName;
-        // ResponseStatus   responseStatus =    await _userProvider.updateUserOceanBuilder(uob);
         ResponseStatus responseStatus = await _userProvider.updateSeapodName(
             uob.oceanBuilderId, uob.oceanBuilderName);
         if (responseStatus.status == 200) {
-          // Navigator.of(context).pop();
-          // await _userProvider.resetAuthenticatedUser(_userProvider.authenticatedUser.userID);
           await _userProvider.autoLogin();
           showInfoBar('Seapod Name Updated', 'SeaPod name updated', context);
         } else {
-          // Navigator.of(context).pop();
           showInfoBar(parseErrorTitle(responseStatus.code),
               responseStatus.message, context);
         }

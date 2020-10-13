@@ -33,6 +33,7 @@ class ColorConstants {
   static const MARINE_ITEM_TEXT_COLOR = Color(0xFF0D48A3);
   static const TOP_CLIPPER_END_DARK = Color(0xFF084AAA);
   static const TOP_CLIPPER_START_DARK = Color(0xFF184192);
+  static const SVG_ICON_COLOR = Color(0xFF3363A3);
 
   static const CONTROL_LIST_ITEM_BKG = Color(0xFF0590D3);
   static const CONTROL_LIST_BKG = Color(0xFF165AB7);
@@ -691,8 +692,7 @@ class ListHelper {
         'UNDERAWATER ROOM',
       ];
 
-  static List<String> getSourceList() =>
-      ['WORLD WEATHER ONLINE', 'LOCAL SOURCE'];
+  static List<String> getSourceList() => ['EXTERNAL SOURCE', 'LOCAL SOURCE'];
 
   static List<String> getLightList() =>
       ["Lightstrip 1", "Lightstrip 2", "Light 3", "Counter 4", "Overhead 3"];
@@ -967,6 +967,23 @@ class ImagePaths {
   static String svgCloudy = 'images/cloudy.svg';
   static String svgStormy = 'images/stormy.svg';
   static String svgCloudSunny = 'images/sunny_and_cloudy.svg';
+
+  static String svgWeatherTypeRainy = 'images/rainy.svg';
+  static String svgWeatherTypeStormy = 'images/stormy.svg';
+  static String svgWeatherTypeCloudy = 'images/cloudy.svg';
+  static String svgWeatherTypeOvercast = 'images/overcast.svg';
+  static String svgWeatherTypeWildGusts = 'images/wid gusts.svg'; 
+  static String svgWeatherTypePartlyCloudy = 'images/partly cloudy.svg';
+  static String svgWeatherTypeAirDensity = 'images/air density.svg';
+
+  static String svgRainDuration = 'images/rain duration.svg';
+  static String svgRainAccumulation = 'images/rain accumulation.svg';
+  static String svgRainIntensity = 'images/rain intensity.svg';
+  
+  static String svgAlarmLightingDetectedLast3hours = 'images/lightnig detected last 3 hours.svg';
+  static String svgCountLightingStrike = 'images/lightning strike count.svg';
+  static String svgAlarmLightingDistanceDetected = 'images/lightning distance detected.svg';
+  static String svgLighitngLastDetected = 'images/lightning last detected.svg';
 
   static String svgHumidity = 'images/humidity.svg';
   static String svgUmbrella = 'images/umbrella.svg';
@@ -1323,9 +1340,10 @@ class ProfileEditState {
 class WeatherDescMap {
   static var weatherCodeMap = {
     '113': {'Sunny', ImagePaths.weatherTypeSunny},
-    '116': {'Partly cloudy', ImagePaths.weatherTypePartyCloudy},
-    '119': {'Cloudy', ImagePaths.weatherTypeCloudy},
-    '122': {'Overcast', ImagePaths.weatherTypeOvercast},
+    '116': {'Partly cloudy', ImagePaths.svgWeatherTypePartlyCloudy},
+    '119': {'Cloudy', ImagePaths.svgWeatherTypeCloudy},
+    '122': {'Overcast', ImagePaths.svgWeatherTypeOvercast},
+
     '143': {'Mist', ImagePaths.weatherTypeMist},
     '176': {'Patchy rain possible', ImagePaths.weatherTypePatchyRainPossible},
     '179': {'Patchy snow possible', ImagePaths.weatherTypePatchySnowPossible},
@@ -1357,6 +1375,7 @@ class WeatherDescMap {
     '308': {'Heavy rain', ImagePaths.weatherTypeHeavyRain},
     '311': {'Light freezing rain', ImagePaths.weatherTypeLightRain},
     '314': {'Moderate or Heavy freezing rain', ImagePaths.weatherTypeHeavyRain},
+    
     '317': {'Light sleet', ImagePaths.weatherTypePatchySleetPossible},
     '320': {'Moderate or heavy sleet', ImagePaths.svgCloudRain},
     '323': {'Patchy light snow', ImagePaths.svgWindGusts},
@@ -1568,19 +1587,19 @@ class PredefinedLightData {
   static List<Room> rooms = [
     new Room(
         roomName: 'Bedroom',
-        light: lightsBedroom[0],
+        // light: lightsBedroom[0],
         lightModes: lightsBedroom),
     new Room(
         roomName: 'Livingroom',
-        light: lightsLivingRoom[1],
+        // light: lightsLivingRoom[1],
         lightModes: lightsLivingRoom),
     new Room(
         roomName: 'Kitchen',
-        light: lightsKitchen[2],
+        // light: lightsKitchen[2],
         lightModes: lightsKitchen),
     new Room(
         roomName: 'UnderWaterRoom',
-        light: lightsUnderWaterRoom[3],
+        // light: lightsUnderWaterRoom[3],
         lightModes: lightsUnderWaterRoom),
   ];
 

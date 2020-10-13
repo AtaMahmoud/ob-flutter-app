@@ -99,31 +99,38 @@ class _YourObsScreenState extends State<YourObsScreen> {
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               Appbar(ScreenTitle.YOUR_OBS),
-              Padding(
-                padding: const EdgeInsets.all(64.0),
-                child: Text(
-                    widget.fcmNotification == null
-                        ? InfoTexts.YOUR_OB_INFO(
-                            pendigOceanBuilderList.length.toString())
-                        : widget.fcmNotification.data.message,
-                    style: TextStyle(
-                        color: Colors.black,
-                        // wordSpacing: 4.0,
-
-                        fontWeight: FontWeight.w500,
-                        fontSize: 24)),
-              ),
-              StreamBuilder<String>(
-                stream: _bloc.requestAccessTimeController,
-                builder: (context, snapshot) {
-                  return BottomClipper(ButtonText.BACK, ButtonText.NEXT,
-                      () => goBack(), () => goNext());
-                },
-              )
+              _textObInfor(pendigOceanBuilderList),
+              _bottomBar()
             ],
           ),
         ),
       ),
+    );
+  }
+
+  StreamBuilder<String> _bottomBar() {
+    return StreamBuilder<String>(
+      stream: _bloc.requestAccessTimeController,
+      builder: (context, snapshot) {
+        return BottomClipper(
+            ButtonText.BACK, ButtonText.NEXT, () => goBack(), () => goNext());
+      },
+    );
+  }
+
+  Padding _textObInfor(List<UserOceanBuilder> pendigOceanBuilderList) {
+    return Padding(
+      padding: const EdgeInsets.all(64.0),
+      child: Text(
+          widget.fcmNotification == null
+              ? InfoTexts.YOUR_OB_INFO(pendigOceanBuilderList.length.toString())
+              : widget.fcmNotification.data.message,
+          style: TextStyle(
+              color: Colors.black,
+              // wordSpacing: 4.0,
+
+              fontWeight: FontWeight.w500,
+              fontSize: 24)),
     );
   }
 
