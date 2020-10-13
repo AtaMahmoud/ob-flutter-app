@@ -19,16 +19,14 @@ class BottomClipperLighting extends StatefulWidget {
 }
 
 class _BottomClipperLightingState extends State<BottomClipperLighting> {
-
   @override
   Widget build(BuildContext context) {
-    ScreenUtil _util = ScreenUtil();
     return Stack(
       children: <Widget>[
         ClipPath(
           clipper: CustomBottomProfileShapeClipper(),
           child: Container(
-            height: _util.setHeight(250),
+            height: 250.h,
             color: Color(0xFFEDF2FD),
           ),
         ),
@@ -37,53 +35,27 @@ class _BottomClipperLightingState extends State<BottomClipperLighting> {
           right: 0,
           left: 0,
           child: Padding(
-            padding: EdgeInsets.all(_util.setHeight(16)),
+            padding: EdgeInsets.all(16.h),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
-                  height: _util.setHeight(96),
+                  height: 96.h,
                   child: RaisedButton(
                     padding: EdgeInsets.only(
-                      left: _util.setWidth(128),
-                      right: _util.setWidth(128),
-                      // top: util.setHeight(8),
-                      // bottom: util.setHeight(8)
+                      left: 128.w,
+                      right: 128.w,
                     ),
                     onPressed: widget.callbackBack,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        _util.setWidth(64)
-                      )
-                    ),
+                        borderRadius: BorderRadius.circular(64.w)),
                     color: ColorConstants.LIGHTING_BOTTOM_CLIPER_BUTTON_BKG,
                     child: Text(
                       widget.leftText,
-                      style: TextStyle(
-                        color: Colors.white, 
-                        fontSize: _util.setSp(38)
-                        ),
+                      style: TextStyle(color: Colors.white, fontSize: 38.sp),
                     ),
                   ),
                 ),
-                // SizedBox(
-                //   height: util.setHeight(32),
-                // ),
-                // Padding(
-                //   padding: EdgeInsets.only(
-                //     bottom:util.setHeight(8)
-                //     ),
-                //   child: InkWell(
-                //     child: Text(
-                //       widget.rightText,
-                //       style: TextStyle(
-                //         color: ColorConstants.LIGHTING_HEXCODE,
-                //         fontSize: util.setSp(38)
-                //         ),
-                //     ),
-                //     onTap: !widget.partiallyTransparent ? widget.callback : null,
-                //   ),
-                // )
               ],
             ),
           ),

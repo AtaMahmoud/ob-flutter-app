@@ -27,6 +27,7 @@ import 'package:ocean_builder/ui/screens/permission/manage_permission_screen.dar
 import 'package:ocean_builder/ui/screens/sign_in_up/request_access_screen.dart';
 import 'package:ocean_builder/ui/shared/popup.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -136,7 +137,7 @@ class _AccessManagementScreenState extends State<AccessManagementScreen> {
     _oceanBuilderProvider = Provider.of<OceanBuilderProvider>(context);
 
     final UserProvider userProvider = Provider.of<UserProvider>(context);
-  _accessEventsFuture = userProvider.getAccessEvents();
+    _accessEventsFuture = userProvider.getAccessEvents();
 /*     if (userProvider.authenticatedUser != null) {
       userProvider
           .resetAuthenticatedUser(userProvider.authenticatedUser.userID);
@@ -153,6 +154,7 @@ class _AccessManagementScreenState extends State<AccessManagementScreen> {
         screnTitle: ScreenTitle.ACCESS_MANAGEMENT));
     slivers.add(_accessControlWidgets());
     slivers.addAll(_accessorList());
+
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -181,290 +183,26 @@ class _AccessManagementScreenState extends State<AccessManagementScreen> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             _accessEvents = snapshot.data;
-            print(_accessEvents.toJson());
-            }
+          }
 
           return SliverToBoxAdapter(
             child: Container(
               color: Colors.white,
-              padding: EdgeInsets.symmetric(
-                  horizontal: _util.setWidth(32), vertical: 48.h),
+              padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 48.h),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  InkWell(
-                    onTap: () {
-                      AccessEventsScreenParams accessEventsScreenParams =
-                          AccessEventsScreenParams(
-                              AccessType.SENT_INVITATION, _accessEvents);
-                      Navigator.of(context).pushNamed(
-                          AccessEventScreen.routeName,
-                          arguments: accessEventsScreenParams);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24.w),
-                        color: ColorConstants.COLOR_PENDING_REQUEST,
-                      ),
-                      width: MediaQuery.of(context).size.width,
-                      padding: EdgeInsets.all(
-                        _util.setWidth(32),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(width: ScreenUtil().setWidth(96)),
-                          SvgPicture.asset(
-                            ImagePaths.svgInvitationSent,
-                            width: ScreenUtil().setWidth(80),
-                            height: ScreenUtil().setWidth(80),
-                          ),
-                          SizedBox(width: ScreenUtil().setWidth(32)),
-                          _pendingRequestConsumer(AccessType.SENT_INVITATION,_accessEvents.sentInvitations != null ? _accessEvents.sentInvitations.length : 0),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(
-                      _util.setWidth(16),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      AccessEventsScreenParams accessEventsScreenParams =
-                          AccessEventsScreenParams(
-                              AccessType.RECEIVED_INVITATION, _accessEvents);
-                      Navigator.of(context).pushNamed(
-                          AccessEventScreen.routeName,
-                          arguments: accessEventsScreenParams);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24.w),
-                        color: ColorConstants.COLOR_PENDING_REQUEST,
-                      ),
-                      width: MediaQuery.of(context).size.width,
-                      padding: EdgeInsets.all(
-                        _util.setWidth(32),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(width: ScreenUtil().setWidth(96)),
-                          SvgPicture.asset(
-                            ImagePaths.svgInvitationReceived,
-                            width: ScreenUtil().setWidth(80),
-                            height: ScreenUtil().setWidth(80),
-                          ),
-                          SizedBox(width: ScreenUtil().setWidth(32)),
-                          _pendingRequestConsumer(
-                              AccessType.RECEIVED_INVITATION,_accessEvents.receivedInvitations != null ? _accessEvents.receivedInvitations.length : 0),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(
-                      _util.setWidth(16),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      AccessEventsScreenParams accessEventsScreenParams =
-                          AccessEventsScreenParams(
-                              AccessType.SENT_REQUEST, _accessEvents);
-                      Navigator.of(context).pushNamed(
-                          AccessEventScreen.routeName,
-                          arguments: accessEventsScreenParams);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24.w),
-                        color: ColorConstants.COLOR_PENDING_REQUEST,
-                      ),
-                      width: MediaQuery.of(context).size.width,
-                      padding: EdgeInsets.all(
-                        _util.setWidth(32),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(width: ScreenUtil().setWidth(96)),
-                          SvgPicture.asset(
-                            ImagePaths.svgRequestSent,
-                            width: ScreenUtil().setWidth(80),
-                            height: ScreenUtil().setWidth(80),
-                          ),
-                          SizedBox(width: ScreenUtil().setWidth(32)),
-                          _pendingRequestConsumer(AccessType.SENT_REQUEST,_accessEvents.sentRequests != null ? _accessEvents.sentRequests.length : 0),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(
-                      _util.setWidth(16),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      AccessEventsScreenParams accessEventsScreenParams =
-                          AccessEventsScreenParams(
-                              AccessType.RECEIVED_REQUEST, _accessEvents);
-                      Navigator.of(context).pushNamed(
-                          AccessEventScreen.routeName,
-                          arguments: accessEventsScreenParams);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24.w),
-                        color: ColorConstants.COLOR_PENDING_REQUEST,
-                      ),
-                      width: MediaQuery.of(context).size.width,
-                      padding: EdgeInsets.all(
-                        _util.setWidth(32),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(width: ScreenUtil().setWidth(96)),
-                          SvgPicture.asset(
-                            ImagePaths.svgRequsetReceived,
-                            width: ScreenUtil().setWidth(80),
-                            height: ScreenUtil().setWidth(80),
-                          ),
-                          SizedBox(width: ScreenUtil().setWidth(32)),
-                          _pendingRequestConsumer(AccessType.RECEIVED_REQUEST, _accessEvents.receivedRequests != null ? _accessEvents.receivedRequests.length : 0),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(
-                      _util.setWidth(16),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context)
-                              .pushNamed(RequestAccessScreen.routeName);
-                        },
-                        child: Container(
-                          // height: h,
-                          // width: MediaQuery.of(context).size.width * .45,
-                          padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
-                          decoration: BoxDecoration(
-                              borderRadius: new BorderRadius.circular(
-                                  ScreenUtil().setWidth(72)),
-                              color: ColorConstants.TOP_CLIPPER_END_DARK),
-                          child: Center(
-                              child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              SvgPicture.asset(
-                                ImagePaths.svgPlus,
-                                color: Colors.white,
-                                height: 48.h,
-                                width: 48.h,
-                              ),
-                              SizedBox(
-                                width: 16.w,
-                              ),
-                              Text(
-                                'REQUEST ACCESS',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: ScreenUtil().setSp(36)),
-                              ),
-                            ],
-                          )),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          if (_user.userOceanBuilder.length > 0) {
-                            showGrantAccessPopup(
-                                context, GrantAccessScreenWidget(), " ");
-                          }
-                        },
-                        child: Container(
-                          // height: h,
-                          // width: MediaQuery.of(context).size.width * .4,
-                          padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
-                          decoration: BoxDecoration(
-                              borderRadius: new BorderRadius.circular(
-                                  ScreenUtil().setWidth(72)),
-                              color: ColorConstants.TOP_CLIPPER_END_DARK),
-                          child: Center(
-                              child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              SvgPicture.asset(
-                                ImagePaths.svgPlus,
-                                color: Colors.white,
-                                height: 48.h,
-                                width: 48.h,
-                              ),
-                              SizedBox(
-                                width: 16.w,
-                              ),
-                              Text(
-                                'GRANT ACCESS',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: ScreenUtil().setSp(36)),
-                              ),
-                            ],
-                          )),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(
-                      _util.setWidth(16),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context)
-                              .pushNamed(ManagePermissionScreen.routeName);
-                        },
-                        child: Container(
-                          // height: h,
-                          width: MediaQuery.of(context).size.width -
-                              ScreenUtil().setWidth(72),
-                          padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
-                          decoration: BoxDecoration(
-                              borderRadius: new BorderRadius.circular(
-                                  ScreenUtil().setWidth(72)),
-                              color: ColorConstants.TOP_CLIPPER_END_DARK),
-                          child: Center(
-                              child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                'MANAGE PERMISSIONS',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: ScreenUtil().setSp(36)),
-                              ),
-                            ],
-                          )),
-                        ),
-                      )
-                    ],
-                  )
+                  _sentInvitations(_accessEvents, context),
+                  SpaceH32(),
+                  _receivedInvitaitons(_accessEvents, context),
+                  SpaceH32(),
+                  _sentRequests(_accessEvents, context),
+                  SpaceH32(),
+                  _receivedRequests(_accessEvents, context),
+                  SpaceH32(),
+                  _accessButtons(context),
+                  SpaceH32(),
+                  _managePermissionsButton(context)
                 ],
               ),
             ),
@@ -472,7 +210,268 @@ class _AccessManagementScreenState extends State<AccessManagementScreen> {
         });
   }
 
-  Widget _pendingRequestConsumer(AccessType accessType,int accessEventCount) {
+  Row _managePermissionsButton(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        InkWell(
+          onTap: () {
+            Navigator.of(context).pushNamed(ManagePermissionScreen.routeName);
+          },
+          child: Container(
+            // height: h,
+            width: MediaQuery.of(context).size.width - 72.w,
+            padding: EdgeInsets.all(32.w),
+            decoration: BoxDecoration(
+                borderRadius: new BorderRadius.circular(72.w),
+                color: ColorConstants.TOP_CLIPPER_END_DARK),
+            child: Center(
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'MANAGE PERMISSIONS',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white, fontSize: 36.sp),
+                ),
+              ],
+            )),
+          ),
+        )
+      ],
+    );
+  }
+
+  Row _accessButtons(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        InkWell(
+          onTap: () {
+            Navigator.of(context).pushNamed(RequestAccessScreen.routeName);
+          },
+          child: Container(
+            padding: EdgeInsets.all(32.w),
+            decoration: BoxDecoration(
+                borderRadius: new BorderRadius.circular(72.w),
+                color: ColorConstants.TOP_CLIPPER_END_DARK),
+            child: Center(
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SvgPicture.asset(
+                  ImagePaths.svgPlus,
+                  color: Colors.white,
+                  height: 48.h,
+                  width: 48.h,
+                ),
+                SizedBox(
+                  width: 16.w,
+                ),
+                Text(
+                  'REQUEST ACCESS',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white, fontSize: 36.sp),
+                ),
+              ],
+            )),
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            if (_user.userOceanBuilder.length > 0) {
+              showGrantAccessPopup(context, GrantAccessScreenWidget(), " ");
+            }
+          },
+          child: Container(
+            // height: h,
+            // width: MediaQuery.of(context).size.width * .4,
+            padding: EdgeInsets.all(32.w),
+            decoration: BoxDecoration(
+                borderRadius: new BorderRadius.circular(72.w),
+                color: ColorConstants.TOP_CLIPPER_END_DARK),
+            child: Center(
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SvgPicture.asset(
+                  ImagePaths.svgPlus,
+                  color: Colors.white,
+                  height: 48.h,
+                  width: 48.h,
+                ),
+                SizedBox(
+                  width: 16.w,
+                ),
+                Text(
+                  'GRANT ACCESS',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white, fontSize: 36.sp),
+                ),
+              ],
+            )),
+          ),
+        ),
+      ],
+    );
+  }
+
+  InkWell _receivedRequests(AccessEvents _accessEvents, BuildContext context) {
+    return InkWell(
+      onTap: () {
+        AccessEventsScreenParams accessEventsScreenParams =
+            AccessEventsScreenParams(
+                AccessType.RECEIVED_REQUEST, _accessEvents);
+        Navigator.of(context).pushNamed(AccessEventScreen.routeName,
+            arguments: accessEventsScreenParams);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24.w),
+          color: ColorConstants.COLOR_PENDING_REQUEST,
+        ),
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.all(
+          32.w,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(width: 96.w),
+            SvgPicture.asset(
+              ImagePaths.svgRequsetReceived,
+              width: 80.w,
+              height: 80.w,
+            ),
+            SizedBox(width: 32.w),
+            _pendingRequestConsumer(
+                AccessType.RECEIVED_REQUEST,
+                _accessEvents.receivedRequests != null
+                    ? _accessEvents.receivedRequests.length
+                    : 0),
+          ],
+        ),
+      ),
+    );
+  }
+
+  InkWell _sentRequests(AccessEvents _accessEvents, BuildContext context) {
+    return InkWell(
+      onTap: () {
+        AccessEventsScreenParams accessEventsScreenParams =
+            AccessEventsScreenParams(AccessType.SENT_REQUEST, _accessEvents);
+        Navigator.of(context).pushNamed(AccessEventScreen.routeName,
+            arguments: accessEventsScreenParams);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24.w),
+          color: ColorConstants.COLOR_PENDING_REQUEST,
+        ),
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.all(
+          _util.setWidth(32),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(width: 96.w),
+            SvgPicture.asset(
+              ImagePaths.svgRequestSent,
+              width: 80.w,
+              height: 80.w,
+            ),
+            SizedBox(width: 32.w),
+            _pendingRequestConsumer(
+                AccessType.SENT_REQUEST,
+                _accessEvents.sentRequests != null
+                    ? _accessEvents.sentRequests.length
+                    : 0),
+          ],
+        ),
+      ),
+    );
+  }
+
+  InkWell _receivedInvitaitons(
+      AccessEvents _accessEvents, BuildContext context) {
+    return InkWell(
+      onTap: () {
+        AccessEventsScreenParams accessEventsScreenParams =
+            AccessEventsScreenParams(
+                AccessType.RECEIVED_INVITATION, _accessEvents);
+        Navigator.of(context).pushNamed(AccessEventScreen.routeName,
+            arguments: accessEventsScreenParams);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24.w),
+          color: ColorConstants.COLOR_PENDING_REQUEST,
+        ),
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.all(
+          _util.setWidth(32),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(width: ScreenUtil().setWidth(96)),
+            SvgPicture.asset(
+              ImagePaths.svgInvitationReceived,
+              width: ScreenUtil().setWidth(80),
+              height: ScreenUtil().setWidth(80),
+            ),
+            SizedBox(width: ScreenUtil().setWidth(32)),
+            _pendingRequestConsumer(
+                AccessType.RECEIVED_INVITATION,
+                _accessEvents.receivedInvitations != null
+                    ? _accessEvents.receivedInvitations.length
+                    : 0),
+          ],
+        ),
+      ),
+    );
+  }
+
+  InkWell _sentInvitations(AccessEvents _accessEvents, BuildContext context) {
+    return InkWell(
+      onTap: () {
+        AccessEventsScreenParams accessEventsScreenParams =
+            AccessEventsScreenParams(AccessType.SENT_INVITATION, _accessEvents);
+        Navigator.of(context).pushNamed(AccessEventScreen.routeName,
+            arguments: accessEventsScreenParams);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24.w),
+          color: ColorConstants.COLOR_PENDING_REQUEST,
+        ),
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.all(
+          _util.setWidth(32),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(width: ScreenUtil().setWidth(96)),
+            SvgPicture.asset(
+              ImagePaths.svgInvitationSent,
+              width: ScreenUtil().setWidth(80),
+              height: ScreenUtil().setWidth(80),
+            ),
+            SizedBox(width: ScreenUtil().setWidth(32)),
+            _pendingRequestConsumer(
+                AccessType.SENT_INVITATION,
+                _accessEvents.sentInvitations != null
+                    ? _accessEvents.sentInvitations.length
+                    : 0),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _pendingRequestConsumer(AccessType accessType, int accessEventCount) {
     String accessTypString;
     if (accessType == AccessType.SENT_INVITATION) {
       accessTypString = '${AppStrings.sentInvitations}      ';
@@ -485,19 +484,19 @@ class _AccessManagementScreenState extends State<AccessManagementScreen> {
     }
 
     return Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text(
-              '$accessTypString (${accessEventCount != null ? accessEventCount : 0})',
-              style: new TextStyle(
-                fontWeight: FontWeight.w400,
-                fontSize: ScreenUtil().setSp(38),
-                color: ColorConstants.TEXT_COLOR,
-              ),
-              textAlign: TextAlign.left,
-            ),
-          ],
-        );
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(
+          '$accessTypString (${accessEventCount != null ? accessEventCount : 0})',
+          style: new TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: ScreenUtil().setSp(38),
+            color: ColorConstants.TEXT_COLOR,
+          ),
+          textAlign: TextAlign.left,
+        ),
+      ],
+    );
   }
 
   _accessorList() {
@@ -538,10 +537,10 @@ class _AccessManagementScreenState extends State<AccessManagementScreen> {
     Navigator.push(
       context,
       PopupLayout(
-        top: _util.setHeight(32),
-        left: _util.setWidth(48),
-        right: _util.setWidth(48),
-        bottom: _util.setHeight(32),
+        top: 32.h,
+        left: 48.w,
+        right: 48.w,
+        bottom: 32.h,
         child: widget,
       ),
     );
@@ -635,13 +634,13 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
                     (context, index) {
                       return Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: _util.setWidth(32),
-                          vertical: _util.setHeight(32),
+                          horizontal: 32.w,
+                          vertical: 32.h,
                         ),
                         child: Text(
                           'Loading ...',
                           style: TextStyle(
-                              fontSize: _util.setSp(24),
+                              fontSize: 24.sp,
                               color:
                                   ColorConstants.ACCESS_MANAGEMENT_LIST_TITLE),
                         ),
@@ -688,8 +687,8 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
               },
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: _util.setWidth(32),
-                  vertical: _util.setHeight(32),
+                  horizontal: 32.w,
+                  vertical: 32.h,
                 ),
                 child: _accesorItem(obUser, ob),
               ),
@@ -717,14 +716,12 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
       ),
     );
   }
-  // evl888403960
-  //09638111666
 
   _accesorItem(OceanBuilderUser ob, SeaPod oceanBuilder) {
     // debugPrint(
     // 'oceanbuilderuser item -- ${ob.toJson()} -- oceanbuilder name --- ${oceanBuilder.obName}');
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: _util.setHeight(16)),
+      padding: EdgeInsets.symmetric(vertical: 16.h),
       child: Column(
         children: <Widget>[
           Row(
@@ -736,7 +733,7 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
                 children: <Widget>[
                   _createAvatar(context),
                   SizedBox(
-                    width: _util.setWidth(8),
+                    width: 8.w,
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -744,16 +741,16 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
                       Text(
                         ob.userName.toUpperCase(),
                         style: TextStyle(
-                            fontSize: _util.setSp(32),
+                            fontSize: 32.sp,
                             color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
                       ),
                       SizedBox(
-                        height: _util.setHeight(8),
+                        height: 8.h,
                       ),
                       _typeAndTimeWidget(ob),
                       _permissionWidget(ob),
                       SizedBox(
-                        height: _util.setHeight(16),
+                        height: 16.h,
                       ),
                     ],
                   ),
@@ -763,26 +760,18 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
                       ob.userType.toLowerCase().contains('administration')
                   ? Container()
                   : UIHelper.getButton(
-                      // ob.userType.compareTo('guest') ==
-                      //         0
-                      //     ? 'REMOVE'
-                      //     : 'CANCEL INVITATION',
                       'REMOVE',
                       () {
                         _showDeleteAccessDialog(ob, oceanBuilder,
                             cancelInvitaion: false);
                       },
-                      w: _util.setWidth(250),
-                      h: _util.setHeight(200),
-                      fontSize: _util.setSp(28),
-                      borderRadius: 28,
+                      w: 250.w,
+                      h: 200.h,
+                      fontSize: 32.sp,
+                      borderRadius: 24,
                     )
             ],
           ),
-          // SizedBox(
-          //   height: _util.setHeight(16),
-          // ),
-          // _horizontalLine()
         ],
       ),
     );
@@ -798,14 +787,14 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
           color: ColorConstants.WEATHER_BKG_CIRCLE,
         ),
         SizedBox(
-          width: _util.setWidth(16),
+          width: 16.w,
         ),
         Padding(
-          padding: EdgeInsets.only(top: _util.setHeight(16)),
+          padding: EdgeInsets.only(top: 16.h),
           child: Text(
             'Full Permissions',
             style: TextStyle(
-                fontSize: ScreenUtil().setSp(32),
+                fontSize: 32.sp,
                 color: ColorConstants.ACCESS_MANAGEMENT_SUBTITLE),
             overflow: TextOverflow.clip,
           ),
@@ -820,8 +809,7 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
       return Text(
         '${uob.userType.capitalize()}',
         style: TextStyle(
-            fontSize: _util.setSp(32),
-            color: ColorConstants.ACCESS_MANAGEMENT_SUBTITLE),
+            fontSize: 32.sp, color: ColorConstants.ACCESS_MANAGEMENT_SUBTITLE),
       );
     } else if (uob.userType.toLowerCase().contains('guest') &&
         uob.checkInDate != null) {
@@ -843,7 +831,7 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
           Text(
             timeText,
             style: TextStyle(
-                fontSize: ScreenUtil().setSp(32),
+                fontSize: 32.sp,
                 color: ColorConstants.ACCESS_MANAGEMENT_SUBTITLE),
             overflow: TextOverflow.clip,
           ),
@@ -857,10 +845,10 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
   Widget _createAvatar(BuildContext context, {File imageFile}) {
     return CircleAvatar(
       backgroundColor: ColorConstants.COLOR_PENDING_REQUEST,
-      radius: _util.setWidth(80),
+      radius: 80.w,
       child: CircleAvatar(
         backgroundColor: ColorConstants.COLOR_PENDING_REQUEST,
-        radius: imageFile != null ? _util.setWidth(60) : _util.setWidth(40),
+        radius: imageFile != null ? 60.w : 40.w,
         backgroundImage: imageFile != null
             ? FileImage(
                 imageFile,
@@ -881,11 +869,6 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
           color: ColorConstants.TOP_CLIPPER_START,
           fontWeight: FontWeight.normal,
           fontSize: 2),
-      // buttonAreaPadding: EdgeInsets.only(
-      //   left: _util.setWidth(32),
-      //   right: _util.setWidth(32),
-      //   bottom: _util.setHeight(48),
-      // )
     );
     Alert(
         context: context,
@@ -900,19 +883,19 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
             // ),
             Container(
               margin: EdgeInsets.only(
-                bottom: _util.setHeight(32),
+                bottom: 32.h,
               ),
               child: Text(
                 cancelInvitaion ? 'Cancel Invitation' : 'Delete access',
                 style: TextStyle(
                     color: ColorConstants.COLOR_NOTIFICATION_TITLE,
                     fontWeight: FontWeight.w400,
-                    fontSize: _util.setSp(60)),
+                    fontSize: 60.sp),
               ),
             ),
             Container(
               margin: EdgeInsets.only(
-                bottom: _util.setHeight(256),
+                bottom: 256.h,
                 // top: _util.setHeight(64)
               ),
               child: Text(
@@ -922,7 +905,7 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
                 style: TextStyle(
                     color: ColorConstants.ACCESS_MANAGEMENT_SUBTITLE,
                     fontWeight: FontWeight.w400,
-                    fontSize: _util.setSp(48)),
+                    fontSize: 48.sp),
               ),
             ),
             Row(
@@ -937,8 +920,7 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
                         'CANCEL',
                       ),
                       shape: RoundedRectangleBorder(
-                          borderRadius:
-                              new BorderRadius.circular(_util.setWidth(48)),
+                          borderRadius: new BorderRadius.circular(48.w),
                           side: BorderSide(
                             color:
                                 ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
@@ -949,13 +931,11 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
                       ),
                 ),
                 SizedBox(
-                  width: _util.setWidth(24),
+                  width: 24.w,
                 ),
                 Expanded(
                   child: RaisedButton(
                       onPressed: () {
-                        // Navigator.of(context).pop();
-                        //  Navigator.of(context, rootNavigator: true).pop();
                         if (cancelInvitaion == true) {
                           _cancelInvitaion(ob, oceanBuilder);
                         } else {
@@ -964,8 +944,7 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
                       },
                       child: Text('CONFIRM'),
                       shape: RoundedRectangleBorder(
-                          borderRadius:
-                              new BorderRadius.circular(_util.setWidth(48)),
+                          borderRadius: new BorderRadius.circular(48.w),
                           side: BorderSide(
                             color:
                                 ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
@@ -996,12 +975,6 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
     int len = _userProvider.authenticatedUser.notifications.length;
     for (int i = 0; i < len; i++) {
       ServerNotification noti = notifications[i];
-      // debugPrint('noti --- seapod --' +
-      // noti.data.seaPod.toJson().toString() +
-      // 'user --- ' +
-      // noti.data.user.toJson().toString());
-      // debugPrint(
-      // 'comapre SeaPodId ${seaPod.id}  ${NotificationConstants.initiated}');
       if (noti.data.seaPod.id != null &&
           noti.data.seaPod.id.contains(seaPod.id) &&
           noti.data.status.compareTo(NotificationConstants.initiated) == 0) {
@@ -1009,39 +982,6 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
         break;
       }
     }
-    // debugPrint('invitation noti to cancel ' + fcmNotification.data.id);
-    // User invitationSender =
-    //     await _userProvider.getAuthUserProfile(fcmNotification.data.user.id);
-
-    // User invitedUser =
-    //     await _userProvider.getAuthUserProfile(fcmNotification.data.user.id);
-
-    // String notificationId = fcmNotification.data.id;
-
-    // _userProvider
-    //     .updateNotificationStatus(
-    //         notificationId, NotificationConstants.canceled, invitedUser.userID)
-    //     .then((onValue) {
-    //   _userProvider
-    //       .deleteOceanBuilderFromUser(
-    //           userId: invitedUser.userID,
-    //           oceanBuilderId: fcmNotification.data.seaPod.id)
-    //       .then((onValue) {
-    //     _oceanBuilderProvider
-    //         .deleteOceanBuilderUser(
-    //             currentUserID: invitedUser.userID,
-    //             oceanBuilderID: fcmNotification.data.seaPod.id,
-    //             oceanBuilderUser: ob)
-    //         .then((onValue) {
-    //        Navigator.of(context, rootNavigator: true).pop();
-    //       // debugPrint('----- invitation canceled and removed userOb and obUser');
-    //       if (this.mounted) {
-    //         setState(() {});
-    //       }
-    //     });
-    //   });
-    // }
-    // );
   }
 
   Future<void> _removeAccess(OceanBuilderUser ob, SeaPod oceanBuilder) async {

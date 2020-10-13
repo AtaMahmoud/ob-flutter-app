@@ -17,7 +17,6 @@ import 'package:provider/provider.dart';
 
 class SettingsWidget extends StatefulWidget {
   static const String routeName = '/settingsWidget';
-
   @override
   _SettingsWidgetState createState() => _SettingsWidgetState();
 }
@@ -25,16 +24,11 @@ class SettingsWidget extends StatefulWidget {
 class _SettingsWidgetState extends State<SettingsWidget> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   UserProvider userProvider;
-  ScreenUtil _util;
-  
   File _profileImageFile;
 
   @override
   void initState() {
     UIHelper.setStatusBarColor(color: Colors.white);
-    // Future.delayed(Duration.zero).then((_) {
-
-    // });
     _getProfilePicture();
     super.initState();
   }
@@ -46,267 +40,247 @@ class _SettingsWidgetState extends State<SettingsWidget> {
 
   @override
   Widget build(BuildContext context) {
-
     GlobalContext.currentScreenContext = context;
-    
     userProvider = Provider.of<UserProvider>(context);
-
-    _util = ScreenUtil();
-
-    return _mainContent();//customDrawer(_innerDrawerKey, _mainContent());
-
+    return _mainContent(); //customDrawer(_innerDrawerKey, _mainContent());
   }
 
-  _mainContent(){
-        return WillPopScope(
-           onWillPop: () async => false,
-                  child: Scaffold(
-      key: _scaffoldKey,
-      drawer: HomeDrawer(isSecondLevel: true,screenIndex: DrawerIndex.SETTINGS,),
-      drawerScrimColor: AppTheme.drawerScrimColor.withOpacity(.65),
-      body: Container(
+  _mainContent() {
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        key: _scaffoldKey,
+        drawer: HomeDrawer(
+          isSecondLevel: true,
+          screenIndex: DrawerIndex.SETTINGS,
+        ),
+        drawerScrimColor: AppTheme.drawerScrimColor.withOpacity(.65),
+        body: Container(
           decoration: BoxDecoration(
             color: Colors.white,
             // borderRadius: BorderRadius.circular(8)
           ),
-          
           child: Stack(
             children: <Widget>[
               CustomScrollView(
                 slivers: <Widget>[
-                  UIHelper.getTopEmptyContainerWithColor(
-                      ScreenUtil().setHeight(256),//ScreenUtil.statusBarHeight * 3, 
-                      Colors.white
-                      ),
-                  SliverToBoxAdapter(
-                    child: Container(
-                      // color: ColorConstants.MODAL_BKG.withOpacity(.375),
-                      // padding: EdgeInsets.only(top: 16.0),
-                      child: CircleAvatar(
-                              backgroundColor: Colors.white,
-                              radius: _util.setWidth(256),
-                              child: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: _profileImageFile != null ? _util.setWidth(256) : _util.setWidth(128),
-                                backgroundImage: _profileImageFile != null
-                                    ? FileImage(
-                                        _profileImageFile,
-                                      )
-                                    : AssetImage(
-                                        ImagePaths.icAvatar,
-                                        
-                                      ),
-                              ),
-                            ),
-                    ),
-                  ),
+                  _startSpace(),
+                  _profilePicture(),
                   SliverPadding(
                     padding: EdgeInsets.symmetric(
-                        vertical: _util.setHeight(48), horizontal: 8.0),
+                        vertical: 48.h, horizontal: 8.0),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
-                        // _next7DaysweatherDataFuture()
-                            _horizontalLine(),
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: InkWell(
-                            onTap: (){
-                              PopUpHelpers.showPopup(context, ChangeEmailPopupContent(),'Change Email');
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text('Change Email',
-                                    style: TextStyle(
-                                        color: ColorConstants.TOP_CLIPPER_END,
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: _util.setSp(64))),
-                                ImageIcon(
-                                  AssetImage(
-                                    ImagePaths.icMail
-                                  ),
-                                  size: _util.setWidth(64),
-                                  color: ColorConstants.TOP_CLIPPER_END,
-
-                                )        
-                              ],
-                            ),
-                          ),
-                        ),
-
-
-                    _horizontalLine(),
-
-                      Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: InkWell(
-                            onTap: (){
-                              PopUpHelpers.showPopup(context, ChangePasswordPopupContent(),'Change Password');
-                            },
-                                                    child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text('Change Password',
-                                    style: TextStyle(
-                                        color: ColorConstants.TOP_CLIPPER_END,
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: _util.setSp(64))),       
-                              ],
-                            ),
-                          ),
-                        ),
-
                         _horizontalLine(),
-
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: InkWell(
-                            onTap: (){
-                               Navigator.of(context).pushNamed(NotificationSettingsWidget.routeName);
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text('Notifications Settings',
-                                    style: TextStyle(
-                                        color: ColorConstants.TOP_CLIPPER_END,
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: _util.setSp(64))),      
-                              ],
-                            ),
-                          ),
-                        ),
-
+                        _changeEmail(),
                         _horizontalLine(),
-
-
+                        _changePassword(),
+                        _horizontalLine(),
+                        _notificationSettings(),
+                        _horizontalLine(),
                       ]),
                     ),
                   ),
-                  // SliverToBoxAdapter(
-                  //   child:
-                  // ),
-
-                  // UIHelper.getTopEmptyContainer(90, false),
                 ],
               ),
-              // Appbar(ScreenTitle.OB_SELECTION),
-              Positioned(
-                top: ScreenUtil.statusBarHeight,
-                left: 0,
-                right: 0,
-                child: Container(
-                  color: Colors.white,
-                  // padding: EdgeInsets.only(top: 8.0, right: 12.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Row(
-                        
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          InkWell(
-                            onTap: () {
-                              _scaffoldKey.currentState.openDrawer();
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.fromLTRB(
-                                      _util.setWidth(32),
-                                      _util.setHeight(32),
-                                      _util.setWidth(32),
-                                      _util.setHeight(32),
-                                    ),
-                              child: ImageIcon(
-                                AssetImage(ImagePaths.icHamburger),
-                                size: _util.setWidth(50),
-                                color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              left: _util.setWidth(48),
-                              top: _util.setHeight(32),
-                              bottom: _util.setHeight(32),
-                            ),
-                            child: Text(
-                                    'Settings',
-                                    style: TextStyle(
-                                        color:
-                                            ColorConstants.WEATHER_MORE_ICON_COLOR,
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: _util.setSp(60)
-                                        ),
-                                  ),
-                          ),
-                                Spacer(),
-                          InkWell(
-                            onTap: () {
-                              goBack();
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                              right: _util.setWidth(48),
-                              top: _util.setHeight(32),
-                              bottom: _util.setHeight(32),
-                                ),
-                              child: Image.asset(
-                                ImagePaths.cross,
-                                width: _util.setWidth(58),
-                                height: _util.setHeight(58),
-                                color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              )
+              _titleBar()
             ],
           ),
+        ),
       ),
-    ),
-        );
+    );
   }
 
-    Widget _horizontalLine() {
+  _startSpace() {
+    return UIHelper.getTopEmptyContainerWithColor(256.h, Colors.white);
+  }
+
+  Positioned _titleBar() {
+    return Positioned(
+      top: ScreenUtil.statusBarHeight,
+      left: 0,
+      right: 0,
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                InkWell(
+                  onTap: () {
+                    _scaffoldKey.currentState.openDrawer();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      32.w,
+                      32.h,
+                      32.w,
+                      32.h,
+                    ),
+                    child: ImageIcon(
+                      AssetImage(ImagePaths.icHamburger),
+                      size:50.w,
+                      color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: 48.w,
+                    top: 32.h,
+                    bottom: 32.h,
+                  ),
+                  child: Text(
+                    'Settings',
+                    style: TextStyle(
+                        color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 60.sp),
+                  ),
+                ),
+                Spacer(),
+                InkWell(
+                  onTap: () {
+                    goBack();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      right: 48.w,
+                      top: 32.h,
+                      bottom: 32.h,
+                    ),
+                    child: Image.asset(
+                      ImagePaths.cross,
+                      width: 58.w,
+                      height: 58.h,
+                      color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Padding _notificationSettings() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).pushNamed(NotificationSettingsWidget.routeName);
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text('Notifications Settings',
+                style: TextStyle(
+                    color: ColorConstants.TOP_CLIPPER_END,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 64.sp)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Padding _changePassword() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: InkWell(
+        onTap: () {
+          PopUpHelpers.showPopup(
+              context, ChangePasswordPopupContent(), 'Change Password');
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text('Change Password',
+                style: TextStyle(
+                    color: ColorConstants.TOP_CLIPPER_END,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 64.sp)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Padding _changeEmail() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: InkWell(
+        onTap: () {
+          PopUpHelpers.showPopup(
+              context, ChangeEmailPopupContent(), 'Change Email');
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text('Change Email',
+                style: TextStyle(
+                    color: ColorConstants.TOP_CLIPPER_END,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 64.sp)),
+            ImageIcon(
+              AssetImage(ImagePaths.icMail),
+              size: 64.w,
+              color: ColorConstants.TOP_CLIPPER_END,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _profilePicture() {
+    return SliverToBoxAdapter(
+      child: Container(
+        child: CircleAvatar(
+          backgroundColor: Colors.white,
+          radius: 256.w,
+          child: CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: _profileImageFile != null ? 256.w : 128.w,
+            backgroundImage: _profileImageFile != null
+                ? FileImage(
+                    _profileImageFile,
+                  )
+                : AssetImage(
+                    ImagePaths.icAvatar,
+                  ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _horizontalLine() {
     return SvgPicture.asset(
       ImagePaths.svgWeatherInfoDividerLine,
       fit: BoxFit.fitWidth,
       color: ColorConstants.TOP_CLIPPER_END,
-      // width: MediaQuery.of(context).size.width*.95,
     );
   }
 
-    goBack() {
-      UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
-    // Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+  goBack() {
+    UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
     Navigator.of(context).pop();
-    // Navigator.of(context).pushNamedAndRemoveUntil(
-    //     LandingScreen.routeName, (Route<dynamic> route) => false);
   }
 
-    _getProfilePicture() async {
-    
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // String path = prefs.getString(SharedPreferanceKeys.KEY_PROFILE_PIC);
-
-    String path =  await SharedPrefHelper.getProfilePicFilePath();
-
-    if(path!=null){
-    final File imageFile = File(path);
-    if (await imageFile.exists()) {
-      // Use the cached images if it exists
-      setState(() {
-        _profileImageFile = imageFile;
-      });
+  _getProfilePicture() async {
+    String path = await SharedPrefHelper.getProfilePicFilePath();
+    if (path != null) {
+      final File imageFile = File(path);
+      if (await imageFile.exists()) {
+        setState(() {
+          _profileImageFile = imageFile;
+        });
+      }
     }
-
-    }
-
-
   }
-
 }

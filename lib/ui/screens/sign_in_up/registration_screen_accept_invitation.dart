@@ -12,6 +12,7 @@ import 'package:ocean_builder/ui/screens/sign_in_up/accept_invitation_screen.dar
 import 'package:ocean_builder/ui/screens/sign_in_up/login_screen.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 
@@ -19,11 +20,12 @@ class RegistrationScreenAcceptInvitation extends StatefulWidget {
   static const String routeName = '/registrationHomeAccessInvitation';
 
   @override
-  _RegistrationScreenAcceptInvitationState createState() => _RegistrationScreenAcceptInvitationState();
+  _RegistrationScreenAcceptInvitationState createState() =>
+      _RegistrationScreenAcceptInvitationState();
 }
 
-class _RegistrationScreenAcceptInvitationState extends State<RegistrationScreenAcceptInvitation> {
-  
+class _RegistrationScreenAcceptInvitationState
+    extends State<RegistrationScreenAcceptInvitation> {
   UserProvider _userProvider;
 
   TextEditingController _firstNameController,
@@ -70,7 +72,6 @@ class _RegistrationScreenAcceptInvitationState extends State<RegistrationScreenA
 
   @override
   Widget build(BuildContext context) {
-    
     GlobalContext.currentScreenContext = context;
 
     final UserDataProvider userDataProvider =
@@ -78,8 +79,7 @@ class _RegistrationScreenAcceptInvitationState extends State<RegistrationScreenA
 
     _userProvider = Provider.of<UserProvider>(context);
 
-
-    double sizedBoxHeight = 30;
+    // double sizedBoxHeight = 30;
 
     return Scaffold(
       resizeToAvoidBottomPadding: true,
@@ -93,96 +93,131 @@ class _RegistrationScreenAcceptInvitationState extends State<RegistrationScreenA
               shrinkWrap: true,
               controller: _controller,
               slivers: <Widget>[
-                UIHelper.getTopEmptyContainer(_util.setHeight(500), false),
-                SliverList(
-                    delegate: SliverChildListDelegate([
-                  UIHelper.getRegistrationTextField(
-                      context,
-                      _bloc.firstName,
-                      _bloc.firstNameChanged,
-                      TextFieldHints.FIRST_NAME,
-                      _firstNameController,
-                      null,
-                      30,
-                      true,
-                      TextInputAction.next,
-                      _firstNameNode,
-                      () => FocusScope.of(context).requestFocus(_lastNameNode)),
-                  SizedBox(height: sizedBoxHeight),
-                  UIHelper.getRegistrationTextField(
-                      context,
-                      _bloc.lastName,
-                      _bloc.lastNameChanged,
-                      TextFieldHints.LAST_NAME,
-                      _lastNameController,
-                      null,
-                      30,
-                      true,
-                      TextInputAction.next,
-                      _lastNameNode,
-                      () => FocusScope.of(context).requestFocus(_emailNode)),
-                  SizedBox(height: sizedBoxHeight),
-                  SizedBox(height: sizedBoxHeight),
-                  UIHelper.getCountryDropdown(ListHelper.getCountryList(),
-                      _bloc.country, _bloc.countryChanged, true),    
-                  SizedBox(height: sizedBoxHeight),
-                  UIHelper.getRegistrationTextField(
-                      context,
-                      _bloc.phone,
-                      _bloc.phoneChanged,
-                      TextFieldHints.PHONE,
-                      _phoneController,
-                      InputTypes.NUMBER,
-                      null,
-                      true,
-                      TextInputAction.done,
-                      _phoneNode,
-                      null),
-                ])),
-              SliverToBoxAdapter(
-                  child: Container(
-                    padding: EdgeInsets.only(
-                        top: 48.0, //util.setHeight(64),
-                        right: 16.0,
-                        bottom: 16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        InkWell(
-                          onTap: () {
-                            _goToLogInPageFromRegistraion();
-                          },
-                          child: Text(
-                            'ALREADY A MEMBER ?',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w900,
-                                color: ColorConstants.PROFILE_BKG_1),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                UIHelper.getTopEmptyContainer(_util.setHeight(330), false),
+                _startSpace(),
+                _mainContent(context),
+                _buttonAlreadyMember(),
+                _endSpace(),
               ],
             ),
           ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Appbar(ScreenTitle.HOME_ACCESS_INVITATION),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: registerButton(userDataProvider),
-          )
+          _appBar(),
+          _bottomBar(userDataProvider)
         ],
       ),
     );
   }
+
+  SliverList _mainContent(BuildContext context) {
+    return SliverList(
+        delegate: SliverChildListDelegate([
+      _inputFirstName(context),
+      SpaceH32(),
+      _inputLastName(context),
+      SpaceH64(),
+      _dropdownCountry(),
+      SpaceH32(),
+      _inputPhone(context),
+    ]));
+  }
+
+  _endSpace() => UIHelper.getTopEmptyContainer(_util.setHeight(330), false);
+
+  Positioned _bottomBar(UserDataProvider userDataProvider) {
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: registerButton(userDataProvider),
+    );
+  }
+
+  Positioned _appBar() {
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      child: Appbar(ScreenTitle.HOME_ACCESS_INVITATION),
+    );
+  }
+
+  SliverToBoxAdapter _buttonAlreadyMember() {
+    return SliverToBoxAdapter(
+      child: Container(
+        padding: EdgeInsets.only(
+            top: 48.0, //util.setHeight(64),
+            right: 16.0,
+            bottom: 16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            InkWell(
+              onTap: () {
+                _goToLogInPageFromRegistraion();
+              },
+              child: Text(
+                'ALREADY A MEMBER ?',
+                style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    color: ColorConstants.PROFILE_BKG_1),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _inputPhone(BuildContext context) {
+    return UIHelper.getRegistrationTextField(
+        context,
+        _bloc.phone,
+        _bloc.phoneChanged,
+        TextFieldHints.PHONE,
+        _phoneController,
+        InputTypes.NUMBER,
+        null,
+        true,
+        TextInputAction.done,
+        _phoneNode,
+        null);
+  }
+
+  Widget _dropdownCountry() {
+    return UIHelper.getCountryDropdown(
+        ListHelper.getCountryList(), _bloc.country, _bloc.countryChanged, true);
+  }
+
+  Widget _inputLastName(BuildContext context) {
+    return UIHelper.getRegistrationTextField(
+        context,
+        _bloc.lastName,
+        _bloc.lastNameChanged,
+        TextFieldHints.LAST_NAME,
+        _lastNameController,
+        null,
+        30,
+        true,
+        TextInputAction.next,
+        _lastNameNode,
+        () => FocusScope.of(context).requestFocus(_emailNode));
+  }
+
+  Widget _inputFirstName(BuildContext context) {
+    return UIHelper.getRegistrationTextField(
+        context,
+        _bloc.firstName,
+        _bloc.firstNameChanged,
+        TextFieldHints.FIRST_NAME,
+        _firstNameController,
+        null,
+        30,
+        true,
+        TextInputAction.next,
+        _firstNameNode,
+        () => FocusScope.of(context).requestFocus(_lastNameNode));
+  }
+
+  _startSpace() => UIHelper.getTopEmptyContainer(_util.setHeight(500), false);
 
   Widget registerButton(UserDataProvider userDataProvider) {
     return StreamBuilder<bool>(
@@ -199,34 +234,23 @@ class _RegistrationScreenAcceptInvitationState extends State<RegistrationScreenA
   }
 
   _goToLogInPageFromRegistraion() {
-
-    Navigator.of(context).pushNamed(LoginScreen.routeName, arguments: ScreenTitle.REGISTER);
-  
+    Navigator.of(context)
+        .pushNamed(LoginScreen.routeName, arguments: ScreenTitle.REGISTER);
   }
-  
+
   _goBack() {
     Navigator.pop(context);
   }
 
   _goNext(UserDataProvider userDataProvider) async {
-
     String existingUserId = '';
-    // existingUserId = await _userProvider.checkForEmailAlreadyExist(_user.email);
     if (existingUserId.length > 1) {
-
-    // showInfoBarWithDissmissCallback(ErrorConstants.TITLE_USER_ALREADY_EXISTS,
-    // ErrorConstants.USER_ALREADY_EXISTS, context,_goToLogInPageFromRegistraion);
-
-    showInfoBar(ErrorConstants.TITLE_USER_ALREADY_EXISTS,
-    ErrorConstants.USER_ALREADY_EXISTS_USE_ALREADY_BUTTON, context);
-
-    }else{
-
-    userDataProvider.user = _user;
-    Navigator.of(context).pushNamed(AcceptInvitationScreen.routeName);
-
+      showInfoBar(ErrorConstants.TITLE_USER_ALREADY_EXISTS,
+          ErrorConstants.USER_ALREADY_EXISTS_USE_ALREADY_BUTTON, context);
+    } else {
+      userDataProvider.user = _user;
+      Navigator.of(context).pushNamed(AcceptInvitationScreen.routeName);
     }
-
   }
 
   _setUserDataListener() {

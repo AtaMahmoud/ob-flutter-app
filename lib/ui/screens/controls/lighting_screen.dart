@@ -17,6 +17,7 @@ import 'package:ocean_builder/custom_drawer/homeDrawer.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper_lighting.dart';
 import 'package:ocean_builder/ui/screens/controls/lighting_scene_list_screen.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -54,7 +55,7 @@ class LightingScreen extends StatefulWidget {
 class _LightingScreenState extends State<LightingScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   // UserProvider userProvider;
-  ScreenUtil _util = ScreenUtil();
+  // ScreenUtil _util = ScreenUtil();
   LightSceneBloc _bloc = LightSceneBloc();
   TextEditingController _renameTextController = TextEditingController();
 
@@ -111,7 +112,7 @@ class _LightingScreenState extends State<LightingScreen> {
         _allLightScenes.add(lc);
       }).toList();
     }
-    switchOn = _oceanBuilderUser.lighting.isLightON;
+    switchOn = _oceanBuilderUser.lighting.isLightON ?? false;
 
     if (widget.selectedLightSceneIdFromPopup != null) {
       // debugPrint('widget.selectedLightSceneIdFromPopup --------- ');
@@ -141,6 +142,12 @@ class _LightingScreenState extends State<LightingScreen> {
   _setDataListener() {
     _bloc.lightSceneController.listen((onData) {
       _renameTextController.text = onData;
+      // isSeaPodSourceSelected
+      if(_selectedScene == null)
+      isSeaPodSourceSelected = false;
+      else
+      isSeaPodSourceSelected =
+          _selectedScene.source.compareTo('seapod') == 0 ?? false;
     });
   }
 
@@ -188,244 +195,254 @@ class _LightingScreenState extends State<LightingScreen> {
         body: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            // borderRadius: BorderRadius.circular(8)
           ),
           child: Stack(
             children: <Widget>[
               CustomScrollView(
                 slivers: <Widget>[
                   UIHelper.getTopEmptyContainerWithColor(
-                      ScreenUtil.statusBarHeight + _util.setHeight(160),
-                      Colors.white),
+                      ScreenUtil.statusBarHeight + 160.h, Colors.white),
                   SliverPadding(
                     padding: EdgeInsets.only(
-                      top: _util.setHeight(8),
-                      bottom: _util.setHeight(350),
-                      left: _util.setWidth(32),
-                      right: _util.setWidth(32),
+                      top: 8.h,
+                      bottom: 350.h,
+                      left: 32.w,
+                      right: 32.w,
                     ),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
-                        Padding(
-                          padding: EdgeInsets.only(
-                              // top: util.setHeight(32),
-                              bottom: _util.setHeight(32)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Transform.scale(
-                                scale: 1.5,
-                                child: Switch(
-                                  onChanged: _onSwitchChanged,
-                                  value: switchOn,
-                                  activeColor: Colors.green,
-                                  activeTrackColor:
-                                      ColorConstants.LIGHT_POPUP_BKG,
-                                  inactiveThumbColor: Colors.grey,
-                                  inactiveTrackColor:
-                                      ColorConstants.LIGHT_POPUP_BKG,
-                                  // activeThumbImage: Image.asset(
-                                  //   ImagePaths.icAdd
-                                  // ).image,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: _util.setHeight(32),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: _util.setHeight(16),
-                            bottom: _util.setHeight(32),
-                          ),
-                          child: _getLightSceneDropdown(
-                            _allLightScenes,
-                            _bloc.lightScene,
-                            _bloc.lightSceneChanged,
-                            true,
-                            label: 'Select Scene',
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: _util.setHeight(16),
-                            bottom: _util.setHeight(16),
-                          ),
-                          child: _isLoading
-                              ? Center(child: CircularProgressIndicator())
-                              : InkWell(
-                                  onTap: () {
-                                    _renameTextController.text = _predefinedNewScene
-                                        .name; // PredefinedLightData.scenes[0].name;
-                                    _selectedScene =
-                                        _predefinedNewScene; // PredefinedLightData.scenes[0];
-                                    _selectedRoom = _selectedScene.rooms[0];
-                                    selectedLight = _selectedRoom.lightModes[0];
-                                    _bloc
-                                        .lightSceneChanged(_selectedScene.name);
-
-                                    Navigator.of(context).pushNamed(
-                                        LightingSceneListScreen.routeName);
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Text(
-                                        AppStrings.viewAllTheScenes,
-                                        style: TextStyle(
-                                            fontSize: _util.setSp(36),
-                                            color: ColorConstants
-                                                .LIGHT_POPUP_TEXT),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: _util.setHeight(32),
-                            bottom: _util.setHeight(32),
-                          ),
-                          child: _getDropdown(
-                              _selectedScene != null
-                                  ? _selectedScene.rooms.map((f) {
-                                      return f.roomName;
-                                    }).toList()
-                                  : _predefinedNewScene.rooms.map((f) {
-                                      return f.roomName;
-                                    }).toList(),
-                              _bloc.lightRoom,
-                              _bloc.lightRoomChanged,
-                              true,
-                              label: 'Select Room',
-                              dropdownType: 'room'),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: _util.setHeight(16),
-                            bottom: _util.setHeight(16),
-                          ),
-                          child: InkWell(
-                            onTap: () {},
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  AppStrings.slectLight,
-                                  style: TextStyle(
-                                      fontSize: _util.setSp(36),
-                                      color: ColorConstants.LIGHT_POPUP_TEXT),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Center(
-                            child: MultiSelectChip(
-                                // _user.lights,
-                                _selectedRoom != null
-                                    ? _selectedRoom.lightModes
-                                    : _selectedScene.rooms[0].lightModes,
-                                this)),
-                        // color picker
+                        _lightingSwitch(),
+                        SpaceH32(),
+                        _selectLightSceneDropdown(),
+                        _viewAllSceneButton(),
+                        _selectRoomDropdown(),
+                        _selectLightText(),
+                        _lightchipsContainerWidget(),
                         _colorPickerWidget()
                       ]),
                     ),
-                  ),
-                  // SliverToBoxAdapter(
-                  //   child:
-                  // ),
-
-                  // UIHelper.getTopEmptyContainer(90, false),
+                  )
                 ],
               ),
-              // Appbar(ScreenTitle.OB_SELECTION),
-              Positioned(
-                top: ScreenUtil.statusBarHeight,
-                left: 0,
-                right: 0,
-                child: Container(
-                  color: Colors.white,
-                  // padding: EdgeInsets.only(top: 8.0, right: 12.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          InkWell(
-                            onTap: () {
-                              _scaffoldKey.currentState.openDrawer();
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.fromLTRB(
-                                _util.setWidth(32),
-                                _util.setHeight(32),
-                                _util.setWidth(32),
-                                _util.setHeight(32),
-                              ),
-                              child: ImageIcon(
-                                AssetImage(ImagePaths.icHamburger),
-                                color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              left: _util.setWidth(48),
-                              top: _util.setHeight(32),
-                              bottom: _util.setHeight(32),
-                            ),
-                            child: Text(
-                              AppStrings.lighting,
-                              style: TextStyle(
-                                  color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 22),
-                            ),
-                          ),
-                          Spacer(),
-                          InkWell(
-                            onTap: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                right: _util.setWidth(48),
-                                top: _util.setHeight(32),
-                                bottom: _util.setHeight(32),
-                              ),
-                              child: Image.asset(
-                                ImagePaths.cross,
-                                width: _util.setWidth(48),
-                                height: _util.setHeight(48),
-                                color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: BottomClipperLighting(ButtonText.SAVE_SCENE,
-                    ButtonText.RENAME_DELETE_SCENE, false, () {
-                  _showSaveAsDialog();
-                }, () {
-                  if (_isNewScene == null || !_isNewScene)
-                    _showRenameDeteletDialog();
-                }),
-              )
+              _topBar(),
+              _bottomButton()
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Positioned _bottomButton() {
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: BottomClipperLighting(
+          ButtonText.SAVE_SCENE, ButtonText.RENAME_DELETE_SCENE, false, () {
+        _showSaveAsDialog();
+      }, () {
+        if (_isNewScene == null || !_isNewScene) _showRenameDeteletDialog();
+      }),
+    );
+  }
+
+  Positioned _topBar() {
+    return Positioned(
+      top: ScreenUtil.statusBarHeight,
+      left: 0,
+      right: 0,
+      child: Container(
+        color: Colors.white,
+        // padding: EdgeInsets.only(top: 8.0, right: 12.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                InkWell(
+                  onTap: () {
+                    _scaffoldKey.currentState.openDrawer();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      32.w,
+                      32.h,
+                      32.w,
+                      32.h,
+                    ),
+                    child: ImageIcon(
+                      AssetImage(ImagePaths.icHamburger),
+                      color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: 48.w,
+                    top: 32.h,
+                    bottom: 32.h,
+                  ),
+                  child: Text(
+                    AppStrings.lighting,
+                    style: TextStyle(
+                        color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 22),
+                  ),
+                ),
+                Spacer(),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      right: 48.w,
+                      top: 32.h,
+                      bottom: 32.h,
+                    ),
+                    child: Image.asset(
+                      ImagePaths.cross,
+                      width: 48.w,
+                      height: 48.h,
+                      color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Center _lightchipsContainerWidget() {
+    return Center(
+        child: MultiSelectChip(
+            // _user.lights,
+            _selectedRoom != null
+                ? _selectedRoom.lightModes
+                : _selectedScene.rooms[0].lightModes,
+            this));
+  }
+
+  Padding _selectLightText() {
+    return Padding(
+      padding: EdgeInsets.only(
+        top: 16.h,
+        bottom: 16.h,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            AppStrings.slectLight,
+            style: TextStyle(
+                fontSize: 36.sp, color: ColorConstants.LIGHT_POPUP_TEXT),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Padding _selectRoomDropdown() {
+    return Padding(
+      padding: EdgeInsets.only(
+        top: 32.h,
+        bottom: 32.h,
+      ),
+      child: _getDropdown(
+          _selectedScene != null
+              ? _selectedScene.rooms.map((f) {
+                  return f.roomName;
+                }).toList()
+              : _predefinedNewScene.rooms.map((f) {
+                  return f.roomName;
+                }).toList(),
+          _bloc.lightRoom,
+          _bloc.lightRoomChanged,
+          true,
+          label: 'Select Room',
+          dropdownType: 'room'),
+    );
+  }
+
+  Padding _viewAllSceneButton() {
+    return Padding(
+      padding: EdgeInsets.only(
+        top: 16.h,
+        bottom: 16.h,
+      ),
+      child: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : InkWell(
+              onTap: () {
+                _renameTextController.text = _predefinedNewScene
+                    .name; // PredefinedLightData.scenes[0].name;
+                _selectedScene =
+                    _predefinedNewScene; // PredefinedLightData.scenes[0];
+                _selectedRoom = _selectedScene.rooms[0];
+                selectedLight = _selectedRoom.lightModes[0];
+                _bloc.lightSceneChanged(_selectedScene.name);
+
+                Navigator.of(context)
+                    .pushNamed(LightingSceneListScreen.routeName);
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    AppStrings.viewAllTheScenes,
+                    style: TextStyle(
+                        fontSize: 36.sp,
+                        color: ColorConstants.LIGHT_POPUP_TEXT),
+                  ),
+                ],
+              ),
+            ),
+    );
+  }
+
+  Padding _selectLightSceneDropdown() {
+    return Padding(
+      padding: EdgeInsets.only(
+        top: 16.h,
+        bottom: 32.h,
+      ),
+      child: _getLightSceneDropdown(
+        _allLightScenes,
+        _bloc.lightScene,
+        _bloc.lightSceneChanged,
+        true,
+        label: 'Select Scene',
+      ),
+    );
+  }
+
+  Padding _lightingSwitch() {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 32.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Transform.scale(
+            scale: 1.5,
+            child: Switch(
+              onChanged: _onSwitchChanged,
+              value: switchOn,
+              activeColor: Colors.green,
+              activeTrackColor: ColorConstants.LIGHT_POPUP_BKG,
+              inactiveThumbColor: Colors.grey,
+              inactiveTrackColor: ColorConstants.LIGHT_POPUP_BKG,
+              // activeThumbImage: Image.asset(
+              //   ImagePaths.icAdd
+              // ).image,
+            ),
+          )
+        ],
       ),
     );
   }
@@ -443,6 +460,20 @@ class _LightingScreenState extends State<LightingScreen> {
     });
   }
 
+  void _onLightSwitchChanged() {
+    _oceanBuilderProvider
+        .toogleLightStatus(
+            sceneId: _oceanBuilderUser.lighting.selectedScene,
+            lightId: selectedLight.id)
+        .then((responseStatus) {
+      if (responseStatus.status == 200) {
+        showInfoBar('Toggle Light Status', 'Light status toogled', context);
+      } else {
+        showInfoBar(responseStatus.code, responseStatus.message, context);
+      }
+    });
+  }
+
   _colorPickerWidget() {
     // // debugPrint('Color picker widget rebuilding');
     return Container(
@@ -450,11 +481,10 @@ class _LightingScreenState extends State<LightingScreen> {
         color: _colorPickerDataProvider
             .initialColor, //Color(0xffffed27), //Color(0xFF2741D3),
         onChanged: (value) {
-          // // debugPrint('Selected color -- ' + value.toString().substring(10,16).toUpperCase());
+          debugPrint('Selected color -- ' + value.toString().substring(6, 16));
           setState(() {
             selectedColor = value;
-            selectedLight.lightColor =
-                value.toString().substring(6, 16).toUpperCase();
+            selectedLight.lightColor = value.toString().substring(6, 16);
 
             Light light;
             _selectedRoom.lightModes.map((f) {
@@ -480,18 +510,24 @@ class _LightingScreenState extends State<LightingScreen> {
                 _selectedRoom.lightModes;
           });
         },
+        onLightSwitchChanged: (value) {
+          _onLightSwitchChanged();
+        },
       ),
     );
   }
 
   Scene getLightScene(String lightingSceneId) {
     Scene lightScene;
-    // print('getLightScene');
-    // print(lightingSceneId);
+    print('getLightScene');
+    debugPrint(
+        '$lightingSceneId -------------------- ${_allLightScenes.length} ');
     // _user.lightiningScenes.map((f) {
     _allLightScenes.map((f) {
       if (f.id != null && f.id.compareTo(lightingSceneId) == 0) lightScene = f;
     }).toList();
+
+    debugPrint('$lightingSceneId----------------- $lightScene');
 
     return lightScene;
   }
@@ -538,24 +574,24 @@ class _LightingScreenState extends State<LightingScreen> {
                   borderSide: BorderSide(
                       color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                       width: 1),
-                  borderRadius: BorderRadius.circular(_util.setWidth(32))),
+                  borderRadius: BorderRadius.circular(32.w)),
               contentPadding: EdgeInsets.only(
                 left: 48.w,
-                top: _util.setWidth(16),
-                bottom: _util.setWidth(16),
+                top: 16.w,
+                bottom: 16.w,
               ),
               labelText: label,
               // hintStyle: TextStyle(color: Colors.red),
               labelStyle: TextStyle(
                   color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                  fontSize: _util.setSp(36)),
+                  fontSize: 36.sp),
             ),
             child: DropdownButtonHideUnderline(
               child: ButtonTheme(
                 alignedDropdown: true,
                 child: DropdownButton<String>(
                   icon: Icon(Icons.arrow_drop_down,
-                      size: _util.setSp(96),
+                      size: 96.sp,
                       color: snapshot.hasData
                           ? ColorConstants.ACCESS_MANAGEMENT_TITLE
                           : ColorConstants
@@ -569,7 +605,7 @@ class _LightingScreenState extends State<LightingScreen> {
                         ? ColorConstants.ACCESS_MANAGEMENT_TITLE
                         : ColorConstants
                             .ACCESS_MANAGEMENT_SUBTITLE, //ColorConstants.INVALID_TEXTFIELD,
-                    fontSize: _util.setSp(36),
+                    fontSize: 36.sp,
                     fontWeight: FontWeight.w400,
                     // letterSpacing: 1.2,
                     // wordSpacing: 4
@@ -642,24 +678,24 @@ class _LightingScreenState extends State<LightingScreen> {
                   borderSide: BorderSide(
                       color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                       width: 1),
-                  borderRadius: BorderRadius.circular(_util.setWidth(32))),
+                  borderRadius: BorderRadius.circular(32.w)),
               contentPadding: EdgeInsets.only(
                 left: 48.w,
-                top: _util.setWidth(16),
-                bottom: _util.setWidth(16),
+                top: 16.w,
+                bottom: 16.w,
               ),
               labelText: label,
               // hintStyle: TextStyle(color: Colors.red),
               labelStyle: TextStyle(
                   color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                  fontSize: _util.setSp(36)),
+                  fontSize: 36.sp),
             ),
             child: DropdownButtonHideUnderline(
               child: ButtonTheme(
                 alignedDropdown: true,
                 child: DropdownButton<String>(
                   icon: Icon(Icons.arrow_drop_down,
-                      size: _util.setSp(96),
+                      size: 96.sp,
                       color: snapshot.hasData
                           ? ColorConstants.ACCESS_MANAGEMENT_TITLE
                           : ColorConstants
@@ -676,7 +712,7 @@ class _LightingScreenState extends State<LightingScreen> {
                         ? ColorConstants.ACCESS_MANAGEMENT_TITLE
                         : ColorConstants
                             .ACCESS_MANAGEMENT_SUBTITLE, //ColorConstants.INVALID_TEXTFIELD,
-                    fontSize: _util.setSp(36),
+                    fontSize: 36.sp,
                     fontWeight: FontWeight.w400,
                     // letterSpacing: 1.2,
                     // wordSpacing: 4
@@ -723,12 +759,12 @@ class _LightingScreenState extends State<LightingScreen> {
                                             0)
                                 ? Padding(
                                     padding: EdgeInsets.only(
-                                      top: _util.setHeight(32),
+                                      top: 32.h,
                                     ),
                                     child: Divider(
                                       color: ColorConstants
                                           .ACCESS_MANAGEMENT_DIVIDER,
-                                      height: _util.setHeight(8),
+                                      height: 8.h,
                                     ),
                                   )
                                 : Container(),
@@ -794,7 +830,7 @@ class _LightingScreenState extends State<LightingScreen> {
             // ),
             Container(
               margin: EdgeInsets.only(
-                bottom: _util.setHeight(32),
+                bottom: 32.h,
               ),
               child: TextField(
                 autofocus: false,
@@ -811,19 +847,19 @@ class _LightingScreenState extends State<LightingScreen> {
                       borderSide: BorderSide(
                           color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                           width: 1),
-                      borderRadius: BorderRadius.circular(_util.setWidth(16))),
+                      borderRadius: BorderRadius.circular(16.w)),
                   border: OutlineInputBorder(
                       borderSide: BorderSide(
                           color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                           width: 1),
-                      borderRadius: BorderRadius.circular(_util.setWidth(16))),
+                      borderRadius: BorderRadius.circular(16.w)),
                   labelText: 'Rename Scene',
                   labelStyle: TextStyle(
                       color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                      fontSize: _util.setSp(38)),
+                      fontSize: 38.sp),
                 ),
                 style: TextStyle(
-                  fontSize: _util.setSp(38),
+                  fontSize: 38.sp,
                   fontWeight: FontWeight.w400,
                   color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
                 ),
@@ -844,61 +880,31 @@ class _LightingScreenState extends State<LightingScreen> {
                     _bloc.lightSceneController.add(null);
 
                     _selectedScene.name = _renameTextController.text;
-
-                    // _oceanBuilderProvider
-                    //     .updateOceanBuilderUser(
-                    //         currentUserID: _user.userID,
-                    //         oceanBuilderID: _selectedOBIdProvider.selectedObId,
-                    //         oceanBuilderUser: _oceanBuilderUser)
-                    //     .then((onValue) {
-                    //   _oceanBuilderProvider
-                    //       .getOceanBuilder(_selectedOBIdProvider.selectedObId)
-                    //       .then((oceanBuilder) {
-                    //     _resetOceanBuilder(oceanBuilder);
-                    //   });
-                    // });
                   },
                   child: Text(
                     'RENAME SCENE',
                   ),
                   shape: RoundedRectangleBorder(
-                      borderRadius:
-                          new BorderRadius.circular(_util.setWidth(16)),
+                      borderRadius: new BorderRadius.circular(16.w),
                       side: BorderSide(
                         color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                       )),
                   textColor: ColorConstants.ACCESS_MANAGEMENT_BUTTON,
                   color: Colors.white, //ColorConstants.TOP_CLIPPER_END
                 ),
-                SizedBox(
-                  width: _util.setHeight(32),
-                ),
+                SpaceH32(),
                 InkWell(
                   onTap: () {
                     Navigator.of(context).pop();
                     _oceanBuilderUser.lighting.sceneList.remove(_selectedScene);
                     _bloc.lightRoomController.add(null);
                     _bloc.lightSceneController.add(null);
-
-                    // _oceanBuilderProvider
-                    //     .updateOceanBuilderUser(
-                    //         currentUserID: _user.userID,
-                    //         oceanBuilderID: _selectedOBIdProvider.selectedObId,
-                    //         oceanBuilderUser: _oceanBuilderUser)
-                    //     .then((onValue) {
-                    //   _oceanBuilderProvider
-                    //       .getOceanBuilder(_selectedOBIdProvider.selectedObId)
-                    //       .then((oceanBuilder) {
-                    //     _resetOceanBuilder(oceanBuilder);
-                    //   });
-                    // });
                   },
                   child: Padding(
-                    padding: EdgeInsets.all(_util.setWidth(32)),
+                    padding: EdgeInsets.all(32.w),
                     child: Text(
                       'DELETE SCENE',
-                      style: TextStyle(
-                          fontSize: _util.setSp(38), color: Colors.red),
+                      style: TextStyle(fontSize: 38.sp, color: Colors.red),
                     ),
                   ),
                 )
@@ -940,7 +946,7 @@ class _LightingScreenState extends State<LightingScreen> {
             // ),
             Container(
               margin: EdgeInsets.only(
-                bottom: _util.setHeight(32),
+                bottom: 32.h,
               ),
               child: TextField(
                 autofocus: false,
@@ -957,19 +963,19 @@ class _LightingScreenState extends State<LightingScreen> {
                       borderSide: BorderSide(
                           color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                           width: 1),
-                      borderRadius: BorderRadius.circular(_util.setWidth(16))),
+                      borderRadius: BorderRadius.circular(16.w)),
                   border: OutlineInputBorder(
                       borderSide: BorderSide(
                           color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                           width: 1),
-                      borderRadius: BorderRadius.circular(_util.setWidth(16))),
+                      borderRadius: BorderRadius.circular(16.w)),
                   labelText: 'Name your scene',
                   labelStyle: TextStyle(
                       color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                      fontSize: _util.setSp(38)),
+                      fontSize: 38.sp),
                 ),
                 style: TextStyle(
-                  fontSize: _util.setSp(38),
+                  fontSize: 38.sp,
                   fontWeight: FontWeight.w400,
                   color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
                 ),
@@ -978,27 +984,23 @@ class _LightingScreenState extends State<LightingScreen> {
                 ],
               ),
             ),
-            SizedBox(
-              height: _util.setHeight(32),
-            ),
+            SpaceH32(),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Text('Save scene in',
                     style: TextStyle(
                         color: ColorConstants.COLOR_NOTIFICATION_ITEM,
-                        fontSize: _util.setSp(42)))
+                        fontSize: 42.sp))
               ],
             ),
-            SizedBox(
-              height: _util.setHeight(32),
-            ),
+            SpaceH32(),
             StatefulBuilder(
                 builder: (BuildContext context, StateSetter stateSetter) {
               return Column(
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.only(left: _util.setWidth(64)),
+                    padding: EdgeInsets.only(left: 64.w),
                     child: InkWell(
                       onTap: () {
                         stateSetter(() {
@@ -1015,11 +1017,9 @@ class _LightingScreenState extends State<LightingScreen> {
                             color: isSeaPodSourceSelected
                                 ? ColorConstants.COLOR_NOTIFICATION_BUBBLE
                                 : Colors.grey, //Color(0xFF064390),
-                            size: _util.setWidth(36),
+                            size: 36.w,
                           ),
-                          SizedBox(
-                            width: _util.setWidth(32),
-                          ),
+                          SpaceH32(),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1030,7 +1030,7 @@ class _LightingScreenState extends State<LightingScreen> {
                                 style: TextStyle(
                                     color:
                                         ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                                    fontSize: _util.setSp(36)),
+                                    fontSize: 36.sp),
                               ),
                               Text(
                                 'Anyone with acces will be able to see it',
@@ -1038,7 +1038,7 @@ class _LightingScreenState extends State<LightingScreen> {
                                 style: TextStyle(
                                     color:
                                         ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                                    fontSize: _util.setSp(24)),
+                                    fontSize: 24.sp),
                               ),
                             ],
                           ),
@@ -1046,11 +1046,9 @@ class _LightingScreenState extends State<LightingScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: _util.setHeight(32),
-                  ),
+                  SpaceH32(),
                   Padding(
-                    padding: EdgeInsets.only(left: _util.setWidth(64)),
+                    padding: EdgeInsets.only(left: 64.w),
                     child: InkWell(
                       onTap: () {
                         stateSetter(() {
@@ -1067,11 +1065,9 @@ class _LightingScreenState extends State<LightingScreen> {
                             color: !isSeaPodSourceSelected
                                 ? ColorConstants.COLOR_NOTIFICATION_BUBBLE
                                 : Colors.grey, //Color(0xFF064390),
-                            size: _util.setWidth(36),
+                            size: 36.w,
                           ),
-                          SizedBox(
-                            width: _util.setWidth(32),
-                          ),
+                          SpaceH32(),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1082,7 +1078,7 @@ class _LightingScreenState extends State<LightingScreen> {
                                 style: TextStyle(
                                     color:
                                         ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                                    fontSize: _util.setSp(36)),
+                                    fontSize: 36.sp),
                               ),
                               Text(
                                 'Available only to you',
@@ -1090,7 +1086,7 @@ class _LightingScreenState extends State<LightingScreen> {
                                 style: TextStyle(
                                     color:
                                         ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                                    fontSize: _util.setSp(24)),
+                                    fontSize: 24.sp),
                               ),
                             ],
                           ),
@@ -1101,9 +1097,7 @@ class _LightingScreenState extends State<LightingScreen> {
                 ],
               );
             }),
-            SizedBox(
-              height: _util.setHeight(32),
-            ),
+            SpaceH32(),
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -1226,26 +1220,12 @@ class _LightingScreenState extends State<LightingScreen> {
                         }
                       });
                     }
-/* 
-                      _oceanBuilderProvider.updateOceanBuilderUser(
-                        currentUserID: _user.userID,
-                        oceanBuilderID: _selectedOBIdProvider.selectedObId,
-                        oceanBuilderUser: _oceanBuilderUser).then((onValue){
-                          
-                        _oceanBuilderProvider.getOceanBuilder(_selectedOBIdProvider.selectedObId).then((oceanBuilder){
-                              _resetOceanBuilder(oceanBuilder);
-                             
-                          });
-
-                        }); 
-                         */
                   },
                   child: Text(
                     'SAVE SCENE',
                   ),
                   shape: RoundedRectangleBorder(
-                      borderRadius:
-                          new BorderRadius.circular(_util.setWidth(16)),
+                      borderRadius: new BorderRadius.circular(16.w),
                       side: BorderSide(
                         color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                       )),
@@ -1261,53 +1241,133 @@ class _LightingScreenState extends State<LightingScreen> {
 
   Scene _getNewScene() {
     List<Light> _lightsBedroom = [
-      new Light(lightName: 'Lightstrip 1', lightColor: '0xFF959B1B'),
-      new Light(lightName: 'Lightstrip 2', lightColor: '0xFF1322FF'),
-      new Light(lightName: 'Ligh 3', lightColor: '0xFFFF1EEE'),
-      new Light(lightName: 'Counter 4', lightColor: '0xFFFFBE93'),
-      new Light(lightName: 'Ocerhead 3', lightColor: '0xFFC1FFE5')
+      new Light(
+          lightName: 'Lightstrip 1',
+          lightColor: '0xFF959B1B',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Lightstrip 2',
+          lightColor: '0xFF1322FF',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Ligh 3',
+          lightColor: '0xFFFF1EEE',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Counter 4',
+          lightColor: '0xFFFFBE93',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Ocerhead 3',
+          lightColor: '0xFFC1FFE5',
+          status: true,
+          brightness: 100)
     ];
 
     List<Light> _lightsLivingRoom = [
-      new Light(lightName: 'Lightstrip 1', lightColor: '0xFF959B1B'),
-      new Light(lightName: 'Lightstrip 2', lightColor: '0xFF1322FF'),
-      new Light(lightName: 'Ligh 3', lightColor: '0xFFFF1EEE'),
-      new Light(lightName: 'Counter 4', lightColor: '0xFFFFBE93'),
-      new Light(lightName: 'Ocerhead 3', lightColor: '0xFFC1FFE5')
+      new Light(
+          lightName: 'Lightstrip 1',
+          lightColor: '0xFF959B1B',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Lightstrip 2',
+          lightColor: '0xFF1322FF',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Ligh 3',
+          lightColor: '0xFFFF1EEE',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Counter 4',
+          lightColor: '0xFFFFBE93',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Ocerhead 3',
+          lightColor: '0xFFC1FFE5',
+          status: true,
+          brightness: 100)
     ];
 
     List<Light> _lightsKitchen = [
-      new Light(lightName: 'Lightstrip 1', lightColor: '0xFF959B1B'),
-      new Light(lightName: 'Lightstrip 2', lightColor: '0xFF1322FF'),
-      new Light(lightName: 'Ligh 3', lightColor: '0xFFFF1EEE'),
-      new Light(lightName: 'Counter 4', lightColor: '0xFFFFBE93'),
-      new Light(lightName: 'Ocerhead 3', lightColor: '0xFFC1FFE5')
+      new Light(
+          lightName: 'Lightstrip 1',
+          lightColor: '0xFF959B1B',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Lightstrip 2',
+          lightColor: '0xFF1322FF',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Ligh 3',
+          lightColor: '0xFFFF1EEE',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Counter 4',
+          lightColor: '0xFFFFBE93',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Ocerhead 3',
+          lightColor: '0xFFC1FFE5',
+          status: true,
+          brightness: 100)
     ];
 
     List<Light> _lightsUnderWaterRoom = [
-      new Light(lightName: 'Lightstrip 1', lightColor: '0xFF959B1B'),
-      new Light(lightName: 'Lightstrip 2', lightColor: '0xFF1322FF'),
-      new Light(lightName: 'Ligh 3', lightColor: '0xFFFF1EEE'),
-      new Light(lightName: 'Counter 4', lightColor: '0xFFFFBE93'),
-      new Light(lightName: 'Ocerhead 3', lightColor: '0xFFC1FFE5')
+      new Light(
+          lightName: 'Lightstrip 1',
+          lightColor: '0xFF959B1B',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Lightstrip 2',
+          lightColor: '0xFF1322FF',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Ligh 3',
+          lightColor: '0xFFFF1EEE',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Counter 4',
+          lightColor: '0xFFFFBE93',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Ocerhead 3',
+          lightColor: '0xFFC1FFE5',
+          status: true,
+          brightness: 100)
     ];
 
     List<Room> rooms = [
       new Room(
           roomName: 'Bedroom',
-          light: _lightsBedroom[0],
+          // light: _lightsBedroom[0],
           lightModes: _lightsBedroom),
       new Room(
           roomName: 'Livingroom',
-          light: _lightsLivingRoom[1],
+          // light: _lightsLivingRoom[1],
           lightModes: _lightsLivingRoom),
       new Room(
           roomName: 'Kitchen',
-          light: _lightsKitchen[2],
+          // light: _lightsKitchen[2],
           lightModes: _lightsKitchen),
       new Room(
           roomName: 'UnderWaterRoom',
-          light: _lightsUnderWaterRoom[3],
+          // light: _lightsUnderWaterRoom[3],
           lightModes: _lightsUnderWaterRoom),
     ];
 

@@ -15,6 +15,8 @@ import 'package:ocean_builder/ui/screens/menu/landing_screen.dart';
 import 'package:ocean_builder/ui/screens/permission/custom_permission_screen.dart';
 import 'package:ocean_builder/ui/shared/drop_downs.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
+import 'package:ocean_builder/ui/widgets/progress_indicator.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:ocean_builder/core/models/access_request.dart';
 import 'package:provider/provider.dart';
@@ -38,8 +40,6 @@ class _GuestRequestResponseScreenState
   GuestRequestValidationBloc _bloc = GuestRequestValidationBloc();
 
   String requestAccessTime;
-
-  ScreenUtil _util;
 
   bool isFromNotificationTray = false;
 
@@ -158,7 +158,6 @@ class _GuestRequestResponseScreenState
 //  userProvider.getAuthUserProfile(widget.fcmNotification.data.ownerID).then((onValue){
 //      userProvider.authenticatedUser = onValue;
 //  });
-    _util = ScreenUtil();
     double topClipperRatio =
         Platform.isIOS ? (153.5) / 813 : (153.5 + 16) / 813;
     double height = MediaQuery.of(context).size.height * topClipperRatio;
@@ -184,138 +183,9 @@ class _GuestRequestResponseScreenState
           fit: StackFit.expand,
           alignment: Alignment.center,
           children: <Widget>[
-            CustomScrollView(
-              shrinkWrap: true,
-              slivers: <Widget>[
-                UIHelper.getTopEmptyContainer(height * .9, false),
-                userProvider.isLoading
-                    ? SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                      )
-                    : SliverList(
-                        delegate: SliverChildListDelegate([
-                        _messageRow(widget.accessRequest.reqMessage),
-                        SizedBox(height: _util.setHeight(72)),
-                        _itemRow('Email Address',
-                            '${widget.accessRequest.user.email}'),
-                        SizedBox(height: _util.setHeight(72)),
-                        _itemRow('Contact Number',
-                            '${widget.accessRequest.user.mobileNumber}'),
-                        SizedBox(height: _util.setHeight(72)),
-                        _itemRow('SEAPOD NAME /\nVESSEL CODE',
-                            '${widget.accessRequest.seaPod.name} /\n ${widget.accessRequest.seaPod.vessleCode}'),
-                        SizedBox(height: _util.setHeight(72)),
-                        _accessAsRow(),
-                        SizedBox(height: _util.setHeight(72)),
-                        _accessForRow(
-                            'Access From',
-                            DateFormat('MM/dd/yyyy').format(
-                                DateTime.fromMicrosecondsSinceEpoch(widget
-                                    .accessRequest
-                                    .checkIn)), //widget.accessRequest.checkIn,
-                            ' Access For',
-                            'accessForValue'),
-                        SizedBox(height: _util.setHeight(72)),
-                        _permissionSetRow(),
-                        SizedBox(height: 24),
-                        _customPermissionsRow(),
-                      ])),
-                UIHelper.getTopEmptyContainer(90, false),
-              ],
-            ),
-            Positioned(
-              top: ScreenUtil.statusBarHeight,
-              left: 0,
-              right: 0,
-              child: Container(
-                // color: Colors.white,
-                // padding: EdgeInsets.only(top: 8.0, right: 12.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            InkWell(
-                              onTap: () {
-                                _scaffoldKey.currentState.openDrawer();
-                                // _innerDrawerKey.currentState.toggle();
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  left: _util.setWidth(32),
-                                  right: _util.setWidth(32),
-                                  top: _util.setHeight(32),
-                                  bottom: _util.setHeight(32),
-                                ),
-                                child: ImageIcon(
-                                  AssetImage(ImagePaths.icHamburger),
-                                  color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(
-                                  _util.setWidth(32),
-                                  _util.setHeight(32),
-                                  0.0, //_util.setWidth(32),
-                                  _util.setHeight(32)),
-                              child: Text(
-                                widget.accessRequest.accesEventType,
-                                style: TextStyle(
-                                    color:
-                                        ColorConstants.WEATHER_MORE_ICON_COLOR,
-                                    fontSize: ScreenUtil().setSp(64),
-                                    fontWeight: FontWeight.w400),
-                              ),
-                            ),
-                          ],
-                        ),
-                        InkWell(
-                          onTap: () {
-                            if (isFromNotificationTray) {
-                              Navigator.of(context)
-                                  .pushReplacementNamed(HomeScreen.routeName);
-                            } else {
-                              Navigator.of(context).pop();
-                            }
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                              left: _util.setWidth(32),
-                              right: _util.setWidth(32),
-                              top: _util.setHeight(32),
-                              bottom: _util.setHeight(32),
-                            ),
-                            child: Image.asset(
-                              ImagePaths.cross,
-                              width: _util.setWidth(48),
-                              height: _util.setHeight(48),
-                              color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: _util.setHeight(48),
-              child: _approvalButtons(userProvider),
-            )
+            _mainContent(height, userProvider),
+            _topBar(context),
+            _bottomButtons(userProvider)
             // OB24sP6
           ],
         ),
@@ -323,9 +193,145 @@ class _GuestRequestResponseScreenState
     );
   }
 
+  CustomScrollView _mainContent(double height, UserProvider userProvider) {
+    return CustomScrollView(
+      shrinkWrap: true,
+      slivers: <Widget>[
+        _startSpace(height),
+        userProvider.isLoading ? ProgressIndicatorBoxAdapter() : _inputFields(),
+        _endSpace(),
+      ],
+    );
+  }
+
+  Positioned _bottomButtons(UserProvider userProvider) {
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: 48.h,
+      child: _approvalButtons(userProvider),
+    );
+  }
+
+  Positioned _topBar(BuildContext context) {
+    return Positioned(
+      top: ScreenUtil.statusBarHeight,
+      left: 0,
+      right: 0,
+      child: Container(
+        // color: Colors.white,
+        // padding: EdgeInsets.only(top: 8.0, right: 12.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () {
+                        _scaffoldKey.currentState.openDrawer();
+                        // _innerDrawerKey.currentState.toggle();
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          left: 32.w,
+                          right: 32.w,
+                          top: 32.w,
+                          bottom: 32.w,
+                        ),
+                        child: ImageIcon(
+                          AssetImage(ImagePaths.icHamburger),
+                          color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          32.w,
+                          32.h,
+                          0.0, //_util.setWidth(32),
+                          32.h),
+                      child: Text(
+                        widget.accessRequest.accesEventType,
+                        style: TextStyle(
+                            color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                            fontSize: 64.sp,
+                            fontWeight: FontWeight.w400),
+                      ),
+                    ),
+                  ],
+                ),
+                InkWell(
+                  onTap: () {
+                    if (isFromNotificationTray) {
+                      Navigator.of(context)
+                          .pushReplacementNamed(HomeScreen.routeName);
+                    } else {
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: 32.w,
+                      right: 32.w,
+                      top: 32.h,
+                      bottom: 32.h,
+                    ),
+                    child: Image.asset(
+                      ImagePaths.cross,
+                      width: 48.w,
+                      height: 48.h,
+                      color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _startSpace(double height) =>
+      UIHelper.getTopEmptyContainer(height * .9, false);
+
+  SliverList _inputFields() {
+    return SliverList(
+        delegate: SliverChildListDelegate([
+      _messageRow(widget.accessRequest.reqMessage),
+      SpaceH64(),
+      _itemRow('Email Address', '${widget.accessRequest.user.email}'),
+      SpaceH64(),
+      _itemRow('Contact Number', '${widget.accessRequest.user.mobileNumber}'),
+      SpaceH64(),
+      _itemRow('SEAPOD NAME /\nVESSEL CODE',
+          '${widget.accessRequest.seaPod.name} /\n ${widget.accessRequest.seaPod.vessleCode}'),
+      SpaceH64(),
+      _accessAsRow(),
+      SpaceH64(),
+      _accessForRow(
+          'Access From',
+          DateFormat('MM/dd/yyyy').format(DateTime.fromMicrosecondsSinceEpoch(
+              widget.accessRequest.checkIn)), //widget.accessRequest.checkIn,
+          ' Access For',
+          'accessForValue'),
+      SpaceH64(),
+      _permissionSetRow(),
+      SpaceH32(),
+      _customPermissionsRow(),
+    ]));
+  }
+
+  _endSpace() => UIHelper.getTopEmptyContainer(90, false);
+
   _messageRow(String message) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: _util.setWidth(48)),
+      padding: EdgeInsets.symmetric(horizontal: 48.w),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -334,12 +340,12 @@ class _GuestRequestResponseScreenState
               style: TextStyle(
                   color: ColorConstants.COLOR_NOTIFICATION_SUB_ITEM,
                   fontWeight: FontWeight.w400,
-                  fontSize: _util.setSp(42))),
-          SizedBox(height: _util.setHeight(32)),
+                  fontSize: 42.sp)),
+          SizedBox(height: 32.h),
           Text(message,
               style: TextStyle(
                   color: ColorConstants.COLOR_NOTIFICATION_ITEM,
-                  fontSize: _util.setSp(42)))
+                  fontSize: 42.sp))
         ],
       ),
     );
@@ -347,7 +353,7 @@ class _GuestRequestResponseScreenState
 
   _itemRow(String itemTitle, itemValue) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: _util.setWidth(48)),
+      padding: EdgeInsets.symmetric(horizontal: 48.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -356,14 +362,14 @@ class _GuestRequestResponseScreenState
               style: TextStyle(
                   color: ColorConstants.COLOR_NOTIFICATION_SUB_ITEM,
                   fontWeight: FontWeight.w400,
-                  fontSize: _util.setSp(42))),
+                  fontSize: 42.sp)),
           // SizedBox(
           //   height: util.setHeight(32)
           //   ),
           Text(itemValue,
               style: TextStyle(
                   color: ColorConstants.COLOR_NOTIFICATION_ITEM,
-                  fontSize: _util.setSp(42)))
+                  fontSize: 42.sp))
         ],
       ),
     );
@@ -377,13 +383,13 @@ class _GuestRequestResponseScreenState
             label: 'Access As'),
         _isMemberSelected
             ? Positioned(
-                bottom: _util.setHeight(16),
-                right: _util.setWidth(96),
+                bottom: 16.h,
+                right: 96.w,
                 child: Text('Indefinite access to your seapod',
                     style: TextStyle(
                         color: ColorConstants.COLOR_NOTIFICATION_ITEM,
                         fontWeight: FontWeight.w400,
-                        fontSize: _util.setSp(42))),
+                        fontSize: 42.sp)),
               )
             : Container(),
       ],
@@ -393,7 +399,7 @@ class _GuestRequestResponseScreenState
   _accessForRow(
       accessFromTitle, accessFromValue, accessForTitle, accessForValue) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: _util.setWidth(48)),
+      padding: EdgeInsets.symmetric(horizontal: 48.w),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -407,12 +413,12 @@ class _GuestRequestResponseScreenState
                         style: TextStyle(
                             color: ColorConstants.COLOR_NOTIFICATION_ITEM,
                             fontWeight: FontWeight.w400,
-                            fontSize: _util.setSp(42))),
-                    SizedBox(width: _util.setWidth(32)),
+                            fontSize: 42.sp)),
+                    SizedBox(width: 32.w),
                     Text(accessFromValue,
                         style: TextStyle(
                             color: ColorConstants.COLOR_NOTIFICATION_ITEM,
-                            fontSize: _util.setSp(42)))
+                            fontSize: 42.sp))
                   ],
                 )
               : Column(
@@ -423,16 +429,16 @@ class _GuestRequestResponseScreenState
                         style: TextStyle(
                             color: ColorConstants.COLOR_NOTIFICATION_ITEM,
                             fontWeight: FontWeight.w400,
-                            fontSize: _util.setSp(42))),
-                    SizedBox(height: _util.setHeight(32)),
+                            fontSize: 42.sp)),
+                    SizedBox(height: 32.h),
                     Text(accessFromValue,
                         style: TextStyle(
                             color: ColorConstants.COLOR_NOTIFICATION_ITEM,
-                            fontSize: _util.setSp(42)))
+                            fontSize: 42.sp))
                   ],
                 ),
           SizedBox(
-            width: _util.setWidth(200),
+            width: 200.w,
           ),
           _isGuestSelected
               ? Expanded(
@@ -471,14 +477,12 @@ class _GuestRequestResponseScreenState
                     onPressed: () {
                       _denyRequest(userProvider);
                     },
-                    padding: EdgeInsets.only(
-                        left: _util.setWidth(64), right: _util.setWidth(64)),
+                    padding: EdgeInsets.only(left: 64.w, right: 64.w),
                     child: Text(
                       'DENY',
                     ),
                     shape: RoundedRectangleBorder(
-                        borderRadius:
-                            new BorderRadius.circular(_util.setWidth(48)),
+                        borderRadius: new BorderRadius.circular(48.w),
                         side: BorderSide(
                           color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                         )),
@@ -489,12 +493,10 @@ class _GuestRequestResponseScreenState
                     onPressed: () {
                       _approveRequest(userProvider);
                     },
-                    padding: EdgeInsets.only(
-                        left: _util.setWidth(64), right: _util.setWidth(64)),
+                    padding: EdgeInsets.only(left: 64.w, right: 64.w),
                     child: Text('APPROVE'),
                     shape: RoundedRectangleBorder(
-                        borderRadius:
-                            new BorderRadius.circular(_util.setWidth(48)),
+                        borderRadius: new BorderRadius.circular(48.w),
                         side: BorderSide(
                           color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                         )),
@@ -549,7 +551,7 @@ class _GuestRequestResponseScreenState
 
   _customPermissionsRow() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: _util.setWidth(48)),
+      padding: EdgeInsets.symmetric(horizontal: 48.w),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.end,
@@ -571,7 +573,7 @@ class _GuestRequestResponseScreenState
                 Text(
                   'CUSTOM PERMISSIONS',
                   style: TextStyle(
-                      fontSize: _util.setSp(48),
+                      fontSize: 48.sp,
                       color: ColorConstants.COLOR_NOTIFICATION_ITEM),
                 ),
               ],
@@ -584,7 +586,7 @@ class _GuestRequestResponseScreenState
 
   _permissionSetRow() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: _util.setWidth(48)),
+      padding: EdgeInsets.symmetric(horizontal: 48.w),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

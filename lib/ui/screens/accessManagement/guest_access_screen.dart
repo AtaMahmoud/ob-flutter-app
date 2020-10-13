@@ -14,6 +14,8 @@ import 'package:ocean_builder/helper/method_helper.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
 import 'package:ocean_builder/ui/screens/permission/edit_permission_screen.dart';
 import 'package:ocean_builder/ui/shared/drop_downs.dart';
+import 'package:ocean_builder/ui/widgets/progress_indicator.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -98,13 +100,6 @@ class _GuestAccessScreenState extends State<GuestAccessScreen> {
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
     final UserProvider userProvider = Provider.of<UserProvider>(context);
-
-/*     if (userProvider.authenticatedUser == null)
-      userProvider.resetAuthenticatedUser(widget.fcmNotification.data.ownerID); */
-
-//  userProvider.getAuthUserProfile(widget.fcmNotification.data.ownerID).then((onValue){
-//      userProvider.authenticatedUser = onValue;
-//  });
     _util = ScreenUtil();
 
     if (!mounted)
@@ -128,43 +123,35 @@ class _GuestAccessScreenState extends State<GuestAccessScreen> {
             UIHelper.defaultSliverAppbar(_scaffoldKey, goBack,
                 screnTitle: ScreenTitle.Guest_ACCESS),
             userProvider.isLoading
-                ? SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                  )
+                ? ProgressIndicatorBoxAdapter()
                 : SliverList(
                     delegate: SliverChildListDelegate([
-                    // _messageRow(widget.accessRequest.reqMessage),
-
-                    SizedBox(height: _util.setHeight(64)),
+                    SpaceH64(),
                     _avatarWidget(),
-                    SizedBox(height: _util.setHeight(64)),
+                    SpaceH64(),
                     _nameWidget(),
-                    SizedBox(height: _util.setHeight(64)),
+                    SpaceH64(),
                     _accessAsRow(),
-                    SizedBox(height: _util.setHeight(64)),
-                    _accessRow(
-                        'Access From',
-                        DateFormat('dd/MM/yyyy').format(DateTime.now()),
-                        ' Access For',
-                        'accessForValue'),
-                    SizedBox(height: _util.setHeight(64)),
+                    SpaceH64(),
+                    _accessFromRow(),
+                    SpaceH64(),
                     _expireDateWidget(),
-                    SizedBox(height: _util.setHeight(64)),
+                    SpaceH64(),
                     _permissionSetRow(),
-                    SizedBox(height: _util.setHeight(64)),
+                    SpaceH64(),
                     _editPermissionRow(),
-                    SizedBox(height: _util.setHeight(64)),
+                    SpaceH64(),
                   ])),
             UIHelper.getTopEmptyContainer(90, false),
           ],
         ),
       ),
     );
+  }
+
+  _accessFromRow() {
+    _accessRow('Access From', DateFormat('dd/MM/yyyy').format(DateTime.now()),
+        ' Access For', 'accessForValue');
   }
 
   _nameWidget() {
@@ -231,9 +218,6 @@ class _GuestAccessScreenState extends State<GuestAccessScreen> {
                   color: ColorConstants.COLOR_NOTIFICATION_SUB_ITEM,
                   fontWeight: FontWeight.w400,
                   fontSize: _util.setSp(42))),
-          // SizedBox(
-          //   height: util.setHeight(32)
-          //   ),
           Text(itemValue,
               style: TextStyle(
                   color: ColorConstants.COLOR_NOTIFICATION_ITEM,
@@ -320,14 +304,9 @@ class _GuestAccessScreenState extends State<GuestAccessScreen> {
     String timeText;
 
     DateTime now = DateTime.now();
-    DateTime checkInDate =
-        DateTime.now(); //widget.oceanBuilderUser.checkInDate;
-    DateTime checkOutDate = DateTime.now().add(Duration(
-        days: 30)); //checkInDate.add(widget.oceanBuilderUser.accessTime);
+    DateTime checkInDate = DateTime.now();
+    DateTime checkOutDate = DateTime.now().add(Duration(days: 30));
     Duration remainingDays = checkOutDate.difference(now);
-    // Check in Date
-    // N days remaining.
-    // if (widget.oceanBuilderUser.checkInDate.isAfter(DateTime.now())) {
     if (checkInDate.isAfter(DateTime.now())) {
       timeText =
           'Expires in ${remainingDays.inDays} days ( ${DateFormat('yMMMMd').format(checkOutDate)} )';
@@ -387,9 +366,5 @@ class _GuestAccessScreenState extends State<GuestAccessScreen> {
 
   goBack() async {
     Navigator.pop(context);
-/*     if (userProvider.authenticatedUser == null)
-      await userProvider
-          .resetAuthenticatedUser(widget.fcmNotification.data.ownerID); */
-    // Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
   }
 }
