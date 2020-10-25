@@ -36,12 +36,17 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
     super.initState();
     UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
     Future.delayed(Duration.zero).then((_) {
+      _smartHomeDataProvider.fetchAllTopicsData().then((topicList) {
       _mqttServerClient = _smartHomeDataProvider.connect();
       _mqttServerClient.then((client) {
         if (client.connectionStatus.returnCode ==
             MqttConnectReturnCode.connectionAccepted) {
           _isConnecting = true;
-          client.subscribe(Config.MQTT_TOPIC, MqttQos.atLeastOnce);
+          for(int i = 0; i < topicList.length ; i ++){
+          client.subscribe(topicList[i].topic, MqttQos.atLeastOnce);
+           debugPrint('Subscribed to Topic: ${topicList[i].topic}');
+          }
+          
           showInfoBar('Connected', 'Connected with MQTT broker', context);
         } else {
           showInfoBar(
@@ -49,6 +54,8 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
           _isConnecting = false;
         }
       });
+      });
+
     });
   }
 

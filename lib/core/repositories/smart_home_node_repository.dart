@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:ocean_builder/configs/app_configurations.dart';
 import 'package:ocean_builder/core/models/iot_event_data.dart';
 import 'package:ocean_builder/helper/api_base_helper.dart';
@@ -7,14 +8,32 @@ import 'package:intl/intl.dart';
 class SmartHomeServerRepository {
   ApiBaseHelper _apiBaseHelper = ApiBaseHelper();
 
-  String _allSensorData = 'https://opensteading.ddns.net:8000/api/events';
+  String _getTopicList = 'https://seapod.technoid.info:8000/api/topics';
+
+  String _allSensorData = 'https://seapod.technoid.info:8000/api/events';
   String _getSensorDataBetweenDates =
-      'https://opensteading.ddns.net:8000/api/events/';
-  String _getSensorDataById = 'https://opensteading.ddns.net:8000/api/events/';
+      'https://seapod.technoid.info:8000/api/events/';
+  String _getSensorDataById = 'https://seapod.technoid.info:8000/api/events/';
 
   final Map<String, dynamic> _headers = {
     "x-auth-token": Config.IOT_SERVER_API_KEY,
   };
+
+
+  Future<List<IotTopic>> getAllTopicData() async {
+    List<IotTopic> iotTopicList = [];
+    final response =
+        await _apiBaseHelper.get(url: _getTopicList, headers: _headers);
+    print(response);
+    var responseMap = response as List;
+
+    responseMap.map((json) {
+      IotTopic iotTopic = IotTopic.fromJson(json);
+      iotTopicList.add(iotTopic);
+    }).toList();
+
+    return iotTopicList;
+  }
 
   Future<List<IotEventData>> getAllSensorData() async {
     List<IotEventData> iotEventDataList = [];
@@ -64,6 +83,8 @@ class SmartHomeServerRepository {
 
     final response = await _apiBaseHelper.get(
         url: _getSensorDataById, headers: _headers, parameters: _params);
+    
+    debugPrint('-getSensorDataById-');
     print(response);
     var responseMap = response as List;
 

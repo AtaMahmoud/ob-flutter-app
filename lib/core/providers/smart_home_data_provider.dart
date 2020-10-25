@@ -31,7 +31,8 @@ class SmartHomeDataProvider extends ChangeNotifier {
   MQTTAppConnectionState get getAppConnectionState => _appConnectionState;
 
   Future<MqttServerClient> connect() async {
-    _client = new MqttServerClient("mqtt.technoid.info", "");
+    _client = new MqttServerClient(Config.MQTT_SERVER, "");
+    _client.setProtocolV311();
     _client.logging(on: false);
     _client.onConnected = onConnected;
     _client.onDisconnected = onDisconnected;
@@ -47,7 +48,7 @@ class SmartHomeDataProvider extends ChangeNotifier {
     final connMess = MqttConnectMessage()
         .withClientIdentifier('Mqtt_MyClientUniqueId')
         .authenticateAs(Config.MQTT_USER, Config.MQTT_PASSWORD)
-        // .keepAliveFor(20) // Must agree with the keep alive set above or not set
+        .keepAliveFor(20) // Must agree with the keep alive set above or not set
         .withWillTopic(
             'willtopic') // If you set this you must set a will message
         .withWillMessage('My Will message')
@@ -71,12 +72,12 @@ class SmartHomeDataProvider extends ChangeNotifier {
     print('-------------------Connected---------------------');
     setAppConnectionState(MQTTAppConnectionState.connected);
     // send message to all topics
-      final builder1 = MqttClientPayloadBuilder();
-  builder1.addString('Every');
-  // print('EXAMPLE:: <<<< PUBLISH 1 >>>>');
-  _client.publishMessage("byron/#", MqttQos.exactlyOnce, builder1.payload,retain: true);
+    // final builder1 = MqttClientPayloadBuilder();
+    // builder1.addString('Every');
+    // print('EXAMPLE:: <<<< PUBLISH 1 >>>>');
+    // _client.publishMessage("byron/#", MqttQos.exactlyOnce, builder1.payload,retain: true);
 
-    _client.subscribe(Config.MQTT_TOPIC_WILD_CARD, MqttQos.atMostOnce);
+    // _client.subscribe(Config.MQTT_TOPIC_WILD_CARD, MqttQos.atMostOnce);
     _client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       print('------------lsitenning to  message -----------');
       // print(c.toString());
@@ -86,7 +87,7 @@ class SmartHomeDataProvider extends ChangeNotifier {
       print('------------got broadcasted message -----------');
       // print('Received message:$payload from topic: ${c[0].topic}>');
       for (var i = 0; i < c.length; i++) {
-          print('Received message:$payload from topic: ${c[i].topic}>');
+        print('Received message:$payload from topic: ${c[i].topic}>');
       }
       setReceivedText('Received payload:$payload from topic: ${c[0].topic}');
       notifyListeners();
@@ -130,6 +131,19 @@ class SmartHomeDataProvider extends ChangeNotifier {
 
   SmartHomeServerRepository _smartHomeServerRepository =
       SmartHomeServerRepository();
+
+  Future<List<IotTopic>> fetchAllTopicsData() async {
+    notifyListeners();
+    List<IotTopic> allTopicData = [];
+    try {
+      allTopicData = await _smartHomeServerRepository.getAllTopicData();
+      notifyListeners();
+    } catch (e) {
+      print(e.toString());
+      notifyListeners();
+    }
+    return allTopicData;
+  }    
 
   Future<List<IotEventData>> fetchAllSensorData() async {
     notifyListeners();

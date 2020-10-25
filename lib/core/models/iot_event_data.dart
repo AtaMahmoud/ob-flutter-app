@@ -1,13 +1,22 @@
 class IotEventData{
   
 /*
+[
+    {
         "EventID": 1,
-        "Temperature": "68.45",
-        "TimeStamp": "2020-08-29T12:17:14.000Z"
+        "Temperature": 65.2,
+        "TimeStamp": "2020-10-13T20:22:47.000Z"
+    },
+    {
+        "EventID": 2,
+        "Temperature": 45.1,
+        "TimeStamp": "2020-10-13T20:22:47.000Z"
+    }
+]
 */
 
   int eventID;
-  String temperature;
+  double temperature;
   String tiemStamp;
 
 
@@ -23,4 +32,16 @@ class IotEventData{
 
   }
 
+}
+
+class IotTopic{
+  String topic;
+  IotTopic({this.topic});
+
+  factory IotTopic.fromJson(Map<String,dynamic> json){
+
+    return IotTopic(
+      topic: json['topic']
+    );
+  }
 }
