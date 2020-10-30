@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
+import 'package:ocean_builder/bloc/iot_topic_bloc.dart';
 import 'package:ocean_builder/configs/app_configurations.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/iot_event_data.dart';
@@ -14,6 +15,7 @@ import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper_2.dart';
 import 'package:ocean_builder/ui/screens/designSteps/exterior_finish_screen.dart';
+import 'package:ocean_builder/ui/shared/drop_downs.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
@@ -26,18 +28,24 @@ class SmartHomeScreen extends StatefulWidget {
   _SmartHomeScreenState createState() => _SmartHomeScreenState();
 }
 
+
+
 class _SmartHomeScreenState extends State<SmartHomeScreen> {
   Future<MqttServerClient> _mqttServerClient;
   SmartHomeDataProvider _smartHomeDataProvider;
   bool _isConnecting = false;
+  IotTopicBloc  iotTopicBloc;
+  List<IotTopic>  _topicList;
 
   @override
   void initState() {
     super.initState();
+    iotTopicBloc = IotTopicBloc();
     UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
     Future.delayed(Duration.zero).then((_) {
       _smartHomeDataProvider.fetchAllTopicsData().then((topicList) {
       _mqttServerClient = _smartHomeDataProvider.connect();
+      _topicList = topicList;
       _mqttServerClient.then((client) {
         if (client.connectionStatus.returnCode ==
             MqttConnectReturnCode.connectionAccepted) {
@@ -60,6 +68,14 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
   }
 
   @override
+void dispose() { 
+  super.dispose();
+  iotTopicBloc.dispose();
+}
+
+
+
+  @override
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
     _smartHomeDataProvider = Provider.of<SmartHomeDataProvider>(context);
@@ -74,21 +90,10 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
               children: <Widget>[
                 Appbar(
                   ScreenTitle.SMART_HOME,
-                  isDesignScreen: true,
+                  isDesignScreen: false,
                 ),
                 // Spacer(),
-                Text(
-                  AppStrings.smartHomeMessage,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontFamily: Fonts.fontVarela,
-                      fontSize: ScreenUtil().setSp(48),
-                      color: ColorConstants.TEXT_COLOR),
-                ),
-                UIHelper.getRegistrationDropdown(list, stream, changed, false),
-                _buildConnectionStateText(_prepareStateMessageFrom(
-                    _smartHomeDataProvider.getAppConnectionState)),
-                _buildScrollableTextWith(_smartHomeDataProvider.getHistoryText),
+                _mainContent(),
                 BottomClipper(ButtonText.BACK, '', goBack, () {},
                     isNextEnabled: false)
               ],
@@ -100,6 +105,24 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
                   )
           ],
         ),
+      ),
+    );
+  }
+
+  Expanded _mainContent() {
+    return Expanded(
+          child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 32.w),
+        child: Column(
+                    children: [
+                      _topicList != null && _topicList.length > 0 ?
+                      getDropdown(_topicList.map((e) => e.topic).toList(), iotTopicBloc.topicController, iotTopicBloc.selectedTopicChanged, false,label: 'Topic')
+                      : Container(),
+                      _buildConnectionStateText(_prepareStateMessageFrom(
+                          _smartHomeDataProvider.getAppConnectionState)),
+                      _buildScrollableTextWith(_smartHomeDataProvider.getHistoryText),
+                    ],
+                  ),
       ),
     );
   }
@@ -140,15 +163,15 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
   }
 
   Widget _buildScrollableTextWith(String text) {
-    return Padding(
-      padding: EdgeInsets.all(32.w),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(32.w),
-          color: AppTheme.chipBackground,
-        ),
-        height: 600.h,
-        child: SingleChildScrollView(
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(32.w),
+        color: AppTheme.chipBackground,
+      ),
+      height: 600.h,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 32.w),
           child: Text(
             text,
             style: TextStyle(
