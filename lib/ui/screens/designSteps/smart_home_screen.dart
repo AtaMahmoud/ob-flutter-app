@@ -85,6 +85,7 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
                       fontSize: ScreenUtil().setSp(48),
                       color: ColorConstants.TEXT_COLOR),
                 ),
+                UIHelper.getRegistrationDropdown(list, stream, changed, false),
                 _buildConnectionStateText(_prepareStateMessageFrom(
                     _smartHomeDataProvider.getAppConnectionState)),
                 _buildScrollableTextWith(_smartHomeDataProvider.getHistoryText),
