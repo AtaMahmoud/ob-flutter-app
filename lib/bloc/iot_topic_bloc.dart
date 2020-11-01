@@ -3,7 +3,7 @@ import 'package:rxdart/rxdart.dart';
 
 import 'bloc_provider.dart';
 
-class IotTopicBloc extends Object with Validator
+class IotTopicBloc extends Object
     implements BlocBase {
 
   var topicController = BehaviorSubject<String>();

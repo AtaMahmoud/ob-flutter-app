@@ -4,6 +4,7 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:ocean_builder/configs/app_configurations.dart';
 import 'package:ocean_builder/core/models/iot_event_data.dart';
 import 'package:ocean_builder/core/repositories/smart_home_node_repository.dart';
+import 'package:ocean_builder/ui/screens/designSteps/smart_home_screen.dart';
 
 enum MQTTAppConnectionState { connected, disconnected, connecting }
 
@@ -12,6 +13,7 @@ class SmartHomeDataProvider extends ChangeNotifier {
       MQTTAppConnectionState.disconnected;
   String _receivedText = '';
   String _historyText = '';
+  List<SensorData> _sensorDataList = [];
 
   MqttServerClient _client;
 
@@ -26,8 +28,14 @@ class SmartHomeDataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setSensorData(SensorData sensorData){
+    _sensorDataList.add(sensorData);
+    notifyListeners();
+  }
+
   String get getReceivedText => _receivedText;
   String get getHistoryText => _historyText;
+  List<SensorData> get sensorDataList => _sensorDataList;
   MQTTAppConnectionState get getAppConnectionState => _appConnectionState;
 
   Future<MqttServerClient> connect() async {
@@ -90,6 +98,8 @@ class SmartHomeDataProvider extends ChangeNotifier {
         print('Received message:$payload from topic: ${c[i].topic}>');
       }
       setReceivedText('Received payload:$payload from topic: ${c[0].topic}');
+      SensorData sensorData = SensorData(sensorName: parseTopicName(c[0].topic),sensorData: payload);
+      
       notifyListeners();
     }).onError((e) {
       print(e);
@@ -184,4 +194,11 @@ class SmartHomeDataProvider extends ChangeNotifier {
     }
     return allSensorData;
   }
+}
+class SensorData {
+  String sensorName;
+  String sensorData;
+
+  SensorData({this.sensorName,this.sensorData});
+
 }

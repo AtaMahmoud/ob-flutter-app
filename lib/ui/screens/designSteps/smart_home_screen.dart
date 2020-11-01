@@ -20,6 +20,7 @@ import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
 
 class SmartHomeScreen extends StatefulWidget {
   static const String routeName = '/smart_home';
@@ -28,52 +29,62 @@ class SmartHomeScreen extends StatefulWidget {
   _SmartHomeScreenState createState() => _SmartHomeScreenState();
 }
 
-
-
 class _SmartHomeScreenState extends State<SmartHomeScreen> {
-  Future<MqttServerClient> _mqttServerClient;
+  Future<MqttServerClient> _mqttServerClientFuture;
+  MqttServerClient _mqttServerClient;
   SmartHomeDataProvider _smartHomeDataProvider;
   bool _isConnecting = false;
-  IotTopicBloc  iotTopicBloc;
-  List<IotTopic>  _topicList;
+  IotTopicBloc _iotTopicBloc;
+  List<IotTopic> _topicList;
+  String _currentlySubscribedTopic;
 
   @override
   void initState() {
     super.initState();
-    iotTopicBloc = IotTopicBloc();
+    _iotTopicBloc = IotTopicBloc();
     UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
     Future.delayed(Duration.zero).then((_) {
       _smartHomeDataProvider.fetchAllTopicsData().then((topicList) {
-      _mqttServerClient = _smartHomeDataProvider.connect();
-      _topicList = topicList;
-      _mqttServerClient.then((client) {
-        if (client.connectionStatus.returnCode ==
-            MqttConnectReturnCode.connectionAccepted) {
-          _isConnecting = true;
-          for(int i = 0; i < topicList.length ; i ++){
-          client.subscribe(topicList[i].topic, MqttQos.atLeastOnce);
-           debugPrint('Subscribed to Topic: ${topicList[i].topic}');
-          }
-          
-          showInfoBar('Connected', 'Connected with MQTT broker', context);
-        } else {
-          showInfoBar(
-              'Not Connected', 'Could not connected with MQTT broker', context);
-          _isConnecting = false;
-        }
-      });
-      });
+        _mqttServerClientFuture = _smartHomeDataProvider.connect();
+        _topicList = topicList;
+        _mqttServerClientFuture.then((client) {
+          if (client.connectionStatus.returnCode ==
+              MqttConnectReturnCode.connectionAccepted) {
+            _mqttServerClient = client;
+            _isConnecting = true;
+            // for(int i = 0; i < topicList.length ; i ++){
+            // client.subscribe(topicList[i].topic, MqttQos.atLeastOnce);
+            //  debugPrint('Subscribed to Topic: ${topicList[i].topic}');
+            // }
+            if (topicList.length > 0) {
+              client.subscribe(topicList[0].topic, MqttQos.atLeastOnce);
+              _currentlySubscribedTopic = topicList[0].topic;
+            }
 
+            showInfoBar('Connected', 'Connected with MQTT broker', context);
+          } else {
+            showInfoBar('Not Connected', 'Could not connected with MQTT broker',
+                context);
+            _isConnecting = false;
+          }
+        });
+      });
+    });
+
+    _iotTopicBloc.topicController.listen((event) {
+      if (_mqttServerClient.connectionStatus.returnCode ==
+          MqttConnectReturnCode.connectionAccepted) {
+        _mqttServerClient.subscribe(event, MqttQos.atLeastOnce);
+        _currentlySubscribedTopic = event;
+      }
     });
   }
 
   @override
-void dispose() { 
-  super.dispose();
-  iotTopicBloc.dispose();
-}
-
-
+  void dispose() {
+    super.dispose();
+    _iotTopicBloc.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,21 +122,28 @@ void dispose() {
 
   Expanded _mainContent() {
     return Expanded(
-          child: Container(
+      child: Container(
         padding: EdgeInsets.symmetric(horizontal: 32.w),
         child: Column(
-                    children: [
-                      _topicList != null && _topicList.length > 0 ?
-                      getDropdown(_topicList.map((e) => e.topic).toList(), iotTopicBloc.topicController, iotTopicBloc.selectedTopicChanged, false,label: 'Topic')
-                      : Container(),
-                      _buildConnectionStateText(_prepareStateMessageFrom(
-                          _smartHomeDataProvider.getAppConnectionState)),
-                      _buildScrollableTextWith(_smartHomeDataProvider.getHistoryText),
-                    ],
-                  ),
+          children: [
+            _topicList != null && _topicList.length > 0
+                ? _getTopicsDropdown(
+                    _topicList.map((e) => e.topic).toList(),
+                    _iotTopicBloc.topicController,
+                    _iotTopicBloc.selectedTopicChanged,
+                    false,
+                    label: 'Topic')
+                : Container(),
+            _buildConnectionStateText(_prepareStateMessageFrom(
+                _smartHomeDataProvider.getAppConnectionState)),
+            _buildScrollableTextWith(_smartHomeDataProvider.getHistoryText),
+          ],
+        ),
       ),
     );
   }
+
+
 
   // Utility functions
   String _prepareStateMessageFrom(MQTTAppConnectionState state) {
@@ -185,4 +203,89 @@ void dispose() {
   goBack() {
     Navigator.pop(context);
   }
+
+  Widget _getTopicsDropdown(
+      List<String> list, Observable<String> stream, changed, bool addPadding,
+      {String label = 'Label'}) {
+    ScreenUtil _util = ScreenUtil();
+    return StreamBuilder<String>(
+        stream: stream,
+        builder: (context, snapshot) {
+          return Padding(
+            padding: addPadding
+                ? EdgeInsets.symmetric(horizontal: _util.setWidth(48))
+                : EdgeInsets.symmetric(horizontal: 0),
+            child: InputDecorator(
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.w),
+                  borderSide: BorderSide(
+                      color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
+                      width: 1),
+                ),
+                contentPadding: EdgeInsets.only(
+                  top: 16.h,
+                  bottom: 16.h,
+                  left: 48.w,
+                  // right: 32.w
+                ),
+                // alignLabelWithHint: true,
+                labelText: label,
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                // hintStyle: TextStyle(color: Colors.red),
+                labelStyle: TextStyle(
+                    color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
+                    fontSize: _util.setSp(48)),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: ButtonTheme(
+                  alignedDropdown: true,
+                  child: DropdownButton<String>(
+                    icon: Icon(Icons.arrow_drop_down,
+                        size: 96.w,
+                        color: snapshot.hasData
+                            ? ColorConstants.ACCESS_MANAGEMENT_TITLE
+                            : ColorConstants
+                                .ACCESS_MANAGEMENT_SUBTITLE //ColorConstants.INVALID_TEXTFIELD,
+                        ),
+                    value: snapshot.hasData ? snapshot.data : list[0],
+                    isExpanded: true,
+                    underline: Container(),
+                    style: TextStyle(
+                      color: snapshot.hasData
+                          ? ColorConstants.ACCESS_MANAGEMENT_TITLE
+                          : ColorConstants
+                              .ACCESS_MANAGEMENT_SUBTITLE, //ColorConstants.INVALID_TEXTFIELD,
+                      fontSize: _util.setSp(40),
+                      fontWeight: FontWeight.w400,
+                      // letterSpacing: 1.2,
+                      // wordSpacing: 4
+                    ),
+                    onChanged: changed,
+                    items: list.map((data) {
+                      return DropdownMenuItem(
+                          value: data,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Text(parseTopicName(data)),
+                            ],
+                          ));
+                    }).toList(),
+                  ),
+                ),
+              ),
+            ),
+          );
+        });
+  }
 }
+
+  String parseTopicName(String topic) {
+    String topicName = '';
+    var topics = topic.split("/");
+    if (topics.length > 2) {
+      topicName = topics.last + " ( " + topics.first + " )";
+    }
+    return topicName;
+  }
