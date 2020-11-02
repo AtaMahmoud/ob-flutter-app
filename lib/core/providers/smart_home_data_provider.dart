@@ -98,9 +98,10 @@ class SmartHomeDataProvider extends ChangeNotifier {
         print('Received message:$payload from topic: ${c[i].topic}>');
       }
       setReceivedText('Received payload:$payload from topic: ${c[0].topic}');
-      SensorData sensorData = SensorData(sensorName: parseTopicName(c[0].topic),sensorData: payload);
-      
-      notifyListeners();
+       var topics = c[0].topic.split("/");
+      SensorData sensorData = SensorData(roomName: topics.first, sensorName: topics.last,sensorData: payload);
+      setSensorData(sensorData);
+      // notifyListeners();
     }).onError((e) {
       print(e);
     });
@@ -196,9 +197,10 @@ class SmartHomeDataProvider extends ChangeNotifier {
   }
 }
 class SensorData {
+  String roomName;
   String sensorName;
   String sensorData;
 
-  SensorData({this.sensorName,this.sensorData});
+  SensorData({this.roomName,this.sensorName,this.sensorData});
 
 }

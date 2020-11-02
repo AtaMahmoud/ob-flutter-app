@@ -136,7 +136,8 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
                 : Container(),
             _buildConnectionStateText(_prepareStateMessageFrom(
                 _smartHomeDataProvider.getAppConnectionState)),
-            _buildScrollableTextWith(_smartHomeDataProvider.getHistoryText),
+            // _buildScrollableTextWith(_smartHomeDataProvider.getHistoryText),
+            _buildSensorDataTable(_smartHomeDataProvider.sensorDataList)
           ],
         ),
       ),
@@ -199,6 +200,34 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
       ),
     );
   }
+
+  _buildSensorDataTable(List<SensorData> sensorDataList){
+
+    return Container(
+      // margin: EdgeInsets.all(32.w),
+      child: Table(
+
+        border: TableBorder.all(),
+        children: [
+          TableRow(
+            children: [
+                  Text("Room",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.blue)), 
+                  Text("Sensor",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.blue)), 
+                  Text("Data",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.blue)), 
+            ]
+          ),
+          ...sensorDataList.map((sensorData) => TableRow(
+            children: [
+                  Text(sensorData.roomName,textScaleFactor: 1.5,textAlign: TextAlign.center), 
+                  Text(sensorData.sensorName,textScaleFactor: 1.5,textAlign: TextAlign.center), 
+                  Text(sensorData.sensorData,textScaleFactor: 1.5,textAlign: TextAlign.center), 
+            ]
+          )).toList()
+        ],
+      ),
+    );
+  }
+
 
   goBack() {
     Navigator.pop(context);
