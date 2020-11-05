@@ -15,6 +15,9 @@ class SmartHomeDataProvider extends ChangeNotifier {
   String _historyText = '';
   List<SensorData> _sensorDataList = [];
 
+  // temporary
+  String _ledStatus = "";
+
   MqttServerClient _client;
 
   void setReceivedText(String text) {
@@ -33,9 +36,16 @@ class SmartHomeDataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setLedStatus(String ledStat){
+    _ledStatus = ledStat;
+    notifyListeners();
+  }
+
   String get getReceivedText => _receivedText;
   String get getHistoryText => _historyText;
   List<SensorData> get sensorDataList => _sensorDataList;
+  String get ledControl => _ledStatus;
+
   MQTTAppConnectionState get getAppConnectionState => _appConnectionState;
 
   Future<MqttServerClient> connect() async {
@@ -92,15 +102,20 @@ class SmartHomeDataProvider extends ChangeNotifier {
       final MqttPublishMessage message = c[0].payload;
       final payload =
           MqttPublishPayload.bytesToStringAsString(message.payload.message);
-      print('------------got broadcasted message -----------');
+      // print('------------got broadcasted message -----------');
       // print('Received message:$payload from topic: ${c[0].topic}>');
       for (var i = 0; i < c.length; i++) {
         print('Received message:$payload from topic: ${c[i].topic}>');
       }
-      setReceivedText('Received payload:$payload from topic: ${c[0].topic}');
-       var topics = c[0].topic.split("/");
+      // setReceivedText('Received payload:$payload from topic: ${c[0].topic}');
+
+      if(c[0].topic.compareTo("test/message/status")==0){
+        setLedStatus(payload);
+      }else{
+      var topics = c[0].topic.split("/");
       SensorData sensorData = SensorData(roomName: topics.first, sensorName: topics.last,sensorData: payload);
       setSensorData(sensorData);
+      }
       // notifyListeners();
     }).onError((e) {
       print(e);

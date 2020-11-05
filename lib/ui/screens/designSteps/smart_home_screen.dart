@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
@@ -38,6 +39,8 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
   List<IotTopic> _topicList;
   String _currentlySubscribedTopic;
 
+  bool _isLedOn = false;
+
   @override
   void initState() {
     super.initState();
@@ -57,7 +60,7 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
             //  debugPrint('Subscribed to Topic: ${topicList[i].topic}');
             // }
             if (topicList.length > 0) {
-              client.subscribe(topicList[0].topic, MqttQos.atLeastOnce);
+              client.subscribe(topicList[0].topic, MqttQos.exactlyOnce);
               _currentlySubscribedTopic = topicList[0].topic;
             }
 
@@ -74,7 +77,7 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
     _iotTopicBloc.topicController.listen((event) {
       if (_mqttServerClient.connectionStatus.returnCode ==
           MqttConnectReturnCode.connectionAccepted) {
-        _mqttServerClient.subscribe(event, MqttQos.atLeastOnce);
+        _mqttServerClient.subscribe(event, MqttQos.exactlyOnce);
         _currentlySubscribedTopic = event;
       }
     });
@@ -95,51 +98,57 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
         decoration: BoxDecoration(gradient: ColorConstants.BKG_GRADIENT),
         child: Stack(
           children: [
-            Column(
-              // mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Appbar(
-                  ScreenTitle.SMART_HOME,
-                  isDesignScreen: false,
-                ),
-                // Spacer(),
-                _mainContent(),
-                BottomClipper(ButtonText.BACK, '', goBack, () {},
-                    isNextEnabled: false)
+                        CustomScrollView(
+              slivers: <Widget>[
+                UIHelper.getTopEmptyContainer(
+                    MediaQuery.of(context).size.height / 4, true),
+                SliverToBoxAdapter(child: _mainContent()),
+                UIHelper.getTopEmptyContainer(MediaQuery.of(context).size.height / 4, false),
               ],
             ),
+            Appbar(
+              ScreenTitle.SMART_HOME,
+              isDesignScreen: true,
+            ),
+            Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: BottomClipper(ButtonText.BACK, '', goBack, () {},
+                    isNextEnabled: false)),
             _isConnecting
                 ? Container()
                 : Center(
                     child: CircularProgressIndicator(),
                   )
+
           ],
         ),
       ),
     );
   }
 
-  Expanded _mainContent() {
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 32.w),
-        child: Column(
-          children: [
-            _topicList != null && _topicList.length > 0
-                ? _getTopicsDropdown(
-                    _topicList.map((e) => e.topic).toList(),
-                    _iotTopicBloc.topicController,
-                    _iotTopicBloc.selectedTopicChanged,
-                    false,
-                    label: 'Topic')
-                : Container(),
-            _buildConnectionStateText(_prepareStateMessageFrom(
-                _smartHomeDataProvider.getAppConnectionState)),
-            // _buildScrollableTextWith(_smartHomeDataProvider.getHistoryText),
-            _buildSensorDataTable(_smartHomeDataProvider.sensorDataList)
-          ],
-        ),
+  Container _mainContent() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 32.w,vertical: 32.h),
+      child: Column(
+        children: [
+          _topicList != null && _topicList.length > 0
+              ? _getTopicsDropdown(
+                  _topicList.map((e) => e.topic).toList(),
+                  _iotTopicBloc.topicController,
+                  _iotTopicBloc.selectedTopicChanged,
+                  false,
+                  label: 'Topic')
+              : Container(),
+          _buildConnectionStateText(_prepareStateMessageFrom(
+              _smartHomeDataProvider.getAppConnectionState)),
+          // _buildScrollableTextWith(_smartHomeDataProvider.getHistoryText),
+          _buildSensorDataTableHeader(),
+          _buildSensorDataTable(_smartHomeDataProvider.sensorDataList),
+          SizedBox(height: 32.h,),
+          _controllContainer()
+        ],
       ),
     );
   }
@@ -201,29 +210,108 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
     );
   }
 
+  Widget _controllContainer(){
+    if(_smartHomeDataProvider.ledControl.compareTo("LED is on")==0)
+    _isLedOn = true;
+    else
+     _isLedOn = false;
+
+    return Container(
+      color: Colors.white,
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(16.w),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(32.w),
+              color: Colors.amber
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                InkWell(
+                  onTap: (){
+          // send message to all topics
+          final builder1 = MqttClientPayloadBuilder();
+          // builder1.addInt(1);
+          if(_isLedOn){
+            builder1.addString("0");
+            _isLedOn = false;
+          }else{
+            builder1.addString("1");
+            _isLedOn = true;
+          }
+          
+          _mqttServerClient.publishMessage("test/message", MqttQos.exactlyOnce, builder1.payload,retain: true);
+          _mqttServerClient.subscribe("test/message/status", MqttQos.exactlyOnce);
+                  
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                       borderRadius: BorderRadius.circular(32.w),
+                        color: _isLedOn ? Colors.red : Colors.green,
+                    ),
+                   
+                    padding: EdgeInsets.all(16.w),
+                    child: Text(
+                      _isLedOn ? "OFF" : "ON" ,
+                      textScaleFactor: 1.5,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 8.h,),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  child: Text("Test led",textScaleFactor: 1.5,),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   _buildSensorDataTable(List<SensorData> sensorDataList){
 
     return Container(
       // margin: EdgeInsets.all(32.w),
+      // height: 600.h,
       child: Table(
 
-        border: TableBorder.all(),
-        children: [
-          TableRow(
-            children: [
-                  Text("Room",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.blue)), 
-                  Text("Sensor",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.blue)), 
-                  Text("Data",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.blue)), 
-            ]
-          ),
-          ...sensorDataList.map((sensorData) => TableRow(
-            children: [
-                  Text(sensorData.roomName,textScaleFactor: 1.5,textAlign: TextAlign.center), 
-                  Text(sensorData.sensorName,textScaleFactor: 1.5,textAlign: TextAlign.center), 
-                  Text(sensorData.sensorData,textScaleFactor: 1.5,textAlign: TextAlign.center), 
-            ]
-          )).toList()
-        ],
+          border: TableBorder.all(),
+          children: [
+            ...sensorDataList.map((sensorData) => TableRow(
+      children: [
+            Text(sensorData.roomName,textScaleFactor: 1.5,textAlign: TextAlign.center), 
+            Text(sensorData.sensorName,textScaleFactor: 1.5,textAlign: TextAlign.center), 
+            Text(sensorData.sensorData,textScaleFactor: 1.5,textAlign: TextAlign.center), 
+      ]
+            )).toList()
+          ],
+        ),
+    );
+  }
+
+    _buildSensorDataTableHeader(){
+
+    return Container(
+      // margin: EdgeInsets.all(32.w),
+      child: SingleChildScrollView(
+              child: Table(
+
+          border: TableBorder.all(),
+          children: [
+            TableRow(
+              
+              children: [
+                    Text("Room",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.blue)), 
+                    Text("Sensor",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.blue)), 
+                    Text("Data",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.blue)), 
+              ]
+            )
+          ],
+        ),
       ),
     );
   }
