@@ -66,96 +66,121 @@ class _SparFinishingScreenState extends State<SparFinishingScreen> {
             .add(int.parse(designDataProvider.oceanBuilder.sparFinishing));
       }
     }
-    var _util = ScreenUtil();
     return Container(
       decoration: BoxDecoration(gradient: blueBackgroundGradient),
       child: Scaffold(
         body: Stack(
           children: <Widget>[
-            CustomScrollView(
-              slivers: [
-                UIHelper.getTopEmptyContainer(
-                    MediaQuery.of(context).size.height / 4, false),
-                SliverToBoxAdapter(
-                    child: Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        InkWell(
-                          onTap: () => _bloc.sink.add(list[0]),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Image.asset(
-                                ImagePaths.defaultIcon,
-                                width: _util.setWidth(380),
-                                height: _util.setWidth(380),
-                              ),
-                              SizedBox(height: 16.0),
-                              UIHelper.getCustomRadioButtonVertical(
-                                  _bloc.stream, list[0])
-                            ],
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () => _bloc.sink.add(list[1]),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Image.asset(
-                                ImagePaths.defaultIcon,
-                                width: _util.setWidth(380),
-                                height: _util.setWidth(380),
-                              ),
-                              SizedBox(height: 16.0),
-                              UIHelper.getCustomRadioButtonVertical(
-                                  _bloc.stream, list[1])
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                )),
-                StreamBuilder<String>(
-                    stream: _bloc.stream,
-                    builder: (context, snapshot) {
-                      return snapshot.data ==
-                              ListHelper.getSparFinishingColorList()[1]
-                          ? UIHelper.getSliverGridColor(_colorCountBloc.stream,
-                              _selectedColor.stream, (data) => selectItem(data))
-                          : SliverPadding(padding: EdgeInsets.all(0.0));
-                    }),
-                SliverToBoxAdapter(
-                  child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 24.0, vertical: 16.0),
-                      child: Text(
-                        InfoTexts.POLYUREA_COATING_INFO,
-                        style: TextStyle(
-                            fontSize: _util.setSp(43.69),
-                            color: ColorConstants.TOP_CLIPPER_START),
-                      )),
-                ),
-                UIHelper.getTopEmptyContainer(90, false),
-              ],
-            ),
-            Appbar(
-              ScreenTitle.SPAR_FINISHING,
-              isDesignScreen: true,
-            ),
-            Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: BottomClipper(ButtonText.BACK, ButtonText.NEXT,
-                    () => goBack(), () => goNext(designDataProvider)))
+            _mainContent(context),
+            _topBar(),
+            _bottomBar(designDataProvider)
           ],
         ),
       ),
     );
+  }
+
+  Positioned _bottomBar(DesignDataProvider designDataProvider) {
+    return Positioned(
+        bottom: 0,
+        left: 0,
+        right: 0,
+        child: BottomClipper(ButtonText.BACK, ButtonText.NEXT, () => goBack(),
+            () => goNext(designDataProvider)));
+  }
+
+  Appbar _topBar() {
+    return Appbar(
+      ScreenTitle.SPAR_FINISHING,
+      isDesignScreen: true,
+    );
+  }
+
+  CustomScrollView _mainContent(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        _startSpace(context),
+        SliverToBoxAdapter(
+            child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[_radioButtonSteel(), _radioButtonColor()],
+            ),
+          ],
+        )),
+        _colorGridFinish(),
+        _infoText(),
+        _endSpace(),
+      ],
+    );
+  }
+
+  _endSpace() => UIHelper.getTopEmptyContainer(90, false);
+
+  SliverToBoxAdapter _infoText() {
+    return SliverToBoxAdapter(
+      child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+          child: Text(
+            InfoTexts.POLYUREA_COATING_INFO,
+            style: TextStyle(
+                fontSize: 44.sp, color: ColorConstants.TOP_CLIPPER_START),
+          )),
+    );
+  }
+
+  StreamBuilder<String> _colorGridFinish() {
+    return StreamBuilder<String>(
+        stream: _bloc.stream,
+        builder: (context, snapshot) {
+          return snapshot.data == ListHelper.getSparFinishingColorList()[1]
+              ? UIHelper.getSliverGridColor(_colorCountBloc.stream,
+                  _selectedColor.stream, (data) => selectItem(data))
+              : SliverPadding(padding: EdgeInsets.all(0.0));
+        });
+  }
+
+  InkWell _radioButtonColor() {
+    return InkWell(
+      onTap: () => _bloc.sink.add(list[1]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Image.asset(
+            ImagePaths.defaultIcon,
+            width: 380.w,
+            height: 380.w,
+          ),
+          SizedBox(height: 16.0),
+          UIHelper.getCustomRadioButtonVertical(_bloc.stream, list[1])
+        ],
+      ),
+    );
+  }
+
+  InkWell _radioButtonSteel() {
+    return InkWell(
+      onTap: () => _bloc.sink.add(list[0]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Image.asset(
+            ImagePaths.defaultIcon,
+            width: 380.w,
+            height: 380.w,
+          ),
+          SizedBox(height: 16.0),
+          UIHelper.getCustomRadioButtonVertical(_bloc.stream, list[0])
+        ],
+      ),
+    );
+  }
+
+  _startSpace(BuildContext context) {
+    return UIHelper.getTopEmptyContainer(
+        MediaQuery.of(context).size.height / 4, false);
   }
 
   goNext(DesignDataProvider designDataProvider) {

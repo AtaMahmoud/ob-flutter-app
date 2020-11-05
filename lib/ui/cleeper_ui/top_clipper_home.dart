@@ -29,8 +29,6 @@ class TopClipperHome extends StatefulWidget {
 
 class _TopClipperHomeState extends State<TopClipperHome> {
   UserProvider _userProvider;
-  ScreenUtil _util;
-
   SelectedOBIdProvider _selectedOBIdProvider;
   Future<SeaPod> _seaPodFuture;
 
@@ -39,7 +37,6 @@ class _TopClipperHomeState extends State<TopClipperHome> {
   @override
   Widget build(BuildContext context) {
     _userProvider = Provider.of<UserProvider>(context);
-    _util = ScreenUtil();
 
     _selectedOBIdProvider = Provider.of<SelectedOBIdProvider>(context);
     OceanBuilderProvider oceanBuilderProvider =
@@ -60,26 +57,7 @@ class _TopClipperHomeState extends State<TopClipperHome> {
             clipper: CustomTopShapeClipperHome(),
             child: widget.hasAvator ? _customContainer() : _defaultContainer()),
         widget.hasAvator
-            ? Positioned(
-                right: ScreenUtil().setWidth(64),
-                top: ScreenUtil().setHeight(120),
-                child: _profilePicFuture()
-                /* InkWell(
-                    onTap: () {
-                      Navigator.of(context).pushNamed(ProfileScreen.routeName);
-                    },
-                    child: 
-                    CircleAvatar(
-                      backgroundColor: ColorConstants.CONTROL_END,
-                      radius: ScreenUtil().setHeight(86),
-                      child: ImageIcon(
-                        AssetImage(ImagePaths.icGroup),
-                        color: ColorConstants.CONTROL_LIST_BKG,
-                      ),
-                    )
-                    ) */
-                ,
-              )
+            ? Positioned(right: 64.w, top: 120.h, child: _profilePicFuture())
             : Container(),
       ],
     );
@@ -87,7 +65,7 @@ class _TopClipperHomeState extends State<TopClipperHome> {
 
   _defaultContainer() {
     return Container(
-      height: ScreenUtil().setHeight(400),
+      height: 400.h,
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: [
           ColorConstants.TOP_CLIPPER_START,
@@ -97,25 +75,20 @@ class _TopClipperHomeState extends State<TopClipperHome> {
       child: Align(
         alignment: Alignment.centerLeft,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(
-              _util.setWidth(32),
-              _util.setHeight(32),
-              0.0, //_util.setWidth(32),
-              _util.setHeight(32)),
+          padding: EdgeInsets.fromLTRB(32.w, 32.h, 0.0, 32.h),
           child: widget.scaffoldKey != null
               ? Row(
                   children: <Widget>[
                     InkWell(
                       onTap: () {
                         widget.scaffoldKey.currentState.openDrawer();
-                        // widget.innerDrawerKey.currentState.toggle();
                       },
                       child: Padding(
                         padding: EdgeInsets.only(
-                          left: _util.setWidth(32),
-                          right: _util.setWidth(32),
-                          top: _util.setHeight(32),
-                          bottom: _util.setHeight(32),
+                          left: 32.w,
+                          right: 32.w,
+                          top: 32.h,
+                          bottom: 32.h,
                         ),
                         child: Icon(
                           Icons.sort,
@@ -127,7 +100,7 @@ class _TopClipperHomeState extends State<TopClipperHome> {
                       widget.title,
                       style: TextStyle(
                           color: Colors.white,
-                          fontSize: ScreenUtil().setSp(70),
+                          fontSize: 70.sp,
                           fontWeight: FontWeight.w400),
                     ),
                   ],
@@ -136,7 +109,7 @@ class _TopClipperHomeState extends State<TopClipperHome> {
                   widget.title,
                   style: TextStyle(
                       color: Colors.white,
-                      fontSize: ScreenUtil().setSp(70),
+                      fontSize: 70.sp,
                       fontWeight: FontWeight.w400),
                 ),
         ),
@@ -146,19 +119,10 @@ class _TopClipperHomeState extends State<TopClipperHome> {
 
   _customContainer() {
     return Container(
-      height: ScreenUtil().setHeight(400),
-      decoration: BoxDecoration(gradient: topGradientDark
-          // LinearGradient(colors: [
-          //   ColorConstants.TOP_CLIPPER_START,
-          //   ColorConstants.TOP_CLIPPER_END
-          // ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
-          ),
+      height: 400.h,
+      decoration: BoxDecoration(gradient: topGradientDark),
       child: Padding(
-        padding: EdgeInsets.fromLTRB(
-            _util.setWidth(32),
-            _util.setHeight(32),
-            0.0, //_util.setWidth(32),
-            _util.setHeight(32)),
+        padding: EdgeInsets.fromLTRB(32.w, 32.h, 0.0, 32.h),
         child: widget.scaffoldKey != null
             ? Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,13 +130,10 @@ class _TopClipperHomeState extends State<TopClipperHome> {
                   InkWell(
                     onTap: () {
                       widget.scaffoldKey.currentState.openDrawer();
-                      // widget.innerDrawerKey.currentState.toggle();
                     },
                     child: Padding(
                       padding: EdgeInsets.only(
-                        // left: 8.w,
                         right: 32.w,
-                        // top: _util.setHeight(32),
                         bottom: 32.h,
                       ),
                       child: ImageIcon(
@@ -195,7 +156,7 @@ class _TopClipperHomeState extends State<TopClipperHome> {
                                 : 'Welcome',
                             style: TextStyle(
                                 color: Colors.white,
-                                fontSize: ScreenUtil().setSp(60),
+                                fontSize: 60.sp,
                                 fontWeight: FontWeight.w400),
                           ),
                           _obNameFuture(),
@@ -209,7 +170,7 @@ class _TopClipperHomeState extends State<TopClipperHome> {
                 widget.title,
                 style: TextStyle(
                     color: Colors.white,
-                    fontSize: ScreenUtil().setSp(70),
+                    fontSize: 70.sp,
                     fontWeight: FontWeight.w400),
               ),
       ),
@@ -238,7 +199,7 @@ class _TopClipperHomeState extends State<TopClipperHome> {
                     : '',
                 style: TextStyle(
                     color: Colors.white,
-                    fontSize: ScreenUtil().setSp(60),
+                    fontSize: 60.sp,
                     fontWeight: FontWeight.w400),
               )
             : Container();
@@ -276,8 +237,7 @@ class _TopClipperHomeState extends State<TopClipperHome> {
             radius: 72.h,
             child: CircleAvatar(
               backgroundColor: Colors.transparent,
-              radius:
-                  imageFile != null ? 72.h : 48.h,
+              radius: imageFile != null ? 72.h : 48.h,
               backgroundImage: imageFile != null
                   ? FileImage(
                       imageFile,

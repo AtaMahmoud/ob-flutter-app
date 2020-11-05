@@ -14,6 +14,7 @@ import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/custom_clipper/custom_clipper.dart';
 import 'package:ocean_builder/helper/url_launcher_helper.dart';
 import 'package:ocean_builder/map/darksky_map.dart';
+import 'package:ocean_builder/ui/screens/weather/weather_formulas.dart';
 import 'package:ocean_builder/ui/screens/weather/weather_more_widget.dart';
 import 'package:ocean_builder/ui/shared/app_colors.dart';
 import 'package:ocean_builder/ui/shared/popup.dart';
@@ -39,7 +40,6 @@ enum DayState { YESTERDAY, TODAY, TOMORROW }
 
 class _TopClipperWeatherState extends State<TopClipperWeather> {
   UserProvider _userProvider;
-  ScreenUtil _util;
   DayState _whichDay = DayState.TODAY;
   DateTime _whichDate = DateTime.now();
   var useMobileLayout;
@@ -52,13 +52,15 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
   @override
   void initState() {
     super.initState();
-    _bloc.weatherSourceController.listen((onData) {});
+    _bloc.weatherSourceController.listen((onData) {
+      debugPrint(
+          '------------- weather soruce change detected in top cliper weather ');
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     _userProvider = Provider.of<UserProvider>(context);
-    _util = ScreenUtil();
     var shortestSide = MediaQuery.of(context).size.shortestSide;
     useMobileLayout = shortestSide < 600;
 
@@ -68,7 +70,7 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
           ClipPath(
               clipper: WeatherTopShapeClipper(), child: _customContainer()),
           Positioned(
-            left: ScreenUtil().setWidth(32),
+            left: 32.w,
             bottom: constraints.maxHeight / 2 * 1 / 8,
             child: InkWell(
                 onTap: () {
@@ -80,21 +82,21 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(
-                        _util.setWidth(8),
+                        8.w,
                       ),
                       child: Text(
                         'MORE',
                         style: TextStyle(
                           color: ColorConstants.SCALE_COLOR_LIGHT,
-                          fontSize: ScreenUtil().setSp(36),
+                          fontSize: 36.sp,
                         ),
                       ),
                     ),
                     SvgPicture.asset(
                       ImagePaths.svgMoreIcon,
                       fit: BoxFit.cover,
-                      width: ScreenUtil().setSp(36),
-                      height: ScreenUtil().setSp(24),
+                      width: 36.sp,
+                      height: 24.sp,
                     ),
                   ],
                 )),
@@ -108,39 +110,26 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
     return Container(
       height: useMobileLayout
           ? MediaQuery.of(context).size.height * 0.55
-          : MediaQuery.of(context).size.height *
-              0.7, //ScreenUtil().setHeight(990),
+          : MediaQuery.of(context).size.height * 0.7,
       decoration: BoxDecoration(gradient: topGradientDark),
       child: Padding(
-        padding: EdgeInsets.fromLTRB(
-            0.0, //_util.setWidth(32),
-            0.0, //_util.setHeight(32),
-            0.0, //_util.setWidth(32),
-            _util.setHeight(32)),
+        padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 32.h),
         child: widget.scaffoldKey != null
             ? Column(
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.fromLTRB(
-                        _util.setWidth(16),
-                        0.0, //_util.setHeight(32),
-                        0.0, //_util.setWidth(32),
-                        _util.setHeight(32)),
+                    padding: EdgeInsets.fromLTRB(16.w, 0.0, 0.0, 32.h),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         InkWell(
                           onTap: () {
                             widget.scaffoldKey.currentState.openDrawer();
-                            // widget.innerDrawerKey.currentState.toggle();
                           },
                           child: Padding(
-                            padding: EdgeInsets.fromLTRB(
-                                _util.setWidth(32),
-                                _util.setHeight(32),
-                                _util.setWidth(32),
-                                _util.setHeight(32)),
+                            padding:
+                                EdgeInsets.fromLTRB(32.w, 32.h, 32.w, 32.h),
                             child: ImageIcon(
                               AssetImage(ImagePaths.icHamburger),
                               color: Colors.white,
@@ -148,16 +137,12 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.fromLTRB(
-                              _util.setWidth(32),
-                              _util.setHeight(32),
-                              0.0, //_util.setWidth(32),
-                              _util.setHeight(32)),
+                          padding: EdgeInsets.fromLTRB(32.w, 32.h, 0.0, 32.h),
                           child: Text(
                             widget.title.toUpperCase(),
                             style: TextStyle(
                                 color: Colors.white,
-                                fontSize: ScreenUtil().setSp(48),
+                                fontSize: 48.sp,
                                 fontWeight: FontWeight.w400),
                           ),
                         ),
@@ -191,7 +176,7 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
                                   'TODAY'.toUpperCase(),
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: ScreenUtil().setSp(48),
+                                      fontSize: 48.sp,
                                       fontWeight: _whichDay == DayState.TODAY
                                           ? FontWeight.w900
                                           : FontWeight.w400),
@@ -218,7 +203,7 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
                                   'TOMORROW'.toUpperCase(),
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: ScreenUtil().setSp(48),
+                                      fontSize: 48.sp,
                                       fontWeight: _whichDay == DayState.TOMORROW
                                           ? FontWeight.w900
                                           : FontWeight.w400),
@@ -230,10 +215,10 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
                       ),
                       Container(
                           padding: EdgeInsets.fromLTRB(
-                            ScreenUtil().setWidth(0.0),
-                            ScreenUtil().setHeight(32.0),
-                            ScreenUtil().setWidth(32.0),
-                            ScreenUtil().setHeight(32.0),
+                            0.0,
+                            32.h,
+                            32.w,
+                            32.h,
                           ),
                           child: _weatherSummeryContainer()),
                     ],
@@ -244,7 +229,7 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
                 widget.title.toUpperCase(),
                 style: TextStyle(
                     color: Colors.white,
-                    fontSize: ScreenUtil().setSp(48),
+                    fontSize: 48.sp,
                     fontWeight: FontWeight.w400),
               ),
       ),
@@ -262,7 +247,7 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
               maxRadius: constraint.maxWidth / 4,
               backgroundColor: ColorConstants.WEATHER_BKG_CIRCLE,
               child: Container(
-                margin: EdgeInsets.only(left: ScreenUtil().setWidth(64.0)),
+                margin: EdgeInsets.only(left: 64.w),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -296,9 +281,7 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
           Align(
             alignment: Alignment.center,
             child: Container(
-              margin: EdgeInsets.only(top: ScreenUtil().setHeight(24)),
-              // height: constraint.maxWidth / 1.5,
-              // color: Colors.red,
+              margin: EdgeInsets.only(top: 24.h),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
@@ -357,8 +340,7 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
           child: Text(
             AppStrings.noData,
             style: TextStyle(
-                fontSize: _util.setWidth(48),
-                color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
+                fontSize: 48.w, color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
           ),
         ),
       );
@@ -374,24 +356,52 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
       var currentDate = DateFormat('yMd').format(_whichDate);
 
       if (dDate.compareTo(currentDate) == 0) {
-        _weatherIconUrl = WeatherDescMap.weatherCodeMap['116'].last;
-        _weatherCondition = WeatherDescMap.weatherCodeMap['116'].first;
+        var weatherType = getWeatherType(
+            f.airTemperatureList.attributeDataList[0].value,
+            f.barometricPressureList.attributeDataList[0].value,
+            f.windSpeedList.attributeDataList[0].value,
+            f.humidityList.attributeDataList[0].value,
+            f.precipitationList.attributeDataList[0].value);
+        _weatherIconUrl =
+            WeatherDescMap.weatherCodeMap[weatherType.toString()].last;
+        _weatherCondition =
+            WeatherDescMap.weatherCodeMap[weatherType.toString()].first;
         _temperature =
             f.airTemperatureList.attributeDataList[0].value.toString();
-        _feelsLikeTemperature = data
-            .hours[0].airTemperatureList.attributeDataList[0].value
+        // _feelsLikeTemperature = data
+        //     .hours[0].airTemperatureList.attributeDataList[0].value
+        //     .round()
+        //     .toString();
+        _feelsLikeTemperature = getFeelsLikeTemperature(
+                f.airTemperatureList.attributeDataList[0].value,
+                f.humidityList.attributeDataList[0].value,
+                f.windSpeedList.attributeDataList[0].value)
             .round()
             .toString();
       }
     }
 
     if (_temperature == null && _whichDay == DayState.TODAY) {
-      _weatherIconUrl = WeatherDescMap.weatherCodeMap[116].last;
-      _weatherCondition = WeatherDescMap.weatherCodeMap[116].first;
+      var weatherType = getWeatherType(
+          data.hours[0].airTemperatureList.attributeDataList[0].value,
+          data.hours[0].barometricPressureList.attributeDataList[0].value,
+          data.hours[0].windSpeedList.attributeDataList[0].value,
+          data.hours[0].humidityList.attributeDataList[0].value,
+          data.hours[0].precipitationList.attributeDataList[0].value);
+      _weatherIconUrl =
+          WeatherDescMap.weatherCodeMap[weatherType.toString()].last;
+      _weatherCondition =
+          WeatherDescMap.weatherCodeMap[weatherType.toString()].first;
       _temperature = data.hours[0].airTemperatureList.attributeDataList[0].value
           .toString();
-      _feelsLikeTemperature = data
-          .hours[0].airTemperatureList.attributeDataList[0].value
+      // _feelsLikeTemperature = data
+      //     .hours[0].airTemperatureList.attributeDataList[0].value
+      //     .round()
+      //     .toString();
+      _feelsLikeTemperature = getFeelsLikeTemperature(
+              data.hours[0].airTemperatureList.attributeDataList[0].value,
+              data.hours[0].humidityList.attributeDataList[0].value,
+              data.hours[0].windSpeedList.attributeDataList[0].value)
           .round()
           .toString();
     }
@@ -406,9 +416,7 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16.0),
                     color: Colors.white),
-                //  height: ScreenUtil().setHeight(512),
                 width: MediaQuery.of(context).size.width,
-
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -427,7 +435,7 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.all(ScreenUtil().setWidth(16)),
+            padding: EdgeInsets.all(16.w),
             child: SvgPicture.asset(
               _weatherIconUrl,
               color: Colors.white,
@@ -437,15 +445,15 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
           Text(
             '$_weatherCondition',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: ScreenUtil().setSp(36)),
+            style: TextStyle(fontSize: 36.sp),
           ),
           Text(
             '$_temperature\u{00B0}C',
-            style: TextStyle(fontSize: ScreenUtil().setSp(108)),
+            style: TextStyle(fontSize: 108.sp),
           ),
           Text(
             'Feels Like: $_feelsLikeTemperature\u{00B0}C',
-            style: TextStyle(fontSize: ScreenUtil().setSp(32)),
+            style: TextStyle(fontSize: 32.sp),
           ),
         ],
       ),
@@ -470,8 +478,7 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
           child: Text(
             AppStrings.noData,
             style: TextStyle(
-                fontSize: _util.setWidth(48),
-                color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
+                fontSize: 48.w, color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
           ),
         ),
       );
@@ -506,9 +513,7 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16.0),
                     color: Colors.white),
-                //  height: ScreenUtil().setHeight(512),
                 width: MediaQuery.of(context).size.width,
-
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -527,23 +532,23 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
+            padding: EdgeInsets.all(32.w),
             child: SvgPicture.asset(
               ImagePaths.svgHumidity,
               fit: BoxFit.scaleDown,
-              width: ScreenUtil().setWidth(100),
-              height: ScreenUtil().setWidth(100),
+              width: 100.w,
+              height: 100.w,
             ),
           ),
           Text(
             '$_humidity%',
-            style: TextStyle(fontSize: ScreenUtil().setSp(48)),
+            style: TextStyle(fontSize: 48.sp),
           ),
           Padding(
-            padding: EdgeInsets.all(ScreenUtil().setWidth(8)),
+            padding: EdgeInsets.all(8.w),
             child: Text(
               'HUMIDITY',
-              style: TextStyle(fontSize: ScreenUtil().setSp(24)),
+              style: TextStyle(fontSize: 24.sp),
             ),
           ),
         ],
@@ -569,8 +574,7 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
           child: Text(
             AppStrings.noData,
             style: TextStyle(
-                fontSize: _util.setWidth(48),
-                color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
+                fontSize: 48.w, color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
           ),
         ),
       );
@@ -606,9 +610,7 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16.0),
                     color: Colors.white),
-                //  height: ScreenUtil().setHeight(512),
                 width: MediaQuery.of(context).size.width,
-
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -629,19 +631,19 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.all(ScreenUtil().setWidth(16)),
+                padding: EdgeInsets.all(16.w),
                 child: SvgPicture.asset(
                   ImagePaths.svgUmbrella,
                   fit: BoxFit.contain,
-                  width: ScreenUtil().setWidth(100),
-                  height: ScreenUtil().setWidth(100),
+                  width: 100.w,
+                  height: 100.w,
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(_util.setWidth(8)),
+                padding: EdgeInsets.all(8.w),
                 child: Text(
                   '  $_chanceOfRain%  ',
-                  style: TextStyle(fontSize: ScreenUtil().setSp(40)),
+                  style: TextStyle(fontSize: 40.sp),
                 ),
               ),
             ],
@@ -656,13 +658,13 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
                 TextItem(
                     text: Text("CHANCE OF RAIN",
                         style: TextStyle(
-                          fontSize: _util.setSp(96),
+                          fontSize: 96.sp,
                         )),
                     startAngle: 155,
                     direction: CircularTextDirection.anticlockwise),
               ],
 
-              radius: _util.setWidth(296),
+              radius: 296.w,
               position: CircularTextPosition.outside,
               // spacing: _util.setSp(32),
             ),
@@ -697,7 +699,7 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
             ),
             Padding(
               padding: EdgeInsets.all(
-                _util.setWidth(8),
+                8.w,
               ),
               child: Text(
                 'MAP',

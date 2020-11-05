@@ -14,6 +14,7 @@ import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:ocean_builder/custom_drawer/homeDrawer.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper_lighting.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:reorderables/reorderables.dart';
@@ -32,7 +33,7 @@ class LightingSceneListScreen extends StatefulWidget {
 class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   UserProvider userProvider;
-  ScreenUtil _util = ScreenUtil();
+  // ScreenUtil _util = ScreenUtil();
   LightSceneBloc _bloc = LightSceneBloc();
   TextEditingController _renameTextController = TextEditingController();
   List<String> _userScenerows;
@@ -66,10 +67,7 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
     setState(() {
       String row = _userScenerows.removeAt(oldIndex);
       _userScenerows.insert(newIndex, row);
-
-      // reorder _oceanBuilderUser Scene
       Scene sceneElement = _userScenes.removeAt(oldIndex);
-      // _user.lightiningScenes.insert(newIndex, sceneElement);
       _userScenes.insert(newIndex, sceneElement);
       _userSceneChanged = true;
     });
@@ -79,8 +77,6 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
     setState(() {
       String row = _seaPodSceneRows.removeAt(oldIndex);
       _seaPodSceneRows.insert(newIndex, row);
-
-      // reorder _oceanBuilderUser Scene
       Scene sceneElement = _seaPodScenes.removeAt(oldIndex);
       _seaPodScenes.insert(newIndex, sceneElement);
       _seaPodSceneChanged = true;
@@ -89,9 +85,7 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     _renameTextController.text = ListHelper.getlightSceneList()[0];
-    // _rows = ListHelper.getlightSceneList();
     _setDataListener();
     super.initState();
 
@@ -106,8 +100,6 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
 
       _selectedSeaPodSource = _oceanBuilderProvider.getSeaPod(
           _selectedOBIdProvider.selectedObId, _userProvider);
-
-      // debugPrint('calling fetch ob ');
 
       _selectedSeaPod.whenComplete(() {
         setState(() {
@@ -129,11 +121,8 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
   }
 
   _mainContent() {
-    // Make sure there is a scroll controller attached to the scroll view that contains ReorderableSliverList.
-    // Otherwise an error will be thrown.
     ScrollController _scrollController =
         PrimaryScrollController.of(context) ?? ScrollController();
-
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -146,157 +135,23 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
         body: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            // borderRadius: BorderRadius.circular(8)
           ),
           child: Stack(
             children: <Widget>[
               CustomScrollView(
                 controller: _scrollController,
                 slivers: <Widget>[
-                  UIHelper.getTopEmptyContainerWithColor(
-                      ScreenUtil.statusBarHeight + _util.setHeight(160),
-                      Colors.white),
-                  SliverToBoxAdapter(
-                      child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: _util.setHeight(32),
-                      horizontal: _util.setWidth(32),
-                    ),
-                    child: _sceneSourceTitle('My Scenes'),
-                  )),
-
+                  _topEmptyContainerWithColor(),
+                  _titleMyScene(),
                   _userLightingSceneListContentFuture(),
-
-                  SliverToBoxAdapter(
-                      child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: _util.setHeight(32),
-                      horizontal: _util.setWidth(32),
-                    ),
-                    child: _sceneSourceTitle('SeaPod Scenes'),
-                  )),
-
+                  _titleSeaPodScene(),
                   _seaPodlightingSceneListContentFuture(),
-                  /*                   ReorderableSliverList(
-                                      // delegate: ReorderableSliverChildListDelegate(
-                                      //       _rows
-                  
-                                      //       ),
-                                      // or use ReorderableSliverChildBuilderDelegate if needed
-                                      delegate: ReorderableSliverChildBuilderDelegate(
-                                        
-                                          (BuildContext context, int index) => Align(
-                                                alignment: Alignment.center,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(8.0),
-                                                  child: _rowItem(index) ,
-                                                ),
-                                              ),
-                                          childCount: _rows.length //ListHelper.getlightSceneList().length//
-                                          ),
-                                      onReorder: _onReorder,
-                                    ), */
-                  // SliverToBoxAdapter(
-                  //   child:
-                  // ),
-
-                  UIHelper.getTopEmptyContainer(90, false),
+                  _emptyContainer(),
                 ],
               ),
-              // Appbar(ScreenTitle.OB_SELECTION),
-              Positioned(
-                top: ScreenUtil.statusBarHeight,
-                left: 0,
-                right: 0,
-                child: Container(
-                  color: Colors.white,
-                  // padding: EdgeInsets.only(top: 8.0, right: 12.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          InkWell(
-                            onTap: () {
-                              _scaffoldKey.currentState.openDrawer();
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.fromLTRB(
-                                _util.setWidth(32),
-                                _util.setHeight(32),
-                                _util.setWidth(32),
-                                _util.setHeight(32),
-                              ),
-                              child: ImageIcon(
-                                AssetImage(ImagePaths.icHamburger),
-                                color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              left: _util.setWidth(48),
-                              top: _util.setHeight(32),
-                              bottom: _util.setHeight(32),
-                            ),
-                            child: Text(
-                              AppStrings.lightingSceneList,
-                              style: TextStyle(
-                                  color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 22),
-                            ),
-                          ),
-                          Spacer(),
-                          InkWell(
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              ApplicationStatics.oceanBuilderUser =
-                                  _oceanBuilderUser;
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                right: _util.setWidth(48),
-                                top: _util.setHeight(32),
-                                bottom: _util.setHeight(32),
-                              ),
-                              child: Image.asset(
-                                ImagePaths.cross,
-                                width: _util.setWidth(48),
-                                height: _util.setHeight(48),
-                                color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                top: 0,
-                child: showProgressCircle
-                    ? Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : Container(),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child:
-                    BottomClipperLighting(ButtonText.SAVE_SCENE, '', false, () {
-                  _saveSCeneList();
-                }, () {
-                  // _showRenameDeteletDialog();
-                }),
-              )
+              _topBar(),
+              _progressCircle(),
+              _saveButton()
             ],
           ),
         ),
@@ -304,12 +159,135 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
     );
   }
 
+  Positioned _topBar() {
+    return Positioned(
+      top: ScreenUtil.statusBarHeight,
+      left: 0,
+      right: 0,
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                InkWell(
+                  onTap: () {
+                    _scaffoldKey.currentState.openDrawer();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(32.w, 32.h, 32.w, 32.h),
+                    child: ImageIcon(
+                      AssetImage(ImagePaths.icHamburger),
+                      color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: 48.w,
+                    top: 32.h,
+                    bottom: 32.h,
+                  ),
+                  child: Text(
+                    AppStrings.lightingSceneList,
+                    style: TextStyle(
+                        color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 22),
+                  ),
+                ),
+                Spacer(),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    ApplicationStatics.oceanBuilderUser = _oceanBuilderUser;
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      right: 48.w,
+                      top: 32.h,
+                      bottom: 32.h,
+                    ),
+                    child: Image.asset(
+                      ImagePaths.cross,
+                      width: 48.w,
+                      height: 48.h,
+                      color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Positioned _progressCircle() {
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      top: 0,
+      child: showProgressCircle
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Container(),
+    );
+  }
+
+  Positioned _saveButton() {
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: BottomClipperLighting(ButtonText.SAVE_SCENE, '', false, () {
+        _saveSCeneList();
+      }, () {
+        // _showRenameDeteletDialog();
+      }),
+    );
+  }
+
+  _emptyContainer() => UIHelper.getTopEmptyContainer(90, false);
+
+  SliverToBoxAdapter _titleSeaPodScene() {
+    return SliverToBoxAdapter(
+        child: Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: 32.h,
+        horizontal: 32.w,
+      ),
+      child: _sceneSourceTitle('SeaPod Scenes'),
+    ));
+  }
+
+  SliverToBoxAdapter _titleMyScene() {
+    return SliverToBoxAdapter(
+        child: Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: 32.h,
+        horizontal: 32.w,
+      ),
+      child: _sceneSourceTitle('My Scenes'),
+    ));
+  }
+
+  _topEmptyContainerWithColor() {
+    return UIHelper.getTopEmptyContainerWithColor(
+        ScreenUtil.statusBarHeight + 160.h, Colors.white);
+  }
+
   _rowItem(int index) {
     // return _rows[index];
     return Padding(
       padding: EdgeInsets.only(
-        left: _util.setWidth(32),
-        right: _util.setWidth(32),
+        left: 32.w,
+        right: 32.w,
       ),
       child: Column(
         children: <Widget>[
@@ -321,20 +299,20 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.only(left: _util.setWidth(32)),
+                      padding: EdgeInsets.only(left: 32.w),
                       child: Image.asset(
                         ImagePaths.icVerticalDots,
                         color: ColorConstants.LIGHTING_CHIP_LABEL,
                       ),
                     ),
                     SizedBox(
-                      width: _util.setWidth(32),
+                      width: 32.w,
                     ),
                     Text(
                       _userScenerows[
                           index], //ListHelper.getlightSceneList()[index],
                       style: TextStyle(
-                          fontSize: _util.setSp(38),
+                          fontSize: 38.sp,
                           color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
                     )
                   ],
@@ -352,8 +330,7 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
                       },
                       child: Text(
                         'RENAME',
-                        style: TextStyle(
-                            fontSize: _util.setSp(38), color: Colors.green),
+                        style: TextStyle(fontSize: 38.sp, color: Colors.green),
                       ),
                     ),
                     InkWell(
@@ -363,8 +340,7 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
                       },
                       child: Text(
                         'DELETE',
-                        style: TextStyle(
-                            fontSize: _util.setSp(38), color: Colors.red),
+                        style: TextStyle(fontSize: 38.sp, color: Colors.red),
                       ),
                     )
                   ],
@@ -373,7 +349,7 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
             ],
           ),
           SizedBox(
-            height: _util.setHeight(32),
+            height: 32.h,
           ),
           Divider(
             // height: 2,
@@ -389,8 +365,8 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
     // return _rows[index];
     return Padding(
       padding: EdgeInsets.only(
-        left: _util.setWidth(32),
-        right: _util.setWidth(32),
+        left: 32.w,
+        right: 32.w,
       ),
       child: Column(
         children: <Widget>[
@@ -402,20 +378,20 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.only(left: _util.setWidth(32)),
+                      padding: EdgeInsets.only(left: 32.w),
                       child: Image.asset(
                         ImagePaths.icVerticalDots,
                         color: ColorConstants.LIGHTING_CHIP_LABEL,
                       ),
                     ),
                     SizedBox(
-                      width: _util.setWidth(32),
+                      width: 32.w,
                     ),
                     Text(
                       _seaPodSceneRows[
                           index], //ListHelper.getlightSceneList()[index],
                       style: TextStyle(
-                          fontSize: _util.setSp(38),
+                          fontSize: 38.sp,
                           color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
                     )
                   ],
@@ -436,8 +412,7 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
                             child: Text(
                               'RENAME',
                               style: TextStyle(
-                                  fontSize: _util.setSp(38),
-                                  color: Colors.green),
+                                  fontSize: 38.sp, color: Colors.green),
                             ),
                           ),
                           InkWell(
@@ -448,8 +423,8 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
                             },
                             child: Text(
                               'DELETE',
-                              style: TextStyle(
-                                  fontSize: _util.setSp(38), color: Colors.red),
+                              style:
+                                  TextStyle(fontSize: 38.sp, color: Colors.red),
                             ),
                           )
                         ],
@@ -458,16 +433,18 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
               )
             ],
           ),
-          SizedBox(
-            height: _util.setHeight(32),
-          ),
-          Divider(
-            // height: 2,
-            thickness: 1,
-            color: ColorConstants.ACCESS_MANAGEMENT_SUBTITLE,
-          )
+          SpaceH32(),
+          _dividerone()
         ],
       ),
+    );
+  }
+
+  Divider _dividerone() {
+    return Divider(
+      // height: 2,
+      thickness: 1,
+      color: ColorConstants.ACCESS_MANAGEMENT_SUBTITLE,
     );
   }
 
@@ -543,7 +520,7 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
           (BuildContext context, int index) => Align(
                 alignment: Alignment.center,
                 child: Padding(
-                  padding: EdgeInsets.all(_util.setWidth(12)),
+                  padding: EdgeInsets.all(12.w),
                   child: _rowItem(index),
                 ),
               ),
@@ -560,7 +537,7 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
           (BuildContext context, int index) => Align(
                 alignment: Alignment.center,
                 child: Padding(
-                  padding: EdgeInsets.all(_util.setWidth(12)),
+                  padding: EdgeInsets.all(12.w),
                   child: _seaPodRowItem(index),
                 ),
               ),
@@ -577,7 +554,7 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
           (BuildContext context, int index) => Align(
                 alignment: Alignment.center,
                 child: Padding(
-                  padding: EdgeInsets.all(_util.setWidth(12)),
+                  padding: EdgeInsets.all(12.w),
                   child: _seaPodRowItem(index),
                 ),
               ),
@@ -620,7 +597,7 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
             // ),
             Container(
               margin: EdgeInsets.only(
-                bottom: _util.setHeight(32),
+                bottom: 32.h,
               ),
               child: TextField(
                 autofocus: false,
@@ -638,19 +615,19 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
                       borderSide: BorderSide(
                           color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                           width: 1),
-                      borderRadius: BorderRadius.circular(_util.setWidth(16))),
+                      borderRadius: BorderRadius.circular(16.w)),
                   border: OutlineInputBorder(
                       borderSide: BorderSide(
                           color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                           width: 1),
-                      borderRadius: BorderRadius.circular(_util.setWidth(16))),
+                      borderRadius: BorderRadius.circular(16.w)),
                   labelText: 'Rename Scene',
                   labelStyle: TextStyle(
                       color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                      fontSize: _util.setSp(38)),
+                      fontSize: 38.sp),
                 ),
                 style: TextStyle(
-                  fontSize: _util.setSp(38),
+                  fontSize: 38.sp,
                   fontWeight: FontWeight.w400,
                   color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
                 ),
@@ -677,8 +654,7 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
                     'RENAME SCENE',
                   ),
                   shape: RoundedRectangleBorder(
-                      borderRadius:
-                          new BorderRadius.circular(_util.setWidth(16)),
+                      borderRadius: new BorderRadius.circular(16.w),
                       side: BorderSide(
                         color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                       )),
@@ -722,7 +698,7 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
             // ),
             Container(
               margin: EdgeInsets.only(
-                bottom: _util.setHeight(32),
+                bottom: 32.h,
               ),
               child: Text(
                 'Are you sure you want to delete the scene ?',
@@ -748,8 +724,7 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
                     'DELETE SCENE',
                   ),
                   shape: RoundedRectangleBorder(
-                      borderRadius:
-                          new BorderRadius.circular(_util.setWidth(16)),
+                      borderRadius: new BorderRadius.circular(16.w),
                       side: BorderSide(
                         color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                       )),
@@ -955,8 +930,7 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
         Text(
           '$sourceName',
           style: TextStyle(
-              fontSize: _util.setHeight(48),
-              color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
+              fontSize: 48.sp, color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
         )
       ],
     );

@@ -17,18 +17,26 @@ const LinearGradient profileGradient = LinearGradient(
 const LinearGradient controlGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: <Color>[ColorConstants.CONTROL_BKG, ColorConstants.CONTROL_LIST_BKG]);
+    colors: <Color>[
+      ColorConstants.CONTROL_BKG,
+      ColorConstants.CONTROL_LIST_BKG
+    ]);
 
 const LinearGradient topGradientDark = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: <Color>[ColorConstants.TOP_CLIPPER_START_DARK, ColorConstants.TOP_CLIPPER_END_DARK]);
+    colors: <Color>[
+      ColorConstants.TOP_CLIPPER_START_DARK,
+      ColorConstants.TOP_CLIPPER_END_DARK
+    ]);
 
- const LinearGradient weatherChartGradient = LinearGradient(
+const LinearGradient weatherChartGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: <Color>[ColorConstants.TEMP_BY_HOUR_START, ColorConstants.TEMP_BY_HOUR_START]);   
-
+    colors: <Color>[
+      ColorConstants.TEMP_BY_HOUR_START,
+      ColorConstants.TEMP_BY_HOUR_START
+    ]);
 
 class HexColor extends Color {
   static int _getColorFromHex(String hexColor) {
@@ -40,4 +48,4 @@ class HexColor extends Color {
   }
 
   HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
-}    
+}

@@ -19,6 +19,7 @@ import 'package:ocean_builder/ui/screens/sign_in_up/request_access_screen.dart';
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 
@@ -31,7 +32,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   UserDataProvider _userDataProvider;
   TextEditingController _emailController, _passwordController;
 
@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   LoginValidationBloc _bloc = LoginValidationBloc();
 
-   ConnectionStatusProvider _connectionStatusProvider;
+  ConnectionStatusProvider _connectionStatusProvider;
 
   // StreamSubscription _connectionChangeStream;
 
@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
     final UserProvider userProvider = Provider.of<UserProvider>(context);
-   _connectionStatusProvider = Provider.of<ConnectionStatusProvider>(context);
+    _connectionStatusProvider = Provider.of<ConnectionStatusProvider>(context);
     _userDataProvider = Provider.of<UserDataProvider>(context);
     _selectedOBIdProvider = Provider.of<SelectedOBIdProvider>(context);
 
@@ -86,8 +86,6 @@ class _LoginScreenState extends State<LoginScreen> {
     double topClipperRatio =
         Platform.isIOS ? (153.5) / 813 : (153.5 + 16) / 813;
     double height = MediaQuery.of(context).size.height * topClipperRatio;
-
-
 
     return Scaffold(
         body: Stack(
@@ -101,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: CustomScrollView(
               shrinkWrap: true,
               slivers: <Widget>[
-                UIHelper.getTopEmptyContainer(height + 20, false),
+                _startSpace(height),
                 SliverList(
                     delegate: SliverChildListDelegate([
                   userProvider.isLoading
@@ -112,214 +110,181 @@ class _LoginScreenState extends State<LoginScreen> {
                           shrinkWrap: true,
                           scrollDirection: Axis.vertical,
                           children: <Widget>[
-                            UIHelper.getRegistrationTextField(
-                                context,
-                                _bloc.email,
-                                _bloc.emailChanged,
-                                TextFieldHints.EMAIL,
-                                _emailController,
-                                InputTypes.EMAIL,
-                                null,
-                                true,
-                                TextInputAction.next,
-                                _emailNode,
-                                () => FocusScope.of(context)
-                                    .requestFocus(_passwordNode)),
-                            SizedBox(
-                              height: sizedBoxHeight,
-                            ),
-                            UIHelper.getPasswordTextField(
-                                context,
-                                _bloc.password,
-                                _bloc.showPassword,
-                                TextFieldHints.PASSWORD,
-                                _passwordController,
-                                null,
-                                null,
-                                true,
-                                TextInputAction.done,
-                                _passwordNode,
-                                (data) => _bloc.passwordChanged(data),
-                                (show) => _bloc.showPasswordChanged(show),
-                                null),
-
-                Container(
-                  padding: EdgeInsets.only(
-                      top: 48.0, //util.setHeight(64),
-                      right: 16.0,
-                      bottom: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      InkWell(
-                        onTap: () {
-                          goToForgotPasswordScreen();
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.all(
-                            ScreenUtil().setWidth(32)
-                          ),
-                          child: Text(
-                            'Forgot password ?',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: ColorConstants.PROFILE_BKG_1),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),    
+                            _inputEmail(context),
+                            SpaceH48(),
+                            _inputPassword(context),
+                            _buttonForgetPassword(),
                           ],
                         )
                 ])),
-                UIHelper.getTopEmptyContainer(90, false),
+                _endSpace(),
               ],
             ),
           ),
         ),
-        Positioned(top: 0, left: 0, right: 0, child: Appbar(ScreenTitle.LOGIN)),
-        Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: StreamBuilder<bool>(
-                stream: _bloc.loginCheck,
-                builder: (context, snapshot) {
-                  return BottomClipper(
-                      ButtonText.BACK,
-                      widget.sourceScreen.contains(ScreenTitle.YOUR_INFO) ? ButtonText.SUBMIT_ORDER :ButtonText.NEXT,
-                      () => onBackPressed(userProvider),
-                      () => onLoginEvent(userProvider),
-                      isNextEnabled: snapshot.hasData && snapshot.data);
-                }))
+        _topBar(),
+        _bottomBar(userProvider)
       ],
     ));
   }
 
-  loginField(TextEditingController controller, String label, bool isPassword) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.0),
-      child: TextField(
-        autofocus: false,
-        controller: controller,
-        keyboardAppearance: Brightness.light,
-        style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            color: ColorConstants.TOP_CLIPPER_START),
-        decoration: InputDecoration(
-            hintText: label,
-            enabledBorder: new UnderlineInputBorder(
-                borderSide:
-                    new BorderSide(color: ColorConstants.TOP_CLIPPER_START)),
-            hintStyle: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: ColorConstants.TOP_CLIPPER_START)),
+  Positioned _bottomBar(UserProvider userProvider) {
+    return Positioned(
+        bottom: 0,
+        left: 0,
+        right: 0,
+        child: StreamBuilder<bool>(
+            stream: _bloc.loginCheck,
+            builder: (context, snapshot) {
+              return BottomClipper(
+                  ButtonText.BACK,
+                  widget.sourceScreen.contains(ScreenTitle.YOUR_INFO)
+                      ? ButtonText.SUBMIT_ORDER
+                      : ButtonText.NEXT,
+                  () => onBackPressed(userProvider),
+                  () => onLoginEvent(userProvider),
+                  isNextEnabled: snapshot.hasData && snapshot.data);
+            }));
+  }
+
+  Positioned _topBar() =>
+      Positioned(top: 0, left: 0, right: 0, child: Appbar(ScreenTitle.LOGIN));
+
+  _endSpace() => UIHelper.getTopEmptyContainer(90, false);
+
+  Container _buttonForgetPassword() {
+    return Container(
+      padding: EdgeInsets.only(
+          top: 48.0, //util.setHeight(64),
+          right: 16.0,
+          bottom: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          InkWell(
+            onTap: () {
+              goToForgotPasswordScreen();
+            },
+            child: Padding(
+              padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
+              child: Text(
+                'Forgot password ?',
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: ColorConstants.PROFILE_BKG_1),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  goToForgotPasswordScreen(){
-     Navigator.of(context).pushNamed(ForgotPasswordScreen.routeName);
+  Widget _inputPassword(BuildContext context) {
+    return UIHelper.getPasswordTextField(
+        context,
+        _bloc.password,
+        _bloc.showPassword,
+        TextFieldHints.PASSWORD,
+        _passwordController,
+        null,
+        null,
+        true,
+        TextInputAction.done,
+        _passwordNode,
+        (data) => _bloc.passwordChanged(data),
+        (show) => _bloc.showPasswordChanged(show),
+        null);
   }
 
-  onBackPressed(UserProvider userProvider){
-    if(userProvider.isLoading) return ;
+  Widget _inputEmail(BuildContext context) {
+    return UIHelper.getRegistrationTextField(
+        context,
+        _bloc.email,
+        _bloc.emailChanged,
+        TextFieldHints.EMAIL,
+        _emailController,
+        InputTypes.EMAIL,
+        null,
+        true,
+        TextInputAction.next,
+        _emailNode,
+        () => FocusScope.of(context).requestFocus(_passwordNode));
+  }
+
+  _startSpace(double height) =>
+      UIHelper.getTopEmptyContainer(height + 20, false);
+
+  goToForgotPasswordScreen() {
+    Navigator.of(context).pushNamed(ForgotPasswordScreen.routeName);
+  }
+
+  onBackPressed(UserProvider userProvider) {
+    if (userProvider.isLoading) return;
     Navigator.pop(context);
   }
 
-  onLoginEvent(UserProvider userProvider) async{
-    if(userProvider.isLoading) return ;
+  onLoginEvent(UserProvider userProvider) async {
+    if (userProvider.isLoading) return;
     if (_emailController == null || _passwordController == null) return;
     bool internetStatus = await DataConnectionChecker().hasConnection;
-    // debugPrint('internte status  ' + internetStatus.toString());
-    if(!internetStatus){
-      displayInternetInfoBar(context,AppStrings.noInternetConnectionTryAgain);
-      // showInfoBar('NO INTERNET', AppStrings.noInternetConnection, context);
+    if (!internetStatus) {
+      displayInternetInfoBar(context, AppStrings.noInternetConnectionTryAgain);
       return;
     }
     String email = _emailController.text;
     String password = _passwordController.text;
 
-    // debugPrint('header -------  ${_headerManager.headers}');
-
     if (email != null && password != null)
-      // userProvider.signIn(email, password).then((status) {
-         userProvider.logIn(email, password).then((status) {
+      userProvider.logIn(email, password).then((status) async {
         if (status.status == 200) {
           MethodHelper.parseNotifications(context);
-          if (widget.sourceScreen.contains(ScreenTitle.REGISTER) ) {
-            _userDataProvider.user.firstName = userProvider.authenticatedUser.firstName;
-            _userDataProvider.user.lastName = userProvider.authenticatedUser.lastName;
+          if (widget.sourceScreen.contains(ScreenTitle.REGISTER)) {
+            _userDataProvider.user.firstName =
+                userProvider.authenticatedUser.firstName;
+            _userDataProvider.user.lastName =
+                userProvider.authenticatedUser.lastName;
             _userDataProvider.user.email = userProvider.authenticatedUser.email;
-            _userDataProvider.user.country = userProvider.authenticatedUser.country;
+            _userDataProvider.user.country =
+                userProvider.authenticatedUser.country;
             _userDataProvider.user.phone = userProvider.authenticatedUser.phone;
-                          Navigator.of(context)
-                  .pushNamed(RequestAccessScreen.routeName);
-          }
-          else if (widget.sourceScreen.contains(ScreenTitle.YOUR_INFO) ) {
+            Navigator.of(context).pushNamed(RequestAccessScreen.routeName);
+          } else if (widget.sourceScreen.contains(ScreenTitle.YOUR_INFO)) {
             _createNewObForExistingUser(userProvider);
           } else {
-           MethodHelper.selectOnlyOBasSelectedOB();
+            await MethodHelper.selectOnlyOBasSelectedOB();
             if (userProvider.authenticatedUser.userOceanBuilder == null ||
                 userProvider.authenticatedUser.userOceanBuilder.length > 1) {
-              Navigator.of(context)
-                  .pushReplacementNamed(HomeScreen.routeName);
+              Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
             } else if (userProvider.authenticatedUser.userOceanBuilder.length <=
                 1) {
-              Navigator.of(context)
-                  .pushReplacementNamed(HomeScreen.routeName);
+              Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
             }
-
           }
         } else {
-          // debugPrint('status  ' +
-              // status.status.toString() +
-              // 'status code ' +
-              // status.code +
-              // ' msg ' +
-              // status.message);
-          // debugPrint("--" + parseErrorTitle(status.code) + "---");
-
           _passwordController.text = '';
           _bloc.passwordChanged('');
-          
-
           String title = parseErrorTitle(status.code);
           showInfoBar(title, status.message, context);
         }
       });
-    else {
-      // debugPrint('field empty');
-    }
-
+    else {}
   }
 
+  _createNewObForExistingUser(UserProvider userProvider) {
+    String existingUserId = userProvider.authenticatedUser.userID;
+    DesignDataProvider designDataProvider =
+        Provider.of<DesignDataProvider>(context);
 
-
-_createNewObForExistingUser(UserProvider userProvider){
-
-      String existingUserId = userProvider.authenticatedUser.userID;
-      DesignDataProvider designDataProvider = Provider.of<DesignDataProvider>(context);
-
-      userProvider
-            .createSeaPod(designDataProvider.oceanBuilder)
-          // .createNewOBforExistingUser(
-          //     existingUserId, designDataProvider.oceanBuilder)
-          .then((responseStatus) {
-            // debugPrint('_createNewObForExistingUser .. status code'+ responseStatus.status.toString());
-        if (responseStatus.status == 200) {
-          Navigator.of(context)
-              .pushReplacementNamed(HomeScreen.routeName);
-        } else {
-          // debugPrint('Signup as existing user failed');
-          showInfoBar( parseErrorTitle(responseStatus.code), responseStatus.message,context);
-        }
-      });
-
-}
-
-
+    userProvider
+        .createSeaPod(designDataProvider.oceanBuilder)
+        .then((responseStatus) {
+      if (responseStatus.status == 200) {
+        Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+      } else {
+        showInfoBar(parseErrorTitle(responseStatus.code),
+            responseStatus.message, context);
+      }
+    });
+  }
 }

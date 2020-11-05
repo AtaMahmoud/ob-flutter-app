@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 class WeatherFlowDeviceObservationData {
@@ -48,13 +51,62 @@ class DeviceObservationStatus {
 
 class DeviceObservation {
   List<dynamic> observation;
-  DeviceObservation(this.observation);
+  num epoch; 
+  num windLull;
+  num windAvg;
+  num windGust;
+  num windDirection;
+  num windSampleInterval;
+  num pressure;
+  num airTemperature;
+  num relativeHumidity;
+  num illuminance;
+  num unIndex;
+  num solarRadiation;
+  num rainAccumulation;
+  // (0 = none, 1 = rain, 2 = hail)
+  num precipitationType;
+  num averageStrikeDistance;
+  num strikeCount;
+  num battery;
+  num reportIntervals;
+  num localDayRainAccumulation;
+  num rainAccuulationFinal;
+  num localDayRainAccumulationFinal;
+  // (0 = none, 1 = Rain Check with user display on, 2 = Rain Check with user display off)
+  num precipitationAnalysisType;
 
-  factory DeviceObservation.fromJson(Map<String, dynamic> json) {
+
+
+  DeviceObservation({this.observation,this.airTemperature,this.averageStrikeDistance,this.battery,this.epoch,this.illuminance,this.localDayRainAccumulation,this.localDayRainAccumulationFinal,this.precipitationAnalysisType,this.precipitationType,this.pressure,this.rainAccumulation,this.rainAccuulationFinal,this.relativeHumidity,this.reportIntervals,this.solarRadiation,this.strikeCount,this.unIndex,this.windAvg,this.windDirection,this.windGust,this.windLull,this.windSampleInterval});
+
+  factory DeviceObservation.fromJson(dynamic json) {
     List<dynamic> values = json != null ? List.from(json) : null;
     return DeviceObservation(
-        // status_code: json['status_code'],
-        // status_message: json['status_message']
+      observation: values,
+      epoch: values[0]??0,
+      windLull: values[1]??0,
+      windAvg: values[2]??0,
+      windGust: values[3]??0,
+      windDirection: values[4]??0,
+      windSampleInterval: values[5]??0,
+      pressure: values[6]??0,
+      airTemperature: values[7]??0,
+      relativeHumidity: values[8]??0,
+      illuminance: values[9]??0,
+      unIndex: values[10]??0,
+      solarRadiation: values[11]??0,
+      rainAccumulation: values[12]??0,
+      precipitationAnalysisType: values[13]??0,
+      averageStrikeDistance: values[14]??0,
+      strikeCount: values[15]??0,
+      battery: values[16]??0,
+      reportIntervals: values[17]??0,
+      localDayRainAccumulation: values[18]??0,
+      rainAccuulationFinal: values[19]??0,
+      localDayRainAccumulationFinal: values[20]??0,
+      precipitationType: values[21]??0
+
         );
   }
 }

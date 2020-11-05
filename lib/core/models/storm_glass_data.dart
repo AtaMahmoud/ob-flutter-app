@@ -29,6 +29,9 @@ class HourData {
   AttributeList barometricPressureList;
   AttributeList precipitationList;
   String time;
+  // 
+  AttributeList solarRadiation;
+  AttributeList unIndex;
 
   HourData(
       {this.airTemperatureList,

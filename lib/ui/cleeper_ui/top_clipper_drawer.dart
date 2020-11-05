@@ -27,7 +27,6 @@ class TopClipperDrawer extends StatefulWidget {
 }
 
 class _TopClipperDrawerState extends State<TopClipperDrawer> {
-  final ScreenUtil _util = ScreenUtil();
   UserProvider _userProvider;
   User _user;
 
@@ -46,16 +45,12 @@ class _TopClipperDrawerState extends State<TopClipperDrawer> {
     if (_user != null &&
         _user.userOceanBuilder != null &&
         _user.userOceanBuilder.length >= 1) {
-      // if(_selectedOBIdProvider.selectedObId.length>3)
       if (!(_selectedOBIdProvider.selectedObId
               .compareTo(AppStrings.selectOceanBuilder) ==
           0)) {
-        // debugPrint('Selected OB ID =============================== ${_selectedOBIdProvider.selectedObId}');
         _seaPodFuture = oceanBuilderProvider.getSeaPod(
             _selectedOBIdProvider.selectedObId, _userProvider);
       }
-      // else
-      // _oceanBuilderFuture = oceanBuilderProvider.getOceanBuilder(_user.userOceanBuilder[0].oceanBuilderId);
     }
 
     _profileImageFile = MethodHelper.getProfilePicture();
@@ -64,8 +59,8 @@ class _TopClipperDrawerState extends State<TopClipperDrawer> {
       children: <Widget>[
         ClipPath(clipper: DrawerTopShapeClipper(), child: _customContainer()),
         Positioned(
-          right: ScreenUtil().setWidth(32),
-          top: ScreenUtil().setHeight(175),
+          right: 32.w,
+          top: 175.h,
           child: _profilePicFuture(),
         ),
       ],
@@ -74,7 +69,7 @@ class _TopClipperDrawerState extends State<TopClipperDrawer> {
 
   _customContainer() {
     return Container(
-      height: ScreenUtil().setHeight(450),
+      height: 450.h,
       decoration: BoxDecoration(gradient: topGradientDark),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16.0, 8.0, 0.0, 0.0),
@@ -186,21 +181,20 @@ class _TopClipperDrawerState extends State<TopClipperDrawer> {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.all(
-                  _util.setHeight(16),
+                  16.h,
                 ),
                 child: SvgPicture.asset(
                   ImagePaths.svgHomeIcon,
                   color: Colors.white,
-                  width: _util.setHeight(128),
-                  height: _util.setHeight(128),
+                  width: 128.h,
+                  height: 128.h,
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: Text(
                   text,
-                  style:
-                      TextStyle(fontSize: _util.setSp(48), color: Colors.white),
+                  style: TextStyle(fontSize: 48.sp, color: Colors.white),
                 ),
               )
             ],
@@ -210,8 +204,7 @@ class _TopClipperDrawerState extends State<TopClipperDrawer> {
             child: Text(
               title.toUpperCase(),
               style: TextStyle(
-                  fontSize: _util.setSp(32),
-                  color: ColorConstants.MARINE_ITEM_COLOR),
+                  fontSize: 32.sp, color: ColorConstants.MARINE_ITEM_COLOR),
             ),
           ),
         ],

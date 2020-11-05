@@ -51,7 +51,6 @@ class _ClipperProfileEmergencyDropdownState
 
   _setUserDataListener() {
     _bloc.firstNameController.listen((onData) {
-      //  widget.editBloc.emergencyInfoChanged(true);
       if (widget.user.emergencyContact?.firstName == null &&
           onData != null &&
           onData.length >= 3) {
@@ -65,11 +64,6 @@ class _ClipperProfileEmergencyDropdownState
 
         widget.user.emergencyContact.firstName = onData;
       }
-      // else {
-      //   print(
-      //       'set emergencyInfoChanged to false for firstName ${widget.user.emergencyContact?.firstName} ');
-      //   widget.editBloc.emergencyInfoChanged(false);
-      // }
     });
 
     _bloc.lastNameController.listen((onData) {
@@ -86,11 +80,6 @@ class _ClipperProfileEmergencyDropdownState
 
         widget.user.emergencyContact.lastName = onData;
       }
-      //  else {
-      //   print(
-      //       'set emergencyInfoChanged to false for lastName ${widget.user.emergencyContact?.lastName} ');
-      //   widget.editBloc.emergencyInfoChanged(false);
-      // }
     });
 
     _bloc.emailController.listen((onData) {
@@ -107,11 +96,6 @@ class _ClipperProfileEmergencyDropdownState
 
         widget.user.emergencyContact.email = onData;
       }
-      //  else {
-      //   print(
-      //       'set emergencyInfoChanged to false for email ${widget.user.emergencyContact?.email} ');
-      //   widget.editBloc.emergencyInfoChanged(false);
-      // }
     });
 
     _bloc.phoneController.listen((onData) {
@@ -128,15 +112,9 @@ class _ClipperProfileEmergencyDropdownState
 
         widget.user.emergencyContact.phone = onData;
       }
-      //  else {
-      //   print(
-      //       'set emergencyInfoChanged to false for phone ${widget.user.emergencyContact?.phone} ');
-      //   widget.editBloc.emergencyInfoChanged(false);
-      // }
     });
 
     widget.editBloc.emergencyInfoController.listen((isChanged) {
-      print('emergencyInfoController  state -- $isChanged ');
       if (isChanged) {
         ProfileEditState.emergencyContactInfoChanged = true;
       } else {
@@ -157,8 +135,6 @@ class _ClipperProfileEmergencyDropdownState
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil _util = ScreenUtil();
-
     if (widget.user.emergencyContact != null) {
       _firstNameController =
           TextEditingController(text: widget.user.emergencyContact.firstName);
@@ -174,8 +150,6 @@ class _ClipperProfileEmergencyDropdownState
       _bloc.emailChanged(widget.user.emergencyContact.email);
       _bloc.phoneChanged(widget.user.emergencyContact.phone);
     }
-    // widget.editBloc.emergencyInfoChanged(false);
-    debugPrint('build called for emeregency dropdown');
 
     return Stack(
       children: <Widget>[
@@ -185,8 +159,8 @@ class _ClipperProfileEmergencyDropdownState
             color: widget.backgroundColor,
             child: Padding(
               padding: EdgeInsets.symmetric(
-                  vertical: ScreenUtil().setHeight(164),
-                  horizontal: ScreenUtil().setWidth(16)),
+                  vertical: 164.h,
+                  horizontal: 16.w),
               child: Center(
                 child: Theme(
                   child: ExpansionTile(
@@ -194,25 +168,20 @@ class _ClipperProfileEmergencyDropdownState
                         isExpanded
                             ? Icons.arrow_drop_up
                             : Icons.arrow_drop_down,
-                        size: ScreenUtil().setWidth(128),
+                        size: 128.w,
                         color: Colors.white,
                       ),
                       onExpansionChanged: (b) {
                         setState(() {
                           if (b) {
-                            // widget.scrollController.jumpTo(512);
-                            // widget.scrollController.animateTo(widget.scrollController.offset + util.setHeight(960),
-                            //                           curve: Curves.linear, duration: Duration(milliseconds: 500));
-
                             double heightToScollOffsetRatio =
                                 widget.scrollController.offset /
                                     MediaQuery.of(context).size.height;
-                            // // debugPrint('--------- scrollOffsetRatio emergency -- $heightToScollOffsetRatio -offset -- ${widget.scrollController.offset}');
-                            double limitRatio = 0.6; //0.19212079534723905;
+                            double limitRatio = 0.6;
                             if (heightToScollOffsetRatio <= limitRatio) {
                               double animateTo = widget.scrollController
                                       .position.maxScrollExtent *
-                                  3; // widget.scrollController.offset + util.setHeight(960);
+                                  3;
                               widget.scrollController.animateTo(animateTo,
                                   curve: Curves.linear,
                                   duration: Duration(milliseconds: 500));
@@ -225,11 +194,11 @@ class _ClipperProfileEmergencyDropdownState
                         widget.title,
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: _util.setSp(48),
+                            fontSize: 48.sp,
                             letterSpacing: 1.3),
                       ),
                       children: [
-                        SizedBox(height: _util.setHeight(120)),
+                        SizedBox(height: 120.h),
                         UIHelper.getProfileOBUnit(
                             context,
                             TextFieldHints.PROFILE_FIRST_NAME,
@@ -240,7 +209,7 @@ class _ClipperProfileEmergencyDropdownState
                             true,
                             _firstNameNode,
                             _lastNameNode),
-                        SizedBox(height: _util.setHeight(120)),
+                        SizedBox(height: 120.h),
                         UIHelper.getProfileOBUnit(
                             context,
                             TextFieldHints.PROFILE_LAST_NAME,
@@ -251,7 +220,7 @@ class _ClipperProfileEmergencyDropdownState
                             true,
                             _lastNameNode,
                             _phoneNode),
-                        SizedBox(height: _util.setHeight(120)),
+                        SizedBox(height: 120.h),
                         UIHelper.getProfileOBUnitPhone(
                             context,
                             TextFieldHints.PHONE,
@@ -262,7 +231,7 @@ class _ClipperProfileEmergencyDropdownState
                             true,
                             _phoneNode,
                             _emailNode),
-                        SizedBox(height: _util.setHeight(120)),
+                        SizedBox(height: 120.h),
                         UIHelper.getProfileOBUnit(
                             context,
                             TextFieldHints.PROFILE_EMAIL,
@@ -273,7 +242,7 @@ class _ClipperProfileEmergencyDropdownState
                             true,
                             _emailNode,
                             null),
-                        SizedBox(height: _util.setHeight(120)),
+                        SizedBox(height: 120.h),
                       ]),
                   data: ThemeData(dividerColor: Colors.transparent),
                 ),
@@ -281,14 +250,6 @@ class _ClipperProfileEmergencyDropdownState
             ),
           ),
         ),
-        // Padding(
-        //   padding: EdgeInsets.fromLTRB(
-        //       util.setHeight(48), util.setHeight(130), util.setHeight(48), 0),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: <Widget>[],
-        //   ),
-        // )
       ],
     );
   }

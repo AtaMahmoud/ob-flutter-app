@@ -54,7 +54,7 @@ class _CreatePermissionScreenState extends State<CreatePermissionScreen> {
   void initState() {
     super.initState();
 
-    _permissionSet.permissionGroups =  TempPermissionData.permissions;
+    _permissionSet.permissionGroups = TempPermissionData.permissions;
     _scrollController = ScrollController();
 
     _bloc.permissionSetNameController.listen((onData) {
@@ -71,8 +71,6 @@ class _CreatePermissionScreenState extends State<CreatePermissionScreen> {
     _oceanBuilderProvider = Provider.of<OceanBuilderProvider>(context);
     _userProvider = Provider.of<UserProvider>(context);
 
-    _util = ScreenUtil();
-
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -83,55 +81,69 @@ class _CreatePermissionScreenState extends State<CreatePermissionScreen> {
           screenIndex: DrawerIndex.ACCESS_MANAGEMENT,
         ),
         drawerScrimColor: AppTheme.drawerScrimColor.withOpacity(.65),
-        body: CustomScrollView(
-          controller: _scrollController,
-          // shrinkWrap: true,
-          slivers: <Widget>[
-            UIHelper.defaultSliverAppbar(_scaffoldKey, goBack,
-                screnTitle: ScreenTitle.CREATE_PERMISSION),
-            SliverToBoxAdapter(
-                child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 32.w,
-                vertical: 32.h,
-              ),
-              child: _permissionSetNameContainer(),
-            )),
-            SliverPadding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 32.w,
-                vertical: 32.h,
-              ),
-              sliver: SliverList(
-                  delegate: SliverChildListDelegate(
-                      // [
-                      _permissionSet.permissionGroups.map((f) {
-                return Padding(
-                  padding: EdgeInsets.only(
-                    bottom: 16.h,
-                  ),
-                  child: PermissionDropdown(f, _scrollController),
-                );
-              }).toList()
-
-                      // PermissionDropdown('title', TempPermissionData.mainControllPermissionSet, _scrollController),
-                      // ]
-                      )),
-            ),
-
-            SliverToBoxAdapter(
-                child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: _util.setWidth(32),
-                vertical: _util.setHeight(32),
-              ),
-              child: _userProvider.isLoading || _oceanBuilderProvider.isLoading ? Center(child: CircularProgressIndicator())  : _saveButtonWidget(),
-            )),
-            // UIHelper.getTopEmptyContainer(90, false),
-          ],
-        ),
+        body: _body(),
       ),
     );
+  }
+
+  CustomScrollView _body() {
+    return CustomScrollView(
+      controller: _scrollController,
+      slivers: <Widget>[
+        _topBar(),
+        _inputPermissionSetName(),
+        _listOfPermission(),
+        _buttonSave(),
+      ],
+    );
+  }
+
+  SliverToBoxAdapter _buttonSave() {
+    return SliverToBoxAdapter(
+        child: Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: _util.setWidth(32),
+        vertical: _util.setHeight(32),
+      ),
+      child: _userProvider.isLoading || _oceanBuilderProvider.isLoading
+          ? Center(child: CircularProgressIndicator())
+          : _saveButtonWidget(),
+    ));
+  }
+
+  SliverPadding _listOfPermission() {
+    return SliverPadding(
+      padding: EdgeInsets.symmetric(
+        horizontal: 32.w,
+        vertical: 32.h,
+      ),
+      sliver: SliverList(
+          delegate:
+              SliverChildListDelegate(_permissionSet.permissionGroups.map((f) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: 16.h,
+          ),
+          child: PermissionDropdown(f, _scrollController),
+        );
+      }).toList())),
+    );
+  }
+
+  SliverToBoxAdapter _inputPermissionSetName() {
+    return SliverToBoxAdapter(
+        child: Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: 32.w,
+        vertical: 32.h,
+      ),
+      child: _permissionSetNameContainer(),
+    ));
+  }
+
+  _topBar() {
+    return UIHelper.defaultSliverAppbar(_scaffoldKey, goBack,
+        screnTitle: ScreenTitle.CREATE_PERMISSION);
   }
 
   Widget _permissionSetNameContainer() {
@@ -184,30 +196,23 @@ class _CreatePermissionScreenState extends State<CreatePermissionScreen> {
       onTap: () {
         String selectedSeaPodId = _selectedOBIdProvider.selectedObId;
 
-        if(permissionSet != null && permissionSet.length > 0){
+        if (permissionSet != null && permissionSet.length > 0) {
           // _userProvider
-          _oceanBuilderProvider.createPermission(selectedSeaPodId, _permissionSet).then((responseStatus) {
-
-            if(responseStatus.status==200)
-            {
-              _userProvider.autoLogin().then((value) => showInfoBar('Create Permission', 'Permission Created ', context));
+          _oceanBuilderProvider
+              .createPermission(selectedSeaPodId, _permissionSet)
+              .then((responseStatus) {
+            if (responseStatus.status == 200) {
+              _userProvider.autoLogin().then((value) => showInfoBar(
+                  'Create Permission', 'Permission Created ', context));
               isNewPermissionCreated = true;
-              
-              }
-            else{
-
-                    showInfoBar('Create Permission', responseStatus.message, context);
-
+            } else {
+              showInfoBar('Create Permission', responseStatus.message, context);
             }
-
           });
-        }else {
-
-           showInfoBar('Create Permission', 'Please input a permission set name', context);
-        
+        } else {
+          showInfoBar('Create Permission', 'Please input a permission set name',
+              context);
         }
-
-
       },
       child: Container(
         // height: h,
@@ -217,8 +222,7 @@ class _CreatePermissionScreenState extends State<CreatePermissionScreen> {
           vertical: _util.setHeight(32),
         ),
         decoration: BoxDecoration(
-            borderRadius: new BorderRadius.circular(
-                ScreenUtil().setWidth(72)),
+            borderRadius: new BorderRadius.circular(ScreenUtil().setWidth(72)),
             color: ColorConstants.CREATE_PERMISSION_COLOR_BKG),
         child: Center(
             child: Row(
@@ -238,6 +242,6 @@ class _CreatePermissionScreenState extends State<CreatePermissionScreen> {
   }
 
   goBack() {
-    Navigator.pop(context,isNewPermissionCreated);
+    Navigator.pop(context, isNewPermissionCreated);
   }
 }

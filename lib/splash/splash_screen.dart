@@ -96,7 +96,7 @@ class _SplashScreenState extends State<SplashScreen> {
         );
       } else {
         // await userProvider.autoAuthenticate().then((onValue) {
-        await userProvider.autoLogin().then((onValue) {
+        await userProvider.autoLogin().then((onValue) async {
           if (userProvider.authenticatedUser == null) {
             Navigator.pushAndRemoveUntil(
               context,
@@ -106,9 +106,10 @@ class _SplashScreenState extends State<SplashScreen> {
               (Route<dynamic> route) => false,
             );
           } else {
-            MethodHelper.selectOnlyOBasSelectedOB();
+            await MethodHelper.selectOnlyOBasSelectedOB();
             MethodHelper.parseNotifications(context);
-            // // debugPrint('_selectedOBIdProvider.selectedObId ---------------------------------------- ${_selectedOBIdProvider.selectedObId}');
+            debugPrint(
+                '_selectedOBIdProvider.selectedObId ---------------------------------------- ${_selectedOBIdProvider.selectedObId}');
             if (!(_selectedOBIdProvider.selectedObId
                     .compareTo(AppStrings.selectOceanBuilder) ==
                 0)) {

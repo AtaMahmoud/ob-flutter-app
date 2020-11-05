@@ -123,30 +123,38 @@ class MethodHelper {
     // // debugPrint("Method helper Total noti: ${localNotiDataProvider.localNotification.totalNotificationCount} Method helper unread noti: ${localNotiDataProvider.localNotification.unreadNotificationCount} ---  Method helper unread request access noti: ${localNotiDataProvider.localNotification.unreadAccessRequestCount} ------ isUnread -- ${localNotiDataProvider.localNotification.isUnread}");
   }
 
-  static selectOnlyOBasSelectedOB() {
-    print('#_# selectOnlyOBasSelectedOB');
+  static selectOnlyOBasSelectedOB() async {
+    print(
+        '--GlobalContext.currentScreenContext----------------  ${GlobalContext.currentScreenContext}');
+    print(
+        '--------------------------------------  #_# selectOnlyOBasSelectedOB  ---------------------------------------------');
 
     UserProvider userProvider =
         Provider.of<UserProvider>(GlobalContext.currentScreenContext);
     SelectedOBIdProvider selectedOBIdProvider =
         Provider.of<SelectedOBIdProvider>(GlobalContext.currentScreenContext);
 
-    List<UserOceanBuilder> pendigOceanBuilderList = [];
+    // List<UserOceanBuilder> pendigOceanBuilderList = [];
     List<UserOceanBuilder> myOceanBuilderList = [];
 
     int len = userProvider?.authenticatedUser?.userOceanBuilder?.length ?? 0;
+    debugPrint(
+        '------------------userOceanBuilder----------------length --------------------$len');
     if (len > 0) {
-      pendigOceanBuilderList = new List<UserOceanBuilder>.from(
-          userProvider?.authenticatedUser?.userOceanBuilder);
-      pendigOceanBuilderList.retainWhere((uob) {
-        return uob.reqStatus != null &&
-            uob.reqStatus.contains(NotificationConstants.initiated) &&
-            !uob.userType.toLowerCase().contains('owner');
-      });
+      // pendigOceanBuilderList = new List<UserOceanBuilder>.from(
+      //     userProvider?.authenticatedUser?.userOceanBuilder);
+      // pendigOceanBuilderList.retainWhere((uob) {
+      //   return uob.reqStatus != null &&
+      //       uob.reqStatus.contains(NotificationConstants.initiated) &&
+      //       !uob.userType.toLowerCase().contains('owner');
+      // });
 
       myOceanBuilderList = new List<UserOceanBuilder>.from(
           userProvider?.authenticatedUser?.userOceanBuilder);
+
       myOceanBuilderList.retainWhere((uob) {
+        debugPrint(
+            '========== uob.reqStatus ==========${uob.reqStatus}-----------------');
         return uob.reqStatus != null &&
             (uob.reqStatus.contains('NA') ||
                 !uob.reqStatus.contains(NotificationConstants.initiated));
@@ -162,6 +170,9 @@ class MethodHelper {
       debugPrint(
           'selectedOBIdProvider.selectedObId ----method helper ------  ${selectedOBIdProvider.selectedObId}');
       SharedPrefHelper.setCurrentOB(selectedOBIdProvider.selectedObId);
+    } else {
+      debugPrint(
+          'myOceanBuilderList length is 0 OR ----------------${selectedOBIdProvider.selectedObId}');
     }
   }
 

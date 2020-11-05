@@ -43,7 +43,7 @@ class _ExteriorFinishScreenState extends State<ExteriorFinishScreen> {
   @override
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
-    ScreenUtil _util = ScreenUtil();
+    // ScreenUtil _util = ScreenUtil();
     final DesignDataProvider designDataProvider =
         Provider.of<DesignDataProvider>(context);
     if (designDataProvider.oceanBuilder.exteriorFinish != null) {
@@ -56,53 +56,68 @@ class _ExteriorFinishScreenState extends State<ExteriorFinishScreen> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Appbar(
-              ScreenTitle.EXTERIOR_FINISH,
-              isDesignScreen: true,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                InkWell(
-                  onTap: () => _bloc.sink.add(list[0]),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Image.asset(
-                        ImagePaths.defaultIcon,
-                        width: _util.setWidth(380),
-                        height: _util.setWidth(380),
-                      ),
-                      SizedBox(height: 16.0),
-                      UIHelper.getCustomRadioButtonVertical(
-                          _bloc.stream, list[0])
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () => _bloc.sink.add(list[1]),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Image.asset(
-                        ImagePaths.defaultIcon,
-                        width: _util.setWidth(380),
-                        height: _util.setWidth(380),
-                      ),
-                      SizedBox(height: 16.0),
-                      UIHelper.getCustomRadioButtonVertical(
-                          _bloc.stream, list[1],
-                          price: priceList[1])
-                    ],
-                  ),
-                )
-              ],
-            ),
-            BottomClipper(ButtonText.BACK, ButtonText.NEXT, () => goBack(),
-                () => goNext(designDataProvider))
+            _topBar(),
+            _mainContent(),
+            _bottomBar(designDataProvider)
           ],
         ),
+      ),
+    );
+  }
+
+  Row _mainContent() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[_colorRadioButtonMatt(), _colorRadioButtonGloss()],
+    );
+  }
+
+  Appbar _topBar() {
+    return Appbar(
+      ScreenTitle.EXTERIOR_FINISH,
+      isDesignScreen: true,
+    );
+  }
+
+  BottomClipper _bottomBar(DesignDataProvider designDataProvider) {
+    return BottomClipper(ButtonText.BACK, ButtonText.NEXT, () => goBack(),
+        () => goNext(designDataProvider));
+  }
+
+  InkWell _colorRadioButtonGloss() {
+    return InkWell(
+      onTap: () => _bloc.sink.add(list[1]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Image.asset(
+            ImagePaths.defaultIcon,
+            width: 380.w,
+            height: 380.w,
+          ),
+          SizedBox(height: 16.0),
+          UIHelper.getCustomRadioButtonVertical(_bloc.stream, list[1],
+              price: priceList[1])
+        ],
+      ),
+    );
+  }
+
+  InkWell _colorRadioButtonMatt() {
+    return InkWell(
+      onTap: () => _bloc.sink.add(list[0]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Image.asset(
+            ImagePaths.defaultIcon,
+            width: 380.w,
+            height: 380.w,
+          ),
+          SizedBox(height: 16.0),
+          UIHelper.getCustomRadioButtonVertical(_bloc.stream, list[0])
+        ],
       ),
     );
   }

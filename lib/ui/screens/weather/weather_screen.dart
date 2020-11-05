@@ -6,6 +6,9 @@ import 'package:ocean_builder/bloc/source_priority_bloc.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/storm_glass_data.dart';
 import 'package:ocean_builder/core/models/user.dart';
+import 'package:ocean_builder/core/models/weather_flow_data.dart';
+import 'package:ocean_builder/core/models/weather_flow_device_observation.dart';
+import 'package:ocean_builder/core/providers/local_weather_flow_data_provider.dart';
 import 'package:ocean_builder/core/providers/storm_glass_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/ui/shared/grid_menu_helper.dart';
@@ -30,10 +33,8 @@ class WeatherScreen extends StatefulWidget {
 class _WeatherScreenState extends State<WeatherScreen> {
   UserProvider _userProvider;
   User _user;
-  ScreenUtil _util = ScreenUtil();
   Future<StormGlassData> _futureWeatherData;
-  // Future<WorldWeatherOnlineData> _futureWOWWeatherData;
-  Future<StormGlassData> _futureWOWWeatherDataSummary;
+  Future<StormGlassData> _futuremissingData;
   Future<UvIndexData> _futureUvIndexData;
 
   SourceListBloc _bloc = SourceListBloc();
@@ -47,19 +48,26 @@ class _WeatherScreenState extends State<WeatherScreen> {
   @override
   void initState() {
     Future.delayed(Duration.zero).then((_) {
-      _futureWOWWeatherDataSummary =
-          Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
-
-      // _futureWOWWeatherData = Provider.of<WOWDataProvider>(context).fetchWeatherData();
-
       _futureWeatherData =
           Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
 
-      _futureUvIndexData =
-          Provider.of<StormGlassDataProvider>(context).fetchUvIndexData();
+      _futuremissingData = Provider.of<LocalWeatherDataProvider>(context)
+          .fetchDeviceObservationData();
 
       currentlySelectedSource = ListHelper.getSourceList()[0];
-      _bloc.weatherSourceController.listen((onData) {});
+      _sourcePriorityBloc.topProprity.listen((event) {
+        if (event.compareTo('local') == 0) {
+          _futureWeatherData = Provider.of<LocalWeatherDataProvider>(context)
+              .fetchDeviceObservationData();
+          currentlySelectedSource = ListHelper.getSourceList()[1];
+        } else if (event.compareTo('external') == 0) {
+          _futureWeatherData =
+              Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
+          _futuremissingData = Provider.of<LocalWeatherDataProvider>(context)
+              .fetchDeviceObservationData();
+          currentlySelectedSource = ListHelper.getSourceList()[0];
+        }
+      });
     });
     super.initState();
     UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
@@ -73,17 +81,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
   @override
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
-
-    // final UserProvider userProvider = Provider.of<UserProvider>(context);
     _userProvider = Provider.of<UserProvider>(context);
     _user = _userProvider.authenticatedUser;
 
     var shortestSide = MediaQuery.of(context).size.shortestSide;
     useMobileLayout = shortestSide < 600;
-
-    // UIHelper.setStatusBarColor(color:ColorConstants.CONTROL_BKG);
-
-    return _mainContent(); //_stackWithDrawerandBottomBar(); //customDrawer(_innerDrawerKey, _mainContent());
+    return _mainContent();
   }
 
   _mainContent() {
@@ -93,35 +96,46 @@ class _WeatherScreenState extends State<WeatherScreen> {
           decoration: BoxDecoration(color: ColorConstants.BCKG_COLOR_START),
           child: CustomScrollView(
             slivers: <Widget>[
-              UIHelper.getTopEmptyContainer(
-                  useMobileLayout
-                      ? MediaQuery.of(context).size.height * 0.55
-                      : MediaQuery.of(context).size.height * 0.75,
-                  true),
-              SliverPadding(
-                padding: EdgeInsets.only(
-                  bottom: _util.setHeight(256),
-                ), //EdgeInsets.symmetric(vertical: util.setHeight(48)),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      // _weatherItemContainer(),
-                      _weatherItemsWidgetFuture(),
-                    ],
-                  ),
-                ),
-              ),
+              _topSpace(),
+              _itemGrid(),
             ],
           ),
         ),
-        AppbarWeather(
-          ScreenTitle.WEATHER,
-          scaffoldKey: widget.scaffoldKey,
-          futureWOWWeatherData: _futureWOWWeatherDataSummary,
-        ),
+        _topBar(),
         _sourceSelectionPositioned()
       ],
     );
+  }
+
+  SliverPadding _itemGrid() {
+    return SliverPadding(
+      padding: EdgeInsets.only(
+        bottom: 256.h,
+      ),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate(
+          [
+            _weatherItemsWidgetFuture(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  AppbarWeather _topBar() {
+    return AppbarWeather(
+      ScreenTitle.WEATHER,
+      scaffoldKey: widget.scaffoldKey,
+      futureWOWWeatherData: _futureWeatherData,
+    );
+  }
+
+  _topSpace() {
+    return UIHelper.getTopEmptyContainer(
+        useMobileLayout
+            ? MediaQuery.of(context).size.height * 0.55
+            : MediaQuery.of(context).size.height * 0.75,
+        true);
   }
 
   _sourceSelectionPositioned() {
@@ -133,7 +147,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           PopUpHelpers.showPopup(
               context,
               SourcePrioritySelectorModal(_sourcePriorityBloc),
-              'Lighting Screen');
+              'WEATHER SOURCE');
         }));
   }
 
@@ -155,8 +169,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           child: Text(
             AppStrings.noData,
             style: TextStyle(
-                fontSize: ScreenUtil().setWidth(48),
-                color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
+                fontSize: 48.w, color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
           ),
         ),
       );
@@ -169,30 +182,18 @@ class _WeatherScreenState extends State<WeatherScreen> {
         _windDirection,
         _biometricPressure;
 
-    // for (var f in data.data.weathers) {
-    //   var date1 = DateTime.parse(f.date);
-
-    //   var dDate = DateFormat('yMd').format(date1);
-    //   var currentDate = DateFormat('yMd').format(DateTime.now());
-    //   int currentHour = DateTime.now().hour;
-
-    //   if (dDate.compareTo(currentDate) == 0) {
-    //     _uvIndex = f.hours[currentHour].uvIndex;
-    //     _windSpeed = f.hours[currentHour].windspeedKmph;
-    //     _windGusts = f.hours[currentHour].windGustKmph;
-    //     _windDirection = f.hours[currentHour].winddirection;
-    //     _biometricPressure = f.hours[currentHour].pressureInches;
-    //   }
-
-    // }
-
     for (var f in data.hours) {
       var date1 = DateTime.parse(f.time);
 
       if (date1.difference(DateTime.now()) < Duration(minutes: 59)) {
+        _solarPower = f.solarRadiation != null
+            ? f.solarRadiation.attributeDataList[0].value
+            : 900;
+        _uvIndex =
+            f.unIndex != null ? f.unIndex.attributeDataList[0].value : 0.5;
         _windSpeed = f.windSpeedList.attributeDataList[0].value;
         _windGusts = f.windGustList.attributeDataList[0].value;
-        _windDirection = f.waveHeightList.attributeDataList[0].value;
+        _windDirection = f.windDirectionList.attributeDataList[0].value;
         _biometricPressure =
             f.barometricPressureList.attributeDataList[0].value;
       }
@@ -211,27 +212,120 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  gridRowItemSVG(
-                      iconImagePath: ImagePaths.svgSolarRadiation,
-                      itemName: AppStrings.solarRadiation,
-                      value: '$_solarPower W/M2',
-                      onTap: () {}),
-                  gridRowItemSVG(
-                      iconImagePath: ImagePaths.svguvRadiation,
-                      itemName: AppStrings.uvRadiation,
-                      value: '$_uvIndex Nm',
-                      onTap: () {
-                        // PopUpHelpers.showChartPopup(
-                        //     context,
-                        //     _weatherDataWidgetFuture(
-                        //         title: AppStrings.uvRadiation,
-                        //         iconPath: ImagePaths.svguvRadiation));
-                        // PopUpHelpers.showChartPopup(
-                        //     context,
-                        //     _uvRadiationDataWidgetFuture(
-                        //         title: AppStrings.tides,
-                        //         iconPath: ImagePaths.icTides));
-                      }),
+                  currentlySelectedSource
+                              .compareTo(ListHelper.getSourceList()[1]) ==
+                          0
+                      ? gridRowItemSVG(
+                          iconImagePath: ImagePaths.svgSolarRadiation,
+                          itemName: AppStrings.solarRadiation,
+                          value: '$_solarPower W/M2',
+                          onTap: () {
+                            if (currentlySelectedSource
+                                    .compareTo(ListHelper.getSourceList()[1]) ==
+                                0) {
+                              PopUpHelpers.showChartPopup(
+                                  context,
+                                  _weatherDataWidgetFuture(
+                                      title: AppStrings.solarRadiation,
+                                      iconPath: ImagePaths.svgSolarRadiation));
+                            }
+                          })
+                      : FutureBuilder<StormGlassData>(
+                          future: _futuremissingData,
+                          // initialData: stormGlassDataProvider.weatherDataToday,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              for (var f in snapshot.data.hours) {
+                                var date1 = DateTime.parse(f.time);
+
+                                if (date1.difference(DateTime.now()) <
+                                    Duration(minutes: 59)) {
+                                  _solarPower = f.solarRadiation != null
+                                      ? f.solarRadiation.attributeDataList[0]
+                                          .value
+                                      : 90;
+                                }
+                              }
+                            }
+                            return snapshot.hasData
+                                ? gridRowItemSVG(
+                                    iconImagePath: ImagePaths.svgSolarRadiation,
+                                    itemName: AppStrings.solarRadiation,
+                                    value: '$_solarPower W/M2',
+                                    onTap: () {
+                                      PopUpHelpers.showChartPopup(
+                                          context,
+                                          _weatherMissingDataWidgetFuture(
+                                              title: AppStrings.solarRadiation,
+                                              iconPath: ImagePaths
+                                                  .svgSolarRadiation));
+                                    }) //movieGrid(snapshot.data)
+                                : Center(child: CircularProgressIndicator());
+                          }),
+                  currentlySelectedSource
+                              .compareTo(ListHelper.getSourceList()[1]) ==
+                          0
+                      ? gridRowItemSVG(
+                          iconImagePath: ImagePaths.svguvRadiation,
+                          itemName: AppStrings.uvRadiation,
+                          value: '$_uvIndex Nm',
+                          onTap: () {
+                            if (currentlySelectedSource
+                                    .compareTo(ListHelper.getSourceList()[1]) ==
+                                0) {
+                              PopUpHelpers.showChartPopup(
+                                  context,
+                                  _weatherDataWidgetFuture(
+                                      title: AppStrings.uvRadiation,
+                                      iconPath: ImagePaths.svguvRadiation));
+                            }
+                          })
+                      : FutureBuilder<StormGlassData>(
+                          future: _futuremissingData,
+                          // initialData: stormGlassDataProvider.weatherDataToday,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              for (var f in snapshot.data.hours) {
+                                var date1 = DateTime.parse(f.time);
+
+                                if (date1.difference(DateTime.now()) <
+                                    Duration(minutes: 59)) {
+                                  _uvIndex = f.unIndex != null
+                                      ? f.unIndex.attributeDataList[0].value
+                                      : 0.05;
+                                }
+                              }
+                            }
+                            return snapshot.hasData
+                                ? gridRowItemSVG(
+                                    iconImagePath: ImagePaths.svguvRadiation,
+                                    itemName: AppStrings.uvRadiation,
+                                    value: '$_uvIndex Nm',
+                                    onTap: () {
+                                      PopUpHelpers.showChartPopup(
+                                          context,
+                                          _weatherMissingDataWidgetFuture(
+                                              title: AppStrings.uvRadiation,
+                                              iconPath:
+                                                  ImagePaths.svguvRadiation));
+                                    }) //movieGrid(snapshot.data)
+                                : Center(child: CircularProgressIndicator());
+                          }),
+                  // gridRowItemSVG(
+                  //     iconImagePath: ImagePaths.svguvRadiation,
+                  //     itemName: AppStrings.uvRadiation,
+                  //     value: '$_uvIndex Nm',
+                  //     onTap: () {
+                  //       if (currentlySelectedSource
+                  //               .compareTo(ListHelper.getSourceList()[1]) ==
+                  //           0) {
+                  //         PopUpHelpers.showChartPopup(
+                  //             context,
+                  //             _weatherDataWidgetFuture(
+                  //                 title: AppStrings.uvRadiation,
+                  //                 iconPath: ImagePaths.svguvRadiation));
+                  //       }
+                  //     }),
                 ],
               ),
             ),
@@ -306,7 +400,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.0), color: Colors.white),
-        //  height: ScreenUtil().setHeight(512),
         width: MediaQuery.of(context).size.width,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -317,13 +410,34 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 // initialData: stormGlassDataProvider.weatherDataToday,
                 builder: (context, snapshot) {
                   return snapshot.hasData
-                      // ? SharedChart.beizerChartWeather(
-                      //     context: context,
-                      //     data: snapshot.data,
-                      //     title: title,
-                      //     iconPath: iconPath,
-                      //     bloc: _bloc
-                      //     ) //movieGrid(snapshot.data)
+                      ? BeizerChartPopup(
+                          data: snapshot.data,
+                          title: title,
+                          iconPath: iconPath,
+                          bloc: _bloc)
+                      : Center(child: CircularProgressIndicator());
+                }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _weatherMissingDataWidgetFuture({String title, String iconPath}) {
+    return Center(
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16.0), color: Colors.white),
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            //_popUpTitle(title, iconPath),
+            FutureBuilder<StormGlassData>(
+                future: _futuremissingData,
+                // initialData: stormGlassDataProvider.weatherDataToday,
+                builder: (context, snapshot) {
+                  return snapshot.hasData
                       ? BeizerChartPopup(
                           data: snapshot.data,
                           title: title,
@@ -342,7 +456,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.0), color: Colors.white),
-        //  height: ScreenUtil.getInstance().setHeight(512),
         width: MediaQuery.of(context).size.width,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -408,8 +521,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.0), color: Colors.white),
-        // color: Colors.white,
-        // height: ScreenUtil.getInstance().setHeight(512),
         width: MediaQuery.of(context).size.width,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -417,7 +528,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
             PopUpHelpers.popUpTitle(
                 context, title, iconPath, '$selectedValue Meters'),
             Container(
-              height: ScreenUtil().setHeight(380),
+              height: 380.h,
               width: MediaQuery.of(context).size.width,
               child: BezierChart(
                 bezierChartScale: BezierChartScale.HOURLY,
@@ -442,9 +553,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   showDataPoints: false,
                   displayLinesXAxis: true,
                   bubbleIndicatorValueStyle: TextStyle(
-                      color:
-                          ColorConstants.WEATHER_MORE_DAY_INFO_ICON_COLOR_LIGHT,
-                      fontSize: ScreenUtil().setSp(72)),
+                    color:
+                        ColorConstants.WEATHER_MORE_DAY_INFO_ICON_COLOR_LIGHT,
+                    fontSize: 72.sp,
+                  ),
                   xAxisTextStyle: TextStyle(
                     color:
                         ColorConstants.WEATHER_MORE_DAY_INFO_ITEM_COLOR_HEAVY,

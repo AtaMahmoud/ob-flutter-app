@@ -6,14 +6,14 @@ class Config {
 
   static String STORM_GLASS_API_KEY = ConfigReader.getStormGlassApiKey();
 
-  static var WEATHER_FLOW_API_KEY = ConfigReader.getStormGlassApiKey();
+  static var WEATHER_FLOW_API_KEY = ConfigReader.getWeatherFlowApiKey();
 
   static const String WORLD_WEATHER_ONLINE_API_KEY = '';
 
   // openweather map url
 
-  static const String OPEN_WEATHER_MAP_URL =
-      'https://openweathermap.org/weathermap?basemap=map&cities=true&layer=temperature&lat=30&lon=-20&zoom=5';
+  static const String OPEN_WEATHER_MAP_URL = 'https://openweathermap.org/weathermap?basemap=map&cities=true&layer=temperature&lat=9.2589903&lon=-80.259267&zoom=5';
+      // 'https://openweathermap.org/weathermap?basemap=map&cities=true&layer=temperature&lat=30&lon=-20&zoom=5';
   // API links
 
   static const GET_WEATHER_DATA = 'https://api.stormglass.io/v1/weather/point';
@@ -115,5 +115,7 @@ class Config {
   static GET_WEATHER_FLOW_STATION_OBS_DATA(String stationId) =>
       'https://swd.weatherflow.com/swd/rest/observations/station/$stationId';
 
+  static GET_WEATHER_FLOW_DEVICE_OBS_DATA(String deviceId) =>
+      'https://swd.weatherflow.com/swd/rest/observations/device/$deviceId';
   
 }
