@@ -98,12 +98,13 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
         decoration: BoxDecoration(gradient: ColorConstants.BKG_GRADIENT),
         child: Stack(
           children: [
-                        CustomScrollView(
+            CustomScrollView(
               slivers: <Widget>[
                 UIHelper.getTopEmptyContainer(
-                    MediaQuery.of(context).size.height / 4, true),
+                    MediaQuery.of(context).size.height / 6, true),
                 SliverToBoxAdapter(child: _mainContent()),
-                UIHelper.getTopEmptyContainer(MediaQuery.of(context).size.height / 4, false),
+                UIHelper.getTopEmptyContainer(
+                    MediaQuery.of(context).size.height / 4, false),
               ],
             ),
             Appbar(
@@ -114,14 +115,19 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                child: BottomClipper(ButtonText.BACK, '', goBack, () {},
-                    isNextEnabled: false)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    _controllContainer(),
+                    BottomClipper(ButtonText.BACK, '', goBack, () {},
+                        isNextEnabled: false),
+                  ],
+                )),
             _isConnecting
                 ? Container()
                 : Center(
                     child: CircularProgressIndicator(),
                   )
-
           ],
         ),
       ),
@@ -130,9 +136,11 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
 
   Container _mainContent() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 32.w,vertical: 32.h),
+      padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 32.h),
       child: Column(
         children: [
+          _buildConnectionStatusWidget(_smartHomeDataProvider.getAppConnectionState),
+          SizedBox(height: 32.h,),
           _topicList != null && _topicList.length > 0
               ? _getTopicsDropdown(
                   _topicList.map((e) => e.topic).toList(),
@@ -141,50 +149,59 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
                   false,
                   label: 'Topic')
               : Container(),
-          _buildConnectionStateText(_prepareStateMessageFrom(
-              _smartHomeDataProvider.getAppConnectionState)),
           // _buildScrollableTextWith(_smartHomeDataProvider.getHistoryText),
           _buildSensorDataTableHeader(),
           _buildSensorDataTable(_smartHomeDataProvider.sensorDataList),
-          SizedBox(height: 32.h,),
-          _controllContainer()
+          SizedBox(
+            height: 32.h,
+          ),
+        
         ],
       ),
     );
   }
 
-
-
-  // Utility functions
-  String _prepareStateMessageFrom(MQTTAppConnectionState state) {
-    switch (state) {
+  Widget _buildConnectionStatusWidget([MQTTAppConnectionState connectionState]) {
+    Color color = Colors.red;
+    String status = "";
+        switch (connectionState) {
       case MQTTAppConnectionState.connected:
-        return 'Connected With MQTT Broker';
+        color = Colors.green;
+        status = 'Connected';
+        break;
       case MQTTAppConnectionState.connecting:
-        return 'Connecting With MQTT Broker';
+        color = Colors.yellow;
+        status = 'Connecting';
+        break;
       case MQTTAppConnectionState.disconnected:
-        return 'Disconnected From MQTT Broker';
+        color = Colors.red;
+        status = 'Disconnected';
+        break;
     }
-  }
-
-  Widget _buildConnectionStateText(String status) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
-        Expanded(
-          child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(32.w),
-                color: AppTheme.chipBackground,
-              ),
-              padding: EdgeInsets.all(32.w),
-              child: Text(
-                status,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1,
-                    color: ColorConstants.TEXT_COLOR),
-              )),
+        Column(
+          children: [
+            Container(
+                decoration: BoxDecoration(
+                  // borderRadius: BorderRadius.circular(32.w),
+                  shape: BoxShape.circle,
+                  color: color,
+                ),
+                padding: EdgeInsets.all(32.w),
+                
+                ),
+                Text(
+                  status,
+                  textAlign: TextAlign.center,
+                  textScaleFactor: 1,
+                  style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      // letterSpacing: 1,
+                      color: ColorConstants.TEXT_COLOR),
+                )
+          ],
         ),
       ],
     );
@@ -210,112 +227,157 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
     );
   }
 
-  Widget _controllContainer(){
-    if(_smartHomeDataProvider.ledControl.compareTo("LED is on")==0)
-    _isLedOn = true;
+  Widget _controllContainer() {
+    if (_smartHomeDataProvider.ledControl.compareTo("LED is on") == 0)
+      _isLedOn = true;
     else
-     _isLedOn = false;
+      _isLedOn = false;
 
     return Container(
-      color: Colors.white,
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(16.w),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(32.w),
-              color: Colors.amber
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                InkWell(
-                  onTap: (){
-          // send message to all topics
-          final builder1 = MqttClientPayloadBuilder();
-          // builder1.addInt(1);
-          if(_isLedOn){
-            builder1.addString("0");
-            _isLedOn = false;
-          }else{
-            builder1.addString("1");
-            _isLedOn = true;
-          }
-          
-          _mqttServerClient.publishMessage("test/message", MqttQos.exactlyOnce, builder1.payload,retain: true);
-          _mqttServerClient.subscribe("test/message/status", MqttQos.exactlyOnce);
-                  
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                       borderRadius: BorderRadius.circular(32.w),
-                        color: _isLedOn ? Colors.red : Colors.green,
-                    ),
-                   
-                    padding: EdgeInsets.all(16.w),
-                    child: Text(
-                      _isLedOn ? "OFF" : "ON" ,
-                      textScaleFactor: 1.5,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 8.h,),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w),
-                  child: Text("Test led",textScaleFactor: 1.5,),
-                ),
-              ],
-            ),
-          ),
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(32.w),
+      ),
+      height: 250.h,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children:<Widget>[
+          _controlWidget(),
+          for(var i = 0; i < 10; i++)
+             _controlWidget(),
         ],
       ),
     );
   }
 
-  _buildSensorDataTable(List<SensorData> sensorDataList){
+  Container _controlWidget() {
+    return Container(
+          padding: EdgeInsets.all(16.w),
+          margin: EdgeInsets.symmetric(horizontal: 16.w),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(32.w),
+              // shape: BoxShape.rectangle,
+              color: ColorConstants.AVATAR_BKG),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              InkWell(
+                onTap: () {
+                  // send message to all topics
+                  final builder1 = MqttClientPayloadBuilder();
+                  // builder1.addInt(1);
+                  if (_isLedOn) {
+                    builder1.addString("0");
+                    // _isLedOn = false;
+                  } else {
+                    builder1.addString("1");
+                    // _isLedOn = true;
+                  }
+                  _mqttServerClient.publishMessage(
+                      "test/message", MqttQos.exactlyOnce, builder1.payload,
+                      retain: true);
+                  _mqttServerClient.subscribe(
+                      "test/message/status", MqttQos.exactlyOnce);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    //  borderRadius: BorderRadius.circular(32.w),
+                    shape: BoxShape.circle,
+                    color: _isLedOn ? Colors.red : Colors.green,
+                  ),
+                  padding: EdgeInsets.all(32.w),
+                  child: Text(
+                    _isLedOn ? "OFF" : "ON",
+                    textScaleFactor: 1.25,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 8.h,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.w),
+                child: Text(
+                  _isLedOn ? "Test led is on" : "Test led is off",
+                  textScaleFactor: 1.5,
+                  style: TextStyle(
+                    color:_isLedOn ? Colors.green : Colors.red,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+  }
 
+  _buildSensorDataTable(List<SensorData> sensorDataList) {
     return Container(
       // margin: EdgeInsets.all(32.w),
       // height: 600.h,
       child: Table(
-
-          border: TableBorder.all(),
-          children: [
-            ...sensorDataList.map((sensorData) => TableRow(
-      children: [
-            Text(sensorData.roomName,textScaleFactor: 1.5,textAlign: TextAlign.center), 
-            Text(sensorData.sensorName,textScaleFactor: 1.5,textAlign: TextAlign.center), 
-            Text(sensorData.sensorData,textScaleFactor: 1.5,textAlign: TextAlign.center), 
-      ]
-            )).toList()
-          ],
-        ),
-    );
-  }
-
-    _buildSensorDataTableHeader(){
-
-    return Container(
-      // margin: EdgeInsets.all(32.w),
-      child: SingleChildScrollView(
-              child: Table(
-
-          border: TableBorder.all(),
-          children: [
-            TableRow(
-              
-              children: [
-                    Text("Room",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.blue)), 
-                    Text("Sensor",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.blue)), 
-                    Text("Data",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.blue)), 
-              ]
-            )
-          ],
-        ),
+        border: TableBorder.all(),
+        children: [
+          ...sensorDataList
+              .map((sensorData) => TableRow(children: [
+                    Text(sensorData.roomName,
+                        textScaleFactor: 1.5, textAlign: TextAlign.center),
+                    Text(sensorData.sensorName,
+                        textScaleFactor: 1.5, textAlign: TextAlign.center),
+                    Text(sensorData.sensorData,
+                        textScaleFactor: 1.5, textAlign: TextAlign.center),
+                  ]))
+              .toList()
+        ],
       ),
     );
   }
 
+  _buildSensorDataTableHeader() {
+    return Container(
+      margin: EdgeInsets.only(top:32.h),   
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text("Sensor Data",
+                  textScaleFactor: 1.5,
+                  textAlign: TextAlign.start,
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
+            ],
+          ),
+          SizedBox(
+            height: 16.h,
+          ),
+          Table(
+            border: TableBorder.all(),
+            children: [
+              TableRow(children: [
+                Text("Room",
+                    textScaleFactor: 1.5,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
+                Text("Sensor",
+                    textScaleFactor: 1.5,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
+                Text("Data",
+                    textScaleFactor: 1.5,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
+              ])
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
   goBack() {
     Navigator.pop(context);
@@ -398,11 +460,11 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
   }
 }
 
-  String parseTopicName(String topic) {
-    String topicName = '';
-    var topics = topic.split("/");
-    if (topics.length > 2) {
-      topicName = topics.last + " ( " + topics.first + " )";
-    }
-    return topicName;
+String parseTopicName(String topic) {
+  String topicName = '';
+  var topics = topic.split("/");
+  if (topics.length > 2) {
+    topicName = topics.last + " ( " + topics.first + " )";
   }
+  return topicName;
+}
