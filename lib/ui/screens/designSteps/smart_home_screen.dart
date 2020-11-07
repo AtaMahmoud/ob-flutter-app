@@ -243,7 +243,7 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
       child: ListView(
         scrollDirection: Axis.horizontal,
         children:<Widget>[
-          _controlWidget(),
+          // _controlWidget(),
           for(var i = 0; i < 10; i++)
              _controlWidget(),
         ],
