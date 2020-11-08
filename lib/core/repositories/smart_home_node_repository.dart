@@ -14,6 +14,7 @@ class SmartHomeServerRepository {
   String _getSensorDataBetweenDates =
       'https://seapod.technoid.info:8000/api/events/';
   String _getSensorDataById = 'https://seapod.technoid.info:8000/api/events/';
+  String _getSensorDataByTopic = 'https://seapod.technoid.info:8000/api/events/topics/';
 
   final Map<String, dynamic> _headers = {
     "x-auth-token": Config.IOT_SERVER_API_KEY,
@@ -95,4 +96,50 @@ class SmartHomeServerRepository {
 
     return iotEventDataList;
   }
+
+    Future<List<IotEventData>> getSensorDataByTopic(topic) async {
+    List<IotEventData> iotEventDataList = [];
+
+    final Map<String, dynamic> _params = {
+      "topic": topic,
+    };
+
+    final response = await _apiBaseHelper.get(
+        url: _getSensorDataByTopic, headers: _headers, parameters: _params);
+    
+    debugPrint('-_getSensorDataByTopic-');
+    print(response);
+    var responseMap = response as List;
+
+    responseMap.map((json) {
+      IotEventData iotEventData = IotEventData.fromJson(json);
+      iotEventDataList.add(iotEventData);
+    }).toList();
+
+    return iotEventDataList;
+  }
+    Future<List<IotEventData>> getTopicsDataBetweenDates(String topic,String startDate, String endDate) async {
+    List<IotEventData> iotEventDataList = [];
+
+    final Map<String, dynamic> _params = {
+      "time_start": startDate, //DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 3))),
+      "time_end": endDate //DateFormat('yyyy-MM-dd').format(DateTime.now()),
+    };
+
+    final response = await _apiBaseHelper.get(
+        url: _getSensorDataBetweenDates,
+        headers: _headers,
+        parameters: _params);
+    print(response);
+    var responseMap = response as List;
+
+    responseMap.map((json) {
+      IotEventData iotEventData = IotEventData.fromJson(json);
+      iotEventDataList.add(iotEventData);
+    }).toList();
+
+    return iotEventDataList;
+  }
+
+
 }

@@ -83,7 +83,7 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 48.w),
                 child: CustomScrollView(
-                  slivers: [
+                  slivers: [ 
                     SliverToBoxAdapter(
                       child: _topicList != null && _topicList.length > 0
               ? _getTopicsDropdown(
