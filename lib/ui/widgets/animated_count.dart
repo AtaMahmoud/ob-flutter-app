@@ -3,15 +3,16 @@ import 'package:flutter/cupertino.dart';
 class AnimatedCount extends ImplicitlyAnimatedWidget {
   final int count;
 
-  AnimatedCount({
-    Key key,
-    @required this.count,
-    @required Duration duration,
-    Curve curve = Curves.linear
-  }) : super(duration: duration, curve: curve, key: key);
+  AnimatedCount(
+      {Key key,
+      @required this.count,
+      @required Duration duration,
+      Curve curve = Curves.linear})
+      : super(duration: duration, curve: curve, key: key);
 
   @override
-  ImplicitlyAnimatedWidgetState<ImplicitlyAnimatedWidget> createState() => _AnimatedCountState();
+  ImplicitlyAnimatedWidgetState<ImplicitlyAnimatedWidget> createState() =>
+      _AnimatedCountState();
 }
 
 class _AnimatedCountState extends AnimatedWidgetBaseState<AnimatedCount> {
@@ -24,6 +25,7 @@ class _AnimatedCountState extends AnimatedWidgetBaseState<AnimatedCount> {
 
   @override
   void forEachTween(TweenVisitor visitor) {
-    _count = visitor(_count, widget.count, (dynamic value) => new IntTween(begin: value));
+    _count = visitor(
+        _count, widget.count, (dynamic value) => new IntTween(begin: value));
   }
 }

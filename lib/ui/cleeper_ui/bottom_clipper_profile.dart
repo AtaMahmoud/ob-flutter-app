@@ -19,16 +19,14 @@ class BottomClipperProfile extends StatefulWidget {
 }
 
 class _BottomClipperProfileState extends State<BottomClipperProfile> {
-
   @override
   Widget build(BuildContext context) {
-    ScreenUtil _util = ScreenUtil();
     return Stack(
       children: <Widget>[
         ClipPath(
           clipper: CustomBottomProfileShapeClipper(),
           child: Container(
-            height: _util.setHeight(300),
+            height: 300.h,
             color: Colors.white,
           ),
         ),
@@ -37,31 +35,30 @@ class _BottomClipperProfileState extends State<BottomClipperProfile> {
           right: 0,
           left: 0,
           child: Padding(
-            padding: EdgeInsets.all(_util.setHeight(24)),
+            padding: EdgeInsets.all(24.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 InkWell(
                   onTap: widget.callbackBack,
-                  child: UIHelper.getBackLayout(widget.leftText,
-                      iconColor: ColorConstants.TOP_CLIPPER_START,
-                      textColor: ColorConstants.TOP_CLIPPER_START,
-                      // iconSize: util.setHeight(84),
-                      // textSize: 13
+                  child: UIHelper.getBackLayout(
+                    widget.leftText,
+                    iconColor: ColorConstants.TOP_CLIPPER_START,
+                    textColor: ColorConstants.TOP_CLIPPER_START,
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom:8.0),
+                  padding: const EdgeInsets.only(bottom: 8.0),
                   child: InkWell(
-                    child: UIHelper.getInvertedNextLayout(widget.rightText,
-                        partiallyTransparent: widget.partiallyTransparent,
-                        iconColor: ColorConstants.TOP_CLIPPER_START,
-                        textColor: ColorConstants.TOP_CLIPPER_START,
-                        icon: Icons.check,
-                        // iconSize: util.setHeight(84),
-                        // textSize: 16
-                        ),
-                    onTap: !widget.partiallyTransparent ? widget.callback : null,
+                    child: UIHelper.getInvertedNextLayout(
+                      widget.rightText,
+                      partiallyTransparent: widget.partiallyTransparent,
+                      iconColor: ColorConstants.TOP_CLIPPER_START,
+                      textColor: ColorConstants.TOP_CLIPPER_START,
+                      icon: Icons.check,
+                    ),
+                    onTap:
+                        !widget.partiallyTransparent ? widget.callback : null,
                   ),
                 )
               ],

@@ -55,17 +55,15 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
   Widget _lightingPopupContentFuture() {
     return FutureBuilder<SeaPod>(
         future: _selectedOceanBuilder,
-        // initialData: stormGlassDataProvider.weatherDataToday,
         builder: (context, snapshot) {
           if (snapshot.hasData) _getLighitingSceneInfo(snapshot.data);
           return snapshot.hasData
-              ? _lightingPopupContent() //movieGrid(snapshot.data)
+              ? _lightingPopupContent()
               : Center(child: CircularProgressIndicator());
         });
   }
 
   _getLighitingSceneInfo(SeaPod selectedOceanBuilder) {
-    // debugPrint('_getOceanBuilder');
     _lightingScenes.clear();
 
     if (selectedOceanBuilder.lightScenes != null &&
@@ -75,10 +73,6 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
 
     if (selectedOceanBuilder.users.length != null) {
       for (var i = 0; i < selectedOceanBuilder.users.length; i++) {
-        // debugPrint('user name --- ${selectedOceanBuilder.users[i].userName}');
-        // print(_user.userID);
-        // print(selectedOceanBuilder.users[i].userId);
-
         if (selectedOceanBuilder.users[i].userId.contains(_user.userID)) {
           _oceanBuilderUser = selectedOceanBuilder.users[i];
           _selectedSceneId = _oceanBuilderUser.lighting.selectedScene;
@@ -87,18 +81,12 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
               _oceanBuilderUser.lighting.sceneList.isNotEmpty) {
             _selectedSceneId = _oceanBuilderUser.lighting.sceneList[0].id;
             _oceanBuilderUser.lighting.selectedScene = _selectedSceneId;
-            // getLightSceneById(_selectedSceneId);
           }
-
-          // print(_oceanBuilderUser.lighting.toJson());
-
           if (_oceanBuilderUser != null &&
               _oceanBuilderUser.lighting.sceneList != null)
             _lightingScenes.addAll(_oceanBuilderUser.lighting.sceneList);
 
-          switchOn = _oceanBuilderUser.lighting.isLightON;
-          debugPrint('light scene on/off status ------ $switchOn');
-
+          switchOn = _oceanBuilderUser.lighting.isLightON ?? false;
           _sliderValue = _oceanBuilderUser.lighting.intensity != null
               ? _oceanBuilderUser.lighting.intensity
               : 50;
@@ -109,8 +97,6 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
       }
     }
   }
-
-  // lighting popup
 
   Widget _lightingPopupContent() {
     return Center(
@@ -123,118 +109,138 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(top: 32.h),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        AppStrings.lights,
-                        style: TextStyle(
-                            fontSize: 36.sp,
-                            color: ColorConstants.LIGHT_POPUP_TITLE),
-                      ),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      right: 16.w,
-                      top: 16.h,
-                    ),
-                    child: Image.asset(
-                      ImagePaths.cross,
-                      width: 36.w,
-                      height: 36.w,
-                      color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                    ),
-                  ),
-                )
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 32.h, bottom: 32.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Transform.scale(
-                    scale: 3.62.h,
-                    child: Switch(
-                      onChanged: _onSwitchChanged,
-                      value: switchOn,
-                      activeColor: Colors.green,
-                      activeTrackColor: Colors.white,
-                      inactiveThumbColor: Colors.grey,
-                      inactiveTrackColor: Colors.white,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  AppStrings.intensity,
-                  style: TextStyle(
-                      fontSize: 36.sp, color: ColorConstants.LIGHT_POPUP_TEXT),
-                ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 16.h, bottom: 32.h),
-              child: _intesitySlider(),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                top: 48.h,
-                bottom: 48.h,
-              ),
-              child: _lightingScenes.isNotEmpty
-                  ? _getDropdown(_lightingScenes, _bloc.lightScene,
-                      _bloc.lightSceneChanged, true,
-                      label: 'Select Scene')
-                  : Container(),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pushNamed(LightingScreen.routeName,
-                    arguments: LightingScreenParams(
-                        _oceanBuilderUser,
-                        _userProvider,
-                        _selectedOBIdProvider,
-                        _selectedSceneId) //_oceanBuilderUser
-                    );
-              },
-              child: Padding(
-                padding: EdgeInsets.only(
-                  top: 32.h,
-                  bottom: 32.h,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      AppStrings.goTOLightingSceen,
-                      style: TextStyle(
-                          fontSize: 36.sp,
-                          color: ColorConstants.LIGHT_POPUP_TEXT),
-                    ),
-                  ],
-                ),
-              ),
-            )
+            _headingBar(),
+            _lightSwitch(),
+            _intensityTitle(),
+            _intensitySlider(),
+            _selectLightSceneDropdown(),
+            _goToLightingPageButton()
           ],
         ),
       ),
+    );
+  }
+
+  InkWell _goToLightingPageButton() {
+    return InkWell(
+      onTap: () {
+        debugPrint('Selected scene id ------ $_selectedSceneId');
+        Navigator.of(context).pop();
+        Navigator.of(context).pushNamed(LightingScreen.routeName,
+            arguments: LightingScreenParams(_oceanBuilderUser, _userProvider,
+                _selectedOBIdProvider, _selectedSceneId) //_oceanBuilderUser
+            );
+      },
+      child: Padding(
+        padding: EdgeInsets.only(
+          top: 32.h,
+          bottom: 32.h,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              AppStrings.goTOLightingSceen,
+              style: TextStyle(
+                  fontSize: 36.sp, color: ColorConstants.LIGHT_POPUP_TEXT),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Padding _selectLightSceneDropdown() {
+    return Padding(
+      padding: EdgeInsets.only(
+        top: 48.h,
+        bottom: 48.h,
+      ),
+      child: _lightingScenes.isNotEmpty
+          ? _getDropdown(
+              _lightingScenes, _bloc.lightScene, _bloc.lightSceneChanged, true,
+              label: 'Select Scene')
+          : Container(),
+    );
+  }
+
+  Padding _intensitySlider() {
+    return Padding(
+      padding: EdgeInsets.only(top: 16.h, bottom: 32.h),
+      child: _intesitySlider(),
+    );
+  }
+
+  Row _intensityTitle() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          AppStrings.intensity,
+          style: TextStyle(
+              fontSize: 36.sp, color: ColorConstants.LIGHT_POPUP_TEXT),
+        ),
+      ],
+    );
+  }
+
+  Padding _lightSwitch() {
+    return Padding(
+      padding: EdgeInsets.only(top: 32.h, bottom: 32.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Transform.scale(
+            scale: 3.62.h,
+            child: Switch(
+              onChanged: _onSwitchChanged,
+              value: switchOn,
+              activeColor: Colors.green,
+              activeTrackColor: Colors.white,
+              inactiveThumbColor: Colors.grey,
+              inactiveTrackColor: Colors.white,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Row _headingBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(top: 32.h),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                AppStrings.lights,
+                style: TextStyle(
+                    fontSize: 36.sp, color: ColorConstants.LIGHT_POPUP_TITLE),
+              ),
+            ],
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+          child: Padding(
+            padding: EdgeInsets.only(
+              right: 16.w,
+              top: 16.h,
+            ),
+            child: Image.asset(
+              ImagePaths.cross,
+              width: 36.w,
+              height: 36.w,
+              color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+            ),
+          ),
+        )
+      ],
     );
   }
 
@@ -255,7 +261,6 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
   }
 
   _intesitySlider() {
-    debugPrint('slider value ---------- $_sliderValue ');
     return Stack(
       children: <Widget>[
         Align(
@@ -324,7 +329,6 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
   Widget _getDropdown(
       List<Scene> list, Observable<String> stream, changed, bool addPadding,
       {String label = 'Label'}) {
-    // debugPrint('dropdown list length ------  ${list.length}');
     return StreamBuilder<String>(
         stream: stream,
         builder: (context, snapshot) {
@@ -338,7 +342,6 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
               contentPadding:
                   EdgeInsets.only(top: 16.h, bottom: 16.h, left: 32.w),
               labelText: label,
-              // hintStyle: TextStyle(color: Colors.red),
               labelStyle: TextStyle(
                   color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
                   fontSize: 36.sp),
@@ -352,7 +355,7 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
                       color: snapshot.hasData
                           ? ColorConstants.ACCESS_MANAGEMENT_TITLE
                           : ColorConstants
-                              .ACCESS_MANAGEMENT_SUBTITLE //ColorConstants.INVALID_TEXTFIELD,
+                              .ACCESS_MANAGEMENT_SUBTITLE 
                       ),
                   value: snapshot.hasData ? snapshot.data : list[0].name,
                   isExpanded: true,
@@ -361,11 +364,9 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
                     color: snapshot.hasData
                         ? ColorConstants.ACCESS_MANAGEMENT_TITLE
                         : ColorConstants
-                            .ACCESS_MANAGEMENT_SUBTITLE, //ColorConstants.INVALID_TEXTFIELD,
+                            .ACCESS_MANAGEMENT_SUBTITLE, 
                     fontSize: 36.sp,
                     fontWeight: FontWeight.w400,
-                    // letterSpacing: 1.2,
-                    // wordSpacing: 4
                   ),
                   onChanged: (changedString) async {
                     _oceanBuilderUser.lighting.selectedScene =
@@ -374,10 +375,6 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
                         seapodId: _selectedOBIdProvider.selectedObId,
                         lightSceneId: _oceanBuilderUser.lighting.selectedScene);
 
-/*                 _oceanBuilderProvider.updateOceanBuilderUser(
-                        currentUserID: _user.userID,
-                        oceanBuilderID: _selectedOBIdProvider.selectedObId,
-                        oceanBuilderUser: _oceanBuilderUser); */
                     changed(changedString);
                   },
                   items: list.map((data) {
@@ -409,7 +406,6 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
     }).toList();
 
     _selectedSceneId = selectedScene.id;
-    // debugPrint('_selectedSceneId ----------- ${_selectedSceneId} ---------- name -----  ${ selectedScene.name}  ');
     return selectedScene;
   }
 
@@ -417,9 +413,10 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
     Scene lightScene;
 
     _lightingScenes.map((f) {
-      // debugPrint('---f.id-- ${f.id} -===========- lightingSceneId- $lightingSceneId');
       if (f.id.compareTo(lightingSceneId) == 0) lightScene = f;
     }).toList();
+
+    debugPrint('selected light scene ---------- ${lightScene.name}');
 
     return lightScene;
   }

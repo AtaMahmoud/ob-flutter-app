@@ -22,7 +22,7 @@ import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/core/providers/wow_data_provider.dart';
 import 'package:ocean_builder/core/services/locator.dart';
 import 'package:ocean_builder/core/services/navigation_service.dart';
-import 'package:ocean_builder/router.dart';
+import 'package:ocean_builder/router.dart' as obRoute;
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
@@ -177,8 +177,8 @@ class _MyAppState extends State<MyApp> {
         // ],
         theme: ThemeData(fontFamily: 'Archivo'),
         navigatorKey: locator<NavigationService>().navigatorKey,
-        initialRoute: initialRoute,
-        onGenerateRoute: Router.generateRoute,
+        initialRoute: obRoute.initialRoute,
+        onGenerateRoute: obRoute.Router.generateRoute,
       ),
     );
   }

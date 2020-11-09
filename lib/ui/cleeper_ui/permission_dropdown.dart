@@ -15,7 +15,8 @@ class PermissionDropdown extends StatefulWidget {
 
   final ScrollController scrollController;
 
-  const PermissionDropdown(this.permissionSet, this.scrollController,{this.editBloc});
+  const PermissionDropdown(this.permissionSet, this.scrollController,
+      {this.editBloc});
 
   @override
   _PermissionDropdownState createState() => _PermissionDropdownState();
@@ -25,13 +26,11 @@ class _PermissionDropdownState extends State<PermissionDropdown> {
   bool isExpanded = false;
   UserProvider _userProvider;
 
-
   FocusNode _obNameNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
@@ -43,13 +42,11 @@ class _PermissionDropdownState extends State<PermissionDropdown> {
   Widget build(BuildContext context) {
     _userProvider = Provider.of<UserProvider>(context);
 
-    ScreenUtil _util = ScreenUtil();
     return Stack(
       children: <Widget>[
         Container(
           decoration: BoxDecoration(
-            borderRadius: new BorderRadius.circular(
-                ScreenUtil().setWidth(16)),
+            borderRadius: new BorderRadius.circular(16.w),
             color: ColorConstants.CREATE_PERMISSION_COLOR_BKG,
           ),
           child: Center(
@@ -60,25 +57,11 @@ class _PermissionDropdownState extends State<PermissionDropdown> {
                       ColorConstants.CREATE_PERMISSION_COLOR_BKG,
                   trailing: Icon(
                     isExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                    size: ScreenUtil().setWidth(96),
+                    size: 96.w,
                     color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
                   ),
                   onExpansionChanged: (b) {
                     setState(() {
-                      // if (b) {
-                      //   double heightToScollOffsetRatio =
-                      //       widget.scrollController.offset /
-                      //           MediaQuery.of(context).size.height;
-                      //    debugPrint('--------- scrollOffsetRatio permission dropdown -- $heightToScollOffsetRatio  -offset -- ${widget.scrollController.offset}');
-                      //   double limitRatio = 0.5; //0.19212079534723905;
-                      //   if (heightToScollOffsetRatio <= limitRatio) {
-                      //     double animateTo = widget
-                      //             .scrollController.position.maxScrollExtent; //widget.scrollController.offset + util.setHeight(960);
-                      //     widget.scrollController.animateTo(animateTo,
-                      //         curve: Curves.linear,
-                      //         duration: Duration(milliseconds: 500));
-                      //   }
-                      // }
                       isExpanded = b;
                     });
                   },
@@ -86,7 +69,7 @@ class _PermissionDropdownState extends State<PermissionDropdown> {
                     widget.permissionSet.name,
                     style: TextStyle(
                         color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                        fontSize: _util.setSp(41),
+                        fontSize: 41.sp,
                         letterSpacing: 1.3),
                   ),
                   children: widget.permissionSet.permissions != null &&
@@ -94,38 +77,36 @@ class _PermissionDropdownState extends State<PermissionDropdown> {
                       ? widget.permissionSet.permissions.map((permission) {
                           return InkWell(
                               onTap: () {
-                                if(widget.editBloc != null)
-                                widget.editBloc.permissionChanged(true);
+                                if (widget.editBloc != null)
+                                  widget.editBloc.permissionChanged(true);
                                 setState(() {
-
-                                  if(permission.status.compareTo('ON')==0)
+                                  if (permission.status.compareTo('ON') == 0)
                                     permission.status = 'OFF';
                                   else
                                     permission.status = 'ON';
-
                                 });
                               },
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
-                                    vertical: _util.setHeight(16),
-                                    horizontal: _util.setWidth(32)),
+                                    vertical: 16.h, horizontal: 32.w),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: <Widget>[
                                     ImageIcon(
                                       AssetImage(
-                                        permission.status.compareTo('ON')==0
-                                          ? ImagePaths.icUnread
-                                          : ImagePaths.icRead
-                                          ),
-                                      color: permission.status.compareTo('ON')==0
-                                          ? ColorConstants
-                                              .COLOR_NOTIFICATION_BUBBLE
-                                          : Colors.grey, //Color(0xFF064390),
-                                      size: _util.setWidth(36),
+                                          permission.status.compareTo('ON') == 0
+                                              ? ImagePaths.icUnread
+                                              : ImagePaths.icRead),
+                                      color:
+                                          permission.status.compareTo('ON') == 0
+                                              ? ColorConstants
+                                                  .COLOR_NOTIFICATION_BUBBLE
+                                              : Colors
+                                                  .grey, //Color(0xFF064390),
+                                      size: 36.w,
                                     ),
                                     SizedBox(
-                                      width: _util.setWidth(32),
+                                      width: 32.w,
                                     ),
                                     Text(
                                       permission.name,
@@ -133,7 +114,7 @@ class _PermissionDropdownState extends State<PermissionDropdown> {
                                       style: TextStyle(
                                           color: ColorConstants
                                               .ACCESS_MANAGEMENT_TITLE,
-                                          fontSize: _util.setSp(36)),
+                                          fontSize: 36.sp),
                                     )
                                   ],
                                 ),

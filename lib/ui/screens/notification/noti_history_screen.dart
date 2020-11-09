@@ -98,7 +98,7 @@ class _NotificationHistoryScreenWidgetState
           children: <Widget>[
             CustomScrollView(
               slivers: <Widget>[
-                UIHelper.getTopEmptyContainer(200.h, false),
+                _startSpace(),
                 len > 0
                     ? SliverList(
                         delegate: SliverChildBuilderDelegate((context, index) {
@@ -239,13 +239,7 @@ class _NotificationHistoryScreenWidgetState
                                     children: <Widget>[
                                       Column(
                                         children: <Widget>[
-                                          SvgPicture.asset(
-                                            ImagePaths.svgSeapod,
-                                            color: ColorConstants
-                                                .COLOR_NOTIFICATION_NORMAL,
-                                            width: 40,
-                                            height: 40,
-                                          )
+                                          _imageSeapod()
                                         ],
                                       ),
                                       Expanded(
@@ -265,11 +259,7 @@ class _NotificationHistoryScreenWidgetState
                                                         .spaceBetween,
                                                 children: <Widget>[
                                                   Expanded(
-                                                    child: Text(
-                                                        '$formatedDateTime',
-                                                        style: TextStyle(
-                                                            color: ColorConstants
-                                                                .COLOR_NOTIFICATION_SUB_ITEM)),
+                                                    child: _timeStamp(formatedDateTime),
                                                   ),
                                                   InkWell(
                                                       onTap: () async {
@@ -334,18 +324,11 @@ class _NotificationHistoryScreenWidgetState
                                               SizedBox(
                                                 height: 8,
                                               ),
-                                              Text(notiMsg,
-                                                  style: TextStyle(
-                                                      color: ColorConstants
-                                                          .COLOR_NOTIFICATION_ITEM)),
+                                              _notiMesssage(notiMsg),
                                               SizedBox(
                                                 height: 8,
                                               ),
-                                              Text(
-                                                  'SEAPOD ACCESS ${notificationType.toUpperCase()}',
-                                                  style: TextStyle(
-                                                      color: ColorConstants
-                                                          .COLOR_NOTIFICATION_SUB_ITEM)),
+                                              _notiType(notificationType),
                                               // Text('Status: $requestStatus'),
                                             ],
                                           ),
@@ -353,84 +336,133 @@ class _NotificationHistoryScreenWidgetState
                                       ),
                                     ],
                                   ),
-                                  Divider(
-                                    height: 4,
-                                    color: ColorConstants
-                                        .COLOR_NOTIFICATION_DIVIDER,
-                                  )
+                                  _dividerH4()
                                 ],
                               ),
                             ),
                           );
                         }, childCount: len),
                       )
-                    : SliverToBoxAdapter(
-                        child: Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(48.h),
-                            child: Text(
-                              'No notification Found!!',
-                              style: TextStyle(
-                                  fontSize: 48.sp,
-                                  color:
-                                      ColorConstants.COLOR_NOTIFICATION_ITEM),
-                            ),
-                          ),
-                        ),
-                      ),
-                UIHelper.getTopEmptyContainer(90, false),
+                    : _textNoNotification(),
+                _endSpace(),
               ],
             ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      InkWell(
-                        onTap: () {
-                          // debugPrint(
-                          // '_updatingNotification -- $_updatingNotification');
-                          if (!_updatingNotification) goBack();
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.all(24.h),
-                          child: Image.asset(
-                            ImagePaths.cross,
-                            width: 48.h,
-                            height: 48.h,
-                            color: ColorConstants.COLOR_NOTIFICATION_ITEM,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      Text(
-                        widget.showOnlyAccessRequests
-                            ? AppStrings.pendingRequests
-                            : 'Notifications'.toUpperCase(),
-                        style: TextStyle(
-                            color: ColorConstants.COLOR_NOTIFICATION_TITLE,
-                            fontWeight: FontWeight.w400,
-                            fontSize: ScreenUtil().setSp(60)),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            )
+            _topBar()
           ],
         )
         // ),
         );
   }
+
+  Positioned _topBar() {
+    return Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () {
+                        // debugPrint(
+                        // '_updatingNotification -- $_updatingNotification');
+                        if (!_updatingNotification) goBack();
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.all(24.h),
+                        child: Image.asset(
+                          ImagePaths.cross,
+                          width: 48.h,
+                          height: 48.h,
+                          color: ColorConstants.COLOR_NOTIFICATION_ITEM,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Text(
+                      widget.showOnlyAccessRequests
+                          ? AppStrings.pendingRequests
+                          : 'Notifications'.toUpperCase(),
+                      style: TextStyle(
+                          color: ColorConstants.COLOR_NOTIFICATION_TITLE,
+                          fontWeight: FontWeight.w400,
+                          fontSize: ScreenUtil().setSp(60)),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          );
+  }
+
+  _endSpace() => UIHelper.getTopEmptyContainer(90, false);
+
+  SliverToBoxAdapter _textNoNotification() {
+    return SliverToBoxAdapter(
+                      child: Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(48.h),
+                          child: Text(
+                            'No notification Found!!',
+                            style: TextStyle(
+                                fontSize: 48.sp,
+                                color:
+                                    ColorConstants.COLOR_NOTIFICATION_ITEM),
+                          ),
+                        ),
+                      ),
+                    );
+  }
+
+  Divider _dividerH4() {
+    return Divider(
+                                  height: 4,
+                                  color: ColorConstants
+                                      .COLOR_NOTIFICATION_DIVIDER,
+                                );
+  }
+
+  Text _notiType(String notificationType) {
+    return Text(
+                                                'SEAPOD ACCESS ${notificationType.toUpperCase()}',
+                                                style: TextStyle(
+                                                    color: ColorConstants
+                                                        .COLOR_NOTIFICATION_SUB_ITEM));
+  }
+
+  Text _notiMesssage(String notiMsg) {
+    return Text(notiMsg,
+                                                style: TextStyle(
+                                                    color: ColorConstants
+                                                        .COLOR_NOTIFICATION_ITEM));
+  }
+
+  Text _timeStamp(String formatedDateTime) {
+    return Text(
+                                                      '$formatedDateTime',
+                                                      style: TextStyle(
+                                                          color: ColorConstants
+                                                              .COLOR_NOTIFICATION_SUB_ITEM));
+  }
+
+  SvgPicture _imageSeapod() {
+    return SvgPicture.asset(
+                                          ImagePaths.svgSeapod,
+                                          color: ColorConstants
+                                              .COLOR_NOTIFICATION_NORMAL,
+                                          width: 40,
+                                          height: 40,
+                                        );
+  }
+
+  _startSpace() => UIHelper.getTopEmptyContainer(200.h, false);
 
   goBack() {
     // Navigator.of(context).pushNamedAndRemoveUntil(

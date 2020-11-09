@@ -43,10 +43,8 @@ import 'package:ocean_builder/ui/screens/designSteps/underwater_room_finishing_s
 import 'package:ocean_builder/ui/screens/designSteps/underwater_windows_screen.dart';
 import 'package:ocean_builder/ui/screens/designSteps/weather_station_screen.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
-import 'package:ocean_builder/ui/screens/home/swiper_container.dart';
 import 'package:ocean_builder/ui/screens/marine/marine_screen.dart';
 import 'package:ocean_builder/ui/screens/menu/landing_screen.dart';
-import 'package:ocean_builder/ui/screens/menu/menu_screen.dart';
 import 'package:ocean_builder/ui/screens/misc/earth_station_screen.dart';
 import 'package:ocean_builder/ui/screens/notification/guest_request_response_screen.dart';
 import 'package:ocean_builder/ui/screens/notification/invitation_response_screen.dart';
@@ -91,7 +89,7 @@ class Router {
       case SmartHomeScreenNodeServer.routeName:
         return CupertinoPageRoute(
             builder: (_) => SmartHomeScreenNodeServer(),
-            settings: RouteSettings(name: SmartHomeScreenNodeServer.routeName));      
+            settings: RouteSettings(name: SmartHomeScreenNodeServer.routeName));
       case SwiperContainerScreen.routeName:
         return CupertinoPageRoute(
             builder: (_) => SwiperContainerScreen(),
@@ -176,10 +174,6 @@ class Router {
         return CupertinoPageRoute(
             builder: (_) => QRcodeScreen(inVokedFrom: invokedFromScreen),
             settings: RouteSettings(name: QRcodeScreen.routeName));
-      case MenuScreen.routeName:
-        return CupertinoPageRoute(
-            builder: (_) => MenuScreen(),
-            settings: RouteSettings(name: MenuScreen.routeName));
       case RegistrationScreen.routeName:
         return CupertinoPageRoute(
             builder: (_) => RegistrationScreen(),

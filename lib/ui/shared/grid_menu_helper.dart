@@ -8,10 +8,10 @@ gridRowItemSVG(
     String itemName,
     String value,
     GestureTapCallback onTap}) {
-  ScreenUtil _util = ScreenUtil();
+  // ScreenUtil _util = ScreenUtil();
 
   return Container(
-    padding: EdgeInsets.all(_util.setHeight(32)),
+    padding: EdgeInsets.all(32.h),
     child: InkWell(
       onTap: onTap,
       child: Column(
@@ -19,30 +19,30 @@ gridRowItemSVG(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.all(_util.setHeight(8)),
+            padding: EdgeInsets.all(8.h),
             child: SvgPicture.asset(
               iconImagePath,
               fit: BoxFit.scaleDown,
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(_util.setHeight(8)),
+            padding: EdgeInsets.all(8.h),
             child: Text(
               itemName.toUpperCase(),
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: ColorConstants.MARINE_ITEM_TEXT_COLOR,
-                  fontSize: _util.setSp(22)),
+                  fontSize: 22.sp),
             ),
           ),
           _customDivider(),
           Padding(
-            padding: EdgeInsets.all(_util.setHeight(8)),
+            padding: EdgeInsets.all(8.h),
             child: Text(
               value,
               style: TextStyle(
                   color: ColorConstants.MARINE_ITEM_TEXT_COLOR,
-                  fontSize: _util.setSp(46.5)),
+                  fontSize: 46.5.sp),
             ),
           ),
         ],

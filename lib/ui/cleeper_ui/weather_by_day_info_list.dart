@@ -7,11 +7,7 @@ import 'package:ocean_builder/ui/screens/weather/select_source_screen.dart';
 import 'package:ocean_builder/ui/shared/popup.dart';
 
 class WeatherByDayInfoList extends StatefulWidget {
-  // final String title;
-  // final List<UserOceanBuilder> list;
-
   final WeatherDataDay weatherDataDay;
-
   const WeatherByDayInfoList(this.weatherDataDay);
 
   @override
@@ -21,8 +17,6 @@ class WeatherByDayInfoList extends StatefulWidget {
 class _WeatherByDayInfoListState extends State<WeatherByDayInfoList> {
   bool isExpanded = false;
 
-  ScreenUtil _util = ScreenUtil();
-
   @override
   Widget build(BuildContext context) {
     String _nameOfDay = widget.weatherDataDay.name.toUpperCase();
@@ -30,14 +24,12 @@ class _WeatherByDayInfoListState extends State<WeatherByDayInfoList> {
     String _tempLowest = widget.weatherDataDay.temperatureMin.toString();
     String iconPath = ImagePaths.svgCloudRain;
 
-    // debugPrint('weatherType code --- ' + widget.weatherDataDay.weatherType);
     iconPath =
         WeatherDescMap.weatherCodeMap[widget.weatherDataDay.weatherType].last;
 
     return Stack(
       children: <Widget>[
         Container(
-          // margin: const EdgeInsets.all(4.0),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 0),
             child: Center(
@@ -62,7 +54,7 @@ class _WeatherByDayInfoListState extends State<WeatherByDayInfoList> {
                                     .WEATHER_MORE_DAY_INFO_ITEM_COLOR_HEAVY
                                 : ColorConstants
                                     .WEATHER_MORE_DAY_INFO_ICON_COLOR_LIGHT,
-                            fontSize: ScreenUtil().setSp(48)),
+                            fontSize: 48.sp),
                       ),
                     ),
                     onExpansionChanged: (b) {
@@ -83,7 +75,7 @@ class _WeatherByDayInfoListState extends State<WeatherByDayInfoList> {
                                       .WEATHER_MORE_DAY_INFO_ITEM_COLOR_HEAVY
                                   : ColorConstants
                                       .WEATHER_MORE_DAY_INFO_ICON_COLOR_LIGHT,
-                              fontSize: ScreenUtil().setSp(32)),
+                              fontSize: 32.sp),
                         ),
                         SizedBox(
                           height: 4,
@@ -138,7 +130,6 @@ class _WeatherByDayInfoListState extends State<WeatherByDayInfoList> {
 
   Widget _dayDataRow() {
     return Container(
-      // height: ScreenUtil().setHeight(164),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,12 +194,11 @@ class _WeatherByDayInfoListState extends State<WeatherByDayInfoList> {
     return Container(
       margin: EdgeInsets.fromLTRB(
         0.0,
-        _util.setHeight(8),
+        8.h,
         0.0,
-        _util.setHeight(8),
+        8.h,
       ),
-      // alignment: Alignment.center,
-      width: ScreenUtil().setWidth(425),
+      width: 425.w,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -219,7 +209,7 @@ class _WeatherByDayInfoListState extends State<WeatherByDayInfoList> {
               name.toUpperCase(),
               style: TextStyle(
                 color: ColorConstants.WEATHER_MORE_DAY_INFO_ITEM_COLOR_HEAVY,
-                fontSize: ScreenUtil().setSp(22),
+                fontSize: 22.sp,
               ),
               textAlign: TextAlign.start,
             ),
@@ -227,21 +217,20 @@ class _WeatherByDayInfoListState extends State<WeatherByDayInfoList> {
           Expanded(
               child: RichText(
             text: TextSpan(
-              // text: value,
               children: <TextSpan>[
                 TextSpan(
                   text: value,
                   style: TextStyle(
                       color:
                           ColorConstants.WEATHER_MORE_DAY_INFO_ITEM_COLOR_HEAVY,
-                      fontSize: ScreenUtil().setSp(32)),
+                      fontSize: 32.sp),
                 ),
                 TextSpan(
                     text: ' $unit',
                     style: TextStyle(
                         color: ColorConstants
                             .WEATHER_MORE_DAY_INFO_ITEM_COLOR_HEAVY,
-                        fontSize: ScreenUtil().setSp(24)))
+                        fontSize: 24.sp))
               ],
             ),
           )),
@@ -255,10 +244,10 @@ class _WeatherByDayInfoListState extends State<WeatherByDayInfoList> {
     Navigator.push(
       context,
       PopupLayout(
-        top: _util.setHeight(256),
-        left: _util.setWidth(48),
-        right: _util.setWidth(48),
-        bottom: _util.setHeight(48),
+        top: 256.h,
+        left: 48.w,
+        right: 48.w,
+        bottom: 48.h,
         child: widget,
       ),
     );

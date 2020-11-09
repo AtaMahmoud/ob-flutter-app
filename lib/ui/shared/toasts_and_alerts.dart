@@ -64,8 +64,8 @@ showInAppNotificationFirebase(
         AppStrings.dismiss,
         style: textStyle,
       ),
-      onPressed: () {
-        MethodHelper.selectOnlyOBasSelectedOB();
+      onPressed: () async {
+        await MethodHelper.selectOnlyOBasSelectedOB();
         flush.dismiss(true);
       },
     ),
