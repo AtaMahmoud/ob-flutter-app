@@ -90,10 +90,10 @@ class Router {
         return CupertinoPageRoute(
             builder: (_) => SmartHomeScreenNodeServer(),
             settings: RouteSettings(name: SmartHomeScreenNodeServer.routeName));
-      case SwiperContainerScreen.routeName:
-        return CupertinoPageRoute(
-            builder: (_) => SwiperContainerScreen(),
-            settings: RouteSettings(name: SwiperContainerScreen.routeName));
+      // case SwiperContainerScreen.routeName:
+      //   return CupertinoPageRoute(
+      //       builder: (_) => SwiperContainerScreen(),
+      //       settings: RouteSettings(name: SwiperContainerScreen.routeName));
       case LandingScreen.routeName:
         return CupertinoPageRoute(
             builder: (_) => LandingScreen(),

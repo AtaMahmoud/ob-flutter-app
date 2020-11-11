@@ -12,11 +12,13 @@ import 'package:ocean_builder/core/models/iot_event_data.dart';
 import 'package:ocean_builder/core/models/ocean_builder.dart';
 import 'package:ocean_builder/core/providers/design_data_provider.dart';
 import 'package:ocean_builder/core/providers/smart_home_data_provider.dart';
+import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper_2.dart';
 import 'package:ocean_builder/ui/screens/designSteps/exterior_finish_screen.dart';
 import 'package:ocean_builder/ui/screens/designSteps/smart_home_screen.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
@@ -33,7 +35,7 @@ class SmartHomeScreenNodeServer extends StatefulWidget {
 class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
   Future<List<IotEventData>> _allSensorData;
   Future<List<IotEventData>> _sensorDataById;
-  Future<List<IotEventData>> _last3dayssensorData;
+  Future<List<IotEventData>> _sensorDataBetweenDates;
 
   List<IotTopic> _topicList;
   IotTopicBloc _iotTopicBloc;
@@ -68,8 +70,14 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
     });
 
     _iotTopicBloc.topicController.listen((topic) {
+      if(_fromDateTime != null && _toDateTime != null){
+        _sensorDataBetweenDates = Provider.of<SmartHomeDataProvider>(context)
+          .fetchSensorDataBetweenDates(topic,_fromDateTime,_toDateTime);
+      }else{
       _sensorDataById = Provider.of<SmartHomeDataProvider>(context)
           .fetchSensorDataByTopic(topic);
+      }
+
     });
 
     _fromDateTimeBloc.controller.listen((dateTime) {
@@ -109,6 +117,20 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
                     child: CustomScrollView(
                       slivers: [
                         SliverToBoxAdapter(
+                          child: _dateTimePickerRow(
+                              'Start Date', _fromDateTimeBloc, true),
+                        ),
+                        SliverToBoxAdapter(
+                          child: SpaceH32(),
+                        ),
+                        SliverToBoxAdapter(
+                          child: _dateTimePickerRow(
+                              'End Date', _toDateTimeBloc, false),
+                        ),
+                        SliverToBoxAdapter(
+                          child: SpaceH32(),
+                        ),
+                        SliverToBoxAdapter(
                           child: _topicList != null && _topicList.length > 0
                               ? _getTopicsDropdown(
                                   _topicList.map((e) => e.topic).toList(),
@@ -117,14 +139,6 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
                                   false,
                                   label: 'Topic')
                               : Container(),
-                        ),
-                        SliverToBoxAdapter(
-                          child: _dateTimePickerRow(
-                              'From', _fromDateTimeBloc, true),
-                        ),
-                        SliverToBoxAdapter(
-                          child: _dateTimePickerRow(
-                              'To', _fromDateTimeBloc, false),
                         ),
                         FutureBuilder<List<IotEventData>>(
                             future: _allSensorData,
@@ -167,7 +181,7 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
                               );
                             }),
                         FutureBuilder<List<IotEventData>>(
-                            future: _last3dayssensorData,
+                            future: _sensorDataBetweenDates,
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
@@ -178,7 +192,7 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
 
                               if (snapshot.hasData) {
                                 return _sensorDataList(
-                                    snapshot.data, 'Last 3 Day Sensor Data');
+                                    snapshot.data, 'Sensor Data between dates');
                               }
 
                               return SliverToBoxAdapter(
@@ -204,62 +218,6 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
     );
   }
 
-  // _sensorDataWithInDatesList
-
-  // _sensorDataByIDList
-
-  // _sensorDataList(List<IotEventData> sensorDataList, String title) {
-  //   return SliverStickyHeader(
-  //     header: _buildHeader(title),
-  //     sliver: SliverList(
-  //       delegate: SliverChildBuilderDelegate((context, index) {
-  //         return Container(
-  //           padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 16.h),
-  //           child: Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               Wrap(
-  //                 children: [
-  //                   Text('EventId: ${sensorDataList[index].eventID.toString()}')
-  //                 ],
-  //               ),
-  //               Wrap(
-  //                 children: [
-  //                   Text(
-  //                       'Temperature: ${sensorDataList[index].value.toString()}')
-  //                 ],
-  //               ),
-  //               Wrap(
-  //                 children: [
-  //                   Text(
-  //                       'Timestamp: ${sensorDataList[index].tiemStamp.toString()}')
-  //                 ],
-  //               )
-  //             ],
-  //           ),
-  //         );
-  //       }, childCount: sensorDataList.length),
-  //     ),
-  //   );
-  // }
-
-  // _allSensorDataList(List<IotEventData> sensorDataList, String title) {
-  //   return SliverStickyHeader(
-  //     header: _buildHeader(title),
-  //     sliver: SliverList(
-  //       delegate: SliverChildBuilderDelegate((context, index) {
-  //         var roomName = sensorDataList[index].topic.split('/').first;
-  //         var sensorName = sensorDataList[index].topic.split('/').last;
-  //         return _tableRow(
-  //             roomName,
-  //             sensorName,
-  //             sensorDataList[index].value.toString(),
-  //             sensorDataList[index].tiemStamp.toString());
-  //       }, childCount: sensorDataList.length),
-  //     ),
-  //   );
-  // }
-
   _sensorDataList(List<IotEventData> sensorDataList, String title) {
     return SliverStickyHeader(
       header: _buildHeader(title),
@@ -279,7 +237,7 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
 
   Widget _buildHeader(String text) {
     return new Container(
-      color: Colors.white,
+      color: AppTheme.chipBackground,
       padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
       alignment: Alignment.centerLeft,
       child: Column(
@@ -348,13 +306,12 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
   Widget _getTopicsDropdown(
       List<String> list, Observable<String> stream, changed, bool addPadding,
       {String label = 'Label'}) {
-    ScreenUtil _util = ScreenUtil();
     return StreamBuilder<String>(
         stream: stream,
         builder: (context, snapshot) {
           return Padding(
             padding: addPadding
-                ? EdgeInsets.symmetric(horizontal: _util.setWidth(48))
+                ? EdgeInsets.symmetric(horizontal: 48.w)
                 : EdgeInsets.symmetric(horizontal: 0),
             child: InputDecorator(
               decoration: InputDecoration(
@@ -376,7 +333,7 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
                 // hintStyle: TextStyle(color: Colors.red),
                 labelStyle: TextStyle(
                     color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                    fontSize: _util.setSp(48)),
+                    fontSize: 48.sp),
               ),
               child: DropdownButtonHideUnderline(
                 child: ButtonTheme(
@@ -397,7 +354,7 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
                           ? ColorConstants.ACCESS_MANAGEMENT_TITLE
                           : ColorConstants
                               .ACCESS_MANAGEMENT_SUBTITLE, //ColorConstants.INVALID_TEXTFIELD,
-                      fontSize: _util.setSp(40),
+                      fontSize: 40.sp,
                       fontWeight: FontWeight.w400,
                       // letterSpacing: 1.2,
                       // wordSpacing: 4
@@ -421,103 +378,42 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
         });
   }
 
-  // Widget _dateTimePicker() {
-  //   return Padding(
-  //     padding: EdgeInsets.symmetric(vertical: 1),
-  //     child: SizedBox(
-  //       width: double.maxFinite,
-  //       child: InkWell(
-  //         onTap: () {
-  //           DatePicker.showDateTimePicker(context,
-  //               showTitleActions: true,
-  //               // minTime: DateTime.now(),
-  //               //DateTime(2018, 3, 5),
-  //               // maxTime: DateTime(2019, 12, 7),
-  //               theme: DatePickerTheme(
-  //                   backgroundColor:
-  //                       Colors.white, //ColorConstants.PROFILE_BKG_1,
-  //                   // containerHeight: ScreenUtil().setHeight(512),
-  //                   cancelStyle: TextStyle(
-  //                       fontSize: 40.sp,
-  //                       fontWeight: FontWeight.w600,
-  //                       color: ColorConstants.TOP_CLIPPER_START),
-  //                   itemStyle: TextStyle(
-  //                       fontSize: 40.sp,
-  //                       fontWeight: FontWeight.w400,
-  //                       color: ColorConstants.TOP_CLIPPER_START),
-  //                   doneStyle: TextStyle(
-  //                       fontSize: 40.sp,
-  //                       fontWeight: FontWeight.w600,
-  //                       color: ColorConstants.TOP_CLIPPER_START)),
-  //               onChanged: (date) {
-  //             // // print('change $date in time zone ' +
-  //             // date.timeZoneOffset.inHours.toString());
-  //           }, onConfirm: (date) {
-  //             // print('confirm $date');
-  //             setState(() {
-  //               _pickedDate = date;
-  //               _user.checkInDate = _pickedDate;
-  //               _bloc.checkInChanged(DateFormat('yMMMMd').format(_pickedDate));
-  //             });
-  //           }, currentTime: DateTime.now(), locale: LocaleType.en);
-  //         },
-  //         child: Row(
-  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //           children: <Widget>[
-  //             Text(
-  //               'CHECK IN: ',
-  //               style: TextStyle(
-  //                   fontSize: 43.69.sp,
-  //                   fontWeight: FontWeight.w400,
-  //                   color: ColorConstants.TOP_CLIPPER_START),
-  //             ),
-  //             Text(
-  //               _pickedDate == null
-  //                   ? 'Tap to change'
-  //                   : DateFormat('yMMMMd').format(_pickedDate),
-  //               style: TextStyle(
-  //                   fontSize: 43.69.sp,
-  //                   fontWeight: FontWeight.w400,
-  //                   color: ColorConstants.TOP_CLIPPER_START),
-  //             )
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _dateTimePickerRow(String label, GenericBloc bloc, bool isStartDate) {
     var _pickedDate = isStartDate ? _fromDateTime : _toDateTime;
-
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 1),
-      child: SizedBox(
-        width: double.maxFinite,
-        child: InkWell(
-          onTap: () {
-            _invokeDateTimePicker(bloc);
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                '${label.toUpperCase()}: ',
-                style: TextStyle(
-                    fontSize: 43.69.sp,
-                    fontWeight: FontWeight.w400,
-                    color: ColorConstants.TOP_CLIPPER_START),
-              ),
-              Text(
-                _pickedDate == null
-                    ? 'Tap to change'
-                    : _pickedDate, //DateFormat('yMMMMd').format(_pickedDate),
-                style: TextStyle(
-                    fontSize: 43.69.sp,
-                    fontWeight: FontWeight.w400,
-                    color: ColorConstants.TOP_CLIPPER_START),
-              )
-            ],
+    debugPrint('_pickDate ---- $_pickedDate');
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.w),
+          border: Border.all(color: ColorConstants.ACCESS_MANAGEMENT_BUTTON)),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 24.h,horizontal: 16.w),
+        child: SizedBox(
+          width: double.maxFinite,
+          child: InkWell(
+            onTap: () {
+              _invokeDateTimePicker(bloc);
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  '${label.toUpperCase()}: ',
+                  style: TextStyle(
+                      fontSize: 43.69.sp,
+                      fontWeight: FontWeight.w400,
+                      color: ColorConstants.TOP_CLIPPER_START),
+                ),
+                Text(
+                  _pickedDate == null || _pickedDate.length == 0
+                      ? 'Tap to change'
+                      : _pickedDate, //DateFormat('yMMMMd').format(_pickedDate),
+                  style: TextStyle(
+                      fontSize: 43.69.sp,
+                      fontWeight: FontWeight.w400,
+                      color: ColorConstants.TOP_CLIPPER_START),
+                )
+              ],
+            ),
           ),
         ),
       ),

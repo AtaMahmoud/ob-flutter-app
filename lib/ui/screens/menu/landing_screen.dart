@@ -55,16 +55,39 @@ class _LandingScreenState extends State<LandingScreen> {
 
   Expanded _mainContent() {
     return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          userProvider.isLoading
-              ? CircularProgressIndicator()
-              : _loginToDashboard(),
-          _requestOrAcceptAccess(),
-          _design(),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            userProvider.isLoading
+                ? CircularProgressIndicator()
+                : _loginToDashboard(),
+            _requestOrAcceptAccess(),
+            _design(),
+            InkWell(
+              child: Padding(
+                padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
+                child: UIHelper.imageTextColumn(
+                    ImagePaths.svgSeapod, AppStrings.smartHome),
+              ),
+              onTap: () {
+                Navigator.of(context).pushNamed(SmartHomeScreen.routeName);
+              },
+            ),
+            InkWell(
+              child: Padding(
+                padding: EdgeInsets.all(32.w),
+                child: UIHelper.imageTextColumn(
+                    ImagePaths.svgSeapod, AppStrings.smartHome_local_server),
+              ),
+              onTap: () {
+                Navigator.of(context)
+                    .pushNamed(SmartHomeScreenNodeServer.routeName);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -115,82 +138,9 @@ class _LandingScreenState extends State<LandingScreen> {
     return Appbar(
       ScreenTitle.WELCOME,
       enableSkipLogin: true,
-        children: <Widget>[
-          Appbar(
-            ScreenTitle.WELCOME,
-            enableSkipLogin: true,
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-                          child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  userProvider.isLoading
-                      ? CircularProgressIndicator()
-                      : InkWell(
-                          child: Padding(
-                            padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
-                            child: UIHelper.imageTextColumn(
-                                ImagePaths.loginToDashboard,
-                                AppStrings.loginToDashboard),
-                          ),
-                          onTap: () {
-                            Navigator.of(context).pushNamed(LoginScreen.routeName,
-                                arguments: ScreenTitle.LANDING_SCREEN);
-                          },
-                        ),
-                  InkWell(
-                    child: Padding(
-                      padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
-                      child: UIHelper.imageTextColumn(ImagePaths.svgAccessKey,
-                          AppStrings.requestAcceptHomeAccess),
-                    ),
-                    onTap: () {
-                      // Navigator.of(context)
-                      //     .pushNamed(RegistrationScreen.routeName);
-                      _showAddOBDialog(userProvider, context);
-                    },
-                  ),
-                  InkWell(
-                    child: Padding(
-                      padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
-                      child: UIHelper.imageTextColumn(
-                          ImagePaths.svgSeapod, AppStrings.design),
-                    ),
-                    onTap: () {
-                      Navigator.of(context).pushNamed(DesignScreen.routeName);
-                    },
-                  ),
-                  InkWell(
-                    child: Padding(
-                      padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
-                      child: UIHelper.imageTextColumn(
-                          ImagePaths.svgSeapod, AppStrings.smartHome),
-                    ),
-                    onTap: () {
-                      Navigator.of(context).pushNamed(SmartHomeScreen.routeName);
-                    },
-                  ),
-                                  InkWell(
-                    child: Padding(
-                      padding: EdgeInsets.all(32.w),
-                      child: UIHelper.imageTextColumn(
-                          ImagePaths.svgSeapod, AppStrings.smartHome_local_server),
-                    ),
-                    onTap: () {
-                      Navigator.of(context).pushNamed(SmartHomeScreenNodeServer.routeName);
-                    },
-                  ),
-
-                ],
-              ),
-            ),
-          )
-        ],
-      ),
     );
   }
+
 
   _showAddOBDialog(UserProvider userProvider, BuildContext cntxt) {
     UserDataProvider _userDataProvider = Provider.of<UserDataProvider>(context);

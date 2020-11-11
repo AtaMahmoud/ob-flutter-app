@@ -14,8 +14,8 @@ class SmartHomeServerRepository {
   String _getSensorDataBetweenDates =
       'https://seapod.technoid.info:8000/api/events/';
   String _getSensorDataById = 'https://seapod.technoid.info:8000/api/events/';
-  String _getSensorDataByTopic =
-      'https://seapod.technoid.info:8000/api/events/topics/';
+  String _getSensorDataByTopic(topicName) =>
+      'https://seapod.technoid.info:8000/api/events/topics/$topicName';
 
   final Map<String, dynamic> _headers = {
     "x-auth-token": Config.IOT_SERVER_API_KEY,
@@ -100,12 +100,8 @@ class SmartHomeServerRepository {
   Future<List<IotEventData>> getSensorDataByTopic(topic) async {
     List<IotEventData> iotEventDataList = [];
 
-    final Map<String, dynamic> _params = {
-      "topic": topic,
-    };
-
     final response = await _apiBaseHelper.get(
-        url: _getSensorDataByTopic, headers: _headers, parameters: _params);
+        url: _getSensorDataByTopic(topic), headers: _headers);
 
     debugPrint('-_getSensorDataByTopic-');
     print(response);
