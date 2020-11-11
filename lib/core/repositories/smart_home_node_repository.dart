@@ -14,12 +14,12 @@ class SmartHomeServerRepository {
   String _getSensorDataBetweenDates =
       'https://seapod.technoid.info:8000/api/events/';
   String _getSensorDataById = 'https://seapod.technoid.info:8000/api/events/';
-  String _getSensorDataByTopic = 'https://seapod.technoid.info:8000/api/events/topics/';
+  String _getSensorDataByTopic =
+      'https://seapod.technoid.info:8000/api/events/topics/';
 
   final Map<String, dynamic> _headers = {
     "x-auth-token": Config.IOT_SERVER_API_KEY,
   };
-
 
   Future<List<IotTopic>> getAllTopicData() async {
     List<IotTopic> iotTopicList = [];
@@ -84,7 +84,7 @@ class SmartHomeServerRepository {
 
     final response = await _apiBaseHelper.get(
         url: _getSensorDataById, headers: _headers, parameters: _params);
-    
+
     debugPrint('-getSensorDataById-');
     print(response);
     var responseMap = response as List;
@@ -97,7 +97,7 @@ class SmartHomeServerRepository {
     return iotEventDataList;
   }
 
-    Future<List<IotEventData>> getSensorDataByTopic(topic) async {
+  Future<List<IotEventData>> getSensorDataByTopic(topic) async {
     List<IotEventData> iotEventDataList = [];
 
     final Map<String, dynamic> _params = {
@@ -106,7 +106,7 @@ class SmartHomeServerRepository {
 
     final response = await _apiBaseHelper.get(
         url: _getSensorDataByTopic, headers: _headers, parameters: _params);
-    
+
     debugPrint('-_getSensorDataByTopic-');
     print(response);
     var responseMap = response as List;
@@ -118,11 +118,14 @@ class SmartHomeServerRepository {
 
     return iotEventDataList;
   }
-    Future<List<IotEventData>> getTopicsDataBetweenDates(String topic,String startDate, String endDate) async {
+
+  Future<List<IotEventData>> getTopicsDataBetweenDates(
+      String topic, String startDate, String endDate) async {
     List<IotEventData> iotEventDataList = [];
 
     final Map<String, dynamic> _params = {
-      "time_start": startDate, //DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 3))),
+      "time_start":
+          startDate, //DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 3))),
       "time_end": endDate //DateFormat('yyyy-MM-dd').format(DateTime.now()),
     };
 
@@ -140,6 +143,4 @@ class SmartHomeServerRepository {
 
     return iotEventDataList;
   }
-
-
 }

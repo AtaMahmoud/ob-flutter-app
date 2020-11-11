@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
+import 'package:ocean_builder/bloc/generic_bloc.dart';
 import 'package:ocean_builder/bloc/iot_topic_bloc.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/iot_event_data.dart';
@@ -18,6 +20,7 @@ import 'package:ocean_builder/ui/widgets/appbar.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:intl/intl.dart';
 
 class SmartHomeScreenNodeServer extends StatefulWidget {
   static const String routeName = '/smart_home_node';
@@ -36,21 +39,29 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
   IotTopicBloc _iotTopicBloc;
   bool _isLoading = true;
 
+  String _fromDateTime;
+  String _toDateTime;
+
+  GenericBloc<String> _fromDateTimeBloc;
+  GenericBloc<String> _toDateTimeBloc;
+
   @override
   void initState() {
     super.initState();
     UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
     _iotTopicBloc = IotTopicBloc();
+    _fromDateTimeBloc = GenericBloc("");
+    _toDateTimeBloc = GenericBloc("");
     Future.delayed(Duration.zero).then((_) {
-      _allSensorData =
-          // Provider.of<SmartHomeDataProvider>(context).fetchAllSensorData();
-          // _sensorDataById =
-          //     Provider.of<SmartHomeDataProvider>(context).fetchSensorDataById(1);
-          // _last3dayssensorData = Provider.of<SmartHomeDataProvider>(context)
-          //     .fetchSensorDataLast3Days();
-          Provider.of<SmartHomeDataProvider>(context)
-              .fetchAllTopicsData()
-              .then((topicList) {
+      // _allSensorData =
+      // Provider.of<SmartHomeDataProvider>(context).fetchAllSensorData();
+      // _sensorDataById =
+      //     Provider.of<SmartHomeDataProvider>(context).fetchSensorDataById(1);
+      // _last3dayssensorData = Provider.of<SmartHomeDataProvider>(context)
+      //     .fetchSensorDataLast3Days();
+      Provider.of<SmartHomeDataProvider>(context)
+          .fetchAllTopicsData()
+          .then((topicList) {
         _topicList = topicList;
         _isLoading = false;
       });
@@ -59,6 +70,14 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
     _iotTopicBloc.topicController.listen((topic) {
       _sensorDataById = Provider.of<SmartHomeDataProvider>(context)
           .fetchSensorDataByTopic(topic);
+    });
+
+    _fromDateTimeBloc.controller.listen((dateTime) {
+      _fromDateTime = dateTime;
+    });
+
+    _toDateTimeBloc.controller.listen((dateTime) {
+      _toDateTime = dateTime;
     });
   }
 
@@ -99,19 +118,28 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
                                   label: 'Topic')
                               : Container(),
                         ),
+                        SliverToBoxAdapter(
+                          child: _dateTimePickerRow(
+                              'From', _fromDateTimeBloc, true),
+                        ),
+                        SliverToBoxAdapter(
+                          child: _dateTimePickerRow(
+                              'To', _fromDateTimeBloc, false),
+                        ),
                         FutureBuilder<List<IotEventData>>(
                             future: _allSensorData,
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
                                 return SliverToBoxAdapter(
-                                  child: Container(),
+                                  child:
+                                      _buildHeader('Fetching all sensor data'),
                                 );
                               }
 
                               if (snapshot.hasData) {
                                 return _sensorDataList(
-                                    snapshot.data, 'All Sensor List');
+                                    snapshot.data, 'All Sensor Data');
                               }
 
                               return SliverToBoxAdapter(
@@ -124,13 +152,14 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
                                 return SliverToBoxAdapter(
-                                  child: Container(),
+                                  child: _buildHeader(
+                                      'Fetching Sensor Data By Topic'),
                                 );
                               }
 
                               if (snapshot.hasData) {
                                 return _sensorDataList(
-                                    snapshot.data, 'Sensor Data By Id');
+                                    snapshot.data, 'Sensor Data By Topic');
                               }
 
                               return SliverToBoxAdapter(
@@ -390,5 +419,139 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
             ),
           );
         });
+  }
+
+  // Widget _dateTimePicker() {
+  //   return Padding(
+  //     padding: EdgeInsets.symmetric(vertical: 1),
+  //     child: SizedBox(
+  //       width: double.maxFinite,
+  //       child: InkWell(
+  //         onTap: () {
+  //           DatePicker.showDateTimePicker(context,
+  //               showTitleActions: true,
+  //               // minTime: DateTime.now(),
+  //               //DateTime(2018, 3, 5),
+  //               // maxTime: DateTime(2019, 12, 7),
+  //               theme: DatePickerTheme(
+  //                   backgroundColor:
+  //                       Colors.white, //ColorConstants.PROFILE_BKG_1,
+  //                   // containerHeight: ScreenUtil().setHeight(512),
+  //                   cancelStyle: TextStyle(
+  //                       fontSize: 40.sp,
+  //                       fontWeight: FontWeight.w600,
+  //                       color: ColorConstants.TOP_CLIPPER_START),
+  //                   itemStyle: TextStyle(
+  //                       fontSize: 40.sp,
+  //                       fontWeight: FontWeight.w400,
+  //                       color: ColorConstants.TOP_CLIPPER_START),
+  //                   doneStyle: TextStyle(
+  //                       fontSize: 40.sp,
+  //                       fontWeight: FontWeight.w600,
+  //                       color: ColorConstants.TOP_CLIPPER_START)),
+  //               onChanged: (date) {
+  //             // // print('change $date in time zone ' +
+  //             // date.timeZoneOffset.inHours.toString());
+  //           }, onConfirm: (date) {
+  //             // print('confirm $date');
+  //             setState(() {
+  //               _pickedDate = date;
+  //               _user.checkInDate = _pickedDate;
+  //               _bloc.checkInChanged(DateFormat('yMMMMd').format(_pickedDate));
+  //             });
+  //           }, currentTime: DateTime.now(), locale: LocaleType.en);
+  //         },
+  //         child: Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //           children: <Widget>[
+  //             Text(
+  //               'CHECK IN: ',
+  //               style: TextStyle(
+  //                   fontSize: 43.69.sp,
+  //                   fontWeight: FontWeight.w400,
+  //                   color: ColorConstants.TOP_CLIPPER_START),
+  //             ),
+  //             Text(
+  //               _pickedDate == null
+  //                   ? 'Tap to change'
+  //                   : DateFormat('yMMMMd').format(_pickedDate),
+  //               style: TextStyle(
+  //                   fontSize: 43.69.sp,
+  //                   fontWeight: FontWeight.w400,
+  //                   color: ColorConstants.TOP_CLIPPER_START),
+  //             )
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  Widget _dateTimePickerRow(String label, GenericBloc bloc, bool isStartDate) {
+    var _pickedDate = isStartDate ? _fromDateTime : _toDateTime;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 1),
+      child: SizedBox(
+        width: double.maxFinite,
+        child: InkWell(
+          onTap: () {
+            _invokeDateTimePicker(bloc);
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                '${label.toUpperCase()}: ',
+                style: TextStyle(
+                    fontSize: 43.69.sp,
+                    fontWeight: FontWeight.w400,
+                    color: ColorConstants.TOP_CLIPPER_START),
+              ),
+              Text(
+                _pickedDate == null
+                    ? 'Tap to change'
+                    : _pickedDate, //DateFormat('yMMMMd').format(_pickedDate),
+                style: TextStyle(
+                    fontSize: 43.69.sp,
+                    fontWeight: FontWeight.w400,
+                    color: ColorConstants.TOP_CLIPPER_START),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  _invokeDateTimePicker(GenericBloc bloc) {
+    DatePicker.showDateTimePicker(context,
+        showTitleActions: true,
+        // minTime: DateTime.now(),
+        //DateTime(2018, 3, 5),
+        // maxTime: DateTime(2019, 12, 7),
+        theme: DatePickerTheme(
+            backgroundColor: Colors.white, //ColorConstants.PROFILE_BKG_1,
+            // containerHeight: ScreenUtil().setHeight(512),
+            cancelStyle: TextStyle(
+                fontSize: 40.sp,
+                fontWeight: FontWeight.w600,
+                color: ColorConstants.TOP_CLIPPER_START),
+            itemStyle: TextStyle(
+                fontSize: 40.sp,
+                fontWeight: FontWeight.w400,
+                color: ColorConstants.TOP_CLIPPER_START),
+            doneStyle: TextStyle(
+                fontSize: 40.sp,
+                fontWeight: FontWeight.w600,
+                color: ColorConstants.TOP_CLIPPER_START)), onChanged: (date) {
+      // // print('change $date in time zone ' +
+      // date.timeZoneOffset.inHours.toString());
+    }, onConfirm: (date) {
+      // print('confirm $date');
+      setState(() {
+        bloc.controller.add(DateFormat('yMMMMd').format(date));
+      });
+    }, currentTime: DateTime.now(), locale: LocaleType.en);
   }
 }
