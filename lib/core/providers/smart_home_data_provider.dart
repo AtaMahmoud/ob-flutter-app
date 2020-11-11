@@ -31,12 +31,12 @@ class SmartHomeDataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSensorData(SensorData sensorData){
+  void setSensorData(SensorData sensorData) {
     _sensorDataList.add(sensorData);
     notifyListeners();
   }
 
-  void setLedStatus(String ledStat){
+  void setLedStatus(String ledStat) {
     _ledStatus = ledStat;
     notifyListeners();
   }
@@ -109,12 +109,15 @@ class SmartHomeDataProvider extends ChangeNotifier {
       }
       // setReceivedText('Received payload:$payload from topic: ${c[0].topic}');
 
-      if(c[0].topic.compareTo("test/message/status")==0){
+      if (c[0].topic.compareTo("test/message/status") == 0) {
         setLedStatus(payload);
-      }else{
-      var topics = c[0].topic.split("/");
-      SensorData sensorData = SensorData(roomName: topics.first, sensorName: topics.last,sensorData: payload);
-      setSensorData(sensorData);
+      } else {
+        var topics = c[0].topic.split("/");
+        SensorData sensorData = SensorData(
+            roomName: topics.first,
+            sensorName: topics.last,
+            sensorData: payload);
+        setSensorData(sensorData);
       }
       // notifyListeners();
     }).onError((e) {
@@ -169,7 +172,7 @@ class SmartHomeDataProvider extends ChangeNotifier {
       notifyListeners();
     }
     return allTopicData;
-  }    
+  }
 
   Future<List<IotEventData>> fetchAllSensorData() async {
     notifyListeners();
@@ -211,26 +214,14 @@ class SmartHomeDataProvider extends ChangeNotifier {
     return allSensorData;
   }
 
-    Future<List<IotEventData>> fetchSensorDataByTopic(String topic) async {
+  Future<List<IotEventData>> fetchSensorDataByTopic(String topic) async {
     notifyListeners();
     List<IotEventData> allSensorData = [];
-    topic = topic.replaceAll(new RegExp(r'/'), '%2F');
-    try {
-      allSensorData = await _smartHomeServerRepository.getSensorDataById(topic);
-      notifyListeners();
-    } catch (e) {
-      print(e.toString());
-      notifyListeners();
-    }
-    return allSensorData;
-  }
+    topic = topic.replaceAll(new RegExp(r'\/'), '%2F');
 
-    Future<List<IotEventData>> fetchSensorDataBetweenDates(String topic,String startDate, String endDate) async {
-    notifyListeners();
-    List<IotEventData> allSensorData = [];
     try {
       allSensorData =
-          await _smartHomeServerRepository.getTopicsDataBetweenDates(topic,startDate,endDate);
+          await _smartHomeServerRepository.getSensorDataByTopic(topic);
       notifyListeners();
     } catch (e) {
       print(e.toString());
@@ -239,12 +230,26 @@ class SmartHomeDataProvider extends ChangeNotifier {
     return allSensorData;
   }
 
+  Future<List<IotEventData>> fetchSensorDataBetweenDates(
+      String topic, String startDate, String endDate) async {
+    notifyListeners();
+    List<IotEventData> allSensorData = [];
+    try {
+      allSensorData = await _smartHomeServerRepository
+          .getTopicsDataBetweenDates(topic, startDate, endDate);
+      notifyListeners();
+    } catch (e) {
+      print(e.toString());
+      notifyListeners();
+    }
+    return allSensorData;
+  }
 }
+
 class SensorData {
   String roomName;
   String sensorName;
   String sensorData;
 
-  SensorData({this.roomName,this.sensorName,this.sensorData});
-
+  SensorData({this.roomName, this.sensorName, this.sensorData});
 }
