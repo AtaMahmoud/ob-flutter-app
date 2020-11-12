@@ -200,25 +200,11 @@ class SmartHomeDataProvider extends ChangeNotifier {
     return allSensorData;
   }
 
-  Future<List<IotEventData>> fetchSensorDataLast3Days() async {
-    notifyListeners();
-    List<IotEventData> allSensorData = [];
-    try {
-      allSensorData =
-          await _smartHomeServerRepository.getSensorDataBetweenDates();
-      notifyListeners();
-    } catch (e) {
-      print(e.toString());
-      notifyListeners();
-    }
-    return allSensorData;
-  }
-
   Future<List<IotEventData>> fetchSensorDataByTopic(String topic) async {
     notifyListeners();
     List<IotEventData> allSensorData = [];
     topic = topic.replaceAll(new RegExp(r'\/'), '%2F');
-
+    debugPrint('Parsed topic ----- $topic');
     try {
       allSensorData =
           await _smartHomeServerRepository.getSensorDataByTopic(topic);
@@ -234,6 +220,9 @@ class SmartHomeDataProvider extends ChangeNotifier {
       String topic, String startDate, String endDate) async {
     notifyListeners();
     List<IotEventData> allSensorData = [];
+    topic = topic.replaceAll(new RegExp(r'\/'), '%2F');
+    debugPrint('Parsed topic ----- $topic');
+
     try {
       allSensorData = await _smartHomeServerRepository
           .getTopicsDataBetweenDates(topic, startDate, endDate);

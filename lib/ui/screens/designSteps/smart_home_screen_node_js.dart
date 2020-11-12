@@ -43,6 +43,7 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
 
   String _fromDateTime;
   String _toDateTime;
+  String _selectedTopic;
 
   GenericBloc<String> _fromDateTimeBloc;
   GenericBloc<String> _toDateTimeBloc;
@@ -70,22 +71,39 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
     });
 
     _iotTopicBloc.topicController.listen((topic) {
-      if(_fromDateTime != null && _toDateTime != null){
+      _selectedTopic = topic;
+      if (_fromDateTime != null &&
+          _fromDateTime.length > 0 &&
+          _toDateTime != null &&
+          _toDateTime.length > 0 &&
+          topic != null &&
+          topic.length > 1) {
         _sensorDataBetweenDates = Provider.of<SmartHomeDataProvider>(context)
-          .fetchSensorDataBetweenDates(topic,_fromDateTime,_toDateTime);
-      }else{
-      _sensorDataById = Provider.of<SmartHomeDataProvider>(context)
-          .fetchSensorDataByTopic(topic);
+            .fetchSensorDataBetweenDates(topic, _fromDateTime, _toDateTime);
+      } else if (topic != null && topic.length > 1) {
+        _sensorDataById = Provider.of<SmartHomeDataProvider>(context)
+            .fetchSensorDataByTopic(topic);
       }
-
     });
 
     _fromDateTimeBloc.controller.listen((dateTime) {
       _fromDateTime = dateTime;
+      if (_fromDateTime != null &&
+          _fromDateTime.length > 0 &&
+          _selectedTopic != null &&
+          _selectedTopic.length > 0) {
+        _iotTopicBloc.selectedTopicChanged(_selectedTopic);
+      }
     });
 
     _toDateTimeBloc.controller.listen((dateTime) {
       _toDateTime = dateTime;
+      if (_toDateTime != null &&
+          _toDateTime.length > 0 &&
+          _selectedTopic != null &&
+          _selectedTopic.length > 0) {
+        _iotTopicBloc.selectedTopicChanged(_selectedTopic);
+      }
     });
   }
 
@@ -140,6 +158,13 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
                                   label: 'Topic')
                               : Container(),
                         ),
+                        SliverToBoxAdapter(
+                          child: SpaceH32(),
+                        ),
+                        _clearDateFilter(),
+                        SliverToBoxAdapter(
+                          child: SpaceH32(),
+                        ),
                         FutureBuilder<List<IotEventData>>(
                             future: _allSensorData,
                             builder: (context, snapshot) {
@@ -186,7 +211,8 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
                                 return SliverToBoxAdapter(
-                                  child: Container(),
+                                  child: _buildHeader(
+                                      'Fetching sensor data between dates'),
                                 );
                               }
 
@@ -218,6 +244,34 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
     );
   }
 
+  _clearDateFilter() {
+    return SliverToBoxAdapter(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          InkWell(
+            onTap: () {
+              _fromDateTimeBloc.controller.add('');
+              _toDateTimeBloc.controller.add('');
+              setState(() {});
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24.w),
+                  border: Border.all(
+                      color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER)),
+              padding: EdgeInsets.all(16.w),
+              child: Text(
+                'Clear Filters',
+                // textScaleFactor: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   _sensorDataList(List<IotEventData> sensorDataList, String title) {
     return SliverStickyHeader(
       header: _buildHeader(title),
@@ -238,9 +292,10 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
   Widget _buildHeader(String text) {
     return new Container(
       color: AppTheme.chipBackground,
-      padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
+      padding: EdgeInsets.only(top: 16.h),
       alignment: Alignment.centerLeft,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           SizedBox(
             height: 32.h,
@@ -252,16 +307,11 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
     );
   }
 
-  Row _sensorTableTitle(String text) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Text(
-          text,
-          textScaleFactor: 1.5,
-          style: TextStyle(color: ColorConstants.ACCESS_MANAGEMENT_LIST_TITLE),
-        ),
-      ],
+  Text _sensorTableTitle(String text) {
+    return Text(
+      text,
+      textScaleFactor: 1.25,
+      style: TextStyle(color: ColorConstants.ACCESS_MANAGEMENT_LIST_TITLE),
     );
   }
 
@@ -270,30 +320,38 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
       border: TableBorder.all(),
       children: [
         TableRow(children: [
-          Text(col1,
-              textScaleFactor: 1.5,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
-          Text(col2,
-              textScaleFactor: 1.5,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
-          Text(col3,
-              textScaleFactor: 1.5,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
-          Text(col4,
-              textScaleFactor: 1.5,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
+          Center(
+            child: Text(col1,
+                textScaleFactor: 1.25,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    // fontWeight: FontWeight.bold,
+                    color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
+          ),
+          Center(
+            child: Text(col2,
+                textScaleFactor: 1.25,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    // fontWeight: FontWeight.bold,
+                    color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
+          ),
+          Center(
+            child: Text(col3,
+                textScaleFactor: 1.25,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    // fontWeight: FontWeight.bold,
+                    color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
+          ),
+          Center(
+            child: Text(col4,
+                textScaleFactor: 1.25,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    // fontWeight: FontWeight.bold,
+                    color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
+          ),
         ])
       ],
     );
@@ -386,7 +444,7 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
           borderRadius: BorderRadius.circular(16.w),
           border: Border.all(color: ColorConstants.ACCESS_MANAGEMENT_BUTTON)),
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 24.h,horizontal: 16.w),
+        padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
         child: SizedBox(
           width: double.maxFinite,
           child: InkWell(
@@ -444,9 +502,10 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
       // // print('change $date in time zone ' +
       // date.timeZoneOffset.inHours.toString());
     }, onConfirm: (date) {
-      // print('confirm $date');
+      print('picked ${date.toUtc().toIso8601String()}');
       setState(() {
-        bloc.controller.add(DateFormat('yMMMMd').format(date));
+        bloc.controller.add(date.toUtc().toIso8601String());
+        // bloc.controller.add(DateFormat('yMMMMd').format(date));
       });
     }, currentTime: DateTime.now(), locale: LocaleType.en);
   }
