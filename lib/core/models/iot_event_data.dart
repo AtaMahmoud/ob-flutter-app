@@ -21,7 +21,7 @@ class IotEventData{
 */
 
   int eventID;
-  double value;
+  String value;
   String topic;
   String tiemStamp;
 
@@ -32,7 +32,7 @@ class IotEventData{
 
     return IotEventData(
       eventID: json['EventID'],
-      value: json['Temperature'],
+      value: json['value'],
       topic: json['topic'],
       tiemStamp: json['TimeStamp'],
     );

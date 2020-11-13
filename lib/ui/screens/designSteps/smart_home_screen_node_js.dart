@@ -212,13 +212,13 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
                                   ConnectionState.waiting) {
                                 return SliverToBoxAdapter(
                                   child: _buildHeader(
-                                      'Fetching sensor data between dates'),
+                                      'Fetching Sensor Data Between Dates'),
                                 );
                               }
 
                               if (snapshot.hasData) {
                                 return _sensorDataList(
-                                    snapshot.data, 'Sensor Data between dates');
+                                    snapshot.data, 'Sensor Data Between Dates');
                               }
 
                               return SliverToBoxAdapter(
@@ -263,6 +263,7 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
               padding: EdgeInsets.all(16.w),
               child: Text(
                 'Clear Filters',
+                style: TextStyle(color:ColorConstants.ACCESS_MANAGEMENT_TITLE),
                 // textScaleFactor: 1.5,
               ),
             ),
@@ -283,10 +284,16 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
               roomName,
               sensorName,
               sensorDataList[index].value.toString(),
-              sensorDataList[index].tiemStamp.toString());
+             _parseTimeStamp(sensorDataList[index].tiemStamp.toString())
+              );
         }, childCount: sensorDataList.length),
       ),
     );
+  }
+
+  _parseTimeStamp(String timeStamp){
+    // dd/MM/yy\nH:m:s:
+    return new DateFormat.yMd().add_jm().format(DateTime.parse(timeStamp));
   }
 
   Widget _buildHeader(String text) {
@@ -297,60 +304,65 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          SizedBox(
-            height: 32.h,
-          ),
           _sensorTableTitle(text),
-          _tableRow('Room', 'Sensor', 'Data', 'Time')
+          SizedBox(
+            height: 16.h,
+          ),
+          _tableRow('Room', 'Sensor', 'Data', 'Time', isDataRow: false)
         ],
       ),
     );
   }
 
-  Text _sensorTableTitle(String text) {
-    return Text(
-      text,
-      textScaleFactor: 1.25,
-      style: TextStyle(color: ColorConstants.ACCESS_MANAGEMENT_LIST_TITLE),
+  Align _sensorTableTitle(String text) {
+    return Align(
+      alignment: Alignment.centerLeft,
+          child: Text(
+        text,
+        textScaleFactor: 1.5,
+        style: TextStyle(
+            color: ColorConstants.ACCESS_MANAGEMENT_LIST_TITLE,
+            fontWeight: FontWeight.w800),
+      ),
     );
   }
 
-  Widget _tableRow(String col1, String col2, String col3, String col4) {
+  Widget _tableRow(String col1, String col2, String col3, String col4,
+      {bool isDataRow = true}) {
+    double _textScaleFactor = isDataRow ? 1.1 : 1.25;
+    Color _textColor =
+        isDataRow ? Colors.black : ColorConstants.ACCESS_MANAGEMENT_TITLE;
+    FontWeight _fontWeight = isDataRow ? FontWeight.normal : FontWeight.w800;
     return Table(
       border: TableBorder.all(),
       children: [
         TableRow(children: [
           Center(
             child: Text(col1,
-                textScaleFactor: 1.25,
+                textScaleFactor: _textScaleFactor,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    // fontWeight: FontWeight.bold,
-                    color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
+                  fontWeight: _fontWeight,
+                  color: _textColor,
+                )),
           ),
           Center(
             child: Text(col2,
-                textScaleFactor: 1.25,
+                textScaleFactor: _textScaleFactor,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                    // fontWeight: FontWeight.bold,
-                    color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
+                style: TextStyle(fontWeight: _fontWeight, color: _textColor)),
           ),
           Center(
             child: Text(col3,
-                textScaleFactor: 1.25,
+                textScaleFactor: _textScaleFactor,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                    // fontWeight: FontWeight.bold,
-                    color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
+                style: TextStyle(fontWeight: _fontWeight, color: _textColor)),
           ),
           Center(
             child: Text(col4,
-                textScaleFactor: 1.25,
+                textScaleFactor: _textScaleFactor,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                    // fontWeight: FontWeight.bold,
-                    color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
+                style: TextStyle(fontWeight: _fontWeight, color: _textColor)),
           ),
         ])
       ],

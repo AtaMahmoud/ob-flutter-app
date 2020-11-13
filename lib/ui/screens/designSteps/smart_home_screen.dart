@@ -322,11 +322,11 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
           ...sensorDataList
               .map((sensorData) => TableRow(children: [
                     Text(sensorData.roomName,
-                        textScaleFactor: 1.5, textAlign: TextAlign.center),
+                        textScaleFactor: 1.1, textAlign: TextAlign.center),
                     Text(sensorData.sensorName,
-                        textScaleFactor: 1.5, textAlign: TextAlign.center),
+                        textScaleFactor: 1.1, textAlign: TextAlign.center),
                     Text(sensorData.sensorData,
-                        textScaleFactor: 1.5, textAlign: TextAlign.center),
+                        textScaleFactor: 1.1, textAlign: TextAlign.center),
                   ]))
               .toList()
         ],
@@ -357,17 +357,17 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
             children: [
               TableRow(children: [
                 Text("Room",
-                    textScaleFactor: 1.5,
+                    textScaleFactor: 1.25,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
                 Text("Sensor",
-                    textScaleFactor: 1.5,
+                    textScaleFactor: 1.25,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
                 Text("Data",
-                    textScaleFactor: 1.5,
+                    textScaleFactor: 1.25,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: ColorConstants.ACCESS_MANAGEMENT_TITLE)),
@@ -463,8 +463,10 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
 String parseTopicName(String topic) {
   String topicName = '';
   var topics = topic.split("/");
-  if (topics.length > 2) {
+  if (topics.length >= 2) {
     topicName = topics.last + " ( " + topics.first + " )";
+  }else{
+    topicName = topic;
   }
   return topicName;
 }
