@@ -178,7 +178,7 @@ class _WeatherMoreWidgetState extends State<WeatherMoreWidget> {
   }
 
   _startSpace() {
-    UIHelper.getTopEmptyContainerWithColor(
+    return UIHelper.getTopEmptyContainerWithColor(
         ScreenUtil.statusBarHeight * 4, Colors.white);
   }
 
