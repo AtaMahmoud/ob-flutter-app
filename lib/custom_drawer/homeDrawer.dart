@@ -9,6 +9,8 @@ import 'package:ocean_builder/core/providers/local_noti_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/access_management_screen.dart';
+import 'package:ocean_builder/ui/screens/designSteps/smart_home_screen.dart';
+import 'package:ocean_builder/ui/screens/designSteps/smart_home_screen_node_js.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
 import 'package:ocean_builder/ui/screens/menu/landing_screen.dart';
 import 'package:ocean_builder/ui/screens/notification/noti_history_screen_with_drawer.dart';
@@ -116,6 +118,18 @@ class _HomeDrawerState extends State<HomeDrawer> {
         labelName: AppStrings.profile,
         isAssetsImage: true,
         imageName: ImagePaths.svgIcDrawerProfile,
+      ),
+            DrawerList(
+        index: DrawerIndex.SMART_HOME_MQTT,
+        labelName: AppStrings.smartHome.toUpperCase(),
+        isAssetsImage: true,
+        imageName: ImagePaths.svgHomeIcon,
+      ),
+            DrawerList(
+        index: DrawerIndex.SMART_HOME_NODEJS,
+        labelName: AppStrings.smartHome_local_server.toUpperCase(),
+        isAssetsImage: true,
+        imageName: ImagePaths.svgHomeIcon,
       ),
       DrawerList(
         index: DrawerIndex.LOGOUT,
@@ -640,7 +654,14 @@ class _HomeDrawerState extends State<HomeDrawer> {
     } else if (drawerIndex == DrawerIndex.PROFILE) {
       Navigator.of(context).pop();
       Navigator.of(context).pushNamed(ProfileScreen.routeName);
-    } else if (drawerIndex == DrawerIndex.LOGOUT) {
+    }else if (drawerIndex == DrawerIndex.SMART_HOME_MQTT) {
+      Navigator.of(context).pop();
+      Navigator.of(context).pushNamed(SmartHomeScreen.routeName);
+    }else if (drawerIndex == DrawerIndex.SMART_HOME_NODEJS) {
+      Navigator.of(context).pop();
+      Navigator.of(context).pushNamed(SmartHomeScreenNodeServer.routeName);
+    }
+     else if (drawerIndex == DrawerIndex.LOGOUT) {
       _userProvider.signOut().then((onValue) {
         _selectedOBIdProvider.selectedObId = AppStrings.selectOceanBuilder;
         Navigator.pushAndRemoveUntil(
@@ -681,6 +702,8 @@ enum DrawerIndex {
   ACCESS_MANAGEMENT,
   SETTINGS,
   PROFILE,
+  SMART_HOME_MQTT,
+  SMART_HOME_NODEJS,
   LOGOUT
 }
 

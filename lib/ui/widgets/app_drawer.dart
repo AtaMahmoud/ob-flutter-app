@@ -12,6 +12,8 @@ import 'package:ocean_builder/core/providers/ocean_builder_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/helper/method_helper.dart';
 import 'package:ocean_builder/ui/screens/controls/control_screen.dart';
+import 'package:ocean_builder/ui/screens/designSteps/smart_home_screen.dart';
+import 'package:ocean_builder/ui/screens/designSteps/smart_home_screen_node_js.dart';
 import 'package:ocean_builder/ui/screens/marine/marine_screen.dart';
 import 'package:ocean_builder/ui/screens/menu/landing_screen.dart';
 import 'package:ocean_builder/ui/screens/notification/noti_history_screen.dart';
@@ -81,6 +83,8 @@ class AppDrawer extends StatelessWidget {
                   _drawerItemAccessRequest(context),
                   _drawerItemSettings(context),
                   _drawerItemProfile(context),
+                  _drawerItemSmartHomeMqtt(context),
+                  _drawerItemSmartHomeRpiServer(context)
                 ],
               ),
             ),
@@ -175,6 +179,34 @@ class AppDrawer extends StatelessWidget {
       onTap: () {
         Navigator.of(context).pop();
         Navigator.of(context).pushNamed(WeatherScreen.routeName);
+      },
+      isInactive: _selectedOBIdProvider.selectedObId
+              .compareTo(AppStrings.selectOceanBuilder) ==
+          0,
+    );
+  }
+
+  Widget _drawerItemSmartHomeMqtt(BuildContext context) {
+    return _createDrawerItem(
+      iconPath: ImagePaths.icHome,
+      text: AppStrings.smartHome,
+      onTap: () {
+        Navigator.of(context).pop();
+        Navigator.of(context).pushNamed(SmartHomeScreen.routeName);
+      },
+      isInactive: _selectedOBIdProvider.selectedObId
+              .compareTo(AppStrings.selectOceanBuilder) ==
+          0,
+    );
+  }
+
+  Widget _drawerItemSmartHomeRpiServer(BuildContext context) {
+    return _createDrawerItem(
+      iconPath: ImagePaths.icHome,
+      text: AppStrings.smartHome_local_server,
+      onTap: () {
+        Navigator.of(context).pop();
+        Navigator.of(context).pushNamed(SmartHomeScreenNodeServer.routeName);
       },
       isInactive: _selectedOBIdProvider.selectedObId
               .compareTo(AppStrings.selectOceanBuilder) ==
