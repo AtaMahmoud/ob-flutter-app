@@ -2047,8 +2047,7 @@ class UserProvider extends BaseProvider {
 
   // ------------------------------------------------------- Update All Lighting Scene ( PUT ) --------------------------------------------------------------------
 
-  Future<ResponseStatus> setWeatherSource(
-      List<Scene> lighScenes, String source) async {
+  Future<ResponseStatus> setWeatherSource(String weatherSource) async {
     isLoading = true;
     notifyListeners();
     ResponseStatus responseStatus = ResponseStatus();
@@ -2057,34 +2056,32 @@ class UserProvider extends BaseProvider {
     await _headerManager.initalizeAuthenticatedUserHeaders();
 
     try {
-      final Response lightingSceneUpdateResponse = await _apiBaseHelper.put(
-          url: APP_CONFIG.Config.UPDATE_ALL_LIGHT_SCENES(seaPodId, source),
+      final Response response = await _apiBaseHelper.put(
+          url: APP_CONFIG.Config.SET_WEATHER_SOURCE(weatherSource),
           headers: _headerManager.authUserHeaders,
-          data: lighScenes.map((f) {
-            return f.toJson();
-          }).toList());
+          );
 
-      if (lightingSceneUpdateResponse != null &&
-          lightingSceneUpdateResponse.statusCode == 200) {
-        // debugPrint('Update All Lighting Scenes data ----------- $lightingSceneUpdateResponse');
+      if (response != null &&
+          response.statusCode == 200) {
+        // debugPrint('Set Weather Source  data ----------- $lightingSceneUpdateResponse');
         responseStatus.status = 200;
       } else {
-        responseStatus.code = 'Update All Lighting Scenes Failed';
-        responseStatus.message = lightingSceneUpdateResponse.statusMessage;
-        responseStatus.status = lightingSceneUpdateResponse.statusCode;
+        responseStatus.code = 'Set Weather Source Failed';
+        responseStatus.message = response.statusMessage;
+        responseStatus.status = response.statusCode;
         // debugPrint(
-        // 'Update All Lighting Scenes error ============================== $responseStatus');
+        // 'Set Weather Source  error ============================== $responseStatus');
       }
     } on FetchDataException catch (e) {
       AppException ea = e;
-      responseStatus.code = 'Update All Lighting Scenes Failed';
+      responseStatus.code = 'Set Weather Source ';
       responseStatus.message = ea.message;
       responseStatus.status = ea.statusCode;
       // debugPrint(
-      // 'Update All Lighting Scenes error ============================== ${ea.message}');
+      // 'Set Weather Source error ============================== ${ea.message}');
     } on BadRequestException catch (e) {
       AppException ea = e;
-      responseStatus.code = 'Update All Lighting Scenes Failed';
+      responseStatus.code = 'Set Weather Source ';
       responseStatus.message = ea.message;
       responseStatus.status = ea.statusCode;
     }
