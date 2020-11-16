@@ -2043,6 +2043,58 @@ class UserProvider extends BaseProvider {
     }
   }
 
+// ------------------------------------------------------------ Set weather srouce (PUT) -------------------------------------------------------------
+
+  // ------------------------------------------------------- Update All Lighting Scene ( PUT ) --------------------------------------------------------------------
+
+  Future<ResponseStatus> setWeatherSource(
+      List<Scene> lighScenes, String source) async {
+    isLoading = true;
+    notifyListeners();
+    ResponseStatus responseStatus = ResponseStatus();
+    responseStatus.status = 200;
+
+    await _headerManager.initalizeAuthenticatedUserHeaders();
+
+    try {
+      final Response lightingSceneUpdateResponse = await _apiBaseHelper.put(
+          url: APP_CONFIG.Config.UPDATE_ALL_LIGHT_SCENES(seaPodId, source),
+          headers: _headerManager.authUserHeaders,
+          data: lighScenes.map((f) {
+            return f.toJson();
+          }).toList());
+
+      if (lightingSceneUpdateResponse != null &&
+          lightingSceneUpdateResponse.statusCode == 200) {
+        // debugPrint('Update All Lighting Scenes data ----------- $lightingSceneUpdateResponse');
+        responseStatus.status = 200;
+      } else {
+        responseStatus.code = 'Update All Lighting Scenes Failed';
+        responseStatus.message = lightingSceneUpdateResponse.statusMessage;
+        responseStatus.status = lightingSceneUpdateResponse.statusCode;
+        // debugPrint(
+        // 'Update All Lighting Scenes error ============================== $responseStatus');
+      }
+    } on FetchDataException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Update All Lighting Scenes Failed';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+      // debugPrint(
+      // 'Update All Lighting Scenes error ============================== ${ea.message}');
+    } on BadRequestException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Update All Lighting Scenes Failed';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+    }
+
+    isLoading = false;
+    notifyListeners();
+
+    return responseStatus;
+  }
+
 //######################################################################################################################################################
 
   Future<void> signOut() async {
