@@ -40,6 +40,9 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
   String _currentlySubscribedTopic;
 
   bool _isLedOn = false;
+  bool _isRedLedOn = false;
+  bool _isGreenLedOn = false;
+  bool _isBlueLedOn = false;
 
   @override
   void initState() {
@@ -55,10 +58,6 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
               MqttConnectReturnCode.connectionAccepted) {
             _mqttServerClient = client;
             _isConnecting = true;
-            // for(int i = 0; i < topicList.length ; i ++){
-            // client.subscribe(topicList[i].topic, MqttQos.atLeastOnce);
-            //  debugPrint('Subscribed to Topic: ${topicList[i].topic}');
-            // }
             if (topicList.length > 0) {
               client.subscribe(topicList[0].topic, MqttQos.exactlyOnce);
               _currentlySubscribedTopic = topicList[0].topic;
@@ -244,6 +243,9 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
         scrollDirection: Axis.horizontal,
         children:<Widget>[
           // _controlWidget(),
+          _controlWidgetRgbLed(ledStatus: _isLedOn,onMessage: 'red_on', offMessage: 'red_off',ledColor: Colors.red),
+          _controlWidgetRgbLed(ledStatus: _isLedOn,onMessage: 'gren_on', offMessage: 'green_off',ledColor: Colors.green),
+          _controlWidgetRgbLed(ledStatus: _isLedOn,onMessage: 'blue_on', offMessage: 'blue_off',ledColor: Colors.blue),
           for(var i = 0; i < 10; i++)
              _controlWidget(),
         ],
@@ -311,6 +313,66 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
           ),
         );
   }
+
+    Container _controlWidgetRgbLed({bool ledStatus, String onMessage, String offMessage, Color ledColor}) {
+    return Container(
+          padding: EdgeInsets.all(16.w),
+          margin: EdgeInsets.symmetric(horizontal: 16.w),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(32.w),
+              // shape: BoxShape.rectangle,
+              color: ColorConstants.AVATAR_BKG),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              InkWell(
+                onTap: () {
+                  // send message to all topics
+                  final builder1 = MqttClientPayloadBuilder();
+                  // builder1.addInt(1);
+                  if (ledStatus) {
+                    builder1.addString(onMessage);
+                  } else {
+                    builder1.addString(offMessage);
+                  }
+                  _mqttServerClient.publishMessage(
+                      "test/led", MqttQos.exactlyOnce, builder1.payload,
+                      retain: true);
+                  _mqttServerClient.subscribe(
+                      "test/led/status", MqttQos.exactlyOnce);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    //  borderRadius: BorderRadius.circular(32.w),
+                    shape: BoxShape.circle,
+                    color: ledStatus ? Colors.red : Colors.green,
+                  ),
+                  padding: EdgeInsets.all(32.w),
+                  child: Text(
+                    ledStatus ? "OFF" : "ON",
+                    textScaleFactor: 1.25,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 8.h,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.w),
+                child: Text(
+                  ledStatus ? "Led is on" : "Led is off",
+                  textScaleFactor: 1.5,
+                  style: TextStyle(
+                    color:ledStatus ? ledColor : Colors.grey,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+  }
+  
 
   _buildSensorDataTable(List<SensorData> sensorDataList) {
     return Container(

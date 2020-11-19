@@ -109,7 +109,9 @@ class SmartHomeDataProvider extends ChangeNotifier {
       }
       // setReceivedText('Received payload:$payload from topic: ${c[0].topic}');
 
-      if (c[0].topic.compareTo("test/message/status") == 0) {
+      if (c[0].topic.compareTo("test/led/status") == 0) {
+        setLedStatus(payload);
+      }else if (c[0].topic.compareTo("test/message/status") == 0) {
         setLedStatus(payload);
       } else {
         var topics = c[0].topic.split("/");
