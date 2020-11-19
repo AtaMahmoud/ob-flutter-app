@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ocean_builder/bloc/source_priority_bloc.dart';
 import 'package:ocean_builder/constants/constants.dart';
+import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
+import 'package:provider/provider.dart';
 import 'package:reorderables/reorderables.dart';
 
 class SourcePrioritySelectorModal extends StatefulWidget {
@@ -104,7 +106,8 @@ class _SourcePrioritySelectorModalState
                       Spacer(),
                       InkWell(
                         onTap: () {
-                          Navigator.of(context).pop();
+                          if(!Provider.of<UserProvider>(context).isLoading)
+                            Navigator.of(context).pop();
                         },
                         child: Padding(
                           padding: EdgeInsets.only(
@@ -137,13 +140,23 @@ class _SourcePrioritySelectorModalState
       _seaPodSceneRows.insert(newIndex, row);
       _seaPodSceneChanged = true;
       if (_seaPodSceneRows[0].compareTo('LOCAL (WEATHERFLOW STATION)') == 0) {
+        Provider.of<UserProvider>(context).setWeatherSource('local').then((response) {
+            if(response.status == 200){
         widget.sourcePriorityBloc.topProprityChanged('local');
         ApplicationStatics.selectedWeatherProvider = 'local';
+            }
+        });
+
       } else {
+        Provider.of<UserProvider>(context).setWeatherSource('external').then((response) {
+          if(response.status == 200){
         widget.sourcePriorityBloc.topProprityChanged('external');
         ApplicationStatics.selectedWeatherProvider = 'external';
+          }
+        });
       }
-    });
+    }
+    );
   }
 
   _reorderableContent() {
