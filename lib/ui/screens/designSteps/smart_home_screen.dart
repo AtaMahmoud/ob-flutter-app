@@ -43,6 +43,14 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
   bool _isRedLedOn = false;
   bool _isGreenLedOn = false;
   bool _isBlueLedOn = false;
+  String _msgRedLedOn = 'red_on';
+  String _msgRedLedOff = 'red_off';
+  String _msgGreenLedOn = 'green_on';
+  String _msgGreenLedOff = 'green_off';
+  String _msgBlueLedOn = 'blue_on';
+  String _msgBlueLedOff = 'blue_off';
+
+
 
   @override
   void initState() {
@@ -232,6 +240,20 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
     else
       _isLedOn = false;
 
+    if(_smartHomeDataProvider.ledControl.compareTo(_msgRedLedOn) == 0){
+     _isRedLedOn = true; 
+    }else if(_smartHomeDataProvider.ledControl.compareTo(_msgGreenLedOn) == 0){
+     _isGreenLedOn = true; 
+    } else if(_smartHomeDataProvider.ledControl.compareTo(_msgBlueLedOn) == 0){
+     _isBlueLedOn = true; 
+    }else if(_smartHomeDataProvider.ledControl.compareTo(_msgRedLedOff) == 0){
+     _isRedLedOn = false; 
+    }else if(_smartHomeDataProvider.ledControl.compareTo(_msgGreenLedOff) == 0){
+     _isGreenLedOn = false; 
+    }else if(_smartHomeDataProvider.ledControl.compareTo(_msgBlueLedOff) == 0){
+     _isBlueLedOn = false; 
+    }   
+
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -242,12 +264,10 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
       child: ListView(
         scrollDirection: Axis.horizontal,
         children:<Widget>[
-          // _controlWidget(),
-          _controlWidgetRgbLed(ledStatus: _isLedOn,onMessage: 'red_on', offMessage: 'red_off',ledColor: Colors.red),
-          _controlWidgetRgbLed(ledStatus: _isLedOn,onMessage: 'gren_on', offMessage: 'green_off',ledColor: Colors.green),
-          _controlWidgetRgbLed(ledStatus: _isLedOn,onMessage: 'blue_on', offMessage: 'blue_off',ledColor: Colors.blue),
-          for(var i = 0; i < 10; i++)
-             _controlWidget(),
+          _controlWidgetRgbLed(ledStatus: _isRedLedOn,onMessage: _msgRedLedOn, offMessage: _msgRedLedOff,ledColor: Colors.red),
+          _controlWidgetRgbLed(ledStatus: _isGreenLedOn,onMessage: _msgGreenLedOn, offMessage: _msgGreenLedOff,ledColor: Colors.green),
+          _controlWidgetRgbLed(ledStatus: _isBlueLedOn,onMessage: _msgBlueLedOn, offMessage: _msgBlueLedOff,ledColor: Colors.blue),
+          _controlWidget(),
         ],
       ),
     );
