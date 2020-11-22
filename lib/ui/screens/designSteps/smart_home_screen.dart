@@ -49,7 +49,7 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
   String _msgGreenLedOff = 'green_off';
   String _msgBlueLedOn = 'blue_on';
   String _msgBlueLedOff = 'blue_off';
-m  String _topicLedControl = 'test/leds';
+  String _topicLedControl = 'test/leds';
   String _topicLedControlStatus = 'test/leds/status';
 
   @override
