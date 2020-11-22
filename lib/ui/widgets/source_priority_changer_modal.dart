@@ -222,18 +222,18 @@ class _SourcePrioritySelectorModalState
                   ],
                 ),
               ),
-              Positioned(
-                  top: 0,
-                  bottom: 0,
-                  right: 12.w,
-                  child: _seaPodSceneRows[index]
-                              .compareTo('LOCAL (WEATHERFLOW STATION)') ==
-                          0
-                      ? SvgPicture.asset(
-                          ImagePaths.svgError,
-                          height: 48.h,
-                        )
-                      : Container()),
+              // Positioned(
+              //     top: 0,
+              //     bottom: 0,
+              //     right: 12.w,
+              //     child: _seaPodSceneRows[index]
+              //                 .compareTo('LOCAL (WEATHERFLOW STATION)') ==
+              //             0
+              //         ? SvgPicture.asset(
+              //             ImagePaths.svgError,
+              //             height: 48.h,
+              //           )
+              //         : Container()),
             ],
           ),
         ),
