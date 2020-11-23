@@ -141,10 +141,8 @@ class _ManagePermissionScreenState extends State<ManagePermissionScreen> {
     );
   }
 
-  _topBar() {
-    UIHelper.defaultSliverAppbar(_scaffoldKey, goBack,
-        screnTitle: ScreenTitle.MANAGE_PERMISSIONS);
-  }
+  _topBar() => UIHelper.defaultSliverAppbar(_scaffoldKey, goBack,
+      screnTitle: ScreenTitle.MANAGE_PERMISSIONS);
 
   _permissionSetItemsFuture() {
     return FutureBuilder<SeaPod>(
