@@ -1769,10 +1769,10 @@ class _IPicker {
 class ColorPicker extends StatefulWidget {
   final Color color;
   final ValueChanged<Color> onChanged;
-  final ValueChanged<bool> onLightSwitchChanged;
+  // final ValueChanged<bool> onLightSwitchChanged;
 
   const ColorPicker(
-      {Key key, this.color = Colors.blue,this.onLightSwitchChanged, @required this.onChanged})
+      {Key key, this.color = Colors.blue, @required this.onChanged})
       : super(key: key);
 
   @override
@@ -1949,13 +1949,13 @@ class ColorPickerState extends State<ColorPicker> {
 
     
 
-  void _onSwitchChanged(bool value) {
-    super.widget.onLightSwitchChanged(value);
-    setState(() {
-      switchOn = value;
-    });
+  // void _onSwitchChanged(bool value) {
+  //   super.widget.onLightSwitchChanged(value);
+  //   setState(() {
+  //     switchOn = value;
+  //   });
     
-  }
+  // }
 
   Widget _buildHeadWithSwitchButton() {
     return Padding(
@@ -1964,7 +1964,7 @@ class ColorPickerState extends State<ColorPicker> {
       ),
       child: new Row(
       // mainAxisSize: MainAxisSize.min, 
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
 /*               //Avator
             new Container(
@@ -1983,20 +1983,20 @@ class ColorPickerState extends State<ColorPicker> {
                 )
             ), */
 
-        Transform.scale(
-          scale: 1.5,
-          child: Switch(
-            onChanged: _onSwitchChanged,
-            value: switchOn,
-            activeColor: Colors.green,//this._color,
-            activeTrackColor: ColorConstants.LIGHT_POPUP_BKG,
-            inactiveThumbColor: Colors.grey,
-            inactiveTrackColor: ColorConstants.LIGHT_POPUP_BKG,
-            // activeThumbImage: Image.asset(
-            //   ImagePaths.icAdd
-            // ).image,
-          ),
-        ),
+        // Transform.scale(
+        //   scale: 1.5,
+        //   child: Switch(
+        //     onChanged: _onSwitchChanged,
+        //     value: switchOn,
+        //     activeColor: Colors.green,//this._color,
+        //     activeTrackColor: ColorConstants.LIGHT_POPUP_BKG,
+        //     inactiveThumbColor: Colors.grey,
+        //     inactiveTrackColor: ColorConstants.LIGHT_POPUP_BKG,
+        //     // activeThumbImage: Image.asset(
+        //     //   ImagePaths.icAdd
+        //     // ).image,
+        //   ),
+        // ),
 
         // new SizedBox(width: 22),
 

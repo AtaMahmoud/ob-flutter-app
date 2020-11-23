@@ -218,6 +218,7 @@ class _LightingScreenState extends State<LightingScreen> {
                         _selectRoomDropdown(),
                         _selectLightText(),
                         _lightchipsContainerWidget(),
+                        _lightSwitchRow(),
                         _colorPickerWidget()
                       ]),
                     ),
@@ -327,6 +328,28 @@ class _LightingScreenState extends State<LightingScreen> {
                 ? _selectedRoom.lightModes
                 : _selectedScene.rooms[0].lightModes,
             this));
+  }
+
+  Row _lightSwitchRow(){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+                Transform.scale(
+          scale: 1.5,
+          child: Switch(
+            onChanged: _onLightSwitchChanged,
+            value: switchOn,
+            activeColor: Colors.green,//this._color,
+            activeTrackColor: ColorConstants.LIGHT_POPUP_BKG,
+            inactiveThumbColor: Colors.grey,
+            inactiveTrackColor: ColorConstants.LIGHT_POPUP_BKG,
+            // activeThumbImage: Image.asset(
+            //   ImagePaths.icAdd
+            // ).image,
+          ),
+        ),
+      ],
+    );
   }
 
   Padding _selectLightText() {
@@ -460,13 +483,14 @@ class _LightingScreenState extends State<LightingScreen> {
     });
   }
 
-  void _onLightSwitchChanged() {
+  void _onLightSwitchChanged(bool value) {
     _oceanBuilderProvider
         .toogleLightStatus(
             sceneId: _oceanBuilderUser.lighting.selectedScene,
             lightId: selectedLight.id)
         .then((responseStatus) {
       if (responseStatus.status == 200) {
+        
         showInfoBar('Toggle Light Status', 'Light status toogled', context);
       } else {
         showInfoBar(responseStatus.code, responseStatus.message, context);
@@ -510,9 +534,9 @@ class _LightingScreenState extends State<LightingScreen> {
                 _selectedRoom.lightModes;
           });
         },
-        onLightSwitchChanged: (value) {
-          _onLightSwitchChanged();
-        },
+        // onLightSwitchChanged: (value) {
+        //   _onLightSwitchChanged();
+        // },
       ),
     );
   }
