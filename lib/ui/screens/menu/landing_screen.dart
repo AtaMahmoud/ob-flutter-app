@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inner_drawer/inner_drawer.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ocean_builder/constants/constants.dart';
+import 'package:ocean_builder/core/common_widgets/buttons.dart';
 import 'package:ocean_builder/core/providers/user_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/ui/screens/designSteps/design_screen.dart';
@@ -62,10 +63,21 @@ class _LandingScreenState extends State<LandingScreen> {
               : _loginToDashboard(),
           _requestOrAcceptAccess(),
           _design(),
+          _widgetTest(),
         ],
       ),
     );
   }
+
+ _widgetTest(){
+   return Row(
+     mainAxisAlignment: MainAxisAlignment.center,
+     children: [
+       PrimaryButton()
+       ]
+       );
+ }
+  
 
   InkWell _design() {
     return InkWell(
