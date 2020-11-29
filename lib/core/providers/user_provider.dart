@@ -1353,7 +1353,7 @@ class UserProvider extends BaseProvider {
     await _headerManager.initalizeAuthenticatedUserHeaders();
 
     try {
-      final Response removeUserResponse = await _apiBaseHelper.del(
+      final Response removeUserResponse = await _apiBaseHelper.delete(
         url: APP_CONFIG.Config.REMOVE_MEMBER(seapoID, userId),
         headers: _headerManager.authUserHeaders,
       );
