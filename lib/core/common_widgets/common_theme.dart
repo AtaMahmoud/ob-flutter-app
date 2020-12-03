@@ -18,7 +18,55 @@ class CommonTheme{
   static final Color secondaryDarker = Color(0xFFFFFFFF).withOpacity(0.3);
   static final Color secondaryDarkest = Color(0xFFFFFFFF).withOpacity(0.3);
 
+  static const Color white = Color(0xFFFFFFFF);
+
   static const Color greyLightest = Color(0xFFF7F7F7);
-  
+  static const Color greyLighter  = Color(0xFFEAEAEA);
+  static const Color greyLight = Color(0xFFD4D4D4);
+  static const Color grey = Color(0xFFA9A9A9);
+  static const Color greyDark = Color(0xFF696969);
+  static const Color greyDarker = Color(0xFF505050);
+  static const Color greyDarkest = Color(0xFFFFFFFF);
+
+  static const Color black = Color(0xFF0F2340);
+
+  static const Color infoLightest = primaryLightest;
+  static const Color infoLighter = primaryLighter;
+  static const Color infoLight = primaryLight;
+  static const Color info = primary;
+  static const Color infoDark = primaryDark;
+  static const Color infoDarker = primaryDarker;
+  static const Color infoDarkest = primaryDarkest;
+
+  static const Color successLightest = Color(0xFFF0FDE8);
+  static const Color successLighter = Color(0xFFB4EEA0);
+  static const Color successLight = Color(0xFF7DE15B);
+  static const Color success = Color(0xFF33AF28);
+  static const Color successDark = Color(0xFF147D1C);
+  static const Color successDarker = Color(0xFF07531A);
+  static const Color successDarkest = Color(0xFFFFFFFF);
+
+  static const Color warningLightest = Color(0xFFFEFAE6);
+  static const Color warningLighter = Color(0xFFFEEFB3);
+  static const Color warningLight = Color(0xFFFCD44F);
+  static const Color warning = Color(0xFFF9B402);
+  static const Color warningDark = Color(0xFFB37701);
+  static const Color warningDarker = Color(0xFF774800);
+  static const Color warningDarkest = Color(0xFFFFFFFF); 
+
+  static const Color dangerLightest = Color(0xFFFDEFE7);
+  static const Color dangerLighter = Color(0xFFFBD4C6);
+  static const Color dangerLight = Color(0xFFF19E8E);
+  static const Color danger = Color(0xFFCB2828);
+  static const Color dangerDark = Color(0xFF921429);
+  static const Color dangerDarker = Color(0xFF610726);
+  static const Color dangerDarkest = Color(0xFFFFFFFF);
+
+  static const double elevationLeve1 = 2.00 ;
+  static const double elelvationLevel2 = 8.00;
+  static const double elevationLevel3 = 16.00;
+
+
+
 
 }

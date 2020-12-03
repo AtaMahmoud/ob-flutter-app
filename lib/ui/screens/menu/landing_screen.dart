@@ -70,10 +70,13 @@ class _LandingScreenState extends State<LandingScreen> {
   }
 
  _widgetTest(){
-   return Row(
-     mainAxisAlignment: MainAxisAlignment.center,
+   return Column(
+     crossAxisAlignment: CrossAxisAlignment.center,
      children: [
-       PrimaryButton()
+      //  PrimaryButton(label: 'Primary Button',onPressed: (){},isEnabled: true,isOutlined: false, key: Key('primary_button'),),
+       PrimaryButton(label: 'Primary Button',onPressed: (){},isEnabled: false,isOutlined: false, key: Key('primary_button2'),),
+       PrimaryButton(label: 'Primary Button',onPressed: (){},isEnabled: true,isOutlined: true, key: Key('primary_outline_button'),),
+       PrimaryButton(label: 'Primary Button',onPressed: (){},isEnabled: false,isOutlined: true, key: Key('primary_outline_button2'),)
        ]
        );
  }
