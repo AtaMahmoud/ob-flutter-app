@@ -53,6 +53,7 @@ import 'package:ocean_builder/ui/screens/permission/custom_permission_screen.dar
 import 'package:ocean_builder/ui/screens/permission/edit_permission_screen.dart';
 import 'package:ocean_builder/ui/screens/permission/manage_permission_screen.dart';
 import 'package:ocean_builder/ui/screens/profile/profile_screen.dart';
+import 'package:ocean_builder/ui/screens/reusableWidgetsShowcase.dart';
 import 'package:ocean_builder/ui/screens/seapod_selection/ob_selection_widget_screen.dart';
 import 'package:ocean_builder/ui/screens/settings/notification_settings.dart';
 import 'package:ocean_builder/ui/screens/settings/settings_screen.dart';
@@ -397,6 +398,12 @@ class Router {
                   accessEvents: accessEventsScreenParams.accessEvents,
                 ),
             settings: RouteSettings(name: AccessEventScreen.routeName));
+      case WidgetShowCase.routeName:
+        return CupertinoPageRoute(
+            builder: (_) => WidgetShowCase(),
+            settings: RouteSettings(name: WidgetShowCase.routeName
+            )
+            );
       default:
         return CupertinoPageRoute(
             builder: (_) => Scaffold(

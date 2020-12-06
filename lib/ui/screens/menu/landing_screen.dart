@@ -7,6 +7,7 @@ import 'package:ocean_builder/core/common_widgets/buttons.dart';
 import 'package:ocean_builder/core/providers/user_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/ui/screens/designSteps/design_screen.dart';
+import 'package:ocean_builder/ui/screens/reusableWidgetsShowcase.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/login_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/registration_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/registration_screen_accept_invitation.dart';
@@ -63,23 +64,25 @@ class _LandingScreenState extends State<LandingScreen> {
               : _loginToDashboard(),
           _requestOrAcceptAccess(),
           _design(),
-          _widgetTest(),
+          _widgetShowcase()
         ],
       ),
     );
   }
 
- _widgetTest(){
-   return Column(
-     crossAxisAlignment: CrossAxisAlignment.center,
-     children: [
-      //  PrimaryButton(label: 'Primary Button',onPressed: (){},isEnabled: true,isOutlined: false, key: Key('primary_button'),),
-       PrimaryButton(label: 'Primary Button',onPressed: (){},isEnabled: false,isOutlined: false, key: Key('primary_button2'),),
-       PrimaryButton(label: 'Primary Button',onPressed: (){},isEnabled: true,isOutlined: true, key: Key('primary_outline_button'),),
-       PrimaryButton(label: 'Primary Button',onPressed: (){},isEnabled: false,isOutlined: true, key: Key('primary_outline_button2'),)
-       ]
-       );
- }
+  InkWell _widgetShowcase() {
+    return InkWell(
+      child: Padding(
+        padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
+        child:
+            UIHelper.imageTextColumn(ImagePaths.svgSeapod, 'Reusable Widgets'),
+      ),
+      onTap: () {
+        Navigator.of(context).pushNamed(WidgetShowCase.routeName);
+      },
+    );
+  }
+
   
 
   InkWell _design() {
