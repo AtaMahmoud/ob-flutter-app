@@ -3,14 +3,28 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ocean_builder/core/common_widgets/common_theme.dart';
 
+/*
+This class serves the following types of buttons
+  - primary
+  - primary outlined
+  - destructive
+  - naked
+  To change or tweak the color  check common_theme.dart
+*/
 class PrimaryButton extends StatelessWidget {
+  /// create an specific button among primary, outlined,destructive and naked buttons
+  /// [isEnabled] variable must not be null
+  ///
+  /// set [isOutlined] for outlined button,[isDestructive] for destructive buttons, [isNaked] for naked buttons and without any is for the primary button
+
   const PrimaryButton(
       {Key key,
       this.label,
       this.onPressed,
       this.isEnabled,
       this.isOutlined,
-      this.isDestructive})
+      this.isDestructive,
+      this.isNaked})
       : super(key: key);
 
   final String label;
@@ -18,14 +32,15 @@ class PrimaryButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool isOutlined;
   final bool isDestructive;
+  final bool isNaked;
 
   @override
   Widget build(BuildContext context) {
     Color _color, _textColor, _disabledColor, _hoverColor;
     BorderSide _borderSide;
 
-    if (isEnabled) {
-      if (isOutlined) {
+    if (isEnabled != null && isEnabled) {
+      if (isOutlined != null && isOutlined) {
         _borderSide = BorderSide(color: CommonTheme.primary);
         _textColor = CommonTheme.primary;
         _color = CommonTheme.white;
@@ -34,8 +49,17 @@ class PrimaryButton extends StatelessWidget {
         _textColor = CommonTheme.white;
         _color = CommonTheme.primary;
       }
+
+      if (isDestructive != null && isDestructive) {
+        _color = CommonTheme.danger;
+        _hoverColor = CommonTheme.dangerLight;
+        _textColor = CommonTheme.white;
+        _borderSide = BorderSide.none;
+      } else {
+        _hoverColor = CommonTheme.primaryLight;
+      }
     } else {
-      if (isOutlined) {
+      if (isOutlined != null && isOutlined) {
         _borderSide = BorderSide(color: CommonTheme.greyLight);
         _textColor = CommonTheme.greyLight;
         _color = CommonTheme.greyLightest;
@@ -46,20 +70,43 @@ class PrimaryButton extends StatelessWidget {
       }
     }
 
-    if (isDestructive) {
-      _color = CommonTheme.danger;
-      _hoverColor = CommonTheme.dangerLight;
-      _textColor = CommonTheme.white;
+    if (isNaked != null && isNaked) {
+      _color = Colors.transparent;
       _borderSide = BorderSide.none;
-    } else {
-      _hoverColor = _hoverColor = CommonTheme.primaryLight;
+      _hoverColor = CommonTheme.primaryLight;
+
+      if (isEnabled != null && isEnabled)
+        _textColor = CommonTheme.primary;
+      else
+        _textColor = CommonTheme.greyLight;
     }
 
-    _disabledColor = CommonTheme.greyLight;
+    _disabledColor = CommonTheme.greyLightest;
+
+    if (isNaked != null && isNaked) {
+      return OutlineButton(
+        onPressed: isEnabled != null && isEnabled ? onPressed : null,
+        borderSide: _borderSide,
+        textColor: _textColor,
+        hoverColor: _hoverColor,
+        disabledTextColor: CommonTheme.greyLight,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), side: _borderSide),
+        child: Text(
+          label,
+          //  textScaleFactor: 1.0,
+          style: TextStyle(
+              color: _textColor,
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              letterSpacing: 1.0),
+        ),
+      );
+    }
 
     return Container(
       child: MaterialButton(
-        onPressed: isEnabled ? onPressed : null,
+        onPressed: isEnabled != null && isEnabled ? onPressed : null,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16), side: _borderSide),
         child: Text(
@@ -78,58 +125,3 @@ class PrimaryButton extends StatelessWidget {
     );
   }
 }
-
-/*
-class CommonButtons{
-
-  static Widget getButton(String text, VoidCallback callback,
-      {double w = 200,
-      double h = 60,
-      double fontSize = 22,
-      bool isInactive = false,
-      String iconPath,
-      gradientColors = const [Color(0xFF01388B), Color(0xFF2C86AC)],
-      double borderRadius = 24}) {
-    return InkWell(
-      onTap: callback,
-      child: Container(
-        // height: h,
-        width: w,
-        padding: EdgeInsets.all(16.w),
-        decoration: BoxDecoration(
-          borderRadius: new BorderRadius.circular(borderRadius.w),
-          gradient: isInactive
-              ? LinearGradient(colors: [
-                  ColorConstants.CONTROL_END,
-                  ColorConstants.CONTROL_END
-                ], begin: Alignment.topCenter, end: Alignment.bottomCenter)
-              : LinearGradient(
-                  colors: gradientColors,
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter),
-        ),
-        child: Center(
-            child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            iconPath != null
-                ? ImageIcon(
-                    AssetImage(iconPath),
-                    color: Colors.white,
-                  )
-                : Container(),
-            iconPath != null ? SizedBox(width: 16.w) : Container(),
-            Text(
-              text,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white, fontSize: fontSize),
-            ),
-          ],
-        )),
-      ),
-    );
-  }
-
-}
-*/
