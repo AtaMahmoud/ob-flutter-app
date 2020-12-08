@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ocean_builder/core/common_widgets/buttons.dart';
+import 'package:ocean_builder/core/common_widgets/radio_buttons.dart';
 import 'package:ocean_builder/core/common_widgets/sliders.dart';
 
 class WidgetShowCase extends StatefulWidget {
@@ -12,6 +13,8 @@ class WidgetShowCase extends StatefulWidget {
 }
 
 class _WidgetShowCaseState extends State<WidgetShowCase> {
+  SingingCharacter _character = SingingCharacter.lafayette;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,7 +112,34 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
                 'I wish to print the value from here as a delegate --- $value');
           },
         ),
-      )
+      ),
+      RadioButton(),
+      ListTile(
+        title: const Text('Lafayette'),
+        leading: Radio(
+          value: SingingCharacter.lafayette,
+          groupValue: _character,
+          onChanged: (SingingCharacter value) {
+            setState(() {
+              _character = value;
+            });
+          },
+        ),
+      ),
+      ListTile(
+        title: const Text('jefferson'),
+        leading: Radio(
+          value: SingingCharacter.jefferson,
+          groupValue: _character,
+          onChanged: (SingingCharacter value) {
+            setState(() {
+              _character = value;
+            });
+          },
+        ),
+      ),
     ]);
   }
 }
+
+enum SingingCharacter { lafayette, jefferson }
