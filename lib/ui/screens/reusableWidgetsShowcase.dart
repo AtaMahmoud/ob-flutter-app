@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ocean_builder/core/common_widgets/buttons.dart';
+import 'package:ocean_builder/core/common_widgets/sliders.dart';
 
 class WidgetShowCase extends StatefulWidget {
   static const String routeName = '/widgetShowCase';
@@ -75,6 +76,40 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
         isNaked: true,
         key: Key('primary_naked_button2'),
       ),
+      CommonSlider(
+        key: Key('common slider'),
+        sliderValue: 11.0,
+        hasSliderLabel: false,
+        onChangedMethod: (value) {
+          debugPrint(
+              'I wish to print the value from here as a delegate --- $value ');
+        },
+      ),
+      CommonSlider(
+        key: Key('common slider 2'),
+        sliderValue: 11.0,
+        hasSliderLabel: true,
+        sliderLabel: 'Slider Label',
+        onChangedMethod: (value) {
+          debugPrint(
+              'I wish to print the value from here as a delegate --- $value');
+        },
+      ),
+      Container(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        color: Colors.black,
+        child: CommonSlider(
+          key: Key('common slider 3'),
+          sliderValue: 11.0,
+          hasSliderLabel: true,
+          isDarkBg: true,
+          sliderLabel: 'Slider Label',
+          onChangedMethod: (value) {
+            debugPrint(
+                'I wish to print the value from here as a delegate --- $value');
+          },
+        ),
+      )
     ]);
   }
 }
