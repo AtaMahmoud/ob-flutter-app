@@ -13,8 +13,6 @@ class WidgetShowCase extends StatefulWidget {
 }
 
 class _WidgetShowCaseState extends State<WidgetShowCase> {
-  SingingCharacter _character = SingingCharacter.lafayette;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,6 +26,17 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
   }
 
   _widgetTest() {
+    RadioData _radioData = new RadioData(labelVals: {
+      'radio button 1': 'one',
+      'radio button 2': 'two',
+      'radio button 3': 'three'
+    }, selectedValue: 'one');
+
+    RadioData _radioDataSet2 = new RadioData(labelVals: {
+      'radio button 1': 'one',
+      'radio button 2': 'two',
+    }, selectedValue: 'one');
+
     return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
       PrimaryButton(
         label: 'Primary Button',
@@ -113,33 +122,19 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
           },
         ),
       ),
-      RadioButton(),
-      ListTile(
-        title: const Text('Lafayette'),
-        leading: Radio(
-          value: SingingCharacter.lafayette,
-          groupValue: _character,
-          onChanged: (SingingCharacter value) {
-            setState(() {
-              _character = value;
-            });
-          },
-        ),
+      RadioButton(
+        radioData: _radioData,
+        onChangedMethod: (value) {
+          debugPrint('Do whatever .. with the changed group value $value');
+        },
       ),
-      ListTile(
-        title: const Text('jefferson'),
-        leading: Radio(
-          value: SingingCharacter.jefferson,
-          groupValue: _character,
-          onChanged: (SingingCharacter value) {
-            setState(() {
-              _character = value;
-            });
-          },
-        ),
+      RadioButton(
+        radioData: _radioDataSet2,
+        isHorizontallyAlligned: true,
+        onChangedMethod: (value) {
+          debugPrint('Do whatever .. with the changed group value $value');
+        },
       ),
     ]);
   }
 }
-
-enum SingingCharacter { lafayette, jefferson }
