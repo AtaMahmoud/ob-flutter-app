@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ocean_builder/core/common_widgets/buttons.dart';
+import 'package:ocean_builder/core/common_widgets/custom_checkbox.dart';
 import 'package:ocean_builder/core/common_widgets/radio_buttons.dart';
 import 'package:ocean_builder/core/common_widgets/sliders.dart';
 
@@ -13,6 +14,8 @@ class WidgetShowCase extends StatefulWidget {
 }
 
 class _WidgetShowCaseState extends State<WidgetShowCase> {
+  bool _isChecked = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,6 +138,17 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
           debugPrint('Do whatever .. with the changed group value $value');
         },
       ),
+      // Container(
+      //   child: CustomCheckbox(
+      //       key: Key('cb without title'),
+      //       value: _isChecked,
+      //       onChanged: (value) {
+      //         setState(() {
+      //           _isChecked = !_isChecked;
+      //         });
+      //       }),
+      // ),
+      CustomCheckbox(value: true, onChanged: (value) {}),
     ]);
   }
 }
