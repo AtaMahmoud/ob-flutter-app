@@ -8,6 +8,7 @@ import 'package:ocean_builder/core/common_widgets/custom_checkbox.dart';
 import 'package:ocean_builder/core/common_widgets/flutter_switch.dart';
 import 'package:ocean_builder/core/common_widgets/radio_buttons.dart';
 import 'package:ocean_builder/core/common_widgets/sliders.dart';
+import 'package:ocean_builder/core/common_widgets/title_editable.dart';
 
 class WidgetShowCase extends StatefulWidget {
   static const String routeName = '/widgetShowCase';
@@ -182,61 +183,16 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
       ),
       Container(
         padding: EdgeInsets.symmetric(horizontal: 48),
-        child: Theme(
-          data: ThemeData(
-            primaryColor: CommonTheme.primary,
-            accentColor: CommonTheme.primaryLight,
-            textTheme: TextTheme(
-              bodyText1: TextStyle(color: CommonTheme.primary)
-            )
-          ),
-
-          child: TextField(
-
-            autofocus: false,
-            controller: controller,
-            onChanged: (value) {},
-            keyboardType: TextInputType.text,
-            keyboardAppearance: Brightness.light,
-
-//          textAlign: TextAlign.end,
-//          enabled: false,
-            scrollPadding: EdgeInsets.only(bottom: 100),
-            textInputAction:
-                nextNode != null ? TextInputAction.next : TextInputAction.done,
-            focusNode: node,
-            onEditingComplete: () => nextNode != null
-                ? FocusScope.of(context).requestFocus(nextNode)
-                : FocusScope.of(context).unfocus(),
-//        decoration: InputDecoration.collapsed(hintText: null),
-            decoration: InputDecoration(
-              hintText: 'Text Editable',
-              hintStyle: TextStyle(color:CommonTheme.primaryDark),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: CommonTheme.primaryLighter),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: CommonTheme.primaryLighter),
-              ),
-              border: UnderlineInputBorder(
-                borderSide: BorderSide.none,
-              ),
-              disabledBorder:  UnderlineInputBorder(
-                borderSide: BorderSide.none,
-              ),
-              isDense: true,
-              suffixIcon:  SvgPicture.asset(ImagePaths.svgEdit,fit: BoxFit.scaleDown,color: CommonTheme.primaryLighter,),
-
-            ),
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w400,
-              color: CommonTheme.primary,
-            ),
-//        inputFormatters: [
-//          new LengthLimitingTextInputFormatter(maxLength),
-//        ],
-          ),
+        child: TitleEditable(
+          title: 'TitleEditable',
+          isEnabled: true,
+        ),
+      ),
+      Container(
+        padding: EdgeInsets.symmetric(horizontal: 48),
+        child: TitleEditable(
+          title: 'TitleEditable',
+          isEnabled: false,
         ),
       )
     ]);
