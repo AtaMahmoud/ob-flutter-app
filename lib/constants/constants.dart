@@ -1119,6 +1119,11 @@ class ImagePaths {
   static String svgIcDrawerSettings = 'images/ic_drawer_steering.svg';
   static String svgIcDrawerSteering = 'images/ic_drawer_steering.svg';
   static String svgIcDrawerWeather = 'images/ic_drawer_weather.svg';
+
+  // reusable widgets
+
+  static String icSwitchOff = 'images/switch_dash.png';
+  static String icSwitchOn = 'images/switch_tick.png';
 }
 
 class AppStrings {
