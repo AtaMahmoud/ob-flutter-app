@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ocean_builder/core/common_widgets/buttons.dart';
+import 'package:ocean_builder/core/common_widgets/common_theme.dart';
+import 'package:ocean_builder/core/common_widgets/custom_checkbox.dart';
+import 'package:ocean_builder/core/common_widgets/flutter_switch.dart';
 import 'package:ocean_builder/core/common_widgets/radio_buttons.dart';
 import 'package:ocean_builder/core/common_widgets/sliders.dart';
 
@@ -13,6 +16,10 @@ class WidgetShowCase extends StatefulWidget {
 }
 
 class _WidgetShowCaseState extends State<WidgetShowCase> {
+  bool _isChecked = false;
+
+  bool isPublish = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,6 +142,34 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
           debugPrint('Do whatever .. with the changed group value $value');
         },
       ),
+      // Container(
+      //   child: CustomCheckbox(
+      //       key: Key('cb without title'),
+      //       value: _isChecked,
+      //       onChanged: (value) {
+      //         setState(() {
+      //           _isChecked = !_isChecked;
+      //         });
+      //       }),
+      // ),
+      CustomCheckbox(value: true, onChanged: (value) {}),
+      FlutterSwitch(
+        // valueFontSize: 48,
+        toggleColor: Colors.white,
+        value: isPublish,
+        // borderRadius: 24,
+        padding: 0.0,
+        showOnOff: false,
+        activeColor: Colors.green,
+        inactiveColor: CommonTheme.greyLighter,
+        onToggle: (val) {
+          setState(() {
+            isPublish = val;
+          });
+        },
+      ),
     ]);
   }
+
+  bool isSelected = false;
 }
