@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/common_widgets/buttons.dart';
 import 'package:ocean_builder/core/common_widgets/common_theme.dart';
 import 'package:ocean_builder/core/common_widgets/custom_checkbox.dart';
@@ -19,6 +21,17 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
   bool _isChecked = false;
 
   bool isPublish = false;
+
+  TextEditingController controller;
+  FocusNode node, nextNode;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    controller = new TextEditingController();
+    node = FocusNode();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -142,17 +155,16 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
           debugPrint('Do whatever .. with the changed group value $value');
         },
       ),
-      // Container(
-      //   child: CustomCheckbox(
-      //       key: Key('cb without title'),
-      //       value: _isChecked,
-      //       onChanged: (value) {
-      //         setState(() {
-      //           _isChecked = !_isChecked;
-      //         });
-      //       }),
-      // ),
-      CustomCheckbox(value: true, onChanged: (value) {}),
+      Container(
+        child: CustomCheckbox(
+            key: Key('cb without title'),
+            value: _isChecked,
+            onChanged: (value) {
+              setState(() {
+                _isChecked = !_isChecked;
+              });
+            }),
+      ),
       FlutterSwitch(
         // valueFontSize: 48,
         toggleColor: Colors.white,
@@ -168,6 +180,65 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
           });
         },
       ),
+      Container(
+        padding: EdgeInsets.symmetric(horizontal: 48),
+        child: Theme(
+          data: ThemeData(
+            primaryColor: CommonTheme.primary,
+            accentColor: CommonTheme.primaryLight,
+            textTheme: TextTheme(
+              bodyText1: TextStyle(color: CommonTheme.primary)
+            )
+          ),
+
+          child: TextField(
+
+            autofocus: false,
+            controller: controller,
+            onChanged: (value) {},
+            keyboardType: TextInputType.text,
+            keyboardAppearance: Brightness.light,
+
+//          textAlign: TextAlign.end,
+//          enabled: false,
+            scrollPadding: EdgeInsets.only(bottom: 100),
+            textInputAction:
+                nextNode != null ? TextInputAction.next : TextInputAction.done,
+            focusNode: node,
+            onEditingComplete: () => nextNode != null
+                ? FocusScope.of(context).requestFocus(nextNode)
+                : FocusScope.of(context).unfocus(),
+//        decoration: InputDecoration.collapsed(hintText: null),
+            decoration: InputDecoration(
+              hintText: 'Text Editable',
+              hintStyle: TextStyle(color:CommonTheme.primaryDark),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: CommonTheme.primaryLighter),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: CommonTheme.primaryLighter),
+              ),
+              border: UnderlineInputBorder(
+                borderSide: BorderSide.none,
+              ),
+              disabledBorder:  UnderlineInputBorder(
+                borderSide: BorderSide.none,
+              ),
+              isDense: true,
+              suffixIcon:  SvgPicture.asset(ImagePaths.svgEdit,fit: BoxFit.scaleDown,color: CommonTheme.primaryLighter,),
+
+            ),
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w400,
+              color: CommonTheme.primary,
+            ),
+//        inputFormatters: [
+//          new LengthLimitingTextInputFormatter(maxLength),
+//        ],
+          ),
+        ),
+      )
     ]);
   }
 
