@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ocean_builder/bloc/login_validation_bloc.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/common_widgets/buttons.dart';
 import 'package:ocean_builder/core/common_widgets/common_theme.dart';
@@ -8,6 +9,7 @@ import 'package:ocean_builder/core/common_widgets/custom_checkbox.dart';
 import 'package:ocean_builder/core/common_widgets/flutter_switch.dart';
 import 'package:ocean_builder/core/common_widgets/radio_buttons.dart';
 import 'package:ocean_builder/core/common_widgets/sliders.dart';
+import 'package:ocean_builder/core/common_widgets/text_editable.dart';
 import 'package:ocean_builder/core/common_widgets/title_editable.dart';
 
 class WidgetShowCase extends StatefulWidget {
@@ -24,14 +26,23 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
   bool isPublish = false;
 
   TextEditingController controller;
+  TextEditingController textController;
   FocusNode node, nextNode;
+
+  LoginValidationBloc _bloc = LoginValidationBloc();
 
   @override
   void initState() {
-    // TODO: implement initState
     controller = new TextEditingController();
+    textController = new TextEditingController();
     node = FocusNode();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _bloc.dispose();
+    super.dispose();
   }
 
   @override
@@ -186,15 +197,33 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
         child: TitleEditable(
           title: 'TitleEditable',
           isEnabled: true,
+          controller: controller,
         ),
       ),
-      Container(
-        padding: EdgeInsets.symmetric(horizontal: 48),
-        child: TitleEditable(
-          title: 'TitleEditable',
-          isEnabled: false,
+      // Container(
+      //   padding: EdgeInsets.symmetric(horizontal: 48),
+      //   child: TitleEditable(
+      //     title: 'TitleEditable',
+      //     isEnabled: false,
+      //     controller: controller,
+      //   ),
+      // ),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextEditable(
+          stream: _bloc.email,
+          textChanged: _bloc.emailChanged,
+          controller: textController,
+          title: 'Email',
+          placeHolder: 'Email Address',
+          helperText: 'Enter a valid email',
+          hasHelperText: true,
+          hasPadding: false,
+          hasPlaceHolder: true,
+          hasLabel: true,
+          isEnabled: true,
         ),
-      )
+      ),
     ]);
   }
 
