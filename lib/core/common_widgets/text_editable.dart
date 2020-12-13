@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/common_widgets/common_theme.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -122,9 +124,14 @@ class _TextEditableState extends State<TextEditable> {
               // decoration: InputDecoration.collapsed(hintText: null),
               decoration: InputDecoration(
                   labelText: hasLabel ? '$label' : null,
-                  labelStyle: TextStyle(color: CommonTheme.primary),
+                  labelStyle: TextStyle(
+                      color: isEnabled
+                          ? CommonTheme.primary
+                          : CommonTheme.greyDark),
                   hintText: hasPlaceHolder ? '$placeHolder' : null,
-                  hintStyle: TextStyle(color: CommonTheme.greyDark),
+                  hintStyle: TextStyle(
+                      color:
+                          isEnabled ? CommonTheme.greyDark : CommonTheme.grey),
                   helperText: snapshot.hasError
                       ? snapshot.error
                       : hasHelperText ? '$helperText' : null,
@@ -136,7 +143,11 @@ class _TextEditableState extends State<TextEditable> {
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: CommonTheme.primary),
                   ),
-                  fillColor: CommonTheme.white,
+                  disabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: CommonTheme.grey),
+                  ),
+                  fillColor:
+                      isEnabled ? CommonTheme.greyLightest : CommonTheme.white,
                   errorMaxLines: 4,
                   errorText: snapshot.error,
                   suffix: isEnabled
@@ -165,7 +176,7 @@ class _TextEditableState extends State<TextEditable> {
               style: TextStyle(
                 // fontSize: 32,
                 fontWeight: FontWeight.w400,
-                color: CommonTheme.black,
+                color: isEnabled ? CommonTheme.black : CommonTheme.grey,
               ),
               inputFormatters: [
                 new LengthLimitingTextInputFormatter(maxLength),
@@ -189,9 +200,9 @@ class ErrorIcon extends StatelessWidget {
 
     debugPrint("Rebuilding ErrorWidget");
     isError
-        ? out = new Icon(
-            Icons.error,
-            color: Color(Colors.red.value),
+        ? out = new ImageIcon(
+            AssetImage(ImagePaths.icEditError),
+            color: Color(CommonTheme.danger.value),
           )
         : out = new Icon(null);
 
@@ -212,8 +223,8 @@ class DisableIcon extends StatelessWidget {
 
     debugPrint("Rebuilding DisabledWidget");
     isError
-        ? out = new Icon(
-            Icons.sync_disabled,
+        ? out = new ImageIcon(
+            AssetImage(ImagePaths.icEditDisable),
             color: Color(CommonTheme.grey.value),
           )
         : out = new Icon(null);

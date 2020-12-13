@@ -200,14 +200,22 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
           controller: controller,
         ),
       ),
-      // Container(
-      //   padding: EdgeInsets.symmetric(horizontal: 48),
-      //   child: TitleEditable(
-      //     title: 'TitleEditable',
-      //     isEnabled: false,
-      //     controller: controller,
-      //   ),
-      // ),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextEditable(
+          stream: _bloc.password,
+          textChanged: _bloc.passwordChanged,
+          controller: controller,
+          title: 'Name',
+          placeHolder: 'User name',
+          helperText: 'Enter user name not more than 200 characters',
+          hasHelperText: true,
+          hasPadding: false,
+          hasPlaceHolder: true,
+          hasLabel: true,
+          isEnabled: false,
+        ),
+      ),
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: TextEditable(
@@ -221,6 +229,22 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
           hasPadding: false,
           hasPlaceHolder: true,
           hasLabel: true,
+          isEnabled: true,
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextEditable(
+          stream: _bloc.email,
+          textChanged: _bloc.emailChanged,
+          controller: textController,
+          title: 'Email',
+          placeHolder: 'Email Address',
+          helperText: 'Enter a valid email',
+          hasHelperText: true,
+          hasPadding: false,
+          hasPlaceHolder: true,
+          hasLabel: false,
           isEnabled: true,
         ),
       ),
