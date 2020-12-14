@@ -1129,6 +1129,12 @@ class ImagePaths {
   static String icEditDisable = 'images/ic_edit_disable.png';
   static String icEditError = 'images/ic_edit_error.png';
   static String svgIcWarning = 'images/warning.svg';
+  static String icSearchBarBell = 'images/ic_sb_bell.png';
+  static String svgIcSearchBarBell = 'images/ic_sb_bell_svg.svg';
+  static String icSearchBarHam = 'images/ic_sb_ham.png';
+  static String svgIcSearchBarHam = 'images/ic_sb_search_svg.svg';
+  static String icSearchBarSearch = 'images/ic_sb_search.png';
+  static String svgIcSearchBarSearch = 'images/ic_sb_search_svg.svg';
 }
 
 class AppStrings {

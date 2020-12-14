@@ -8,6 +8,7 @@ import 'package:ocean_builder/core/common_widgets/common_theme.dart';
 import 'package:ocean_builder/core/common_widgets/custom_checkbox.dart';
 import 'package:ocean_builder/core/common_widgets/flutter_switch.dart';
 import 'package:ocean_builder/core/common_widgets/radio_buttons.dart';
+import 'package:ocean_builder/core/common_widgets/search_bar.dart';
 import 'package:ocean_builder/core/common_widgets/sliders.dart';
 import 'package:ocean_builder/core/common_widgets/space_item.dart';
 import 'package:ocean_builder/core/common_widgets/text_editable.dart';
@@ -22,6 +23,7 @@ class WidgetShowCase extends StatefulWidget {
 }
 
 class _WidgetShowCaseState extends State<WidgetShowCase> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   bool _isChecked = false;
 
   bool isPublish = false;
@@ -49,10 +51,18 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: CommonTheme.greyLightest,
       body: Center(
-        child: SingleChildScrollView(
-          child: _widgetTest(),
+        child: CustomScrollView(
+          slivers: [
+            SearchBar(
+              scaffoldKey: _scaffoldKey,
+            ),
+            SliverToBoxAdapter(
+              child: _widgetTest(),
+            )
+          ],
         ),
       ),
     );
