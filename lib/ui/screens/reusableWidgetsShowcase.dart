@@ -9,6 +9,7 @@ import 'package:ocean_builder/core/common_widgets/custom_checkbox.dart';
 import 'package:ocean_builder/core/common_widgets/flutter_switch.dart';
 import 'package:ocean_builder/core/common_widgets/radio_buttons.dart';
 import 'package:ocean_builder/core/common_widgets/sliders.dart';
+import 'package:ocean_builder/core/common_widgets/space_item.dart';
 import 'package:ocean_builder/core/common_widgets/text_editable.dart';
 import 'package:ocean_builder/core/common_widgets/title_editable.dart';
 
@@ -48,7 +49,7 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: CommonTheme.greyLightest,
       body: Center(
         child: SingleChildScrollView(
           child: _widgetTest(),
@@ -248,6 +249,22 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
           isEnabled: true,
         ),
       ),
+      SpaceItem(
+        isSelected: false,
+        hasWarning: true,
+        label: 'Kitchen Room',
+        onPressed: () {
+          debugPrint('Tapped in kitchen room');
+        },
+      ),
+      SpaceItem(
+        isSelected: true,
+        hasWarning: false,
+        label: 'Space Room',
+        onPressed: () {
+          debugPrint('Tapped in Space room');
+        },
+      )
     ]);
   }
 

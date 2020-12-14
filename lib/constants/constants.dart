@@ -1128,6 +1128,7 @@ class ImagePaths {
   static String icSwitchOn = 'images/switch_tick.png';
   static String icEditDisable = 'images/ic_edit_disable.png';
   static String icEditError = 'images/ic_edit_error.png';
+  static String svgIcWarning = 'images/warning.svg';
 }
 
 class AppStrings {
