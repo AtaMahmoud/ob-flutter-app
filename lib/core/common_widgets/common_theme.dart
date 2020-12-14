@@ -1,7 +1,11 @@
 import 'package:flutter/widgets.dart';
 
-class CommonTheme{
+class CommonTheme {
   CommonTheme._();
+  // fonts
+  static const String fontVerela = 'Varela';
+  // colors
+
   static const Color primaryLightest = Color(0xFFE4EDF3);
   static const Color primaryLighter = Color(0xFF9CC4F4);
   static const Color primaryLight = Color(0xFF649FF8);
@@ -21,7 +25,7 @@ class CommonTheme{
   static const Color white = Color(0xFFFFFFFF);
 
   static const Color greyLightest = Color(0xFFF7F7F7);
-  static const Color greyLighter  = Color(0xFFEAEAEA);
+  static const Color greyLighter = Color(0xFFEAEAEA);
   static const Color greyLight = Color(0xFFD4D4D4);
   static const Color grey = Color(0xFFA9A9A9);
   static const Color greyDark = Color(0xFF696969);
@@ -52,7 +56,7 @@ class CommonTheme{
   static const Color warning = Color(0xFFF9B402);
   static const Color warningDark = Color(0xFFB37701);
   static const Color warningDarker = Color(0xFF774800);
-  static const Color warningDarkest = Color(0xFFFFFFFF); 
+  static const Color warningDarkest = Color(0xFFFFFFFF);
 
   static const Color dangerLightest = Color(0xFFFDEFE7);
   static const Color dangerLighter = Color(0xFFFBD4C6);
@@ -62,11 +66,46 @@ class CommonTheme{
   static const Color dangerDarker = Color(0xFF610726);
   static const Color dangerDarkest = Color(0xFFFFFFFF);
 
-  static const double elevationLeve1 = 2.00 ;
+  static const double elevationLeve1 = 2.00;
   static const double elelvationLevel2 = 8.00;
   static const double elevationLevel3 = 16.00;
 
+// Text Styles
 
+  static TextStyle tsHeaderDesktop = TextStyle(
+      fontFamily: fontVerela,
+      fontWeight: FontWeight.w400,
+      fontStyle: FontStyle.normal,
+      fontSize: 32,
+      height: 1.3,
+      color: CommonTheme.greyDark);
 
+  static TextStyle tsHeaderMobile = TextStyle(
+      fontFamily: fontVerela,
+      fontWeight: FontWeight.w400,
+      fontStyle: FontStyle.normal,
+      fontSize: 24,
+      height: 1.3,
+      color: CommonTheme.greyDark);
 
+  static TextStyle tsBodyDefault = TextStyle(
+      fontFamily: fontVerela,
+      fontWeight: FontWeight.w400,
+      fontStyle: FontStyle.normal,
+      fontSize: 16,
+      height: 1.3);
+
+  static TextStyle tsBodySmall = TextStyle(
+      fontFamily: fontVerela,
+      fontWeight: FontWeight.normal,
+      fontStyle: FontStyle.normal,
+      fontSize: 14,
+      height: 1.3);
+
+  static TextStyle tsBodyExtraSmall = TextStyle(
+      fontFamily: fontVerela,
+      fontWeight: FontWeight.normal,
+      fontStyle: FontStyle.normal,
+      fontSize: 12,
+      height: 1.3);
 }

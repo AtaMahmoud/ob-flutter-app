@@ -124,18 +124,19 @@ class _TextEditableState extends State<TextEditable> {
               // decoration: InputDecoration.collapsed(hintText: null),
               decoration: InputDecoration(
                   labelText: hasLabel ? '$label' : null,
-                  labelStyle: TextStyle(
+                  labelStyle: CommonTheme.tsBodyExtraSmall.apply(
                       color: isEnabled
                           ? CommonTheme.primary
                           : CommonTheme.greyDark),
                   hintText: hasPlaceHolder ? '$placeHolder' : null,
-                  hintStyle: TextStyle(
+                  hintStyle: CommonTheme.tsBodyDefault.apply(
                       color:
                           isEnabled ? CommonTheme.greyDark : CommonTheme.grey),
                   helperText: snapshot.hasError
                       ? snapshot.error
                       : hasHelperText ? '$helperText' : null,
-                  helperStyle: TextStyle(color: CommonTheme.greyDark),
+                  helperStyle: CommonTheme.tsBodyExtraSmall
+                      .apply(color: CommonTheme.greyDark),
                   border: new OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(8.0),
                     borderSide: new BorderSide(),
@@ -152,32 +153,9 @@ class _TextEditableState extends State<TextEditable> {
                   errorText: snapshot.error,
                   suffix: isEnabled
                       ? snapshot.hasError ? ErrorIcon(true) : ErrorIcon(false)
-                      : DisableIcon(true)
-                  // suffixIcon:
-
-                  // enabledBorder: UnderlineInputBorder(
-                  //   borderSide: BorderSide(color: CommonTheme.primaryLighter),
-                  // ),
-                  // contentPadding:
-                  //     EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16),
-                  //fillColor: Colors.green
-                  // border: UnderlineInputBorder(
-                  //   borderSide: BorderSide.none,
-                  // ),
-                  // disabledBorder: UnderlineInputBorder(
-                  //   borderSide: BorderSide.none,
-                  // ),
-                  // suffixIcon: SvgPicture.asset(
-                  //   ImagePaths.svgEdit,
-                  //   fit: BoxFit.scaleDown,
-                  //   color: CommonTheme.primaryLighter,
-                  // ),
-                  ),
-              style: TextStyle(
-                // fontSize: 32,
-                fontWeight: FontWeight.w400,
-                color: isEnabled ? CommonTheme.black : CommonTheme.grey,
-              ),
+                      : DisableIcon(true)),
+              style: CommonTheme.tsBodyDefault.apply(
+                  color: isEnabled ? CommonTheme.black : CommonTheme.grey),
               inputFormatters: [
                 new LengthLimitingTextInputFormatter(maxLength),
               ],
@@ -188,7 +166,7 @@ class _TextEditableState extends State<TextEditable> {
 }
 
 class ErrorIcon extends StatelessWidget {
-  bool _isError;
+  final bool _isError;
 
   ErrorIcon(this._isError);
 
@@ -198,7 +176,6 @@ class ErrorIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget out;
 
-    debugPrint("Rebuilding ErrorWidget");
     isError
         ? out = new ImageIcon(
             AssetImage(ImagePaths.icEditError),
@@ -211,7 +188,7 @@ class ErrorIcon extends StatelessWidget {
 }
 
 class DisableIcon extends StatelessWidget {
-  bool _isDisable;
+  final bool _isDisable;
 
   DisableIcon(this._isDisable);
 
@@ -221,7 +198,6 @@ class DisableIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget out;
 
-    debugPrint("Rebuilding DisabledWidget");
     isError
         ? out = new ImageIcon(
             AssetImage(ImagePaths.icEditDisable),

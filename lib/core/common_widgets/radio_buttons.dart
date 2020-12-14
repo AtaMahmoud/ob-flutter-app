@@ -60,13 +60,10 @@ class _RadioButtonState extends State<RadioButton> {
           activeColor: CommonTheme.primary,
           hoverColor: CommonTheme.primaryLight,
         ),
-        Text(
-          label,
-          style: TextStyle(
-            color: val == _groupValue ? Colors.black : CommonTheme.greyDark,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
+        Text(label,
+            style: CommonTheme.tsBodyDefault.apply(
+                color:
+                    val == _groupValue ? Colors.black : CommonTheme.greyDark)),
       ],
     );
   }

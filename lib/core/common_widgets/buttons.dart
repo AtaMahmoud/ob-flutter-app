@@ -92,15 +92,10 @@ class PrimaryButton extends StatelessWidget {
         disabledTextColor: CommonTheme.greyLight,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16), side: _borderSide),
-        child: Text(
-          label,
-          //  textScaleFactor: 1.0,
-          style: TextStyle(
+        child: Text(label,
+            style: CommonTheme.tsBodySmall.apply(
               color: _textColor,
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              letterSpacing: 1.0),
-        ),
+            )),
       );
     }
 
@@ -112,11 +107,9 @@ class PrimaryButton extends StatelessWidget {
         child: Text(
           label,
           //  textScaleFactor: 1.0,
-          style: TextStyle(
-              color: _textColor,
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              letterSpacing: 1.0),
+          style: CommonTheme.tsBodySmall.apply(
+            color: _textColor,
+          ),
         ),
         color: _color,
         disabledColor: _disabledColor,

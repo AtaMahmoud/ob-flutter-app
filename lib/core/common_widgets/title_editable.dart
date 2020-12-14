@@ -57,7 +57,6 @@ class _TitleEditableState extends State<TitleEditable> {
       onChanged: changed,
       keyboardType: inputType,
       keyboardAppearance: Brightness.light,
-      textAlign: TextAlign.start,
       scrollPadding: EdgeInsets.only(bottom: 100),
       textInputAction:
           nextNode != null ? TextInputAction.next : TextInputAction.done,
@@ -68,7 +67,8 @@ class _TitleEditableState extends State<TitleEditable> {
       // decoration: InputDecoration.collapsed(hintText: null),
       decoration: InputDecoration(
         hintText: '$title',
-        hintStyle: TextStyle(color: CommonTheme.primaryDark),
+        hintStyle:
+            CommonTheme.tsHeaderMobile.apply(color: CommonTheme.primaryDark),
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: CommonTheme.primaryLighter),
         ),
@@ -89,11 +89,7 @@ class _TitleEditableState extends State<TitleEditable> {
           color: CommonTheme.primaryLighter,
         ),
       ),
-      style: TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.w400,
-        color: CommonTheme.primaryDark,
-      ),
+      style: CommonTheme.tsHeaderMobile.apply(color: CommonTheme.primaryDark),
       inputFormatters: [
         new LengthLimitingTextInputFormatter(maxLength),
       ],

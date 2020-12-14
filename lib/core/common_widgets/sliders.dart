@@ -82,7 +82,6 @@ class _CommonSliderState extends State<CommonSlider> {
           value: _sliderValue,
           onChanged: (value) {
             setState(() {
-              debugPrint('slider value  $value');
               _sliderValue = value;
               widget.onChangedMethod.call(value);
             });
@@ -100,13 +99,11 @@ class _CommonSliderState extends State<CommonSlider> {
           children: [
             Text(
               '${widget.sliderLabel ?? ' '}',
-              style:
-                  TextStyle(color: _labelColor, fontWeight: FontWeight.normal),
+              style: CommonTheme.tsBodySmall.apply(color: _labelColor),
             ),
             Text(
               '${_sliderValue.toInt() ?? ' '}%',
-              style:
-                  TextStyle(color: _valueColor, fontWeight: FontWeight.normal),
+              style: CommonTheme.tsBodySmall.apply(color: _valueColor),
             ),
           ],
         ),
