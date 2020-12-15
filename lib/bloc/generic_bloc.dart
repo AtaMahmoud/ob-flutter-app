@@ -9,6 +9,8 @@ class GenericBloc<T> implements BlocBase {
 
   StreamSink<T> get sink => controller.sink;
 
+  Function(T) get changed => controller.sink.add;
+
   GenericBloc(T data) {
     sink.add(data);
   }

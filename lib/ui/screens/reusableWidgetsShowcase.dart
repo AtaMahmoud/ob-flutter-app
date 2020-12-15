@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ocean_builder/bloc/generic_bloc.dart';
 import 'package:ocean_builder/bloc/login_validation_bloc.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/common_widgets/buttons.dart';
@@ -9,10 +10,12 @@ import 'package:ocean_builder/core/common_widgets/custom_checkbox.dart';
 import 'package:ocean_builder/core/common_widgets/flutter_switch.dart';
 import 'package:ocean_builder/core/common_widgets/radio_buttons.dart';
 import 'package:ocean_builder/core/common_widgets/search_bar.dart';
+import 'package:ocean_builder/core/common_widgets/select_button.dart';
 import 'package:ocean_builder/core/common_widgets/sliders.dart';
 import 'package:ocean_builder/core/common_widgets/space_item.dart';
 import 'package:ocean_builder/core/common_widgets/text_editable.dart';
 import 'package:ocean_builder/core/common_widgets/title_editable.dart';
+import 'package:ocean_builder/ui/shared/drop_downs.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 
 class WidgetShowCase extends StatefulWidget {
@@ -35,6 +38,9 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
   FocusNode node, nextNode;
 
   LoginValidationBloc _bloc = LoginValidationBloc();
+
+  GenericBloc<String> _selectBloc =
+      GenericBloc(ListHelper.getPermissionList()[0]);
 
   @override
   void initState() {
@@ -289,7 +295,37 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
         onPressed: () {
           debugPrint('Tapped in Space room');
         },
-      )
+      ),
+      Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SelectButton(
+            list: ListHelper.getPermissionList(),
+            stream: _selectBloc.controller,
+            changed: _selectBloc.changed,
+            addPadding: false,
+            label: 'Permission',
+            helperText: 'Help text',
+            placeHolder: 'Place holder',
+            hasHelperText: true,
+            hasLabel: true,
+            hasPlaceHolder: true,
+            isEnabled: true,
+          )),
+      Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SelectButton(
+            list: ListHelper.getPermissionList(),
+            stream: _selectBloc.controller,
+            changed: _selectBloc.changed,
+            addPadding: false,
+            label: 'Permission',
+            helperText: 'Help text',
+            placeHolder: 'Place holder',
+            hasHelperText: true,
+            hasLabel: true,
+            hasPlaceHolder: true,
+            isEnabled: false,
+          ))
     ]);
   }
 

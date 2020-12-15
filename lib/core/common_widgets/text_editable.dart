@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/common_widgets/common_theme.dart';
+import 'package:ocean_builder/core/common_widgets/disable_icon.dart';
+import 'package:ocean_builder/core/common_widgets/error_icon.dart';
 import 'package:rxdart/rxdart.dart';
 
 class TextEditable extends StatefulWidget {
@@ -162,49 +162,5 @@ class _TextEditableState extends State<TextEditable> {
             ),
           );
         });
-  }
-}
-
-class ErrorIcon extends StatelessWidget {
-  final bool _isError;
-
-  ErrorIcon(this._isError);
-
-  bool get isError => _isError;
-
-  @override
-  Widget build(BuildContext context) {
-    Widget out;
-
-    isError
-        ? out = new ImageIcon(
-            AssetImage(ImagePaths.icEditError),
-            color: Color(CommonTheme.danger.value),
-          )
-        : out = new Icon(null);
-
-    return out;
-  }
-}
-
-class DisableIcon extends StatelessWidget {
-  final bool _isDisable;
-
-  DisableIcon(this._isDisable);
-
-  bool get isError => _isDisable;
-
-  @override
-  Widget build(BuildContext context) {
-    Widget out;
-
-    isError
-        ? out = new ImageIcon(
-            AssetImage(ImagePaths.icEditDisable),
-            color: Color(CommonTheme.grey.value),
-          )
-        : out = new Icon(null);
-
-    return out;
   }
 }

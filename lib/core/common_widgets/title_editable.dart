@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/common_widgets/common_theme.dart';
-import 'package:rxdart/rxdart.dart';
 
 class TitleEditable extends StatefulWidget {
   TitleEditable(
@@ -33,7 +32,7 @@ class TitleEditable extends StatefulWidget {
 class _TitleEditableState extends State<TitleEditable> {
   @override
   Widget build(BuildContext context) {
-    widget.controller.text = 'Title value';
+    // widget.controller.text = 'Title value';
     return Container(
       child: _getEditText(widget.title, widget.changed, widget.controller,
           widget.inputType, widget.node, widget.nextNode, widget.isEnabled,
