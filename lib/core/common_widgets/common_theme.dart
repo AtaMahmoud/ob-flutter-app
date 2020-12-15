@@ -6,7 +6,7 @@ class CommonTheme {
   static const String fontVerela = 'Varela';
   // colors
 
-  static const Color primaryLightest = Color(0xFFE4EDF3);
+  static const Color primaryLightest = Color(0xFFF2F5F9);
   static const Color primaryLighter = Color(0xFF9CC4F4);
   static const Color primaryLight = Color(0xFF649FF8);
   static const Color primary = Color(0xFF2D68BF);

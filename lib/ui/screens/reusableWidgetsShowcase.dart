@@ -13,6 +13,7 @@ import 'package:ocean_builder/core/common_widgets/sliders.dart';
 import 'package:ocean_builder/core/common_widgets/space_item.dart';
 import 'package:ocean_builder/core/common_widgets/text_editable.dart';
 import 'package:ocean_builder/core/common_widgets/title_editable.dart';
+import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 
 class WidgetShowCase extends StatefulWidget {
   static const String routeName = '/widgetShowCase';
@@ -30,6 +31,7 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
 
   TextEditingController controller;
   TextEditingController textController;
+  TextEditingController searchController;
   FocusNode node, nextNode;
 
   LoginValidationBloc _bloc = LoginValidationBloc();
@@ -38,6 +40,7 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
   void initState() {
     controller = new TextEditingController();
     textController = new TextEditingController();
+    searchController = new TextEditingController();
     node = FocusNode();
     super.initState();
   }
@@ -45,6 +48,9 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
   @override
   void dispose() {
     _bloc.dispose();
+    controller.dispose();
+    textController.dispose();
+    searchController.dispose();
     super.dispose();
   }
 
@@ -56,8 +62,17 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
       body: Center(
         child: CustomScrollView(
           slivers: [
+            // UIHelper.getTopEmptyContainer(8, false),
             SearchBar(
               scaffoldKey: _scaffoldKey,
+              searchTextController: searchController,
+              stream: _bloc.emailController,
+              textChanged: (value) {
+                debugPrint('Changed Search text is --- $value');
+              },
+              onSubmitted: (value) {
+                debugPrint('Submitted Search text is --- $value');
+              },
             ),
             SliverToBoxAdapter(
               child: _widgetTest(),
