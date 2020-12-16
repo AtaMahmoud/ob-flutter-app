@@ -109,7 +109,7 @@ class PrimaryButton extends StatelessWidget {
           //  textScaleFactor: 1.0,
           style: CommonTheme.tsBodySmall.apply(
             color: _textColor,
-          ),
+        ),
         ),
         color: _color,
         disabledColor: _disabledColor,

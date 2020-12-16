@@ -39,8 +39,7 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
 
   LoginValidationBloc _bloc = LoginValidationBloc();
 
-  GenericBloc<String> _selectBloc =
-      GenericBloc(ListHelper.getPermissionList()[0]);
+  GenericBloc<String> _selectBloc = GenericBloc.named();
 
   @override
   void initState() {
@@ -102,6 +101,36 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
     }, selectedValue: 'one');
 
     return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SelectButton(
+            list: ListHelper.getPermissionList(),
+            stream: _selectBloc.controller,
+            changed: _selectBloc.changed,
+            addPadding: false,
+            label: 'Permission',
+            helperText: 'Help text',
+            placeHolder: 'Place holder',
+            hasHelperText: true,
+            hasLabel: true,
+            hasPlaceHolder: true,
+            isEnabled: false,
+          )),
+      Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SelectButton(
+            list: ListHelper.getPermissionList(),
+            stream: _selectBloc.controller,
+            changed: _selectBloc.changed,
+            addPadding: false,
+            label: 'Permission',
+            helperText: 'Help text',
+            placeHolder: 'Place holder',
+            hasHelperText: true,
+            hasLabel: true,
+            hasPlaceHolder: true,
+            isEnabled: true,
+          )),
       PrimaryButton(
         label: 'Primary Button',
         onPressed: () {},
@@ -296,36 +325,6 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
           debugPrint('Tapped in Space room');
         },
       ),
-      Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SelectButton(
-            list: ListHelper.getPermissionList(),
-            stream: _selectBloc.controller,
-            changed: _selectBloc.changed,
-            addPadding: false,
-            label: 'Permission',
-            helperText: 'Help text',
-            placeHolder: 'Place holder',
-            hasHelperText: true,
-            hasLabel: true,
-            hasPlaceHolder: true,
-            isEnabled: true,
-          )),
-      Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SelectButton(
-            list: ListHelper.getPermissionList(),
-            stream: _selectBloc.controller,
-            changed: _selectBloc.changed,
-            addPadding: false,
-            label: 'Permission',
-            helperText: 'Help text',
-            placeHolder: 'Place holder',
-            hasHelperText: true,
-            hasLabel: true,
-            hasPlaceHolder: true,
-            isEnabled: false,
-          ))
     ]);
   }
 

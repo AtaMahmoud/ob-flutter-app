@@ -11,6 +11,8 @@ class GenericBloc<T> implements BlocBase {
 
   Function(T) get changed => controller.sink.add;
 
+  GenericBloc.named();
+
   GenericBloc(T data) {
     sink.add(data);
   }
