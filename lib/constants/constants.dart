@@ -510,11 +510,11 @@ class ListHelper {
       ];
 
   static List<String> getPermissionList() => [
-        'Full Admin Access',
         'Default Visitor Permissions',
         'Restricted Bedroom & Kitchen',
         'Default Guest Permissions',
-        'Default Member Permissions'
+        'Default Member Permissions',
+        'Full Admin Access'
       ];
 
   static List<String> getAccessAsList() =>
