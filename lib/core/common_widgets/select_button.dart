@@ -50,25 +50,17 @@ class _SelectButtonState extends State<SelectButton> {
 
   Widget _getDropdown(List<String> list, Observable<String> stream, changed,
       bool addPadding, String label) {
-    return StreamBuilder<String>(stream: stream.transform(
-      StreamTransformer<String, String>.fromHandlers(
-        handleData: (data, sink) {
-          if (data.contains('Full')) {
-            sink.addError('You don\'t have admin access');
-          } else {
-            sink.add(data);
-          }
-        },
-      ),
-    ), builder: (context, snapshot) {
-      return Padding(
-          padding: addPadding
-              ? EdgeInsets.symmetric(horizontal: 24)
-              : EdgeInsets.symmetric(horizontal: 0),
-          child: //_wrapperWithinputDecoration(label, snapshot, changed, list),
-              // _dropdown (snapshot, changed, list),
-              _dropdownOutlined(snapshot, changed, list));
-    });
+    return StreamBuilder<String>(
+        stream: stream,
+        builder: (context, snapshot) {
+          return Padding(
+              padding: addPadding
+                  ? EdgeInsets.symmetric(horizontal: 24)
+                  : EdgeInsets.symmetric(horizontal: 0),
+              child: //_wrapperWithinputDecoration(label, snapshot, changed, list),
+                  // _dropdown (snapshot, changed, list),
+                  _dropdownOutlined(snapshot, changed, list));
+        });
   }
 
   InputDecorator _wrapperWithinputDecoration(String label,
@@ -78,7 +70,7 @@ class _SelectButtonState extends State<SelectButton> {
           enabled: widget.isEnabled,
           // hasFloatingPlaceholder: true,
           // alignLabelWithHint: true,
-          // floatingLabelBehavior: FloatingLabelBehavior.always,
+          floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding:
               EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 8),
           fillColor:
@@ -86,7 +78,7 @@ class _SelectButtonState extends State<SelectButton> {
           // borders
           border: new OutlineInputBorder(
             borderRadius: new BorderRadius.circular(8.0),
-            borderSide: new BorderSide(width: 1),
+            borderSide: new BorderSide(width: 2),
           ),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(color: CommonTheme.primaryLight),
@@ -202,7 +194,7 @@ class _SelectButtonState extends State<SelectButton> {
           : DisableIcon(true),
       border: new OutlineInputBorder(
         borderRadius: new BorderRadius.circular(8.0),
-        borderSide: new BorderSide(width: 1),
+        borderSide: new BorderSide(width: 2),
       ),
       enabledBorder: OutlineInputBorder(
         borderSide: BorderSide(color: CommonTheme.primaryLight),
@@ -215,8 +207,8 @@ class _SelectButtonState extends State<SelectButton> {
       ),
       enabled: widget.isEnabled,
       // hasFloatingPlaceholder: true,
-      alignLabelWithHint: true,
-      // floatingLabelBehavior: FloatingLabelBehavior.auto,
+      // alignLabelWithHint: true,
+      floatingLabelBehavior: FloatingLabelBehavior.always,
       contentPadding: EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 8),
       fillColor:
           widget.isEnabled ? CommonTheme.greyLightest : CommonTheme.white,
@@ -237,11 +229,40 @@ class _SelectButtonState extends State<SelectButton> {
             ],
           ));
     });
+    print('has error :');
+    print(snapshot.hasError);
+    print('data:');
+    print(snapshot.data);
+    print('error:');
+    print(snapshot.error);
+
     return DropdownButtonFormField<String>(
       value: snapshot.hasError ? null : snapshot.data,
       decoration: inputDecoration,
       items: menuItems.toList(),
       onChanged: widget.isEnabled ? changed : null,
+      // selectedItemBuilder: (context) {
+      //   return list.map<Widget>((String item) {
+      //     print(item);
+      //     print(snapshot.hasData.toString());
+      //     var _color;
+      //     if (snapshot.hasData && item.compareTo(snapshot.data) == 0) {
+      //       _color = CommonTheme.danger;
+      //     } else {
+      //       _color = CommonTheme.primary;
+      //     }
+      //     return Row(
+      //       mainAxisAlignment: MainAxisAlignment.end,
+      //       children: <Widget>[
+      //         Text(
+      //           item,
+      //           style: CommonTheme.tsBodyDefault
+      //               .apply(color: widget.isEnabled ? _color : CommonTheme.grey),
+      //         ),
+      //       ],
+      //     );
+      //   }).toList();
+      // },
       // elevation: 8,
       // onTap: () {
       //   print('tapped the select button');
@@ -252,7 +273,7 @@ class _SelectButtonState extends State<SelectButton> {
       // disabledHint: Text('Disabled hint'),
       // iconDisabledColor: CommonTheme.grey,
       // dropdownColor: CommonTheme.primary,
-      hint: Text(' hint text in btn form field'),
+      // hint: Text(' --------------------------'),
 
       // iconEnabledColor: CommonTheme.primary,
       // icon: SvgPicture.asset(ImagePaths.svgPlus),

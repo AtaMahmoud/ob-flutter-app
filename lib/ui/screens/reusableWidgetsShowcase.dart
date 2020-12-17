@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -39,7 +41,22 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
 
   LoginValidationBloc _bloc = LoginValidationBloc();
 
-  GenericBloc<String> _selectBloc = GenericBloc.named();
+  var validator = StreamTransformer<String, String>.fromHandlers(
+    handleData: (data, sink) {
+      if (!data.contains('Full')) {
+        sink.add(data);
+      } else {
+        sink.addError('You need admin access to select this option');
+      }
+    },
+    handleError: (error, stackTrace, sink) {
+      print(error);
+      print(stackTrace);
+      sink.add('error handler error');
+    },
+  );
+
+  GenericBloc<String> _selectBloc; // = GenericBloc.named(validator);
 
   @override
   void initState() {
@@ -47,6 +64,8 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
     textController = new TextEditingController();
     searchController = new TextEditingController();
     node = FocusNode();
+    _selectBloc = GenericBloc.named(validator);
+    // _selectBloc.setStreamTransformer();
     super.initState();
   }
 
@@ -101,26 +120,26 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
     }, selectedValue: 'one');
 
     return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      // Padding(
+      //     padding: const EdgeInsets.all(8.0),
+      //     child: SelectButton(
+      //       list: ListHelper.getPermissionList(),
+      //       stream: _selectBloc.controller,
+      //       changed: _selectBloc.changed,
+      //       addPadding: false,
+      //       label: 'Permission',
+      //       helperText: 'Help text',
+      //       placeHolder: 'Place holder',
+      //       hasHelperText: true,
+      //       hasLabel: true,
+      //       hasPlaceHolder: true,
+      //       isEnabled: false,
+      //     )),
       Padding(
           padding: const EdgeInsets.all(8.0),
           child: SelectButton(
             list: ListHelper.getPermissionList(),
-            stream: _selectBloc.controller,
-            changed: _selectBloc.changed,
-            addPadding: false,
-            label: 'Permission',
-            helperText: 'Help text',
-            placeHolder: 'Place holder',
-            hasHelperText: true,
-            hasLabel: true,
-            hasPlaceHolder: true,
-            isEnabled: false,
-          )),
-      Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SelectButton(
-            list: ListHelper.getPermissionList(),
-            stream: _selectBloc.controller,
+            stream: _selectBloc.stream,
             changed: _selectBloc.changed,
             addPadding: false,
             label: 'Permission',
