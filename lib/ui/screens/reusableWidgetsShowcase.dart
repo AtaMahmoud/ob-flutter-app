@@ -28,8 +28,7 @@ class WidgetShowCase extends StatefulWidget {
 class _WidgetShowCaseState extends State<WidgetShowCase> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   bool _isChecked = false;
-
-  bool isPublish = false;
+  bool _isPublish = false;
 
   TextEditingController controller;
   TextEditingController textController;
@@ -49,6 +48,7 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
     },
   );
 
+  List<SelectItem> _selectItems = [SelectItem(option: 'option 0', helpText: 'Help text for option 0'),SelectItem(option: 'option 1', helpText: 'Help text for option 1'),SelectItem(option: 'option 2', helpText: 'Help text for option 2'),];
 
   GenericBloc<SelectItem> _selectBloc; // = GenericBloc.named(validator);
   GenericBloc<SelectItem> _selectBloc2;
@@ -144,9 +144,7 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
       Padding(
           padding: const EdgeInsets.all(8.0),
           child: SelectButton(
-            list: ListHelper.getPermissionList().map((p) {
-              return SelectItem(option: p,helpText: 'Help text for $p');
-            }).toList(),
+            list: _selectItems,
             stream: _selectBloc.stream,
             changed: _selectBloc.changed,
             addPadding: false,
@@ -268,7 +266,7 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
       FlutterSwitch(
         // valueFontSize: 48,
         toggleColor: Colors.white,
-        value: isPublish,
+        value: _isPublish,
         // borderRadius: 24,
         padding: 0.0,
         showOnOff: false,
@@ -276,7 +274,7 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
         inactiveColor: CommonTheme.greyLighter,
         onToggle: (val) {
           setState(() {
-            isPublish = val;
+            _isPublish = val;
           });
         },
       ),
