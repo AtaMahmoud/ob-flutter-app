@@ -2,4 +2,5 @@
 <resources>
     <color name="colorAccent">#2B538F</color>
     <color name="splashBkg">#2B538F</color>
+    <color name="noramlsplashBkg">#2B538F</color>
 </resources>
