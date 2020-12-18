@@ -40,8 +40,8 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
 
   var validator = StreamTransformer<SelectItem, SelectItem>.fromHandlers(
     handleData: (data, sink) {
-      print(data.item);
-      if (!data.item.contains('Full')) {
+      print(data.option);
+      if (!data.option.contains('Full')) {
         sink.add(data);
       } else {
         sink.addError('You need admin access to select this option');
@@ -51,11 +51,11 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
 
 
   GenericBloc<SelectItem> _selectBloc; // = GenericBloc.named(validator);
-
+  GenericBloc<SelectItem> _selectBloc2;
   List<SelectItem> _getSelectItems(List<String> list) {
         List<SelectItem> items = [];
         list.map((data) {
-          items.add(SelectItem(item: data,helpText: 'Help text for $data'));
+          items.add(SelectItem(option: data,helpText: 'Help text for $data'));
         });
         return items;
       }
@@ -67,7 +67,9 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
     searchController = new TextEditingController();
     node = FocusNode();
     _selectBloc = GenericBloc.named(validator);
+    _selectBloc2 = GenericBloc.named(validator);
     // _selectBloc.setStreamTransformer();
+    
     super.initState();
   }
 
@@ -122,26 +124,28 @@ class _WidgetShowCaseState extends State<WidgetShowCase> {
     }, selectedValue: 'one');
 
     return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      // Padding(
-      //     padding: const EdgeInsets.all(8.0),
-      //     child: SelectButton(
-      //       list: ListHelper.getPermissionList(),
-      //       stream: _selectBloc.controller,
-      //       changed: _selectBloc.changed,
-      //       addPadding: false,
-      //       label: 'Permission',
-      //       helperText: 'Help text',
-      //       placeHolder: 'Place holder',
-      //       hasHelperText: true,
-      //       hasLabel: true,
-      //       hasPlaceHolder: true,
-      //       isEnabled: false,
-      //     )),
       Padding(
           padding: const EdgeInsets.all(8.0),
           child: SelectButton(
             list: ListHelper.getPermissionList().map((p) {
-              return SelectItem(item: p,helpText: 'Help text for $p');
+              return SelectItem(option: p,helpText: 'Help text for $p');
+            }).toList(),
+            stream: _selectBloc2.controller,
+            changed: _selectBloc2.changed,
+            addPadding: false,
+            label: 'Permission',
+            helperText: 'Help text',
+            placeHolder: 'Place holder',
+            hasHelperText: true,
+            hasLabel: true,
+            hasPlaceHolder: true,
+            isEnabled: false,
+          )),
+      Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SelectButton(
+            list: ListHelper.getPermissionList().map((p) {
+              return SelectItem(option: p,helpText: 'Help text for $p');
             }).toList(),
             stream: _selectBloc.stream,
             changed: _selectBloc.changed,

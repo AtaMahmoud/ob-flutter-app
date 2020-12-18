@@ -7,19 +7,18 @@ class DisableIcon extends StatelessWidget {
 
   DisableIcon(this._isDisable);
 
-  bool get isError => _isDisable;
+  bool get isDisabled => _isDisable;
 
   @override
   Widget build(BuildContext context) {
     Widget out;
 
-    isError
+    isDisabled
         ? out = new ImageIcon(
             AssetImage(ImagePaths.icEditDisable),
             color: Color(CommonTheme.grey.value),
           )
         : out = new Icon(null);
-
     return out;
   }
 }
