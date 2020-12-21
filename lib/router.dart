@@ -70,7 +70,9 @@ import 'package:ocean_builder/ui/screens/sign_in_up/your_obs_screen.dart';
 import 'package:ocean_builder/ui/screens/weather/weather_more_widget.dart';
 import 'package:ocean_builder/ui/screens/weather/weather_screen.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:page_transition/page_transition.dart';
+
+import 'ui/screens/rooms/reusable_components.dart';
+// import 'package:page_transition/page_transition.dart';
 
 const String initialRoute = SplashScreen.routeName;
 
@@ -78,13 +80,17 @@ class Router {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case SplashScreen.routeName:
-        // return CupertinoPageRoute(builder: (_) => SplashScreen());
-      return PageTransition(
-      type: PageTransitionType.fade, child: SplashScreen());
+        return CupertinoPageRoute(builder: (_) => SplashScreen());
+      // return PageTransition(
+      // type: PageTransitionType.fade, child: SplashScreen());
       case LandingScreen.routeName:
         return CupertinoPageRoute(
             builder: (_) => LandingScreen(),
             settings: RouteSettings(name: LandingScreen.routeName));
+      case Rooms.routeName:
+        return CupertinoPageRoute(
+            builder: (_) => Rooms(),
+            settings: RouteSettings(name: Rooms.routeName));
       case HomeScreen.routeName:
         int currentIndex = settings.arguments;
         if (currentIndex == null) {

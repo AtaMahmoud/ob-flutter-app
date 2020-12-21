@@ -8,6 +8,7 @@ import 'package:ocean_builder/core/providers/user_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/ui/screens/designSteps/design_screen.dart';
 import 'package:ocean_builder/ui/screens/reusableWidgetsShowcase.dart';
+import 'package:ocean_builder/ui/screens/rooms/reusable_components.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/login_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/registration_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/registration_screen_accept_invitation.dart';
@@ -53,19 +54,25 @@ class _LandingScreenState extends State<LandingScreen> {
     );
   }
 
-  Expanded _mainContent() {
+  _mainContent() {
     return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          userProvider.isLoading
-              ? CircularProgressIndicator()
-              : _loginToDashboard(),
-          _requestOrAcceptAccess(),
-          _design(),
-          _widgetShowcase()
-        ],
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        physics: BouncingScrollPhysics(),
+        // primary: false,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            userProvider.isLoading
+                ? CircularProgressIndicator()
+                : _loginToDashboard(),
+            _requestOrAcceptAccess(),
+            _design(),
+            _widgetShowcase(),
+            _roomsDashboard()
+          ],
+        ),
       ),
     );
   }
@@ -83,7 +90,18 @@ class _LandingScreenState extends State<LandingScreen> {
     );
   }
 
-  
+  InkWell _roomsDashboard() {
+    return InkWell(
+      child: Padding(
+        padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
+        child:
+            UIHelper.imageTextColumn(ImagePaths.svgSeapod, 'Rooms Dashboard'),
+      ),
+      onTap: () {
+        Navigator.of(context).pushNamed(Rooms.routeName);
+      },
+    );
+  }
 
   InkWell _design() {
     return InkWell(

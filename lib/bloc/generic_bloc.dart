@@ -27,6 +27,8 @@ class GenericBloc<T> implements BlocBase {
 
   Function(T) get changed => controller.sink.add;
 
+  GenericBloc.private();
+
   GenericBloc.named(StreamTransformer streamTransformer) {
     this.streamTransformer = streamTransformer;
   }
