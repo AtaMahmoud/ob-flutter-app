@@ -5,12 +5,18 @@ import 'package:ocean_builder/core/common_widgets/common_theme.dart';
 
 class SpaceItem extends StatefulWidget {
   SpaceItem(
-      {Key key, this.isSelected, this.hasWarning, this.label, this.onPressed})
+      {Key key,
+      this.index,
+      this.isSelected,
+      this.hasWarning,
+      this.label,
+      this.onPressed})
       : super(key: key);
   final label;
   final bool isSelected;
   final bool hasWarning;
   final VoidCallback onPressed;
+  final int index;
 
   @override
   _SpaceItemState createState() => _SpaceItemState();
@@ -45,9 +51,7 @@ class _SpaceItemState extends State<SpaceItem> {
       clipper: SpaceClipper(isSelected: _isSelected),
       child: MaterialButton(
         onPressed: () {
-          setState(() {
-            _isSelected = !_isSelected;
-          });
+          setState(() {});
           widget.onPressed.call();
         },
         shape: RoundedRectangleBorder(
@@ -110,4 +114,14 @@ class SpaceClipper extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) {
     return true;
   }
+}
+
+class SpaceItemData {
+  // SpaceItem spaceItem = SpaceItem(label: 'Overview',hasWarning: true,isSelected: false,onPressed: ,)
+  int index;
+  bool isSelected;
+  String label;
+  bool hasWarning;
+
+  SpaceItemData({this.index, this.isSelected, this.label, this.hasWarning});
 }

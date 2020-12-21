@@ -8,7 +8,7 @@ import 'package:ocean_builder/core/providers/user_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/ui/screens/designSteps/design_screen.dart';
 import 'package:ocean_builder/ui/screens/reusableWidgetsShowcase.dart';
-import 'package:ocean_builder/ui/screens/rooms/reusable_components.dart';
+import 'package:ocean_builder/ui/screens/rooms/rooms.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/login_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/registration_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/registration_screen_accept_invitation.dart';

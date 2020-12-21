@@ -1666,6 +1666,34 @@ List<String> WEATEHR_SOURCE_LIST = [
   'EXTERNAL (STORMGLASS)'
 ];
 
+// demo data
+List<Room> demorooms = [
+  new Room(
+    roomName: 'Bedroom',
+  ),
+  new Room(
+    roomName: 'Livingroom',
+    // roomName: RoomName.Livingroom.toString()
+  ),
+  new Room(
+    roomName: 'Kitchen',
+  ),
+  new Room(
+    roomName: 'UnderWaterRoom',
+  ),
+  new Room(roomName: 'Bathroom'),
+  new Room(roomName: 'Master Bedroom')
+];
+
+enum RoomName {
+  Bedroom,
+  Livingroom,
+  Kitchen,
+  UnderWaterRoom,
+  Bathroom,
+  MasterBedRoom
+}
+
 /*
 
 {

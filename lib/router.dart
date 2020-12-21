@@ -71,7 +71,7 @@ import 'package:ocean_builder/ui/screens/weather/weather_more_widget.dart';
 import 'package:ocean_builder/ui/screens/weather/weather_screen.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'ui/screens/rooms/reusable_components.dart';
+import 'ui/screens/rooms/rooms.dart';
 // import 'package:page_transition/page_transition.dart';
 
 const String initialRoute = SplashScreen.routeName;
