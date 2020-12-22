@@ -57,6 +57,7 @@ User _$UserFromJson(Map json) {
                 (k, e) => MapEntry(k as String, e),
               )))
         ?.toList(),
+    selectedWeatherSource: json['selectedWeatherSource'] as String,
     version: json['__v'] as int,
   )
     ..xAuthToken = json['xAuthToken'] as String
@@ -108,4 +109,5 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'seaPods': instance.seaPods,
       'accessRequests': instance.accessRequests,
       'accessInvitation': instance.accessInvitations,
+      'selectedWeatherSource': instance.selectedWeatherSource,
     };

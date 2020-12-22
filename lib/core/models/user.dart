@@ -1,4 +1,3 @@
-
 import 'package:json_annotation/json_annotation.dart';
 import 'package:ocean_builder/core/models/access_request.dart';
 import 'package:ocean_builder/core/models/fcm_token.dart';
@@ -13,7 +12,7 @@ part 'user.g.dart';
 class User {
   @JsonKey(name: '_id')
   String userID;
-  String  email;
+  String email;
   String firstName;
   String lastName;
   String country;
@@ -22,10 +21,10 @@ class User {
   String profileImageUrl;
 
   bool isVerified;
-  
+
   @JsonKey(nullable: true)
-  String xAuthToken; 
- 
+  String xAuthToken;
+
   @JsonKey(nullable: true)
   String userType;
 
@@ -63,21 +62,41 @@ class User {
   @JsonKey(nullable: true)
   List<AccessEvent> accessRequests;
 
-  @JsonKey(nullable: true,name: 'accessInvitation')
+  @JsonKey(nullable: true, name: 'accessInvitation')
   List<AccessEvent> accessInvitations;
 
-  User({this.userID,this.email,this.firstName,this.lastName,this.country,this.phone,this.profileImageUrl,this.isVerified,this.userOceanBuilder,this.password,this.requestAccessTime,this.token,this.lightiningScenes,this.notifications,this.checkInDate,this.emergencyContact,this.seaPods,this.version});
+  String selectedWeatherSource;
+
+  User(
+      {this.userID,
+      this.email,
+      this.firstName,
+      this.lastName,
+      this.country,
+      this.phone,
+      this.profileImageUrl,
+      this.isVerified,
+      this.userOceanBuilder,
+      this.password,
+      this.requestAccessTime,
+      this.token,
+      this.lightiningScenes,
+      this.notifications,
+      this.checkInDate,
+      this.emergencyContact,
+      this.seaPods,
+      this.selectedWeatherSource,
+      this.version});
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
 
-  static DateTime _dateTimeFromEpochUs(int us) => us == null ? null : DateTime.fromMicrosecondsSinceEpoch(us);
-  static int _dateTimeToEpochUs(DateTime dateTime) => dateTime?.microsecondsSinceEpoch;
-
-
+  static DateTime _dateTimeFromEpochUs(int us) =>
+      us == null ? null : DateTime.fromMicrosecondsSinceEpoch(us);
+  static int _dateTimeToEpochUs(DateTime dateTime) =>
+      dateTime?.microsecondsSinceEpoch;
 }
-
 
 /*
 

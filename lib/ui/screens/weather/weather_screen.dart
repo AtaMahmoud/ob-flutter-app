@@ -54,7 +54,13 @@ class _WeatherScreenState extends State<WeatherScreen> {
       _futuremissingData = Provider.of<LocalWeatherDataProvider>(context)
           .fetchDeviceObservationData();
 
-      currentlySelectedSource = ListHelper.getSourceList()[0];
+      // currentlySelectedSource = ListHelper.getSourceList()[0];
+      debugPrint(
+          '_user.selectedWeatherSource --- ${_user.selectedWeatherSource}');
+      currentlySelectedSource =
+          _user.selectedWeatherSource ?? ListHelper.getSourceList()[1];
+      ApplicationStatics.selectedWeatherProvider = currentlySelectedSource;
+
       _sourcePriorityBloc.topProprity.listen((event) {
         if (event.compareTo('local') == 0) {
           _futureWeatherData = Provider.of<LocalWeatherDataProvider>(context)

@@ -22,7 +22,7 @@ class _SourcePrioritySelectorModalState
     extends State<SourcePrioritySelectorModal> {
   bool _seaPodSceneChanged;
 
-  List<String> _seaPodSceneRows = [];
+  List<String> _weatherSourceRows = [];
 
   ScreenUtil _util = ScreenUtil();
 
@@ -30,11 +30,11 @@ class _SourcePrioritySelectorModalState
   void initState() {
     super.initState();
     if (ApplicationStatics.selectedWeatherProvider.compareTo('local') == 0) {
-      _seaPodSceneRows.add(WEATEHR_SOURCE_LIST[0]);
-      _seaPodSceneRows.add(WEATEHR_SOURCE_LIST[1]);
+      _weatherSourceRows.add(WEATEHR_SOURCE_LIST[0]);
+      _weatherSourceRows.add(WEATEHR_SOURCE_LIST[1]);
     } else {
-      _seaPodSceneRows.add(WEATEHR_SOURCE_LIST[1]);
-      _seaPodSceneRows.add(WEATEHR_SOURCE_LIST[0]);
+      _weatherSourceRows.add(WEATEHR_SOURCE_LIST[1]);
+      _weatherSourceRows.add(WEATEHR_SOURCE_LIST[0]);
     }
   }
 
@@ -106,7 +106,7 @@ class _SourcePrioritySelectorModalState
                       Spacer(),
                       InkWell(
                         onTap: () {
-                          if(!Provider.of<UserProvider>(context).isLoading)
+                          if (!Provider.of<UserProvider>(context).isLoading)
                             Navigator.of(context).pop();
                         },
                         child: Padding(
@@ -136,27 +136,29 @@ class _SourcePrioritySelectorModalState
 
   void _onSeaPodScenesReorder(int oldIndex, int newIndex) {
     setState(() {
-      String row = _seaPodSceneRows.removeAt(oldIndex);
-      _seaPodSceneRows.insert(newIndex, row);
+      String row = _weatherSourceRows.removeAt(oldIndex);
+      _weatherSourceRows.insert(newIndex, row);
       _seaPodSceneChanged = true;
-      if (_seaPodSceneRows[0].compareTo('LOCAL (WEATHERFLOW STATION)') == 0) {
-        Provider.of<UserProvider>(context).setWeatherSource('local').then((response) {
-            if(response.status == 200){
-        widget.sourcePriorityBloc.topProprityChanged('local');
-        ApplicationStatics.selectedWeatherProvider = 'local';
-            }
+      if (_weatherSourceRows[0].compareTo('LOCAL (WEATHERFLOW STATION)') == 0) {
+        Provider.of<UserProvider>(context)
+            .setWeatherSource('local')
+            .then((response) {
+          if (response.status == 200) {
+            widget.sourcePriorityBloc.topProprityChanged('local');
+            ApplicationStatics.selectedWeatherProvider = 'local';
+          }
         });
-
       } else {
-        Provider.of<UserProvider>(context).setWeatherSource('external').then((response) {
-          if(response.status == 200){
-        widget.sourcePriorityBloc.topProprityChanged('external');
-        ApplicationStatics.selectedWeatherProvider = 'external';
+        Provider.of<UserProvider>(context)
+            .setWeatherSource('external')
+            .then((response) {
+          if (response.status == 200) {
+            widget.sourcePriorityBloc.topProprityChanged('external');
+            ApplicationStatics.selectedWeatherProvider = 'external';
           }
         });
       }
-    }
-    );
+    });
   }
 
   _reorderableContent() {
@@ -170,8 +172,8 @@ class _SourcePrioritySelectorModalState
                   child: _rowItem(index),
                 ),
               ),
-          childCount:
-              _seaPodSceneRows.length //ListHelper.getlightSceneList().length//
+          childCount: _weatherSourceRows
+              .length //ListHelper.getlightSceneList().length//
           ),
       onReorder: _onSeaPodScenesReorder,
     );
@@ -214,7 +216,7 @@ class _SourcePrioritySelectorModalState
                       width: 32.w,
                     ),
                     Text(
-                      _seaPodSceneRows[index],
+                      _weatherSourceRows[index],
                       style: TextStyle(
                           fontSize: 38.sp,
                           color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
