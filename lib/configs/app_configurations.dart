@@ -13,7 +13,7 @@ class Config {
   // openweather map url
 
   static const String OPEN_WEATHER_MAP_URL =
-      'https://openweathermap.org/weathermap?basemap=map&cities=true&layer=temperature&lat=9.2589903&lon=-80.259267&zoom=5';
+      'https://openweathermap.org/weathermap?basemap=map&cities=true&layer=temperature&lat=9.2589903&lon=-80.259267&zoom=7';
   // 'https://openweathermap.org/weathermap?basemap=map&cities=true&layer=temperature&lat=30&lon=-20&zoom=5';
   // API links
 

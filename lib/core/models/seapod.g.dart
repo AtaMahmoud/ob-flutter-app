@@ -84,7 +84,8 @@ SeaPod _$SeaPodFromJson(Map json) {
             : PermissionSet.fromJson((e as Map)?.map(
                 (k, e) => MapEntry(k as String, e),
               )))
-        ?.toList();
+        ?.toList()
+    ..seaPodType = json['seaPodType'] as String ?? 'private';
 }
 
 Map<String, dynamic> _$SeaPodToJson(SeaPod instance) => <String, dynamic>{
@@ -127,4 +128,5 @@ Map<String, dynamic> _$SeaPodToJson(SeaPod instance) => <String, dynamic>{
       'permissionSets': instance.permissionSets,
       'vessleCode': instance.vessleCode,
       '__v': instance.version,
+      'seaPodType': instance.seaPodType,
     };

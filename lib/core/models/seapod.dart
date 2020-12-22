@@ -87,6 +87,9 @@ class SeaPod {
   @JsonKey(name: '__v')
   int version;
 
+  @JsonKey(defaultValue: 'private')
+  String seaPodType;
+
   SeaPod(
       {this.id,
       this.ownerId,
