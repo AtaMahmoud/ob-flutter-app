@@ -7,6 +7,7 @@ import 'package:ocean_builder/bloc/source_priority_bloc.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/storm_glass_data.dart';
 import 'package:ocean_builder/core/models/user.dart';
+import 'package:ocean_builder/core/providers/local_weather_flow_data_provider.dart';
 import 'package:ocean_builder/core/providers/storm_glass_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/ui/shared/grid_menu_helper.dart';
@@ -43,7 +44,7 @@ class _MarineScreenState extends State<MarineScreen> {
 
   bool useMobileLayout;
 
-  SourcePriorityBloc _sourcePriorityBloc = SourcePriorityBloc();
+  SourcePriorityBloc _sourcePriorityBloc = new SourcePriorityBloc('local');
 
   @override
   void initState() {
@@ -53,8 +54,44 @@ class _MarineScreenState extends State<MarineScreen> {
           Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
       _futureTideData =
           Provider.of<StormGlassDataProvider>(context).fetchTideData();
+
+      debugPrint(
+          'Marine screen -- _user.selectedWeatherSource --- ${_user.selectedWeatherSource}');
+      currentlySelectedSource =
+          _user.selectedWeatherSource ?? ListHelper.getSourceList()[1];
+      ApplicationStatics.selectedWeatherProvider = currentlySelectedSource;
+
+      _sourcePriorityBloc.topProprityChanged(currentlySelectedSource);
+      _sourcePriorityBloc.topProprity.listen((event) {
+        debugPrint('received source priority data --- $event');
+        if (event.compareTo('local') == 0) {
+          // _futureWeatherData = Provider.of<LocalWeatherDataProvider>(context)
+          //     .fetchDeviceObservationData();
+          // _futureTideData =
+          //     Provider.of<StormGlassDataProvider>(context).fetchTideData();
+
+          _futureWeatherData =
+              Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
+          _futureTideData =
+              Provider.of<StormGlassDataProvider>(context).fetchTideData();
+
+          currentlySelectedSource = ListHelper.getSourceList()[1];
+          ApplicationStatics.selectedWeatherProvider = currentlySelectedSource;
+          // setState(() {});
+        } else if (event.compareTo('external') == 0) {
+          _futureWeatherData =
+              Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
+          _futureTideData =
+              Provider.of<StormGlassDataProvider>(context).fetchTideData();
+          // _futuremissingData = Provider.of<LocalWeatherDataProvider>(context)
+          //     .fetchDeviceObservationData();
+          currentlySelectedSource = ListHelper.getSourceList()[0];
+          ApplicationStatics.selectedWeatherProvider = currentlySelectedSource;
+          // setState(() {});
+        }
+      });
     });
-    currentlySelectedSource = ListHelper.getSourceList()[0];
+    // currentlySelectedSource = ListHelper.getSourceList()[0];
     _bloc.weatherSourceController.listen((onData) {});
 
     super.initState();
@@ -141,7 +178,7 @@ class _MarineScreenState extends State<MarineScreen> {
           PopUpHelpers.showPopup(
               context,
               SourcePrioritySelectorModal(_sourcePriorityBloc),
-              'Lighting Screen');
+              'WEATHER SOURCE');
         }));
   }
 

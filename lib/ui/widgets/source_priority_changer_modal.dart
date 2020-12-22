@@ -146,6 +146,9 @@ class _SourcePrioritySelectorModalState
           if (response.status == 200) {
             widget.sourcePriorityBloc.topProprityChanged('local');
             ApplicationStatics.selectedWeatherProvider = 'local';
+            Provider.of<UserProvider>(context)
+                .authenticatedUser
+                .selectedWeatherSource = 'local';
           }
         });
       } else {
@@ -155,6 +158,9 @@ class _SourcePrioritySelectorModalState
           if (response.status == 200) {
             widget.sourcePriorityBloc.topProprityChanged('external');
             ApplicationStatics.selectedWeatherProvider = 'external';
+            Provider.of<UserProvider>(context)
+                .authenticatedUser
+                .selectedWeatherSource = 'local';
           }
         });
       }

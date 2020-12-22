@@ -43,10 +43,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
 
   bool useMobileLayout;
 
-  SourcePriorityBloc _sourcePriorityBloc = SourcePriorityBloc();
+  SourcePriorityBloc _sourcePriorityBloc = new SourcePriorityBloc('local');
 
   @override
   void initState() {
+    print('init data of weather screen, cehck if it is called every time');
     Future.delayed(Duration.zero).then((_) {
       _futureWeatherData =
           Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
@@ -61,6 +62,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           _user.selectedWeatherSource ?? ListHelper.getSourceList()[1];
       ApplicationStatics.selectedWeatherProvider = currentlySelectedSource;
 
+      _sourcePriorityBloc.topProprityChanged(currentlySelectedSource);
       _sourcePriorityBloc.topProprity.listen((event) {
         if (event.compareTo('local') == 0) {
           _futureWeatherData = Provider.of<LocalWeatherDataProvider>(context)
