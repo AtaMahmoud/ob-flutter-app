@@ -51,7 +51,9 @@ class _SpaceItemState extends State<SpaceItem> {
       clipper: SpaceClipper(isSelected: _isSelected),
       child: MaterialButton(
         onPressed: () {
-          setState(() {});
+          // setState(() {
+          //   _isSelected = !_isSelected;
+          // });
           widget.onPressed.call();
         },
         shape: RoundedRectangleBorder(
@@ -85,6 +87,15 @@ class _SpaceItemState extends State<SpaceItem> {
         hoverColor: _hoverColor,
       ),
     );
+  }
+
+
+  @override
+  void didUpdateWidget(covariant SpaceItem oldWidget) {
+     super.didUpdateWidget(oldWidget);
+    _isSelected = widget.isSelected;
+    _hasWarning = widget.hasWarning;
+   
   }
 }
 

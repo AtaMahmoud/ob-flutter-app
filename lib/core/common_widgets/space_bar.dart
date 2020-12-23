@@ -56,20 +56,25 @@ class _SpaceBarState extends State<SpaceBar> {
           child: Row(
             children: [
               ...spaceItems.map((sp) {
-                SpaceItem spaceItem = SpaceItem(
-                  label: sp.label,
-                  hasWarning: sp.hasWarning,
-                  isSelected: sp.isSelected,
-                  onPressed: () {
-                    // on item pressed
-                    _selectedIndex = sp.index;
-                    widget.changed.call(_selectedIndex);
-                    if (sp.label.compareTo('Livingroom') == 0) {
-                      debugPrint('Navigate to living room details');
-                    } else {
-                      debugPrint('Navigate to another room details');
-                    }
-                  },
+                print('creating item -- ${sp.label} -- ${sp.isSelected}');
+                Widget spaceItem = 
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: SpaceItem(
+                    label: sp.label,
+                    hasWarning: sp.hasWarning,
+                    isSelected: sp.isSelected,
+                    onPressed: () {
+                      // on item pressed
+                      _selectedIndex = sp.index;
+                      widget.changed.call(_selectedIndex);
+                      if (sp.label.compareTo('Livingroom') == 0) {
+                        debugPrint('Navigate to living room details');
+                      } else {
+                        debugPrint('Navigate to another room details');
+                      }
+                    },
+                  ),
                 );
                 return spaceItem;
               }).toList()
