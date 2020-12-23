@@ -6,8 +6,6 @@ import 'package:ocean_builder/bloc/source_priority_bloc.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/storm_glass_data.dart';
 import 'package:ocean_builder/core/models/user.dart';
-import 'package:ocean_builder/core/models/weather_flow_data.dart';
-import 'package:ocean_builder/core/models/weather_flow_device_observation.dart';
 import 'package:ocean_builder/core/providers/local_weather_flow_data_provider.dart';
 import 'package:ocean_builder/core/providers/storm_glass_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
@@ -18,7 +16,6 @@ import 'package:ocean_builder/ui/widgets/source_priority_changer_modal.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:ocean_builder/ui/widgets/weather_appbar.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 
 class WeatherScreen extends StatefulWidget {
   static const routeName = '/weather';
@@ -49,17 +46,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
 
   @override
   void initState() {
-    print('init data of weather screen, cehck if it is called every time');
     Future.delayed(Duration.zero).then((_) {
       _futureWeatherData =
           Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
 
       _futuremissingData = Provider.of<LocalWeatherDataProvider>(context)
           .fetchDeviceObservationData();
-
-      // currentlySelectedSource = ListHelper.getSourceList()[0];
-      debugPrint(
-          '_user.selectedWeatherSource --- ${_user.selectedWeatherSource}');
 
       if (_user.selectedWeatherSource != null &&
           _user.selectedWeatherSource.compareTo('local') == 0) {
@@ -170,10 +162,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
   Widget _weatherItemsWidgetFuture() {
     return FutureBuilder<StormGlassData>(
         future: _futureWeatherData,
-        // initialData: stormGlassDataProvider.weatherDataToday,
         builder: (context, snapshot) {
           return snapshot.hasData
-              ? _weatherItemContainer(snapshot.data) //movieGrid(snapshot.data)
+              ? _weatherItemContainer(snapshot.data)
               : Center(child: CircularProgressIndicator());
         });
   }
@@ -216,8 +207,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
     }
 
     return Container(
-      // decoration: BoxDecoration(gradient: ColorConstants.BKG_GRADIENT),
-
       child: IntrinsicWidth(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -248,7 +237,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           })
                       : FutureBuilder<StormGlassData>(
                           future: _futuremissingData,
-                          // initialData: stormGlassDataProvider.weatherDataToday,
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               for (var f in snapshot.data.hours) {
@@ -298,7 +286,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           })
                       : FutureBuilder<StormGlassData>(
                           future: _futuremissingData,
-                          // initialData: stormGlassDataProvider.weatherDataToday,
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               for (var f in snapshot.data.hours) {
@@ -327,21 +314,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                     }) //movieGrid(snapshot.data)
                                 : Center(child: CircularProgressIndicator());
                           }),
-                  // gridRowItemSVG(
-                  //     iconImagePath: ImagePaths.svguvRadiation,
-                  //     itemName: AppStrings.uvRadiation,
-                  //     value: '$_uvIndex Nm',
-                  //     onTap: () {
-                  //       if (currentlySelectedSource
-                  //               .compareTo(ListHelper.getSourceList()[1]) ==
-                  //           0) {
-                  //         PopUpHelpers.showChartPopup(
-                  //             context,
-                  //             _weatherDataWidgetFuture(
-                  //                 title: AppStrings.uvRadiation,
-                  //                 iconPath: ImagePaths.svguvRadiation));
-                  //       }
-                  //     }),
                 ],
               ),
             ),
@@ -420,10 +392,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            //_popUpTitle(title, iconPath),
             FutureBuilder<StormGlassData>(
                 future: _futureWeatherData,
-                // initialData: stormGlassDataProvider.weatherDataToday,
                 builder: (context, snapshot) {
                   return snapshot.hasData
                       ? BeizerChartPopup(
@@ -448,10 +418,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            //_popUpTitle(title, iconPath),
             FutureBuilder<StormGlassData>(
                 future: _futuremissingData,
-                // initialData: stormGlassDataProvider.weatherDataToday,
                 builder: (context, snapshot) {
                   return snapshot.hasData
                       ? BeizerChartPopup(
@@ -476,12 +444,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            // _popUpTitle(title, iconPath),
             FutureBuilder<UvIndexData>(
                 future: _futureUvIndexData,
-                // initialData: stormGlassDataProvider.weatherDataToday,
                 builder: (context, snapshot) {
-                  debugPrint('----------------${snapshot.connectionState}');
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.connectionState == ConnectionState.done) {
@@ -490,7 +455,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                             data: snapshot.data,
                             title: title,
                             iconPath: iconPath,
-                          ) //movieGrid(snapshot.data)
+                          )
                         : InkWell(
                             onTap: () {
                               Navigator.of(context).pop();

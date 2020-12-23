@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:ocean_builder/bloc/source_priority_bloc.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
@@ -29,8 +28,6 @@ class _SourcePrioritySelectorModalState
   @override
   void initState() {
     super.initState();
-    print(
-        'initializing source priority modal data --- ${ApplicationStatics.selectedWeatherProvider}');
     if (ApplicationStatics.selectedWeatherProvider
             .compareTo(ListHelper.getSourceList()[1]) ==
         0) {
@@ -238,18 +235,6 @@ class _SourcePrioritySelectorModalState
                   ],
                 ),
               ),
-              // Positioned(
-              //     top: 0,
-              //     bottom: 0,
-              //     right: 12.w,
-              //     child: _seaPodSceneRows[index]
-              //                 .compareTo('LOCAL (WEATHERFLOW STATION)') ==
-              //             0
-              //         ? SvgPicture.asset(
-              //             ImagePaths.svgError,
-              //             height: 48.h,
-              //           )
-              //         : Container()),
             ],
           ),
         ),

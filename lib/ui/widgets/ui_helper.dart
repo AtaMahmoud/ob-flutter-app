@@ -1178,16 +1178,13 @@ class UIHelper {
           ? ListHelper.getSourceList()[0]
           : ListHelper.getSourceList()[1],
       builder: (context, snapshot) {
-        print('rebuilding source selction buttons');
         List<Widget> _providerButtons = [];
         if (snapshot.hasData &&
             snapshot.data.compareTo(ListHelper.getSourceList()[0]) == 0) {
-          print('first one is external');
           _providerButtons.add(list[0]);
           _providerButtons.add(list[1]);
         } else if (snapshot.hasData &&
             snapshot.data.compareTo(ListHelper.getSourceList()[1]) == 0) {
-          print('first one is local');
           _providerButtons.add(list[1]);
           _providerButtons.add(list[0]);
         } else {
