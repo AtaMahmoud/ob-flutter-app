@@ -1310,7 +1310,7 @@ class ApplicationStatics {
 
   static OceanBuilderUser oceanBuilderUser;
 
-  static String selectedWeatherProvider = 'external';
+  static String selectedWeatherProvider;
 }
 
 enum WeatherType { COLUDY, SUNNY_CLOUDY, RAINY, STORMY }

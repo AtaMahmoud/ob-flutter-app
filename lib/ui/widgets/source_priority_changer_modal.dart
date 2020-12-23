@@ -29,7 +29,11 @@ class _SourcePrioritySelectorModalState
   @override
   void initState() {
     super.initState();
-    if (ApplicationStatics.selectedWeatherProvider.compareTo('local') == 0) {
+    print(
+        'initializing source priority modal data --- ${ApplicationStatics.selectedWeatherProvider}');
+    if (ApplicationStatics.selectedWeatherProvider
+            .compareTo(ListHelper.getSourceList()[1]) ==
+        0) {
       _weatherSourceRows.add(WEATEHR_SOURCE_LIST[0]);
       _weatherSourceRows.add(WEATEHR_SOURCE_LIST[1]);
     } else {
@@ -144,8 +148,10 @@ class _SourcePrioritySelectorModalState
             .setWeatherSource('local')
             .then((response) {
           if (response.status == 200) {
-            widget.sourcePriorityBloc.topProprityChanged('local');
-            ApplicationStatics.selectedWeatherProvider = 'local';
+            widget.sourcePriorityBloc
+                .topProprityChanged(ListHelper.getSourceList()[1]);
+            ApplicationStatics.selectedWeatherProvider =
+                ListHelper.getSourceList()[1];
             Provider.of<UserProvider>(context)
                 .authenticatedUser
                 .selectedWeatherSource = 'local';
@@ -156,11 +162,13 @@ class _SourcePrioritySelectorModalState
             .setWeatherSource('external')
             .then((response) {
           if (response.status == 200) {
-            widget.sourcePriorityBloc.topProprityChanged('external');
-            ApplicationStatics.selectedWeatherProvider = 'external';
+            widget.sourcePriorityBloc
+                .topProprityChanged(ListHelper.getSourceList()[0]);
+            ApplicationStatics.selectedWeatherProvider =
+                ListHelper.getSourceList()[1];
             Provider.of<UserProvider>(context)
                 .authenticatedUser
-                .selectedWeatherSource = 'local';
+                .selectedWeatherSource = 'external';
           }
         });
       }

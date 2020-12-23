@@ -1135,48 +1135,66 @@ class UIHelper {
   }
 
   static sourceSelectorButtons(dynamic stream, dynamic onTap) {
+    List<Widget> list = [
+      Column(
+        children: <Widget>[
+          SvgPicture.asset(
+            ImagePaths.svgSourceExternal,
+            height: 40.h,
+          ),
+          SizedBox(
+            height: 8.h,
+          ),
+          Text('External',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24.sp,
+              ))
+        ],
+      ),
+      Column(
+        children: <Widget>[
+          SvgPicture.asset(
+            ImagePaths.svgSourceLocalDisc,
+            height: 40.h,
+          ),
+          SizedBox(
+            height: 8.h,
+          ),
+          Text('Local',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24.sp,
+              ))
+        ],
+      )
+    ];
     return StreamBuilder<String>(
       stream: stream,
-      initialData:
-          ApplicationStatics.selectedWeatherProvider.compareTo('external') == 0
-              ? 'external'
-              : 'local',
+      initialData: ApplicationStatics.selectedWeatherProvider != null &&
+              ApplicationStatics.selectedWeatherProvider
+                      .compareTo(ListHelper.getSourceList()[0]) ==
+                  0
+          ? ListHelper.getSourceList()[0]
+          : ListHelper.getSourceList()[1],
       builder: (context, snapshot) {
-        debugPrint('sourceSelectorButtons ---------- ${snapshot.data} ');
-        List<Widget> list = [
-          Column(
-            children: <Widget>[
-              SvgPicture.asset(
-                ImagePaths.svgSourceExternal,
-                height: 40.h,
-              ),
-              SizedBox(
-                height: 8.h,
-              ),
-              Text('External',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24.sp,
-                  ))
-            ],
-          ),
-          Column(
-            children: <Widget>[
-              SvgPicture.asset(
-                ImagePaths.svgSourceLocalDisc,
-                height: 40.h,
-              ),
-              SizedBox(
-                height: 8.h,
-              ),
-              Text('Local',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24.sp,
-                  ))
-            ],
-          )
-        ];
+        print('rebuilding source selction buttons');
+        List<Widget> _providerButtons = [];
+        if (snapshot.hasData &&
+            snapshot.data.compareTo(ListHelper.getSourceList()[0]) == 0) {
+          print('first one is external');
+          _providerButtons.add(list[0]);
+          _providerButtons.add(list[1]);
+        } else if (snapshot.hasData &&
+            snapshot.data.compareTo(ListHelper.getSourceList()[1]) == 0) {
+          print('first one is local');
+          _providerButtons.add(list[1]);
+          _providerButtons.add(list[0]);
+        } else {
+          _providerButtons.add(list[1]);
+          _providerButtons.add(list[0]);
+        }
+
         return InkWell(
             onTap: onTap,
             child: Container(
@@ -1188,11 +1206,11 @@ class UIHelper {
               ),
               child: Row(
                 children: <Widget>[
-                  snapshot.data.compareTo('external') == 0 ? list[0] : list[1],
+                  _providerButtons[0],
                   SizedBox(
                     width: 32.w,
                   ),
-                  snapshot.data.compareTo('external') == 0 ? list[1] : list[0],
+                  _providerButtons[1]
                 ],
               ),
             ));

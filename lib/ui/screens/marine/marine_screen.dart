@@ -44,7 +44,9 @@ class _MarineScreenState extends State<MarineScreen> {
 
   bool useMobileLayout;
 
-  SourcePriorityBloc _sourcePriorityBloc = new SourcePriorityBloc('local');
+  SourcePriorityBloc _sourcePriorityBloc = new SourcePriorityBloc(
+      ApplicationStatics.selectedWeatherProvider ??
+          ListHelper.getSourceList()[0]);
 
   @override
   void initState() {
@@ -57,14 +59,18 @@ class _MarineScreenState extends State<MarineScreen> {
 
       debugPrint(
           'Marine screen -- _user.selectedWeatherSource --- ${_user.selectedWeatherSource}');
-      currentlySelectedSource =
-          _user.selectedWeatherSource ?? ListHelper.getSourceList()[1];
+      if (_user.selectedWeatherSource != null &&
+          _user.selectedWeatherSource.compareTo('local') == 0) {
+        currentlySelectedSource = ListHelper.getSourceList()[1];
+      } else {
+        currentlySelectedSource = ListHelper.getSourceList()[0];
+      }
       ApplicationStatics.selectedWeatherProvider = currentlySelectedSource;
 
       _sourcePriorityBloc.topProprityChanged(currentlySelectedSource);
       _sourcePriorityBloc.topProprity.listen((event) {
-        debugPrint('received source priority data --- $event');
-        if (event.compareTo('local') == 0) {
+        debugPrint('in marine screen received source priority data --- $event');
+        if (event.compareTo(ListHelper.getSourceList()[1]) == 0) {
           // _futureWeatherData = Provider.of<LocalWeatherDataProvider>(context)
           //     .fetchDeviceObservationData();
           // _futureTideData =
@@ -78,7 +84,7 @@ class _MarineScreenState extends State<MarineScreen> {
           currentlySelectedSource = ListHelper.getSourceList()[1];
           ApplicationStatics.selectedWeatherProvider = currentlySelectedSource;
           // setState(() {});
-        } else if (event.compareTo('external') == 0) {
+        } else if (event.compareTo(ListHelper.getSourceList()[0]) == 0) {
           _futureWeatherData =
               Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
           _futureTideData =
@@ -178,7 +184,7 @@ class _MarineScreenState extends State<MarineScreen> {
           PopUpHelpers.showPopup(
               context,
               SourcePrioritySelectorModal(_sourcePriorityBloc),
-              'WEATHER SOURCE');
+              'MARINE SOURCE');
         }));
   }
 
