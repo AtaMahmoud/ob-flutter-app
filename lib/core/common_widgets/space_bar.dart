@@ -24,7 +24,6 @@ class _SpaceBarState extends State<SpaceBar> {
   }
 
   _validateItem(int selctedIndex) {
-    debugPrint('check for selected item $selctedIndex');
     for (var i = 0; i < spaceItems.length; i++) {
       SpaceItemData item = spaceItems[i];
       if (item.index == selctedIndex) {
@@ -56,23 +55,15 @@ class _SpaceBarState extends State<SpaceBar> {
           child: Row(
             children: [
               ...spaceItems.map((sp) {
-                print('creating item -- ${sp.label} -- ${sp.isSelected}');
-                Widget spaceItem = 
-                Padding(
+                Widget spaceItem = Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: SpaceItem(
                     label: sp.label,
                     hasWarning: sp.hasWarning,
                     isSelected: sp.isSelected,
                     onPressed: () {
-                      // on item pressed
                       _selectedIndex = sp.index;
                       widget.changed.call(_selectedIndex);
-                      if (sp.label.compareTo('Livingroom') == 0) {
-                        debugPrint('Navigate to living room details');
-                      } else {
-                        debugPrint('Navigate to another room details');
-                      }
                     },
                   ),
                 );

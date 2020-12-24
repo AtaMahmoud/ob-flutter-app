@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ocean_builder/constants/constants.dart';
+import 'package:ocean_builder/core/common_widgets/common_theme.dart';
 
 class FlutterSwitch extends StatefulWidget {
   /// Creates a material design switch.
@@ -239,22 +240,20 @@ class _FlutterSwitchState extends State<FlutterSwitch>
                 Align(
                   alignment: _toggleAnimation.value,
                   child: Container(
-                    margin: EdgeInsets.all(4),
+                    margin: EdgeInsets.all(2),
                     width: widget.toggleSize,
                     height: widget.toggleSize,
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: widget.toggleColor,
-                      image: DecorationImage(
-                        image: AssetImage(
-                          _toggleAnimation.value == Alignment.centerRight
-                              ? ImagePaths.icSwitchOn
-                              : ImagePaths.icSwitchOff
-                        ),
-                        fit: BoxFit.scaleDown,
-                        scale: 2
-                      )
-                    ),
+                        shape: BoxShape.circle,
+                        color: widget.toggleColor,
+                        image: DecorationImage(
+                            image: AssetImage(
+                                _toggleAnimation.value == Alignment.centerRight
+                                    ? ImagePaths.icSwitchOn
+                                    : ImagePaths.icSwitchOff),
+                            fit: BoxFit.scaleDown,
+                            scale: 2),
+                        border: Border.all(width: 1, color: CommonTheme.white)),
                   ),
                 ),
                 _toggleAnimation.value == Alignment.centerLeft

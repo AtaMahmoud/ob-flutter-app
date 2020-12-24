@@ -5,6 +5,7 @@ import 'package:ocean_builder/core/common_widgets/common_theme.dart';
 import 'package:ocean_builder/core/common_widgets/search_bar.dart';
 import 'package:ocean_builder/core/common_widgets/space_bar.dart';
 import 'package:ocean_builder/core/common_widgets/space_item.dart';
+import 'package:ocean_builder/ui/screens/rooms/room_details.dart';
 
 class Rooms extends StatefulWidget {
   static const String routeName = '/rooms';
@@ -23,11 +24,14 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
 
   GenericBloc<int> _selectedTabBloc = GenericBloc.private();
 
+  Widget _selectedContent;
+
   @override
   void initState() {
     super.initState();
     _searchBloc = GenericBloc.private();
     _initializeItemSet();
+    _selectItemListener();
   }
 
   _initializeItemSet() {
@@ -39,6 +43,56 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
           isSelected: false));
     }
     spaceItems[0].isSelected = true;
+    _selectedContent = RoomDetails();
+  }
+
+  // 0 bedroom
+  // 1 livingroom
+  // 2 kitchen
+  // 3 underwater room
+  // 4 bathroom
+  // 5 master bedroom
+
+  void _selectItemListener() {
+    _selectedTabBloc.stream.listen((selectedIndex) {
+      switch (selectedIndex) {
+        case 0:
+          debugPrint('Navigate to bathroom details');
+          setState(() {
+            _selectedContent = RoomDetails();
+          });
+          break;
+        case 1:
+          debugPrint('Navigate to living room details');
+          setState(() {
+            _selectedContent = Container();
+          });
+          break;
+        case 2:
+          debugPrint('Navigate to kitchen details');
+          setState(() {
+            _selectedContent = Container();
+          });
+          break;
+        case 3:
+          debugPrint('Navigate to underwater room');
+          _selectedContent = Container();
+          break;
+        case 4:
+          debugPrint('Navigate to bathroom details');
+          setState(() {
+            _selectedContent = Container();
+          });
+          break;
+        case 5:
+          debugPrint('Navigate to master bedroom details');
+          setState(() {
+            _selectedContent = Container();
+          });
+          break;
+        default:
+      }
+    });
   }
 
   @override
@@ -47,30 +101,50 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
       key: _scaffoldKey,
       backgroundColor: CommonTheme.greyLightest,
       body: Center(
-        child: CustomScrollView(
-          slivers: [
-            // UIHelper.getTopEmptyContainer(8, false),
-            SearchBar(
-              scaffoldKey: _scaffoldKey,
-              searchTextController: _searchController,
-              stream: _searchBloc.stream,
-              textChanged: (value) {
-                debugPrint('Changed Search text is --- $value');
-              },
-              onSubmitted: (value) {
-                debugPrint('Submitted Search text is --- $value');
-              },
+        child: Column(
+          children: [
+            Expanded(
+              flex: 1,
+              child: CustomScrollView(
+                slivers: [
+                  // UIHelper.getTopEmptyContainer(8, false),
+
+                  SearchBar(
+                    scaffoldKey: _scaffoldKey,
+                    searchTextController: _searchController,
+                    stream: _searchBloc.stream,
+                    textChanged: (value) {
+                      debugPrint('Changed Search text is --- $value');
+                    },
+                    onSubmitted: (value) {
+                      debugPrint('Submitted Search text is --- $value');
+                    },
+                  ),
+
+                  SliverToBoxAdapter(
+                    child: _spaceBar(),
+                  ),
+                ],
+              ),
             ),
-            SliverToBoxAdapter(
-              child: _placeHolderScrollBar(),
-            )
+            Expanded(
+              flex: 3,
+              child: CustomScrollView(
+                physics: BouncingScrollPhysics(),
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: _selectedContent,
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  _placeHolderScrollBar() {
+  _spaceBar() {
     return SpaceBar(
       spaceItems: spaceItems,
       stream: _selectedTabBloc.stream,

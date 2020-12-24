@@ -1135,6 +1135,7 @@ class ImagePaths {
   static String svgIcSearchBarHam = 'images/ic_sb_search_svg.svg';
   static String icSearchBarSearch = 'images/ic_sb_search.png';
   static String svgIcSearchBarSearch = 'images/ic_sb_search_svg.svg';
+  static String svgIcLightKnob = 'images/light_knob.svg';
 }
 
 class AppStrings {
