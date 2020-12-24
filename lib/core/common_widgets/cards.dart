@@ -118,6 +118,8 @@ class _GenericCardState extends State<GenericCard> {
               setState(() {
                 _isOn = val;
               });
+              if (widget.onControllPressed != null)
+                widget.onControllPressed.call(val);
             },
           ),
         ],

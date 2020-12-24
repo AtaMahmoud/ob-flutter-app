@@ -19,6 +19,9 @@ class _RoomDetailsState extends State<RoomDetails> {
             hasSwitch: false,
             title: 'No Preset Available',
             data: 'Click to save current settings as preset',
+            onTap: () {
+              
+            },
           ),
           GenericCard(
             hasSwitch: true,

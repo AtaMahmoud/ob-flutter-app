@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ocean_builder/bloc/generic_bloc.dart';
 import 'package:ocean_builder/constants/constants.dart';
+import 'package:ocean_builder/core/common_widgets/cards.dart';
 import 'package:ocean_builder/core/common_widgets/common_theme.dart';
 import 'package:ocean_builder/core/common_widgets/search_bar.dart';
 import 'package:ocean_builder/core/common_widgets/space_bar.dart';
@@ -26,6 +27,10 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
 
   Widget _selectedContent;
 
+  String _selctedItemName;
+
+  bool _isSecondLevel = false;
+
   @override
   void initState() {
     super.initState();
@@ -43,7 +48,8 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
           isSelected: false));
     }
     spaceItems[0].isSelected = true;
-    _selectedContent = RoomDetails();
+    _selectedContent = Container();
+    _selctedItemName = 'Bedroom';
   }
 
   // 0 bedroom
@@ -57,36 +63,44 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
     _selectedTabBloc.stream.listen((selectedIndex) {
       switch (selectedIndex) {
         case 0:
-          debugPrint('Navigate to bathroom details');
+          debugPrint('Navigate to bedroom details');
           setState(() {
-            _selectedContent = RoomDetails();
+            _selctedItemName = 'Bedroom';
+            _selectedContent = Container();
           });
           break;
         case 1:
           debugPrint('Navigate to living room details');
           setState(() {
+            _selctedItemName = 'Living room';
             _selectedContent = Container();
           });
           break;
         case 2:
           debugPrint('Navigate to kitchen details');
           setState(() {
+            _selctedItemName = 'Kitchen';
             _selectedContent = Container();
           });
           break;
         case 3:
           debugPrint('Navigate to underwater room');
-          _selectedContent = Container();
+          setState(() {
+            _selctedItemName = 'Underwater room';
+            _selectedContent = Container();
+          });
           break;
         case 4:
           debugPrint('Navigate to bathroom details');
           setState(() {
-            _selectedContent = Container();
+            _selctedItemName = 'Bathroom';
+            _selectedContent = _bathRoom();
           });
           break;
         case 5:
           debugPrint('Navigate to master bedroom details');
           setState(() {
+            _selctedItemName = 'Master bedroom';
             _selectedContent = Container();
           });
           break;
@@ -149,6 +163,46 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
       spaceItems: spaceItems,
       stream: _selectedTabBloc.stream,
       changed: _selectedTabBloc.changed,
+    );
+  }
+
+  _bathRoom() {
+    return Container(
+      child: Column(
+        children: [
+          GenericCard(
+            hasSwitch: false,
+            title: 'No Preset Available',
+            data: 'Click to save current settings as preset',
+            onTap: () {
+              _isSecondLevel = true;
+              
+            },
+          ),
+          GenericCard(
+            hasSwitch: true,
+            switchValue: true,
+            title: 'Lights-Ceiling',
+            dataIcon: ImagePaths.svgIcLightKnob,
+            data: 'Brightness 60%',
+            subData: 'My Bathroom Preset',
+          ),
+          GenericCard(
+            hasSwitch: true,
+            switchValue: false,
+            title: 'Lights-floor',
+            dataIcon: ImagePaths.svgIcLightKnob,
+            data: 'Brightness 60%',
+          ),
+          GenericCard(
+            hasSwitch: true,
+            switchValue: true,
+            title: 'Shower Temperature',
+            data: '24${SymbolConstant.DEGREE}C',
+            subData: '>> 75.2${SymbolConstant.DEGREE}F',
+          ),
+        ],
+      ),
     );
   }
 }
