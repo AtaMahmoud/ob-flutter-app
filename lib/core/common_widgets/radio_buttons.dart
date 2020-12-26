@@ -11,37 +11,37 @@ class RadioButton extends StatefulWidget {
       {this.radioData, this.isHorizontallyAlligned, this.onChangedMethod, key})
       : super(key: key);
 
-  final RadioData radioData;
-  final bool isHorizontallyAlligned;
-  final Function onChangedMethod;
+  final RadioData? radioData;
+  final bool? isHorizontallyAlligned;
+  final Function? onChangedMethod;
 
   @override
   _RadioButtonState createState() => _RadioButtonState();
 }
 
 class _RadioButtonState extends State<RadioButton> {
-  String _groupValue;
+  String? _groupValue;
   @override
   Widget build(BuildContext context) {
-    var _dataMap = widget.radioData.labelVals;
+    var _dataMap = widget.radioData?.labelVals;
     return Container(
         child: widget.isHorizontallyAlligned != null &&
-                widget.isHorizontallyAlligned
+                widget.isHorizontallyAlligned!
             ? Row(
                 children: [
-                  ..._dataMap.keys
-                      .map((k) => _radioButtonHorizontal(k, _dataMap[k]))
+                  ..._dataMap!.keys
+                      .map((k) => _radioButtonHorizontal(k, _dataMap[k]!))
                 ],
               )
             : Column(
                 children: [
-                  ..._dataMap.keys
-                      .map((k) => _radioButtonHorizontal(k, _dataMap[k]))
+                  ..._dataMap!.keys
+                      .map((k) => _radioButtonHorizontal(k, _dataMap[k]!))
                 ],
               ));
   }
 
-  _radioButtonHorizontal(String label, String val, {String subtitle}) {
+  _radioButtonHorizontal(String label, String val, {String? subtitle}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -51,11 +51,11 @@ class _RadioButtonState extends State<RadioButton> {
           toggleable: true,
           value: val,
           groupValue: _groupValue,
-          onChanged: (String value) {
+          onChanged: (String? value) {
             setState(() {
               _groupValue = value;
             });
-            widget.onChangedMethod.call(value);
+            widget.onChangedMethod?.call(value);
           },
           activeColor: CommonTheme.primary,
           hoverColor: CommonTheme.primaryLight,
@@ -71,9 +71,9 @@ class _RadioButtonState extends State<RadioButton> {
 
 class RadioData {
   // radio button label and value
-  Map<String, String> labelVals;
+  Map<String, String>? labelVals;
   // currently selected value aka group value
-  String selectedValue;
+  String? selectedValue;
 
   RadioData({this.labelVals, this.selectedValue});
 }

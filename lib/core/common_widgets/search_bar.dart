@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/common_widgets/common_theme.dart';
-import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SearchBar extends StatefulWidget {
   const SearchBar(
-      {Key key,
+      {Key? key,
       this.scaffoldKey,
       this.searchTextController,
       this.stream,
       this.textChanged,
       this.onSubmitted})
       : super(key: key);
-  final GlobalKey<ScaffoldState> scaffoldKey;
-  final TextEditingController searchTextController;
-  final Observable<String> stream;
-  final Function textChanged;
-  final Function onSubmitted;
+  final GlobalKey<ScaffoldState>? scaffoldKey;
+  final TextEditingController? searchTextController;
+  final Observable<String>? stream;
+  final Function? textChanged;
+  final Function? onSubmitted;
 
   @override
   _SearchBarState createState() => _SearchBarState();
@@ -84,7 +82,7 @@ class _SearchBarState extends State<SearchBar> {
           children: <Widget>[
             GestureDetector(
               onTap: () {
-                widget.onSubmitted.call(widget.searchTextController.text);
+                widget.onSubmitted?.call(widget.searchTextController!.text);
               }, //_setfilter,
               child: Padding(
                 padding: const EdgeInsets.only(left: 8, right: 8),
@@ -99,9 +97,9 @@ class _SearchBarState extends State<SearchBar> {
             Flexible(
               child: TextField(
                 controller: widget.searchTextController,
-                onChanged: widget.textChanged,
+                onChanged: (value) => widget.textChanged!(value),
                 onSubmitted: (value) {
-                  widget.onSubmitted.call(value);
+                  widget.onSubmitted!.call(value);
                 }, //_onSubmitted,
                 keyboardAppearance: Brightness.light,
                 textAlignVertical: TextAlignVertical.bottom,

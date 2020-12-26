@@ -6,7 +6,7 @@ import 'package:ocean_builder/core/common_widgets/common_theme.dart';
 
 class TitleEditable extends StatefulWidget {
   TitleEditable(
-      {Key key,
+      {Key? key,
       this.title,
       this.changed,
       this.controller,
@@ -16,14 +16,14 @@ class TitleEditable extends StatefulWidget {
       this.maxLength,
       this.isEnabled})
       : super(key: key);
-  final String title;
-  final Function changed;
-  final TextEditingController controller;
-  final TextInputType inputType;
-  final FocusNode node;
-  final FocusNode nextNode;
-  final int maxLength;
-  final bool isEnabled;
+  final String? title;
+  final Function? changed;
+  final TextEditingController? controller;
+  final TextInputType? inputType;
+  final FocusNode? node;
+  final FocusNode? nextNode;
+  final int? maxLength;
+  final bool? isEnabled;
 
   @override
   _TitleEditableState createState() => _TitleEditableState();
@@ -34,9 +34,9 @@ class _TitleEditableState extends State<TitleEditable> {
   Widget build(BuildContext context) {
     // widget.controller.text = 'Title value';
     return Container(
-      child: _getEditText(widget.title, widget.changed, widget.controller,
-          widget.inputType, widget.node, widget.nextNode, widget.isEnabled,
-          maxLength: widget.maxLength),
+      child: _getEditText(widget.title!, widget.changed, widget.controller!,
+          widget.inputType!, widget.node!, widget.nextNode!, widget.isEnabled!,
+          maxLength: widget.maxLength!),
     );
   }
 

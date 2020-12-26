@@ -11,19 +11,19 @@ class CommonSlider extends StatefulWidget {
   /// to show or hide label and value information use [hasSliderLabel]
   ///
   const CommonSlider(
-      {@required this.sliderValue,
+      {this.sliderValue,
       this.sliderLabel,
-      @required this.onChangedMethod,
+      this.onChangedMethod,
       this.hasSliderLabel,
       this.isDarkBg,
       key})
       : super(key: key);
 
-  final String sliderLabel;
-  final bool isDarkBg;
-  final bool hasSliderLabel;
-  final double sliderValue;
-  final Function onChangedMethod;
+  final String? sliderLabel;
+  final bool? isDarkBg;
+  final bool? hasSliderLabel;
+  final double? sliderValue;
+  final Function? onChangedMethod;
 
   @override
   _CommonSliderState createState() => _CommonSliderState();
@@ -31,7 +31,7 @@ class CommonSlider extends StatefulWidget {
 
 class _CommonSliderState extends State<CommonSlider> {
   double _sliderValue = 0.0;
-  Color _activeTrackColor,
+  Color? _activeTrackColor,
       _inactiveTrackColor,
       _thumbColor,
       _labelColor,
@@ -45,7 +45,7 @@ class _CommonSliderState extends State<CommonSlider> {
   }
 
   _sliderNative() {
-    if (widget.isDarkBg != null && widget.isDarkBg) {
+    if (widget.isDarkBg != null && widget.isDarkBg!) {
       _activeTrackColor = CommonTheme.primaryLighter;
       _inactiveTrackColor = CommonTheme.primaryDark;
       _thumbColor = CommonTheme.primaryLight;
@@ -61,7 +61,7 @@ class _CommonSliderState extends State<CommonSlider> {
     return Stack(
       children: <Widget>[
         _slider(),
-        widget.hasSliderLabel != null && widget.hasSliderLabel
+        widget.hasSliderLabel != null && widget.hasSliderLabel!
             ? _sliderLabels()
             : Container()
       ],
@@ -83,7 +83,7 @@ class _CommonSliderState extends State<CommonSlider> {
           onChanged: (value) {
             setState(() {
               _sliderValue = value;
-              widget.onChangedMethod.call(value);
+              widget.onChangedMethod!.call(value);
             });
           }),
     );
@@ -102,7 +102,7 @@ class _CommonSliderState extends State<CommonSlider> {
               style: CommonTheme.tsBodySmall.apply(color: _labelColor),
             ),
             Text(
-              '${_sliderValue.toInt() ?? ' '}%',
+              '${_sliderValue.toInt()}%',
               style: CommonTheme.tsBodySmall.apply(color: _valueColor),
             ),
           ],

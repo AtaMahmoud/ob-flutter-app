@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:ocean_builder/core/common_widgets/select_button.dart';
 import 'package:ocean_builder/core/common_widgets/space_item.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SpaceBar extends StatefulWidget {
-  SpaceBar({this.stream, this.changed, this.spaceItems, Key key})
+  SpaceBar({this.stream, this.changed, this.spaceItems, Key? key})
       : super(key: key);
-  final List<SpaceItemData> spaceItems;
-  final Observable<int> stream;
-  final Function changed;
+  final List<SpaceItemData>? spaceItems;
+  final Observable<int>? stream;
+  final Function? changed;
   @override
   _SpaceBarState createState() => _SpaceBarState();
 }
@@ -20,7 +19,7 @@ class _SpaceBarState extends State<SpaceBar> {
   @override
   void initState() {
     super.initState();
-    spaceItems = widget.spaceItems;
+    spaceItems = widget.spaceItems!;
   }
 
   _validateItem(int selctedIndex) {
@@ -62,8 +61,8 @@ class _SpaceBarState extends State<SpaceBar> {
                     hasWarning: sp.hasWarning,
                     isSelected: sp.isSelected,
                     onPressed: () {
-                      _selectedIndex = sp.index;
-                      widget.changed.call(_selectedIndex);
+                      _selectedIndex = sp.index!;
+                      widget.changed!.call(_selectedIndex);
                     },
                   ),
                 );

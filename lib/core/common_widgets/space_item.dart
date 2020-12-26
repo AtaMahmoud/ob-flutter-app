@@ -5,32 +5,32 @@ import 'package:ocean_builder/core/common_widgets/common_theme.dart';
 
 class SpaceItem extends StatefulWidget {
   SpaceItem(
-      {Key key,
+      {Key? key,
       this.index,
       this.isSelected,
       this.hasWarning,
       this.label,
       this.onPressed})
       : super(key: key);
-  final label;
-  final bool isSelected;
-  final bool hasWarning;
-  final VoidCallback onPressed;
-  final int index;
+  final String? label;
+  final bool? isSelected;
+  final bool? hasWarning;
+  final VoidCallback? onPressed;
+  final int? index;
 
   @override
   _SpaceItemState createState() => _SpaceItemState();
 }
 
 class _SpaceItemState extends State<SpaceItem> {
-  Color _color, _textColor, _hoverColor, _disabledColor;
+  Color? _color, _textColor, _hoverColor, _disabledColor;
   bool _isSelected = false;
   bool _hasWarning = false;
 
   @override
   void initState() {
-    _isSelected = widget.isSelected;
-    _hasWarning = widget.hasWarning;
+    _isSelected = widget.isSelected!;
+    _hasWarning = widget.hasWarning!;
     super.initState();
   }
 
@@ -54,7 +54,7 @@ class _SpaceItemState extends State<SpaceItem> {
           // setState(() {
           //   _isSelected = !_isSelected;
           // });
-          widget.onPressed.call();
+          widget.onPressed!.call();
         },
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6), side: BorderSide.none),
@@ -74,7 +74,7 @@ class _SpaceItemState extends State<SpaceItem> {
                     )
                   : Container(),
               Text(
-                widget.label,
+                widget.label!,
                 style: CommonTheme.tsBodySmall.apply(
                   color: _textColor,
                 ),
@@ -89,27 +89,25 @@ class _SpaceItemState extends State<SpaceItem> {
     );
   }
 
-
   @override
   void didUpdateWidget(covariant SpaceItem oldWidget) {
-     super.didUpdateWidget(oldWidget);
-    _isSelected = widget.isSelected;
-    _hasWarning = widget.hasWarning;
-   
+    super.didUpdateWidget(oldWidget);
+    _isSelected = widget.isSelected!;
+    _hasWarning = widget.hasWarning!;
   }
 }
 
 class SpaceClipper extends CustomClipper<Path> {
-  bool isSelected = false;
+  bool? isSelected = false;
 
-  SpaceClipper({Key key, this.isSelected});
+  SpaceClipper({Key? key, this.isSelected});
 
   @override
   getClip(Size size) {
     Path path = Path();
     double h = size.height * .9;
     double w = size.width;
-    if (isSelected) {
+    if (isSelected!) {
       path.addRRect(RRect.fromLTRBR(0, 0, w, h * .85, Radius.circular(6)));
       path.moveTo(w * .45, h * .85);
       path.lineTo(w / 2, h);
@@ -129,10 +127,10 @@ class SpaceClipper extends CustomClipper<Path> {
 
 class SpaceItemData {
   // SpaceItem spaceItem = SpaceItem(label: 'Overview',hasWarning: true,isSelected: false,onPressed: ,)
-  int index;
-  bool isSelected;
-  String label;
-  bool hasWarning;
+  int? index;
+  bool? isSelected;
+  String? label;
+  bool? hasWarning;
 
   SpaceItemData({this.index, this.isSelected, this.label, this.hasWarning});
 }

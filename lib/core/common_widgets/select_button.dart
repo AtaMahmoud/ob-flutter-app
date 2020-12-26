@@ -8,7 +8,7 @@ class SelectButton extends StatefulWidget {
   /// create material textfield  button styled Select Button
   /// add generic bloc of type SelectItem and list of SelectItem
   const SelectButton({
-    Key key,
+    Key? key,
     this.stream,
     this.list,
     this.changed,
@@ -21,17 +21,17 @@ class SelectButton extends StatefulWidget {
     this.hasPlaceHolder,
     this.hasHelperText,
   }) : super(key: key);
-  final Observable<SelectItem> stream;
-  final List<SelectItem> list;
-  final Function changed;
-  final bool addPadding;
-  final String label;
-  final String helperText;
-  final String placeHolder;
-  final bool hasLabel;
-  final bool hasPlaceHolder;
-  final bool hasHelperText;
-  final bool isEnabled;
+  final Observable<SelectItem>? stream;
+  final List<SelectItem>? list;
+  final Function? changed;
+  final bool? addPadding;
+  final String? label;
+  final String? helperText;
+  final String? placeHolder;
+  final bool? hasLabel;
+  final bool? hasPlaceHolder;
+  final bool? hasHelperText;
+  final bool? isEnabled;
 
   @override
   _SelectButtonState createState() => _SelectButtonState();
@@ -46,8 +46,8 @@ class _SelectButtonState extends State<SelectButton> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: _getDropdown(widget.list, widget.stream, widget.changed,
-          widget.addPadding, widget.label),
+      child: _getDropdown(widget.list!, widget.stream!, widget.changed,
+          widget.addPadding!, widget.label!),
     );
   }
 
@@ -56,13 +56,13 @@ class _SelectButtonState extends State<SelectButton> {
     return StreamBuilder<SelectItem>(
         stream: stream,
         // initialData: widget.list[0],
-        
+
         builder: (context, snapshot) {
           return Padding(
             padding: addPadding
                 ? EdgeInsets.symmetric(horizontal: 24)
                 : EdgeInsets.symmetric(horizontal: 0),
-            child: widget.isEnabled
+            child: widget.isEnabled!
                 ? _dropdownOutlined(snapshot, changed, list)
                 : _wrapperWithinputDecoration(label, snapshot, changed,
                     list), //_dropdown(snapshot, changed, list)
@@ -74,14 +74,14 @@ class _SelectButtonState extends State<SelectButton> {
       AsyncSnapshot<SelectItem> snapshot, changed, List<SelectItem> list) {
     return InputDecorator(
       decoration: InputDecoration(
-          enabled: widget.isEnabled,
+          enabled: widget.isEnabled!,
           // hasFloatingPlaceholder: true,
           // alignLabelWithHint: true,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding:
               EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 8),
           fillColor:
-              widget.isEnabled ? CommonTheme.greyLightest : CommonTheme.white,
+              widget.isEnabled! ? CommonTheme.greyLightest : CommonTheme.white,
           // borders
           border: new OutlineInputBorder(
             borderRadius: new BorderRadius.circular(8.0),
@@ -97,26 +97,26 @@ class _SelectButtonState extends State<SelectButton> {
             borderSide: BorderSide(color: CommonTheme.grey),
           ),
           // label,placeholder,helper and error text
-          labelText: widget.hasLabel ? '$label' : null,
+          labelText: widget.hasLabel! ? '$label' : null,
           labelStyle: CommonTheme.tsBodyExtraSmall.apply(
-              color: widget.isEnabled
+              color: widget.isEnabled!
                   ? CommonTheme.primary
                   : CommonTheme.greyDark),
-          hintText: widget.hasPlaceHolder ? '${widget.placeHolder}' : null,
+          hintText: widget.hasPlaceHolder! ? '${widget.placeHolder}' : null,
           hintStyle: CommonTheme.tsBodyDefault.apply(
               color:
-                  widget.isEnabled ? CommonTheme.greyDark : CommonTheme.grey),
+                  widget.isEnabled! ? CommonTheme.greyDark : CommonTheme.grey),
           helperText: snapshot.hasError
-              ? snapshot.error
-              : widget.hasHelperText
+              ? snapshot.error.toString()
+              : widget.hasHelperText!
                   ? '${widget.helperText}'
-                  : null,
+                  : '',
           helperStyle:
               CommonTheme.tsBodyExtraSmall.apply(color: CommonTheme.greyDark),
           errorMaxLines: 4,
-          errorText: snapshot.error,
+          errorText: snapshot.error.toString(),
           // suffix icon
-          suffix: widget.isEnabled
+          suffix: widget.isEnabled!
               ? snapshot.hasError
                   ? ErrorIcon(true)
                   : ErrorIcon(false)
@@ -133,14 +133,14 @@ class _SelectButtonState extends State<SelectButton> {
         child: DropdownButton<SelectItem>(
           autofocus: false,
           hint: Text(
-            widget.placeHolder,
+            widget.placeHolder!,
             style: CommonTheme.tsBodySmall,
           ),
           isDense: true,
           icon: Icon(
             Icons.arrow_drop_down,
             size: 32,
-            color: widget.isEnabled
+            color: widget.isEnabled!
                 ? snapshot.hasData
                     ? CommonTheme.primary
                     : CommonTheme.grey
@@ -157,7 +157,7 @@ class _SelectButtonState extends State<SelectButton> {
             // letterSpacing: 1.2,
             // wordSpacing: 4
           ),
-          onChanged: widget.isEnabled ? changed : null,
+          onChanged: widget.isEnabled! ? changed : null,
           items: list.map((data) {
             return DropdownMenuItem(
                 value: data,
@@ -165,9 +165,9 @@ class _SelectButtonState extends State<SelectButton> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      data.option,
+                      data.option!,
                       style: CommonTheme.tsBodyDefault.apply(
-                          color: widget.isEnabled
+                          color: widget.isEnabled!
                               ? CommonTheme.greyDark
                               : CommonTheme.grey),
                     ),
@@ -184,30 +184,31 @@ class _SelectButtonState extends State<SelectButton> {
     var inputDecoration = InputDecoration(
       filled: true,
       // label,placeholder,helper and error text
-      labelText: widget.hasLabel
+      labelText: widget.hasLabel!
           ? snapshot.hasData
               ? '${widget.label}'
               : ''
           : null,
       labelStyle: CommonTheme.tsBodyExtraSmall.apply(
-          color: widget.isEnabled ? CommonTheme.primary : CommonTheme.greyDark),
-      hintText: widget.hasPlaceHolder ? '${widget.placeHolder}' : null,
+          color:
+              widget.isEnabled! ? CommonTheme.primary : CommonTheme.greyDark),
+      hintText: widget.hasPlaceHolder! ? '${widget.placeHolder}' : null,
       hintStyle: CommonTheme.tsBodyDefault.apply(
-          color: widget.isEnabled ? CommonTheme.greyDark : CommonTheme.grey),
+          color: widget.isEnabled! ? CommonTheme.greyDark : CommonTheme.grey),
       helperText: snapshot.hasError
-          ? snapshot.error
-          : widget.hasHelperText
+          ? snapshot.error.toString()
+          : widget.hasHelperText!
               ? snapshot.hasData
-                  ? snapshot.data.helpText
+                  ? snapshot.data!.helpText
                   : '${widget.helperText}'
               : null,
       helperStyle:
           CommonTheme.tsBodyExtraSmall.apply(color: CommonTheme.greyDark),
 
       errorMaxLines: 4,
-      errorText: snapshot.error,
+      errorText: snapshot.error.toString(),
       // suffix icon
-      suffix: widget.isEnabled
+      suffix: widget.isEnabled!
           ? snapshot.hasError
               ? ErrorIcon(true)
               : ErrorIcon(false)
@@ -226,7 +227,7 @@ class _SelectButtonState extends State<SelectButton> {
       disabledBorder: OutlineInputBorder(
         borderSide: BorderSide(color: CommonTheme.grey),
       ),
-      enabled: widget.isEnabled,
+      enabled: widget.isEnabled!,
       // hasFloatingPlaceholder: true,
       alignLabelWithHint: true,
       floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -236,7 +237,7 @@ class _SelectButtonState extends State<SelectButton> {
         left: 16,
       ),
       fillColor:
-          widget.isEnabled ? CommonTheme.greyLightest : CommonTheme.white,
+          widget.isEnabled! ? CommonTheme.greyLightest : CommonTheme.white,
     );
     var menuItems = list.map((data) {
       return DropdownMenuItem(
@@ -245,9 +246,9 @@ class _SelectButtonState extends State<SelectButton> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Text(
-                data.option,
+                data.option!,
                 style: CommonTheme.tsBodyDefault.apply(
-                    color: widget.isEnabled
+                    color: widget.isEnabled!
                         ? CommonTheme.greyDark
                         : CommonTheme.grey),
               ),
@@ -258,7 +259,7 @@ class _SelectButtonState extends State<SelectButton> {
       value: snapshot.hasData ? snapshot.data : null,
       decoration: inputDecoration,
       items: menuItems.toList(),
-      onChanged: widget.isEnabled ? changed : null,
+      onChanged: widget.isEnabled! ? changed : null,
     );
   }
 }
@@ -266,7 +267,7 @@ class _SelectButtonState extends State<SelectButton> {
 /// create model for selcet button data;
 /// needed for showing help text for individual options and a placeholder/hintext for the select button
 class SelectItem {
-  String option;
-  String helpText;
+  String? option;
+  String? helpText;
   SelectItem({this.option, this.helpText});
 }

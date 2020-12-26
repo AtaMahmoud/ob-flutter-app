@@ -7,7 +7,7 @@ import 'package:rxdart/rxdart.dart';
 
 class TextEditable extends StatefulWidget {
   TextEditable(
-      {Key key,
+      {Key? key,
       this.stream,
       this.title,
       this.textChanged,
@@ -28,24 +28,24 @@ class TextEditable extends StatefulWidget {
       this.hasPadding})
       : super(key: key);
 
-  final Observable<String> stream;
-  final Function textChanged;
-  final String title;
-  final String placeHolder; // hint text
-  final String value;
-  final String helperText;
-  final TextEditingController controller;
-  final TextInputType inputType;
-  final FocusNode node;
-  final FocusNode nextNode;
-  final bool isEnabled;
-  final bool isDense;
-  final bool hasValue;
-  final bool hasLabel;
-  final bool hasPlaceHolder; // hintText
-  final bool hasHelperText;
-  final bool hasPadding;
-  final int maxLength;
+  final Observable<String>? stream;
+  final Function? textChanged;
+  final String? title;
+  final String? placeHolder; // hint text
+  final String? value;
+  final String? helperText;
+  final TextEditingController? controller;
+  final TextInputType? inputType;
+  final FocusNode? node;
+  final FocusNode? nextNode;
+  final bool? isEnabled;
+  final bool? isDense;
+  final bool? hasValue;
+  final bool? hasLabel;
+  final bool? hasPlaceHolder; // hintText
+  final bool? hasHelperText;
+  final bool? hasPadding;
+  final int? maxLength;
 
   @override
   _TextEditableState createState() => _TextEditableState();
@@ -54,39 +54,39 @@ class TextEditable extends StatefulWidget {
 class _TextEditableState extends State<TextEditable> {
   @override
   Widget build(BuildContext context) {
-    widget.controller.text = widget.value;
+    widget.controller!.text = widget.value!;
     return Container(
       child: _getEditText(
-          stream: widget.stream,
-          changed: widget.textChanged,
-          label: widget.title,
-          helperText: widget.helperText,
-          placeHolder: widget.placeHolder,
-          controller: widget.controller,
-          inputType: widget.inputType,
-          focusNode: widget.node,
-          nextNode: widget.nextNode,
-          isEnabled: widget.isEnabled,
-          isDense: widget.isDense,
-          hasLabel: widget.hasLabel,
-          hasPlaceHolder: widget.hasPlaceHolder,
-          hasValue: widget.hasValue,
-          hasHelperText: widget.hasHelperText,
-          hasPadding: widget.hasPadding,
-          maxLength: widget.maxLength),
+          stream: widget.stream!,
+          changed: widget.textChanged!,
+          label: widget.title!,
+          helperText: widget.helperText!,
+          placeHolder: widget.placeHolder!,
+          controller: widget.controller!,
+          inputType: widget.inputType!,
+          focusNode: widget.node!,
+          nextNode: widget.nextNode!,
+          isEnabled: widget.isEnabled!,
+          isDense: widget.isDense!,
+          hasLabel: widget.hasLabel!,
+          hasPlaceHolder: widget.hasPlaceHolder!,
+          hasValue: widget.hasValue!,
+          hasHelperText: widget.hasHelperText!,
+          hasPadding: widget.hasPadding!,
+          maxLength: widget.maxLength!),
     );
   }
 
   Widget _getEditText(
-      {Observable<String> stream,
-      Function changed,
-      String label,
-      String helperText,
-      String placeHolder,
-      TextEditingController controller,
+      {Observable<String>? stream,
+      Function? changed,
+      String? label,
+      String? helperText,
+      String? placeHolder,
+      TextEditingController? controller,
       TextInputType inputType = TextInputType.text,
-      FocusNode focusNode,
-      FocusNode nextNode,
+      FocusNode? focusNode,
+      FocusNode? nextNode,
       bool isEnabled = true,
       bool isDense = true,
       bool hasValue = true,
@@ -107,7 +107,7 @@ class _TextEditableState extends State<TextEditable> {
               autofocus: false,
               controller: controller,
               onChanged: (text) {
-                changed.call(text);
+                changed!.call(text);
                 // DEFINE YOUR RULES HERE
               },
               keyboardType: inputType,
@@ -133,8 +133,10 @@ class _TextEditableState extends State<TextEditable> {
                       color:
                           isEnabled ? CommonTheme.greyDark : CommonTheme.grey),
                   helperText: snapshot.hasError
-                      ? snapshot.error
-                      : hasHelperText ? '$helperText' : null,
+                      ? snapshot.error.toString()
+                      : hasHelperText
+                          ? '$helperText'
+                          : '',
                   helperStyle: CommonTheme.tsBodyExtraSmall
                       .apply(color: CommonTheme.greyDark),
                   border: new OutlineInputBorder(
@@ -150,9 +152,11 @@ class _TextEditableState extends State<TextEditable> {
                   fillColor:
                       isEnabled ? CommonTheme.greyLightest : CommonTheme.white,
                   errorMaxLines: 4,
-                  errorText: snapshot.error,
+                  errorText: snapshot.error.toString(),
                   suffix: isEnabled
-                      ? snapshot.hasError ? ErrorIcon(true) : ErrorIcon(false)
+                      ? snapshot.hasError
+                          ? ErrorIcon(true)
+                          : ErrorIcon(false)
                       : DisableIcon(true)),
               style: CommonTheme.tsBodyDefault.apply(
                   color: isEnabled ? CommonTheme.black : CommonTheme.grey),

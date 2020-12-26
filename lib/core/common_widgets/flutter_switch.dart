@@ -12,9 +12,9 @@ class FlutterSwitch extends StatefulWidget {
   ///
 
   const FlutterSwitch({
-    Key key,
-    @required this.value,
-    @required this.onToggle,
+    Key? key,
+    this.value,
+    this.onToggle,
     this.activeColor = Colors.blue,
     this.inactiveColor = Colors.grey,
     this.activeTextColor = Colors.white70,
@@ -36,7 +36,7 @@ class FlutterSwitch extends StatefulWidget {
   /// Determines if the switch is on or off.
   ///
   /// This property is required.
-  final bool value;
+  final bool? value;
 
   /// Called when the user toggles the switch.
   ///
@@ -57,7 +57,7 @@ class FlutterSwitch extends StatefulWidget {
   ///   },
   /// ),
   /// ```
-  final ValueChanged<bool> onToggle;
+  final ValueChanged<bool>? onToggle;
 
   /// Displays an on or off text.
   ///
@@ -76,7 +76,7 @@ class FlutterSwitch extends StatefulWidget {
   ///
   /// [activeTextColor] - The color to use on the text value when the switch is on.
   /// [activeTextFontWeight] - The font weight to use on the text value when the switch is on.
-  final String activeText;
+  final String? activeText;
 
   /// The text to display when the switch is off.
   /// This parameter is only necessary when [showOnOff] property is true.
@@ -87,7 +87,7 @@ class FlutterSwitch extends StatefulWidget {
   ///
   /// [inactiveTextColor] - The color to use on the text value when the switch is off.
   /// [inactiveTextFontWeight] - The font weight to use on the text value when the switch is off.
-  final String inactiveText;
+  final String? inactiveText;
 
   /// The color to use on the switch when the switch is on.
   ///
@@ -115,13 +115,13 @@ class FlutterSwitch extends StatefulWidget {
   /// This parameter is only necessary when [showOnOff] property is true.
   ///
   /// Defaults to [FontWeight.w900].
-  final FontWeight activeTextFontWeight;
+  final FontWeight? activeTextFontWeight;
 
   /// The font weight to use on the text value when the switch is off.
   /// This parameter is only necessary when [showOnOff] property is true.
   ///
   /// Defaults to [FontWeight.w900].
-  final FontWeight inactiveTextFontWeight;
+  final FontWeight? inactiveTextFontWeight;
 
   /// The color to use on the toggle of the switch.
   ///
@@ -165,28 +165,28 @@ class FlutterSwitch extends StatefulWidget {
 
 class _FlutterSwitchState extends State<FlutterSwitch>
     with SingleTickerProviderStateMixin {
-  Animation _toggleAnimation;
-  AnimationController _animationController;
+  Animation? _toggleAnimation;
+  AnimationController? _animationController;
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      value: widget.value ? 1.0 : 0.0,
+      value: widget.value! ? 1.0 : 0.0,
       duration: Duration(milliseconds: 60),
     );
     _toggleAnimation = AlignmentTween(
       begin: Alignment.centerLeft,
       end: Alignment.centerRight,
     ).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.linear),
+      CurvedAnimation(parent: _animationController!, curve: Curves.linear),
     );
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _animationController!.dispose();
     super.dispose();
   }
 
@@ -196,25 +196,27 @@ class _FlutterSwitchState extends State<FlutterSwitch>
 
     if (oldWidget.value == widget.value) return;
 
-    if (widget.value)
-      _animationController.forward();
+    if (widget.value!)
+      _animationController!.forward();
     else
-      _animationController.reverse();
+      _animationController!.reverse();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _animationController,
+      animation: _animationController!,
       builder: (context, child) {
         return GestureDetector(
           onTap: () {
-            if (widget.value)
-              _animationController.forward();
+            if (widget.value!)
+              _animationController!.forward();
             else
-              _animationController.reverse();
+              _animationController!.reverse();
 
-            widget.onToggle(!widget.value);
+            // widget.onToggle!.call(!widget.value!);
+
+            widget.onToggle!(!widget.value!);
           },
           child: Container(
             width: widget.width,
@@ -222,14 +224,14 @@ class _FlutterSwitchState extends State<FlutterSwitch>
             padding: EdgeInsets.all(widget.padding),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(widget.borderRadius),
-              color: _toggleAnimation.value == Alignment.centerLeft
+              color: _toggleAnimation!.value == Alignment.centerLeft
                   ? widget.inactiveColor
                   : widget.activeColor,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                _toggleAnimation.value == Alignment.centerRight
+                _toggleAnimation!.value == Alignment.centerRight
                     ? Expanded(
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 4.0),
@@ -238,7 +240,7 @@ class _FlutterSwitchState extends State<FlutterSwitch>
                       )
                     : Container(),
                 Align(
-                  alignment: _toggleAnimation.value,
+                  alignment: _toggleAnimation!.value,
                   child: Container(
                     margin: EdgeInsets.all(2),
                     width: widget.toggleSize,
@@ -248,7 +250,7 @@ class _FlutterSwitchState extends State<FlutterSwitch>
                         color: widget.toggleColor,
                         image: DecorationImage(
                             image: AssetImage(
-                                _toggleAnimation.value == Alignment.centerRight
+                                _toggleAnimation!.value == Alignment.centerRight
                                     ? ImagePaths.icSwitchOn
                                     : ImagePaths.icSwitchOff),
                             fit: BoxFit.scaleDown,
@@ -256,7 +258,7 @@ class _FlutterSwitchState extends State<FlutterSwitch>
                         border: Border.all(width: 1, color: CommonTheme.white)),
                   ),
                 ),
-                _toggleAnimation.value == Alignment.centerLeft
+                _toggleAnimation!.value == Alignment.centerLeft
                     ? Expanded(
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 4.0),
@@ -273,10 +275,10 @@ class _FlutterSwitchState extends State<FlutterSwitch>
     );
   }
 
-  FontWeight get _activeTextFontWeight => widget.activeTextFontWeight != null
+  FontWeight? get _activeTextFontWeight => widget.activeTextFontWeight != null
       ? widget.activeTextFontWeight
       : FontWeight.w900;
-  FontWeight get _inactiveTextFontWeight =>
+  FontWeight? get _inactiveTextFontWeight =>
       widget.inactiveTextFontWeight != null
           ? widget.inactiveTextFontWeight
           : FontWeight.w900;
@@ -284,7 +286,7 @@ class _FlutterSwitchState extends State<FlutterSwitch>
   Widget get _activeText {
     if (widget.showOnOff) {
       return Text(
-        (widget?.activeText != null) ? widget.activeText : "On",
+        (widget.activeText != null) ? widget.activeText! : "On",
         style: TextStyle(
           color: widget.activeTextColor,
           fontWeight: _activeTextFontWeight,
@@ -299,7 +301,7 @@ class _FlutterSwitchState extends State<FlutterSwitch>
   Widget get _inactiveText {
     if (widget.showOnOff) {
       return Text(
-        (widget?.inactiveText != null) ? widget.inactiveText : "Off",
+        (widget.inactiveText != null) ? widget.inactiveText! : "Off",
         style: TextStyle(
           color: widget.inactiveTextColor,
           fontWeight: _inactiveTextFontWeight,

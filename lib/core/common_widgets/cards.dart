@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/common_widgets/common_theme.dart';
 import 'package:ocean_builder/core/common_widgets/flutter_switch.dart';
 
 class GenericCard extends StatefulWidget {
   const GenericCard(
-      {Key key,
+      {Key? key,
       this.hasSwitch,
       this.switchValue,
       this.title,
@@ -17,14 +16,14 @@ class GenericCard extends StatefulWidget {
       this.onTap})
       : super(key: key);
 
-  final String title;
-  final String dataIcon;
-  final String data;
-  final String subData;
-  final bool hasSwitch;
-  final bool switchValue;
-  final Function onControllPressed;
-  final Function onTap;
+  final String? title;
+  final String? dataIcon;
+  final String? data;
+  final String? subData;
+  final bool? hasSwitch;
+  final bool? switchValue;
+  final Function? onControllPressed;
+  final Function? onTap;
 
   @override
   _GenericCardState createState() => _GenericCardState();
@@ -36,19 +35,19 @@ class _GenericCardState extends State<GenericCard> {
   @override
   void initState() {
     super.initState();
-    _isOn = widget.switchValue ?? true;
+    _isOn = widget.switchValue ?? false;
   }
 
   @override
   void didUpdateWidget(GenericCard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _isOn = widget.switchValue ?? true;
+    _isOn = widget.switchValue ?? false;
   }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: widget.onTap,
+      onTap: () => widget.onTap,
       child: Card(
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -59,7 +58,7 @@ class _GenericCardState extends State<GenericCard> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              widget.hasSwitch ? _titleWithSwitch() : _title(),
+              widget.hasSwitch! ? _titleWithSwitch() : _title(),
               _divider(),
               _data(),
             ],
@@ -119,7 +118,7 @@ class _GenericCardState extends State<GenericCard> {
                 _isOn = val;
               });
               if (widget.onControllPressed != null)
-                widget.onControllPressed.call(val);
+                widget.onControllPressed!.call(val);
             },
           ),
         ],
@@ -137,7 +136,7 @@ class _GenericCardState extends State<GenericCard> {
               ? Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: SvgPicture.asset(
-                    widget.dataIcon,
+                    widget.dataIcon!,
                     fit: BoxFit.scaleDown,
                     width: 12,
                     height: 12,
