@@ -711,7 +711,7 @@ class ListHelper {
 
   static List<String> getWallColorPricingList() => ['', threeDollar];
 
-  static List<String> getWallColorSubtitle() => [null, 'Select From Palate'];
+  static List<String> getWallColorSubtitle() => ['', 'Select From Palate'];
 
   static List<String> getDeckFloorFinishMaterialList() =>
       ['Carbon Fiber', 'Tile', 'Wood', 'Custom'];
@@ -721,7 +721,7 @@ class ListHelper {
   static List<String> getFloorFinishPricing() => ['', threeDollar, threeDollar];
 
   static List<String> getFloorFinishSubTitle() => [
-        null,
+        '',
         'Select from 50 Different Styles',
         'Select from 10 Different Styles'
       ];
@@ -1319,10 +1319,10 @@ class SharedPreferanceKeys {
 }
 
 class ApplicationStatics {
-  static String SELECTED_OB_ID;
+  static String SELECTED_OB_ID = '';
   static DrawerIndex selectedScreenIndex = DrawerIndex.HOME;
 
-  static OceanBuilderUser oceanBuilderUser;
+  static OceanBuilderUser oceanBuilderUser = OceanBuilderUser();
 
   static String selectedWeatherProvider = 'external';
 }
@@ -1330,13 +1330,13 @@ class ApplicationStatics {
 enum WeatherType { COLUDY, SUNNY_CLOUDY, RAINY, STORMY }
 
 class GlobalListeners {
-  static StreamSubscription listener;
+  static late StreamSubscription listener;
 }
 
 class GlobalContext {
-  static BuildContext currentScreenContext;
+  static late BuildContext currentScreenContext;
   static int dashBoardBuildCount = 0;
-  static bool internetStatus;
+  static late bool internetStatus;
   static SwiperController swiperController = new SwiperController();
   static int currentScreenIndex = 0;
   static bool isDrawerOpen = false;

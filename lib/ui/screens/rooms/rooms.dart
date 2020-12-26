@@ -176,7 +176,6 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
             data: 'Click to save current settings as preset',
             onTap: () {
               _isSecondLevel = true;
-              
             },
           ),
           GenericCard(

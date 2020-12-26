@@ -29,13 +29,11 @@ import 'package:provider/provider.dart';
 import 'constants/constants.dart';
 import 'core/providers/device_type_provider.dart';
 
-
 // Future<void> main() async {
 //   await mainCommon();
 // }
 
 Future<void> main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   // Load the JSON config into memory
   await ConfigReader.initialize();
@@ -63,62 +61,57 @@ Future<void> main() async {
   //     );
   // }, onError: Crashlytics.instance.recordError);
 
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: MyApp() ,
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: MyApp(),
     ),
   );
-  
 }
-
 
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
-
 }
 
 class _MyAppState extends State<MyApp> {
-
   bool isConnected;
   // static FirebaseAnalytics analytics = FirebaseAnalytics();
   // static FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
 
-
   @override
   void initState() {
     super.initState();
-  
-  GlobalListeners.listener = DataConnectionChecker().onStatusChange.listen((status) {
-    switch (status) {
-      case DataConnectionStatus.connected:
-        // // print('Data connection is available.');
-        if(GlobalContext.internetStatus!=null && !GlobalContext.internetStatus)
-        {
-        displayInternetInfoBar(context,AppStrings.internetConnection);
-        GlobalContext.internetStatus = true;
-        }
-        break;
-      case DataConnectionStatus.disconnected:
-        // // print('You are disconnected from the internet.');
-        displayInternetInfoBar(context,AppStrings.noInternetConnection);
-         GlobalContext.internetStatus = false;
-        break;
-    }
-  });  
 
+    GlobalListeners.listener =
+        DataConnectionChecker().onStatusChange.listen((status) {
+      switch (status) {
+        case DataConnectionStatus.connected:
+          // // print('Data connection is available.');
+          if (GlobalContext.internetStatus != null &&
+              !GlobalContext.internetStatus) {
+            displayInternetInfoBar(context, AppStrings.internetConnection);
+            GlobalContext.internetStatus = true;
+          }
+          break;
+        case DataConnectionStatus.disconnected:
+          // // print('You are disconnected from the internet.');
+          displayInternetInfoBar(context, AppStrings.noInternetConnection);
+          GlobalContext.internetStatus = false;
+          break;
+      }
+    });
   }
-  
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context,allowFontScaling: true);
+    ScreenUtil.init(context, allowFontScaling: true);
     service.SystemChrome.setPreferredOrientations([
       service.DeviceOrientation.portraitUp,
       service.DeviceOrientation.portraitDown,
     ]);
 
-   UIHelper.setStatusBarColor(color:ColorConstants.TOP_CLIPPER_START);
+    UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -171,9 +164,22 @@ class _MyAppState extends State<MyApp> {
         ),
         // Provider<FirebaseAnalytics>.value(value: analytics),
         // Provider<FirebaseAnalyticsObserver>.value(value: observer),
-        
       ],
-      child: MaterialApp(
+      child:
+          //        MaterialApp.router(
+          //   debugShowCheckedModeBanner: false,
+          //   title: 'Ocean Builders',
+          //   // navigatorObservers: <NavigatorObserver>[
+          //   // observer
+          //   // ],
+          //   theme: ThemeData(fontFamily: 'Archivo'),
+          //   // navigatorKey: locator<NavigationService>().navigatorKey,
+          //   // initialRoute: obRoute.initialRoute,
+          //   // onGenerateRoute: obRoute.Router.generateRoute,
+          //   routerDelegate: ,
+
+          // ),
+          MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Ocean Builders',
         // navigatorObservers: <NavigatorObserver>[
@@ -188,10 +194,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
-void dispose() {
-  // _listener.cancel();
-  GlobalListeners.listener.cancel();
-  super.dispose();
-}
-
+  void dispose() {
+    // _listener.cancel();
+    GlobalListeners.listener.cancel();
+    super.dispose();
+  }
 }

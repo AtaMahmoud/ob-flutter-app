@@ -5,7 +5,7 @@ import 'bloc_provider.dart';
 class GenericBloc<T> implements BlocBase {
   var controller = BehaviorSubject<T>();
 
-  StreamTransformer<T, T> streamTransformer;
+  late StreamTransformer<T, T> streamTransformer;
   //  =
   //     StreamTransformer<T, T>.fromHandlers(
   //   handleData: (data, sink) {
@@ -29,7 +29,7 @@ class GenericBloc<T> implements BlocBase {
 
   GenericBloc.private();
 
-  GenericBloc.named(StreamTransformer streamTransformer) {
+  GenericBloc.named(StreamTransformer<T, T> streamTransformer) {
     this.streamTransformer = streamTransformer;
   }
 

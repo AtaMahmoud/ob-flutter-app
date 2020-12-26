@@ -8,7 +8,7 @@ class PasswordValidationBloc extends Object with Validator implements BlocBase {
   var showPasswordController = BehaviorSubject<bool>();
   var showConfirmPasswordController = BehaviorSubject<bool>();
 
-  String pass;
+  late String pass;
 
   Observable<String> get password => passwordController.stream.transform(passwordValidator);
 

@@ -14,7 +14,7 @@ description: Ocean Builder Project.
 version: 0.7.0+12
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
   flutter:
