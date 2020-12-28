@@ -38,6 +38,12 @@ class _CommonSliderState extends State<CommonSlider> {
       _valueColor;
 
   @override
+  void initState() {
+    super.initState();
+    _sliderValue = widget.sliderValue;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       child: _sliderNative(),

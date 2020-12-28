@@ -14,10 +14,10 @@ class Rooms extends StatefulWidget {
   Rooms({Key key}) : super(key: key);
 
   @override
-  _RoomsState createState() => _RoomsState();
+  RoomsState createState() => RoomsState();
 }
 
-class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
+class RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   GenericBloc<String> _searchBloc;
   TextEditingController _searchController;
@@ -26,14 +26,15 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
 
   GenericBloc<int> _selectedTabBloc = GenericBloc.private();
   GenericBloc<Widget> _selectedContentBloc = GenericBloc.private();
+  GenericBloc<Widget> _headerContentBloc = GenericBloc.private();
 
   Widget _selectedContent;
 
   String _selctedItemName;
 
-  bool _isSecondLevel = false;
-
   List<Room> _demorooms;
+
+  int _selctedIndex;
 
   @override
   void initState() {
@@ -41,6 +42,14 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
     _searchBloc = GenericBloc.private();
     _initializeItemSet();
     _selectItemListener();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _selectedTabBloc.dispose();
+    _selectedContentBloc.dispose();
+    _headerContentBloc.dispose();
   }
 
   _initializeItemSet() {
@@ -57,6 +66,7 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
     // _selectedContentBloc.changed(_selectedContent);
     _selectedContentBloc = GenericBloc(_selectedContent);
     _selctedItemName = 'Bedroom';
+    _selctedIndex = 0;
   }
 
   // 0 bedroom
@@ -68,6 +78,7 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
 
   void _selectItemListener() {
     _selectedTabBloc.stream.listen((selectedIndex) {
+      _selctedIndex = selectedIndex;
       switch (selectedIndex) {
         case 0:
           debugPrint('Navigate to bedroom details');
@@ -104,6 +115,7 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
             _selectedContent = RoomDetails(
                 name: _selctedItemName,
                 room: _demorooms[selectedIndex],
+                roomHeaderChanged: _headerContentBloc.changed,
                 selectedContentChanged:
                     _selectedContentBloc.changed); //_bathRoom();
             _selectedContentBloc.changed(_selectedContent);
@@ -148,7 +160,12 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
                   ),
 
                   SliverToBoxAdapter(
-                    child: _spaceBar(),
+                    child: StreamBuilder<Widget>(
+                        stream: _headerContentBloc.stream,
+                        initialData: spaceBar(),
+                        builder: (context, snapshot) {
+                          return snapshot.data;
+                        }),
                   ),
                 ],
               ),
@@ -174,51 +191,12 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
     );
   }
 
-  _spaceBar() {
+  spaceBar() {
     return SpaceBar(
       spaceItems: spaceItems,
       stream: _selectedTabBloc.stream,
       changed: _selectedTabBloc.changed,
-    );
-  }
-
-  _bathRoom() {
-    return Container(
-      child: Column(
-        children: [
-          GenericCard(
-            hasSwitch: false,
-            title: 'No Preset Available',
-            data: 'Click to save current settings as preset',
-            onTap: () {
-              _isSecondLevel = true;
-            },
-          ),
-          GenericCard(
-            hasSwitch: true,
-            switchValue: true,
-            title: 'Lights-Ceiling',
-            dataIcon: ImagePaths.svgIcLightKnob,
-            data: 'Brightness 60%',
-            subData: 'My Bathroom Preset',
-            onTap: () {},
-          ),
-          GenericCard(
-            hasSwitch: true,
-            switchValue: false,
-            title: 'Lights-floor',
-            dataIcon: ImagePaths.svgIcLightKnob,
-            data: 'Brightness 60%',
-          ),
-          GenericCard(
-            hasSwitch: true,
-            switchValue: true,
-            title: 'Shower Temperature',
-            data: '24${SymbolConstant.DEGREE}C',
-            subData: '>> 75.2${SymbolConstant.DEGREE}F',
-          ),
-        ],
-      ),
+      initialIndex: _selctedIndex,
     );
   }
 

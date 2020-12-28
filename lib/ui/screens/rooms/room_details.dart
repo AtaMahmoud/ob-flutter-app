@@ -6,11 +6,17 @@ import 'package:ocean_builder/core/models/lighting.dart';
 import 'package:ocean_builder/ui/screens/rooms/room_light.dart';
 
 class RoomDetails extends StatefulWidget {
-  RoomDetails({Key key, this.name, this.room, this.selectedContentChanged})
+  RoomDetails(
+      {Key key,
+      this.name,
+      this.room,
+      this.selectedContentChanged,
+      this.roomHeaderChanged})
       : super(key: key);
   final String name;
   final Room room;
   final Function selectedContentChanged;
+  final Function roomHeaderChanged;
 
   @override
   _RoomDetailsState createState() => _RoomDetailsState();
@@ -81,9 +87,11 @@ class _RoomDetailsState extends State<RoomDetails> {
             onTap: () {
               // _selectedLightBloc = GenericBloc(widget.room.lightModes[0]);
               Widget sc = RoomLight(
+                  room: widget.room,
                   lights: lights,
                   stream: _lightBloc.stream,
                   changed: _lightBloc.changed,
+                  roomHeaderChanged: widget.roomHeaderChanged,
                   selectedContentChanged: widget.selectedContentChanged);
               // got to room light screen with light data stream and changed method.
 

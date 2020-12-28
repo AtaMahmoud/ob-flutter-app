@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ocean_builder/bloc/generic_bloc.dart';
 import 'package:ocean_builder/constants/constants.dart';
+import 'package:ocean_builder/core/common_widgets/buttons.dart';
 import 'package:ocean_builder/core/common_widgets/cards.dart';
+import 'package:ocean_builder/ui/screens/rooms/room_details.dart';
+import 'package:ocean_builder/ui/screens/rooms/rooms.dart';
 import 'package:rxdart/src/observables/observable.dart';
 import 'package:ocean_builder/core/models/lighting.dart';
 import 'package:ocean_builder/core/common_widgets/select_button.dart';
@@ -12,14 +15,18 @@ import 'package:ocean_builder/core/common_widgets/sliders.dart';
 class RoomLight extends StatefulWidget {
   RoomLight(
       {Key key,
+      this.room,
       this.lights,
       this.stream,
       this.changed,
-      this.selectedContentChanged})
+      this.selectedContentChanged,
+      this.roomHeaderChanged})
       : super(key: key);
+  final Room room;
   final List<Light> lights;
   final Observable<Light> stream;
   final Function changed;
+  final Function roomHeaderChanged;
   final Function selectedContentChanged;
   @override
   _RoomLightState createState() => _RoomLightState();
@@ -44,6 +51,7 @@ class _RoomLightState extends State<RoomLight> {
 
   @override
   Widget build(BuildContext context) {
+    // widget.roomHeaderChanged(new Text('Seapod/roomname'));
     return Container(
       child: StreamBuilder<Light>(
           stream: widget.stream,
@@ -53,7 +61,8 @@ class _RoomLightState extends State<RoomLight> {
               children: [
                 _lightControl(),
                 _lightSelection(snapshot.data),
-                _brightness(snapshot.data)
+                _brightness(snapshot.data),
+                _backButton()
               ],
             );
           }),
@@ -98,6 +107,7 @@ class _RoomLightState extends State<RoomLight> {
           setState(() {
             _selectedLight = light;
             _isExpanded = !_isExpanded;
+            widget.changed(light);
           });
         } else {
           setState(() {
@@ -179,6 +189,30 @@ class _RoomLightState extends State<RoomLight> {
           },
         ),
       ),
+    );
+  }
+
+  _backButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        PrimaryButton(
+          isDestructive: false,
+          isEnabled: true,
+          isNaked: true,
+          isOutlined: false,
+          label: '« Back',
+          onPressed: () {
+            Widget sc = RoomDetails(
+                name: widget.room.roomName,
+                room: widget.room,
+                selectedContentChanged: widget.selectedContentChanged);
+            widget.selectedContentChanged(sc);
+            // widget.roomHeaderChanged(
+            //     context.findAncestorStateOfType<RoomsState>().spaceBar());
+          },
+        )
+      ],
     );
   }
 }

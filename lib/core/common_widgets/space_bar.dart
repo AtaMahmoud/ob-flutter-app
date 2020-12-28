@@ -4,11 +4,13 @@ import 'package:ocean_builder/core/common_widgets/space_item.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SpaceBar extends StatefulWidget {
-  SpaceBar({this.stream, this.changed, this.spaceItems, Key key})
+  SpaceBar(
+      {this.stream, this.changed, this.spaceItems, this.initialIndex, Key key})
       : super(key: key);
   final List<SpaceItemData> spaceItems;
   final Observable<int> stream;
   final Function changed;
+  final int initialIndex;
   @override
   _SpaceBarState createState() => _SpaceBarState();
 }
@@ -21,6 +23,7 @@ class _SpaceBarState extends State<SpaceBar> {
   void initState() {
     super.initState();
     spaceItems = widget.spaceItems;
+    _selectedIndex = widget.initialIndex;
   }
 
   _validateItem(int selctedIndex) {
