@@ -75,17 +75,20 @@ class _CommonSliderState extends State<CommonSlider> {
         inactiveTrackColor: _inactiveTrackColor,
         thumbColor: _thumbColor,
       ),
-      child: Slider(
-          min: 0.0,
-          max: 100.0,
-          divisions: 100,
-          value: _sliderValue,
-          onChanged: (value) {
-            setState(() {
-              _sliderValue = value;
-              widget.onChangedMethod.call(value);
-            });
-          }),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 12),
+        child: Slider(
+            min: 0.0,
+            max: 100.0,
+            divisions: 100,
+            value: _sliderValue,
+            onChanged: (value) {
+              setState(() {
+                _sliderValue = value;
+                widget.onChangedMethod.call(value);
+              });
+            }),
+      ),
     );
   }
 
@@ -93,7 +96,7 @@ class _CommonSliderState extends State<CommonSlider> {
     return Align(
       alignment: Alignment.topLeft,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24),
+        padding: EdgeInsets.symmetric(horizontal: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

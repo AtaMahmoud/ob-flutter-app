@@ -14,7 +14,8 @@ class GenericCard extends StatefulWidget {
       this.data,
       this.subData,
       this.onControllPressed,
-      this.onTap})
+      this.onTap,
+      this.showOnOff})
       : super(key: key);
 
   final String title;
@@ -25,6 +26,7 @@ class GenericCard extends StatefulWidget {
   final bool switchValue;
   final Function onControllPressed;
   final Function onTap;
+  final bool showOnOff;
 
   @override
   _GenericCardState createState() => _GenericCardState();
@@ -50,7 +52,7 @@ class _GenericCardState extends State<GenericCard> {
     return InkWell(
       onTap: widget.onTap,
       child: Card(
-        elevation: 4,
+        // elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         color: CommonTheme.white,
         semanticContainer: false,
@@ -60,8 +62,12 @@ class _GenericCardState extends State<GenericCard> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               widget.hasSwitch ? _titleWithSwitch() : _title(),
-              _divider(),
-              _data(),
+              widget.data != null && widget.data.length > 0
+                  ? _divider()
+                  : Container(),
+              widget.data != null && widget.data.length > 0
+                  ? _data()
+                  : Container(),
             ],
           ),
         ),
@@ -99,7 +105,9 @@ class _GenericCardState extends State<GenericCard> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            '${widget.title}',
+            widget.showOnOff != null && widget.showOnOff
+                ? '${widget.title}${_isOn ? '(on)' : '(off)'}'
+                : '${widget.title}',
             style: CommonTheme.tsBodyDefault.apply(color: CommonTheme.primary),
           ),
           FlutterSwitch(

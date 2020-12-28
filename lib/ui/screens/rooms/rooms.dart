@@ -6,6 +6,7 @@ import 'package:ocean_builder/core/common_widgets/common_theme.dart';
 import 'package:ocean_builder/core/common_widgets/search_bar.dart';
 import 'package:ocean_builder/core/common_widgets/space_bar.dart';
 import 'package:ocean_builder/core/common_widgets/space_item.dart';
+import 'package:ocean_builder/core/models/lighting.dart';
 import 'package:ocean_builder/ui/screens/rooms/room_details.dart';
 
 class Rooms extends StatefulWidget {
@@ -24,12 +25,15 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
   List<SpaceItemData> spaceItems = [];
 
   GenericBloc<int> _selectedTabBloc = GenericBloc.private();
+  GenericBloc<Widget> _selectedContentBloc = GenericBloc.private();
 
   Widget _selectedContent;
 
   String _selctedItemName;
 
   bool _isSecondLevel = false;
+
+  List<Room> _demorooms;
 
   @override
   void initState() {
@@ -40,15 +44,18 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
   }
 
   _initializeItemSet() {
-    for (var i = 0; i < demorooms.length; i++) {
+    _demorooms = _getRooms();
+    for (var i = 0; i < _demorooms.length; i++) {
       spaceItems.add(SpaceItemData(
           index: i,
-          label: demorooms[i].roomName,
+          label: _demorooms[i].roomName,
           hasWarning: true,
           isSelected: false));
     }
     spaceItems[0].isSelected = true;
     _selectedContent = Container();
+    // _selectedContentBloc.changed(_selectedContent);
+    _selectedContentBloc = GenericBloc(_selectedContent);
     _selctedItemName = 'Bedroom';
   }
 
@@ -94,7 +101,12 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
           debugPrint('Navigate to bathroom details');
           setState(() {
             _selctedItemName = 'Bathroom';
-            _selectedContent = _bathRoom();
+            _selectedContent = RoomDetails(
+                name: _selctedItemName,
+                room: _demorooms[selectedIndex],
+                selectedContentChanged:
+                    _selectedContentBloc.changed); //_bathRoom();
+            _selectedContentBloc.changed(_selectedContent);
           });
           break;
         case 5:
@@ -147,7 +159,11 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
                 physics: BouncingScrollPhysics(),
                 slivers: [
                   SliverToBoxAdapter(
-                    child: _selectedContent,
+                    child: StreamBuilder<Widget>(
+                        stream: _selectedContentBloc.stream,
+                        builder: (context, snapshot) {
+                          return snapshot.hasData ? snapshot.data : Container();
+                        }),
                   )
                 ],
               ),
@@ -176,7 +192,6 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
             data: 'Click to save current settings as preset',
             onTap: () {
               _isSecondLevel = true;
-              
             },
           ),
           GenericCard(
@@ -186,6 +201,7 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
             dataIcon: ImagePaths.svgIcLightKnob,
             data: 'Brightness 60%',
             subData: 'My Bathroom Preset',
+            onTap: () {},
           ),
           GenericCard(
             hasSwitch: true,
@@ -204,5 +220,143 @@ class _RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+  // demo room data
+  _getRooms() {
+    List<Light> _lightsBedroom = [
+      new Light(
+          lightName: 'Lightstrip 1',
+          lightColor: '0xFF959B1B',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Lightstrip 2',
+          lightColor: '0xFF1322FF',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Ligh 3',
+          lightColor: '0xFFFF1EEE',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Counter 4',
+          lightColor: '0xFFFFBE93',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Ocerhead 3',
+          lightColor: '0xFFC1FFE5',
+          status: true,
+          brightness: 100)
+    ];
+
+    List<Light> _lightsLivingRoom = [
+      new Light(
+          lightName: 'Lightstrip 1',
+          lightColor: '0xFF959B1B',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Lightstrip 2',
+          lightColor: '0xFF1322FF',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Ligh 3',
+          lightColor: '0xFFFF1EEE',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Counter 4',
+          lightColor: '0xFFFFBE93',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Ocerhead 3',
+          lightColor: '0xFFC1FFE5',
+          status: true,
+          brightness: 100)
+    ];
+
+    List<Light> _lightsKitchen = [
+      new Light(
+          lightName: 'Lightstrip 1',
+          lightColor: '0xFF959B1B',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Lightstrip 2',
+          lightColor: '0xFF1322FF',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Ligh 3',
+          lightColor: '0xFFFF1EEE',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Counter 4',
+          lightColor: '0xFFFFBE93',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Ocerhead 3',
+          lightColor: '0xFFC1FFE5',
+          status: true,
+          brightness: 100)
+    ];
+
+    List<Light> _lightsUnderWaterRoom = [
+      new Light(
+          lightName: 'Lightstrip 1',
+          lightColor: '0xFF959B1B',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Lightstrip 2',
+          lightColor: '0xFF1322FF',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Ligh 3',
+          lightColor: '0xFFFF1EEE',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Counter 4',
+          lightColor: '0xFFFFBE93',
+          status: true,
+          brightness: 100),
+      new Light(
+          lightName: 'Ocerhead 3',
+          lightColor: '0xFFC1FFE5',
+          status: true,
+          brightness: 100)
+    ];
+
+    List<Room> rooms = [
+      new Room(
+          roomName: 'Bedroom',
+          // light: _lightsBedroom[0],
+          lightModes: _lightsBedroom),
+      new Room(
+          roomName: 'Livingroom',
+          // light: _lightsLivingRoom[1],
+          lightModes: _lightsLivingRoom),
+      new Room(
+          roomName: 'Kitchen',
+          // light: _lightsKitchen[2],
+          lightModes: _lightsKitchen),
+      new Room(
+          roomName: 'UnderWaterRoom',
+          // light: _lightsUnderWaterRoom[3],
+          lightModes: _lightsUnderWaterRoom),
+      new Room(roomName: 'Bathroom', lightModes: _lightsUnderWaterRoom),
+      new Room(roomName: 'Master Bedroom', lightModes: _lightsBedroom)
+    ];
+
+    return rooms;
   }
 }

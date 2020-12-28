@@ -1,36 +1,183 @@
 import 'package:flutter/material.dart';
 import 'package:ocean_builder/bloc/generic_bloc.dart';
-import 'package:ocean_builder/core/common_widgets/search_bar.dart';
+import 'package:ocean_builder/constants/constants.dart';
+import 'package:ocean_builder/core/common_widgets/cards.dart';
+import 'package:rxdart/src/observables/observable.dart';
+import 'package:ocean_builder/core/models/lighting.dart';
+import 'package:ocean_builder/core/common_widgets/select_button.dart';
+import 'package:ocean_builder/core/common_widgets/common_theme.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ocean_builder/core/common_widgets/sliders.dart';
 
 class RoomLight extends StatefulWidget {
-  RoomLight({Key key}) : super(key: key);
-
+  RoomLight(
+      {Key key,
+      this.lights,
+      this.stream,
+      this.changed,
+      this.selectedContentChanged})
+      : super(key: key);
+  final List<Light> lights;
+  final Observable<Light> stream;
+  final Function changed;
+  final Function selectedContentChanged;
   @override
   _RoomLightState createState() => _RoomLightState();
 }
 
 class _RoomLightState extends State<RoomLight> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  GenericBloc<String> _searchBloc;
-  TextEditingController _searchController;
+  bool _isExpanded = false;
+  List<Light> _lights;
+  Light _selectedLight = Light();
+
+  @override
+  void initState() {
+    super.initState();
+    _lights = widget.lights;
+    _selectedLight = _lights[0];
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SearchBar(
-            scaffoldKey: _scaffoldKey,
-            searchTextController: _searchController,
-            stream: _searchBloc.stream,
-            textChanged: (value) {
-              debugPrint('Changed Search text is --- $value');
-            },
-            onSubmitted: (value) {
-              debugPrint('Submitted Search text is --- $value');
-            },
+    return Container(
+      child: StreamBuilder<Light>(
+          stream: widget.stream,
+          initialData: widget.lights[0],
+          builder: (context, snapshot) {
+            return Column(
+              children: [
+                _lightControl(),
+                _lightSelection(snapshot.data),
+                _brightness(snapshot.data)
+              ],
+            );
+          }),
+    );
+  }
+
+  Widget _lightControl() {
+    return GenericCard(
+      hasSwitch: true,
+      switchValue: true,
+      title: 'Lights',
+      showOnOff: true,
+      // dataIcon: ImagePaths.svgIcLightKnob,
+      onControllPressed: (value) {
+        print('Pressed switch -- $value');
+      },
+      // data: 'Brightness ${snapshot.data.brightness}%',
+      // subData: 'My Bathroom Preset',
+      // onTap: () {
+      //   widget.selectedContentChanged(Text('Modal for color picker'));
+      // },
+    );
+  }
+
+  _lightSelection(Light light) {
+    return Container(
+        child: Column(
+      children: [
+        _lightColor(_selectedLight, false),
+        if (!_isExpanded)
+          Container()
+        else
+          ..._lights.map((data) => _lightColor(data, true)).toList(),
+      ],
+    ));
+  }
+
+  _lightColor(Light light, bool isSelectable) {
+    return InkWell(
+      onTap: () {
+        if (isSelectable) {
+          setState(() {
+            _selectedLight = light;
+            _isExpanded = !_isExpanded;
+          });
+        } else {
+          setState(() {
+            _isExpanded = !_isExpanded;
+          });
+        }
+      },
+      child: isSelectable
+          ? Container(
+              padding: EdgeInsets.symmetric(horizontal: 4),
+              color: isSelectable &&
+                      light.lightName.compareTo(_selectedLight.lightName) == 0
+                  ? CommonTheme.primaryLightest
+                  : CommonTheme.white,
+              child: _ligtColorContent(light, isSelectable),
+            )
+          : Card(
+              // elevation: 4,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+              color: CommonTheme.white,
+              semanticContainer: false,
+              child: _ligtColorContent(light, isSelectable),
+            ),
+    );
+  }
+
+  _ligtColorContent(Light light, bool isSelectable) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Text(
+              '${light.lightName ?? ''}',
+              style: CommonTheme.tsBodyExtraSmall.apply(
+                  color: isSelectable &&
+                          light.lightName.compareTo(_selectedLight.lightName) ==
+                              0
+                      ? CommonTheme.greyDark
+                      : CommonTheme.primary),
+            ),
           ),
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: SvgPicture.asset(
+              ImagePaths.svgIcLightKnob,
+              fit: BoxFit.scaleDown,
+              color: Color(int.parse(light.lightColor)),
+              // width: 12,
+              // height: 12,
+            ),
+          )
         ],
+      ),
+    );
+  }
+
+  _brightness(Light light) {
+    return Card(
+      // elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      color: CommonTheme.white,
+      semanticContainer: false,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: CommonSlider(
+          key: Key('$light'),
+          sliderValue: light.brightness.toDouble(),
+          hasSliderLabel: true,
+          isDarkBg: false,
+          sliderLabel: '${light.lightName}',
+          onChangedMethod: (value) {
+            setState(() {
+              light.brightness = value.toInt();
+            });
+          },
+        ),
       ),
     );
   }
