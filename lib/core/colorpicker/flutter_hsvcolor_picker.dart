@@ -1220,7 +1220,7 @@ class _HexPickerState extends State<HexPicker> {
       //TextField
       new Expanded(
           child: new TextField(
-        enabled: true,    
+        enabled: true,
         style: TextStyle(
             color: ColorConstants.LIGHTING_HEXCODE,
             fontSize: ScreenUtil().setSp(
@@ -1758,6 +1758,7 @@ List<Color> swatches = [
 //import "package:color_picker/Pickers/HexPicker.dart";
 //import "package:color_picker/Pickers/AlphaPicker.dart";
 bool switchOn = true;
+
 class _IPicker {
   int index;
   String name;
@@ -1821,7 +1822,7 @@ class ColorPickerState extends State<ColorPicker> {
   }
 
   //pickers
-  int _index = 6;
+  int _index = 3;
   List<_IPicker> _pickers;
   void _pickerOnChanged(_IPicker value) =>
       this._index = this._pickers.indexOf(value);
@@ -1947,25 +1948,23 @@ class ColorPickerState extends State<ColorPicker> {
         ]));
   }
 
-    
-
   // void _onSwitchChanged(bool value) {
   //   super.widget.onLightSwitchChanged(value);
   //   setState(() {
   //     switchOn = value;
   //   });
-    
+
   // }
 
   Widget _buildHeadWithSwitchButton() {
     return Padding(
       padding: EdgeInsets.only(
-       top: ScreenUtil().setHeight(32),
+        top: ScreenUtil().setHeight(32),
       ),
       child: new Row(
-      // mainAxisSize: MainAxisSize.min, 
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
+          // mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
 /*               //Avator
             new Container(
                 width: 32,
@@ -1983,55 +1982,55 @@ class ColorPickerState extends State<ColorPicker> {
                 )
             ), */
 
-        // Transform.scale(
-        //   scale: 1.5,
-        //   child: Switch(
-        //     onChanged: _onSwitchChanged,
-        //     value: switchOn,
-        //     activeColor: Colors.green,//this._color,
-        //     activeTrackColor: ColorConstants.LIGHT_POPUP_BKG,
-        //     inactiveThumbColor: Colors.grey,
-        //     inactiveTrackColor: ColorConstants.LIGHT_POPUP_BKG,
-        //     // activeThumbImage: Image.asset(
-        //     //   ImagePaths.icAdd
-        //     // ).image,
-        //   ),
-        // ),
+            // Transform.scale(
+            //   scale: 1.5,
+            //   child: Switch(
+            //     onChanged: _onSwitchChanged,
+            //     value: switchOn,
+            //     activeColor: Colors.green,//this._color,
+            //     activeTrackColor: ColorConstants.LIGHT_POPUP_BKG,
+            //     inactiveThumbColor: Colors.grey,
+            //     inactiveTrackColor: ColorConstants.LIGHT_POPUP_BKG,
+            //     // activeThumbImage: Image.asset(
+            //     //   ImagePaths.icAdd
+            //     // ).image,
+            //   ),
+            // ),
 
-        // new SizedBox(width: 22),
+            // new SizedBox(width: 22),
 
-        //HexPicker
-        new Container(
-          width: ScreenUtil().setWidth(256),
-            child: InputDecorator(
-          decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                    color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
-                    width: 1),
-                borderRadius: BorderRadius.circular(
-                    ScreenUtil().setWidth(16))),
-            contentPadding:
-                EdgeInsets.all(ScreenUtil().setWidth(1)),
-            labelText: 'HEXCODE',
-            // hintStyle: TextStyle(color: Colors.red),
-            labelStyle: TextStyle(
-                color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                fontSize: ScreenUtil().setSp(32)),
-          ),
-          child: Padding(
-            padding: EdgeInsets.only(
-            top: ScreenUtil().setHeight(4),
-            bottom: ScreenUtil().setHeight(4),
-          ),
-            child: new HexPicker(
-              color: this._color,
-              onChanged: (value) =>
-                  super.setState(() => this._colorOnChanged(value)),
-            ),
-          ),
-        ))
-      ]),
+            //HexPicker
+            new Container(
+                width: ScreenUtil().setWidth(256),
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color:
+                                ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
+                            width: 1),
+                        borderRadius:
+                            BorderRadius.circular(ScreenUtil().setWidth(16))),
+                    contentPadding: EdgeInsets.all(ScreenUtil().setWidth(1)),
+                    labelText: 'HEXCODE',
+                    // hintStyle: TextStyle(color: Colors.red),
+                    labelStyle: TextStyle(
+                        color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
+                        fontSize: ScreenUtil().setSp(32)),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      top: ScreenUtil().setHeight(4),
+                      bottom: ScreenUtil().setHeight(4),
+                    ),
+                    child: new HexPicker(
+                      color: this._color,
+                      onChanged: (value) =>
+                          super.setState(() => this._colorOnChanged(value)),
+                    ),
+                  ),
+                ))
+          ]),
     );
   }
 
@@ -2120,8 +2119,6 @@ class ColorPickerState extends State<ColorPicker> {
 
     return new Text("Color Picker");
   }
-
-
 }
 
 //

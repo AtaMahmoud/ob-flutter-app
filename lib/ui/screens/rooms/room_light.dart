@@ -3,6 +3,7 @@ import 'package:ocean_builder/bloc/generic_bloc.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/common_widgets/buttons.dart';
 import 'package:ocean_builder/core/common_widgets/cards.dart';
+import 'package:ocean_builder/ui/screens/rooms/color_picker.dart';
 import 'package:ocean_builder/ui/screens/rooms/room_details.dart';
 import 'package:ocean_builder/ui/screens/rooms/rooms.dart';
 import 'package:rxdart/src/observables/observable.dart';
@@ -11,6 +12,7 @@ import 'package:ocean_builder/core/common_widgets/select_button.dart';
 import 'package:ocean_builder/core/common_widgets/common_theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ocean_builder/core/common_widgets/sliders.dart';
+import 'package:ocean_builder/ui/shared/popup.dart';
 
 class RoomLight extends StatefulWidget {
   RoomLight(
@@ -96,8 +98,51 @@ class _RoomLightState extends State<RoomLight> {
           Container()
         else
           ..._lights.map((data) => _lightColor(data, true)).toList(),
+        if (!_isExpanded) Container() else _addNewColorItem()
       ],
     ));
+  }
+
+  _addNewColorItem() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 4),
+      color: CommonTheme.white,
+      child: InkWell(
+        onTap: () {
+          print('on tap add new color');
+          setState(() {
+            _isExpanded = !_isExpanded;
+            showColorPickerPopup(context, ColorPickerModal(), 'Color Picker');
+          });
+        },
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Text(
+                  'Add new color',
+                  style: CommonTheme.tsBodyExtraSmall
+                      .apply(color: CommonTheme.primary),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: SvgPicture.asset(
+                  ImagePaths.svgIcPlusThick,
+                  fit: BoxFit.scaleDown,
+                  color: CommonTheme.primary,
+                  // width: 12,
+                  // height: 12,
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   _lightColor(Light light, bool isSelectable) {
@@ -213,6 +258,20 @@ class _RoomLightState extends State<RoomLight> {
           },
         )
       ],
+    );
+  }
+
+  showColorPickerPopup(BuildContext context, Widget widget, String title,
+      {BuildContext popupContext}) {
+    Navigator.push(
+      context,
+      PopupLayout(
+        top: 16,
+        left: 16,
+        right: 16,
+        bottom: 16,
+        child: widget,
+      ),
     );
   }
 }
