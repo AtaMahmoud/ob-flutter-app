@@ -61,12 +61,16 @@ class RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
           hasWarning: true,
           isSelected: false));
     }
-    spaceItems[0].isSelected = true;
-    _selectedContent = Container();
-    // _selectedContentBloc.changed(_selectedContent);
+    _selctedIndex = 0;
+    spaceItems[_selctedIndex].isSelected = true;
     _selectedContentBloc = GenericBloc(_selectedContent);
     _selctedItemName = 'Bedroom';
-    _selctedIndex = 0;
+    _selectedContent = RoomDetails(
+        name: _selctedItemName,
+        room: _demorooms[0],
+        roomHeaderChanged: _headerContentBloc.changed,
+        selectedContentChanged: _selectedContentBloc.changed);
+    _selectedContentBloc.changed(_selectedContent);
   }
 
   // 0 bedroom
@@ -84,7 +88,17 @@ class RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
           debugPrint('Navigate to bedroom details');
           setState(() {
             _selctedItemName = 'Bedroom';
-            _selectedContent = Container();
+            // _selectedContent = Container();
+            setState(() {
+              _selctedItemName = 'Bathroom';
+              _selectedContent = RoomDetails(
+                  name: _selctedItemName,
+                  room: _demorooms[selectedIndex],
+                  roomHeaderChanged: _headerContentBloc.changed,
+                  selectedContentChanged:
+                      _selectedContentBloc.changed); //_bathRoom();
+              _selectedContentBloc.changed(_selectedContent);
+            });
           });
           break;
         case 1:
@@ -178,6 +192,7 @@ class RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
                   SliverToBoxAdapter(
                     child: StreamBuilder<Widget>(
                         stream: _selectedContentBloc.stream,
+                        initialData: _selectedContent,
                         builder: (context, snapshot) {
                           return snapshot.hasData ? snapshot.data : Container();
                         }),

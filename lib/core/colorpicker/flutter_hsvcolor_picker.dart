@@ -1822,7 +1822,7 @@ class ColorPickerState extends State<ColorPicker> {
   }
 
   //pickers
-  int _index = 3;
+  int _index = 6;
   List<_IPicker> _pickers;
   void _pickerOnChanged(_IPicker value) =>
       this._index = this._pickers.indexOf(value);
