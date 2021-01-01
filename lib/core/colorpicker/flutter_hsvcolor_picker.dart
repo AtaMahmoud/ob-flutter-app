@@ -1821,8 +1821,8 @@ class ColorPickerState extends State<ColorPicker> {
     super.widget.onChanged(value);
   }
 
-  //pickers
-  int _index = 6;
+  //pickers // 3,5/6
+  int _index = 1;
   List<_IPicker> _pickers;
   void _pickerOnChanged(_IPicker value) =>
       this._index = this._pickers.indexOf(value);
@@ -2098,7 +2098,7 @@ class ColorPickerState extends State<ColorPicker> {
     switch (orientation) {
       case Orientation.portrait:
         return new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          // this._buildHead(),
+          this._buildHead(),
           this._buildHeadWithSwitchButton(),
           // this._buildDropdown2(),
           this._buildBody(),
