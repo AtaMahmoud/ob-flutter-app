@@ -106,6 +106,7 @@ class RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
           setState(() {
             _selctedItemName = 'Living room';
             _selectedContent = Container();
+            _selectedContentBloc.changed(_selectedContent);
           });
           break;
         case 2:
@@ -113,6 +114,7 @@ class RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
           setState(() {
             _selctedItemName = 'Kitchen';
             _selectedContent = Container();
+            _selectedContentBloc.changed(_selectedContent);
           });
           break;
         case 3:
@@ -120,6 +122,7 @@ class RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
           setState(() {
             _selctedItemName = 'Underwater room';
             _selectedContent = Container();
+            _selectedContentBloc.changed(_selectedContent);
           });
           break;
         case 4:
@@ -140,6 +143,7 @@ class RoomsState extends State<Rooms> with SingleTickerProviderStateMixin {
           setState(() {
             _selctedItemName = 'Master bedroom';
             _selectedContent = Container();
+            _selectedContentBloc.changed(_selectedContent);
           });
           break;
         default:
