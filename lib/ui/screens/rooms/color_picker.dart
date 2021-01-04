@@ -57,6 +57,7 @@ class _ColorPickerState extends State<ColorPickerModal> {
                 isEnabled: true,
               ),
               SpaceV24(),
+              _colorPickerHeader(),
               _colorPickerWidget(),
               SpaceV24(),
               _bottomButtons(),
@@ -91,6 +92,7 @@ class _ColorPickerState extends State<ColorPickerModal> {
           label: 'Cancel',
           onPressed: () {
             print('Cancel button pressed');
+            Navigator.pop(context);
           },
         ),
         SpaceW16(),
@@ -102,7 +104,21 @@ class _ColorPickerState extends State<ColorPickerModal> {
           label: 'Save',
           onPressed: () {
             print('save button pressed');
+            Navigator.pop(context);
           },
+        ),
+      ],
+    );
+  }
+
+  _colorPickerHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SpaceW32(),
+        Text(
+          'Manage Colors',
+          style: CommonTheme.tsBodyDefault.apply(color: CommonTheme.primary),
         ),
       ],
     );

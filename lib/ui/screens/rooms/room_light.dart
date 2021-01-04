@@ -129,10 +129,12 @@ class _RoomLightState extends State<RoomLight> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(right: 8.0),
+                padding: const EdgeInsets.only(right: 12.0),
                 child: SvgPicture.asset(
                   ImagePaths.svgIcPlusThick,
-                  fit: BoxFit.scaleDown,
+                  fit: BoxFit.contain,
+                  width: 18,
+                  height: 18,
                   color: CommonTheme.primary,
                   // width: 12,
                   // height: 12,
@@ -202,7 +204,9 @@ class _RoomLightState extends State<RoomLight> {
             padding: const EdgeInsets.only(right: 8.0),
             child: SvgPicture.asset(
               ImagePaths.svgIcLightKnob,
-              fit: BoxFit.scaleDown,
+              fit: BoxFit.contain,
+              width: 24,
+              height: 24,
               color: Color(int.parse(light.lightColor)),
               // width: 12,
               // height: 12,

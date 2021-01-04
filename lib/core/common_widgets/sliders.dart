@@ -16,7 +16,9 @@ class CommonSlider extends StatefulWidget {
       @required this.onChangedMethod,
       this.hasSliderLabel,
       this.isDarkBg,
-      key})
+      key,
+      this.isColorSlider,
+      this.sliderColor})
       : super(key: key);
 
   final String sliderLabel;
@@ -24,6 +26,8 @@ class CommonSlider extends StatefulWidget {
   final bool hasSliderLabel;
   final double sliderValue;
   final Function onChangedMethod;
+  final bool isColorSlider;
+  final Color sliderColor;
 
   @override
   _CommonSliderState createState() => _CommonSliderState();
@@ -61,6 +65,14 @@ class _CommonSliderState extends State<CommonSlider> {
       _activeTrackColor = CommonTheme.primaryLight;
       _inactiveTrackColor = CommonTheme.primaryLightest;
       _thumbColor = CommonTheme.primary;
+      _labelColor = CommonTheme.greyDark;
+      _valueColor = CommonTheme.primary;
+    }
+
+    if (widget.isColorSlider != null && widget.isColorSlider) {
+      _activeTrackColor = widget.sliderColor;
+      _inactiveTrackColor = CommonTheme.greyLighter;
+      _thumbColor = widget.sliderColor;
       _labelColor = CommonTheme.greyDark;
       _valueColor = CommonTheme.primary;
     }

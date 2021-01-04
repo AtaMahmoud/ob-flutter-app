@@ -50,7 +50,7 @@ class _GenericCardState extends State<GenericCard> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: widget.onTap,
+      onTap: _isOn ? widget.onTap : () {},
       child: Card(
         // elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
