@@ -25,6 +25,9 @@ import 'package:ocean_builder/router.dart' as obRoute;
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
+import 'package:ocean_builder/route_info/route_info_parser.dart';
+import 'package:ocean_builder/route_info/router_delegate.dart';
+import 'package:ocean_builder/route_info/back_button_dispatcher.dart';
 
 import 'constants/constants.dart';
 import 'core/providers/device_type_provider.dart';
@@ -165,25 +168,35 @@ class _MyAppState extends State<MyApp> {
           // Provider<FirebaseAnalytics>.value(value: analytics),
           // Provider<FirebaseAnalyticsObserver>.value(value: observer),
         ],
-        child:
-            MaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: 'Ocean Builders',
-              // navigatorObservers: <NavigatorObserver>[
-              // observer
-              // ],
-              theme: ThemeData(fontFamily: 'Archivo'),
-              navigatorKey: locator<NavigationService>().navigatorKey,
-              initialRoute: obRoute.initialRoute,
-              onGenerateRoute: obRoute.Router.generateRoute,
-            ),
+        child: MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          title: 'Ocean Builders',
+          theme: ThemeData(fontFamily: 'Archivo'),
+          onGenerateTitle: (context) {
+            return context.findAncestorStateOfType().toString();
+          },
+          routeInformationParser: RouteInformationParserOB(),
+          routerDelegate: RouterDelegateOB(),
+          backButtonDispatcher: BackButtonDispatcherOB(),
+        )
+        // MaterialApp(
+        //   debugShowCheckedModeBanner: false,
+        //   title: 'Ocean Builders',
+        //   // navigatorObservers: <NavigatorObserver>[
+        //   // observer
+        //   // ],
+        //   theme: ThemeData(fontFamily: 'Archivo'),
+        //   navigatorKey: locator<NavigationService>().navigatorKey,
+        //   initialRoute: obRoute.initialRoute,
+        //   onGenerateRoute: obRoute.Router.generateRoute,
+        // ),
         //     MaterialApp.router(
         //   debugShowCheckedModeBanner: false,
         //   title: 'Ocean Builders',
         //   theme: ThemeData(fontFamily: 'Varela'),
         //   // navigatorKey: locator<NavigationService>().navigatorKey,
         // )
-        
+
         );
   }
 
