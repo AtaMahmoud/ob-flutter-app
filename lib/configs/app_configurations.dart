@@ -95,7 +95,7 @@ class Config {
   static String UPDATE_NOTIFICATION_SEEN_STATUS(String notificationId) =>
       'https://oceanbuilders.herokuapp.com/v1/api/users/notifications/$notificationId';
   static String REMOVE_MEMBER(String seaPodId, String userId) =>
-      ' https://oceanbuilders.herokuapp.com/v1/api/seapods/$seaPodId/users/$userId';
+      'https://oceanbuilders.herokuapp.com/v1/api/seapods/$seaPodId/users/$userId';
   static String CREATE_PERMISSION(String seaPodId) =>
       'https://oceanbuilders.herokuapp.com/v1/api/permissions/$seaPodId';
   static String DELETE_PERMISSION(String seaPodId, String permissionId) =>

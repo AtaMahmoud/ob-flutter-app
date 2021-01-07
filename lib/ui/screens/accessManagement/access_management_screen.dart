@@ -602,8 +602,6 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
   Future<SeaPod> _oceanBuildeFuture;
   OceanBuilderProvider _oceanBuilderProvider;
 
-  ScreenUtil _util = ScreenUtil();
-
   UserProvider _userProvider;
 
   @override
@@ -718,8 +716,9 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
   }
 
   _accesorItem(OceanBuilderUser ob, SeaPod oceanBuilder) {
-    // debugPrint(
-    // 'oceanbuilderuser item -- ${ob.toJson()} -- oceanbuilder name --- ${oceanBuilder.obName}');
+    debugPrint(
+        'oceanbuilderuser item -- ${ob.toJson()} -- oceanbuilder name --- ${oceanBuilder.obName}------Logged in user --- ${_userProvider.authenticatedUser.userID}');
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 16.h),
       child: Column(
@@ -756,7 +755,11 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
                   ),
                 ],
               ),
-              ob.userType.toLowerCase().contains('owner') ||
+              (ob.userId != null &&
+                          ob.userId.compareTo(
+                                  _userProvider.authenticatedUser.userID) ==
+                              0) ||
+                      ob.userType.toLowerCase().contains('owner') ||
                       ob.userType.toLowerCase().contains('administration')
                   ? Container()
                   : UIHelper.getButton(
