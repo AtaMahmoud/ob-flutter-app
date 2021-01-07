@@ -18,6 +18,7 @@ import 'package:ocean_builder/ui/screens/permission/create_permission_screen.dar
 import 'package:ocean_builder/ui/screens/permission/edit_permission_screen.dart';
 import 'package:ocean_builder/ui/shared/drop_downs.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
+import 'package:ocean_builder/ui/widgets/progress_indicator.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
@@ -65,8 +66,6 @@ class _ManagePermissionScreenState extends State<ManagePermissionScreen> {
     _userProvider = Provider.of<UserProvider>(context);
     _user = _userProvider.authenticatedUser;
 
-
-
     _oceanBuildeFuture = _oceanBuilderProvider.getSeaPod(
         _selectedOBIdProvider.selectedObId, _userProvider);
 
@@ -85,53 +84,66 @@ class _ManagePermissionScreenState extends State<ManagePermissionScreen> {
         drawerScrimColor: AppTheme.drawerScrimColor.withOpacity(.65),
         body: Stack(
           children: [
-            CustomScrollView(
-              slivers: <Widget>[
-                UIHelper.defaultSliverAppbar(_scaffoldKey, goBack,
-                    screnTitle: ScreenTitle.MANAGE_PERMISSIONS),
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(vertical: 64.h),
-                  sliver: SliverToBoxAdapter(
-                    child: getDropdown(getSeaPodList(), _bloc.selectedSeaPodId,
-                        _bloc.selectedSeaPodIdChanged, true,
-                        label: 'SeaPods'),
-                  ),
-                ),
-                userProvider.isLoading
-                    ? SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                      )
-                    : _permissionSetItemsFuture(),
-                SliverToBoxAdapter(
-                    child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 32.w,
-                    vertical: 32.h,
-                  ),
-                  child: _createNewButtonWidget(),
-                )),
-                UIHelper.getTopEmptyContainer(90, false),
-              ],
-            ),
-            _oceanBuilderProvider.isLoading
-                ? Positioned(
-                    top: 0.0,
-                    left: 0.0,
-                    right: 0.0,
-                    bottom: 0.0,
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ))
-                : Container()
+            _mainContent(userProvider),
+            _oceanBuilderProvider.isLoading ? _progressIndicator() : Container()
           ],
         ),
       ),
     );
+  }
+
+  CustomScrollView _mainContent(UserProvider userProvider) {
+    return CustomScrollView(
+      slivers: <Widget>[
+        _topBar(),
+        _dropDownSeaPod(),
+        userProvider.isLoading
+            ? ProgressIndicatorBoxAdapter()
+            : _permissionSetItemsFuture(),
+        _buttonCreate(),
+        _endSpace(),
+      ],
+    );
+  }
+
+  Positioned _progressIndicator() {
+    return Positioned(
+        top: 0.0,
+        left: 0.0,
+        right: 0.0,
+        bottom: 0.0,
+        child: Center(
+          child: CircularProgressIndicator(),
+        ));
+  }
+
+  _endSpace() => UIHelper.getTopEmptyContainer(90, false);
+
+  SliverToBoxAdapter _buttonCreate() {
+    return SliverToBoxAdapter(
+        child: Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: 32.w,
+        vertical: 32.h,
+      ),
+      child: _createNewButtonWidget(),
+    ));
+  }
+
+  SliverPadding _dropDownSeaPod() {
+    return SliverPadding(
+      padding: EdgeInsets.symmetric(vertical: 64.h),
+      sliver: SliverToBoxAdapter(
+        child: getDropdown(getSeaPodList(), _bloc.selectedSeaPodId,
+            _bloc.selectedSeaPodIdChanged, true,
+            label: 'SeaPods'),
+      ),
+    );
+  }
+
+  _topBar() {
+    return UIHelper.defaultSliverAppbar(_scaffoldKey, goBack,
+        screnTitle: ScreenTitle.MANAGE_PERMISSIONS);
   }
 
   _permissionSetItemsFuture() {
@@ -276,7 +288,7 @@ class _ManagePermissionScreenState extends State<ManagePermissionScreen> {
           vertical: 32.h,
         ),
         decoration: BoxDecoration(
-            borderRadius: new BorderRadius.circular(ScreenUtil().setWidth(72)),
+            borderRadius: new BorderRadius.circular(72.w),
             color: ColorConstants.TOP_CLIPPER_END_DARK),
         child: Center(
             child: Row(
@@ -287,13 +299,12 @@ class _ManagePermissionScreenState extends State<ManagePermissionScreen> {
               color: Colors.white,
             ),
             SizedBox(
-              width: ScreenUtil().setWidth(8),
+              width: 8.w,
             ),
             Text(
               'CREATE NEW',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.white, fontSize: ScreenUtil().setSp(36)),
+              style: TextStyle(color: Colors.white, fontSize: 36.sp),
             ),
           ],
         )),

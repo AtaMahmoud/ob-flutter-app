@@ -2043,6 +2043,55 @@ class UserProvider extends BaseProvider {
     }
   }
 
+// ------------------------------------------------------------ Set weather srouce (PUT) -------------------------------------------------------------
+
+  // ------------------------------------------------------- Update All Lighting Scene ( PUT ) --------------------------------------------------------------------
+
+  Future<ResponseStatus> setWeatherSource(String weatherSource) async {
+    isLoading = true;
+    notifyListeners();
+    ResponseStatus responseStatus = ResponseStatus();
+    responseStatus.status = 200;
+
+    await _headerManager.initalizeAuthenticatedUserHeaders();
+
+    try {
+      final Response response = await _apiBaseHelper.put(
+          url: APP_CONFIG.Config.SET_WEATHER_SOURCE(weatherSource),
+          headers: _headerManager.authUserHeaders,
+          );
+
+      if (response != null &&
+          response.statusCode == 200) {
+        // debugPrint('Set Weather Source  data ----------- $lightingSceneUpdateResponse');
+        responseStatus.status = 200;
+      } else {
+        responseStatus.code = 'Set Weather Source Failed';
+        responseStatus.message = response.statusMessage;
+        responseStatus.status = response.statusCode;
+        // debugPrint(
+        // 'Set Weather Source  error ============================== $responseStatus');
+      }
+    } on FetchDataException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Set Weather Source ';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+      // debugPrint(
+      // 'Set Weather Source error ============================== ${ea.message}');
+    } on BadRequestException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Set Weather Source ';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+    }
+
+    isLoading = false;
+    notifyListeners();
+
+    return responseStatus;
+  }
+
 //######################################################################################################################################################
 
   Future<void> signOut() async {

@@ -29,6 +29,7 @@ import 'package:ocean_builder/ui/screens/notification/noti_history_screen.dart';
 import 'package:ocean_builder/ui/screens/weather/weather_screen.dart';
 import 'package:ocean_builder/ui/shared/popup.dart';
 import 'package:ocean_builder/ui/widgets/home_appbar.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -51,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen>
       GlobalKey<InnerDrawerState>();
   UserProvider _userProvider;
   User _user;
-  ScreenUtil _util = ScreenUtil();
+  // ScreenUtil _util = ScreenUtil();
   FakeDataProvider _fakeDataProvider;
 
   SwiperController _controller;
@@ -201,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen>
           decoration: BoxDecoration(color: Colors.white),
           child: CustomScrollView(
             slivers: <Widget>[
-              UIHelper.getTopEmptyContainer(_util.setHeight(400), false),
+              UIHelper.getTopEmptyContainer(400.h, false),
               SliverPadding(
                 padding: EdgeInsets.only(
                   bottom: 16.h,
@@ -280,15 +281,15 @@ class _HomeScreenState extends State<HomeScreen>
         },
         child: Padding(
           padding: EdgeInsets.only(
-            left: _util.setWidth(8),
-            right: _util.setWidth(8),
+            left: 8.w,
+            right: 8.w,
           ),
           child: Container(
             decoration: BoxDecoration(
               image: new DecorationImage(
                   image: AssetImage(ImagePaths.bkgControl), fit: BoxFit.fill),
               borderRadius: BorderRadius.circular(
-                _util.setWidth(48),
+                48.w,
               ),
             ),
             child: Center(
@@ -300,19 +301,16 @@ class _HomeScreenState extends State<HomeScreen>
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(
-                        left: _util.setWidth(24),
+                        left: 24.w,
                       ),
                       child: Text(
                         ScreenTitle.CONTROLS.toUpperCase(),
-                        style: TextStyle(
-                            fontSize: _util.setSp(48), color: Colors.white),
+                        style: TextStyle(fontSize: 48.sp, color: Colors.white),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(
-                          top: _util.setHeight(16),
-                          left: _util.setWidth(16),
-                          right: _util.setWidth(16)),
+                      padding:
+                          EdgeInsets.only(top: 16.h, left: 16.w, right: 16.w),
                       child: Container(
                         color: Colors.white,
                         height: 2,
@@ -415,8 +413,8 @@ class _HomeScreenState extends State<HomeScreen>
         },
         child: Padding(
           padding: EdgeInsets.only(
-            left: _util.setWidth(8),
-            right: _util.setWidth(8),
+            left: 8.w,
+            right: 8.w,
           ),
           child: FutureBuilder<StormGlassData>(
               future: _futureWOWWeatherDataWeather,
@@ -429,7 +427,7 @@ class _HomeScreenState extends State<HomeScreen>
                         decoration: BoxDecoration(
                           color: ColorConstants.TOP_CLIPPER_START,
                           borderRadius: BorderRadius.circular(
-                            _util.setWidth(48),
+                            48.w,
                           ),
                         ),
                         child: Center(
@@ -443,21 +441,18 @@ class _HomeScreenState extends State<HomeScreen>
                               children: <Widget>[
                                 Padding(
                                   padding: EdgeInsets.only(
-                                    top: _util.setHeight(24),
-                                    left: _util.setWidth(24),
+                                    top: 24.h,
+                                    left: 24.w,
                                   ),
                                   child: Text(
                                     ScreenTitle.WEATHER.toUpperCase(),
                                     style: TextStyle(
-                                        fontSize: _util.setSp(48),
-                                        color: Colors.white),
+                                        fontSize: 48.sp, color: Colors.white),
                                   ),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.only(
-                                      top: _util.setHeight(16),
-                                      left: _util.setWidth(16),
-                                      right: _util.setWidth(16)),
+                                      top: 16.h, left: 16.w, right: 16.w),
                                   child: Container(
                                     color: Colors.white,
                                     height: 2,
@@ -466,7 +461,7 @@ class _HomeScreenState extends State<HomeScreen>
                               ],
                             ),
                             SizedBox(
-                              height: _util.setHeight(64),
+                              height: 64.h,
                             ),
                             Center(child: CircularProgressIndicator())
                           ],
@@ -481,15 +476,15 @@ class _HomeScreenState extends State<HomeScreen>
         },
         child: Padding(
           padding: EdgeInsets.only(
-            left: _util.setWidth(8),
-            right: _util.setWidth(8),
+            left: 8.w,
+            right: 8.w,
           ),
           child: Container(
             decoration: BoxDecoration(
               image: new DecorationImage(
                   image: AssetImage(ImagePaths.bkgMarine), fit: BoxFit.fill),
               borderRadius: BorderRadius.circular(
-                _util.setWidth(48),
+                48.w,
               ),
             ),
             child: Center(
@@ -509,21 +504,19 @@ class _HomeScreenState extends State<HomeScreen>
                                   children: <Widget>[
                                     Padding(
                                       padding: EdgeInsets.only(
-                                        top: _util.setHeight(24),
-                                        left: _util.setWidth(24),
+                                        top: 24.h,
+                                        left: 24.w,
                                       ),
                                       child: Text(
                                         ScreenTitle.MARINE.toUpperCase(),
                                         style: TextStyle(
-                                            fontSize: _util.setSp(48),
+                                            fontSize: 48.sp,
                                             color: Colors.white),
                                       ),
                                     ),
                                     Padding(
                                       padding: EdgeInsets.only(
-                                          top: _util.setHeight(16),
-                                          left: _util.setWidth(16),
-                                          right: _util.setWidth(16)),
+                                          top: 16.h, left: 16.w, right: 16.w),
                                       child: Container(
                                         color: Colors.white,
                                         height: 2,
@@ -531,9 +524,7 @@ class _HomeScreenState extends State<HomeScreen>
                                     ),
                                   ],
                                 ),
-                                SizedBox(
-                                  height: _util.setHeight(64),
-                                ),
+                                SpaceH64(),
                                 Center(child: CircularProgressIndicator())
                               ],
                             ));
@@ -547,7 +538,7 @@ class _HomeScreenState extends State<HomeScreen>
   _titleandValueWithIcon(String iconPath, String title, String value,
       {bool isSvg = false}) {
     return Padding(
-      padding: EdgeInsets.only(left: _util.setWidth(8)),
+      padding: EdgeInsets.only(left: 8.w),
       child: Row(
         // mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -555,15 +546,15 @@ class _HomeScreenState extends State<HomeScreen>
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(
-              right: _util.setWidth(16),
+              right: 16.w,
             ),
             child: isSvg
                 ? SvgPicture.asset(
                     iconPath,
                     color: Colors.white,
                     fit: BoxFit.scaleDown,
-                    width: ScreenUtil().setWidth(64),
-                    height: ScreenUtil().setWidth(64),
+                    width: 64.w,
+                    height: 64.w,
                   )
                 : ImageIcon(
                     AssetImage(iconPath),
@@ -582,7 +573,7 @@ class _HomeScreenState extends State<HomeScreen>
                   overflow: TextOverflow.visible,
                   style: new TextStyle(
                       fontWeight: FontWeight.w500,
-                      fontSize: _util.setSp(24),
+                      fontSize: 24.sp,
                       color: Colors.white),
                   textAlign: TextAlign.left,
                 ),
@@ -590,7 +581,7 @@ class _HomeScreenState extends State<HomeScreen>
                   value,
                   style: new TextStyle(
                       fontWeight: FontWeight.w500,
-                      fontSize: _util.setSp(36),
+                      fontSize: 36.sp,
                       color: Colors.white),
                   textAlign: TextAlign.left,
                 ),
@@ -646,12 +637,12 @@ class _HomeScreenState extends State<HomeScreen>
                           baseColor: Color(0xFFB4BFD6).withOpacity(.26),
                           selectionColor: Color(0xFFB4BFD6).withOpacity(.01),
                           handlerColor: Color(0xFF4A8CB8),
-                          handlerRadius: _util.setWidth(48),
-                          handlerOutterRadius: _util.setWidth(64),
+                          handlerRadius: 48.w,
+                          handlerOutterRadius: 64.w,
                           onSelectionChange: _updateLabels,
                           showRoundedCapInSelection: true,
                           showHandlerOutter: false,
-                          sliderStrokeWidth: _util.setWidth(38),
+                          sliderStrokeWidth: 38.w,
                           child: Transform.rotate(
                             angle: math.pi,
                             child: Padding(
@@ -665,7 +656,7 @@ class _HomeScreenState extends State<HomeScreen>
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontWeight: FontWeight.normal,
-                                      fontSize: _util.setSp(172),
+                                      fontSize: 172.sp,
                                       letterSpacing: 1.0,
                                       color: Color(0xFF08619D),
                                     ),
@@ -674,7 +665,7 @@ class _HomeScreenState extends State<HomeScreen>
                                     'NE',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontSize: _util.setSp(64),
+                                      fontSize: 64.sp,
                                       letterSpacing: 0.0,
                                       color: Color(0xFF08619D),
                                     ),
@@ -746,25 +737,29 @@ class _HomeScreenState extends State<HomeScreen>
         }
         return swiperStateDataProvider.currentScreenIndex == null
             ? Container()
-            : Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: BottomClipperTitle(
-                  screnTitle,
-                  iconPath,
-                  ButtonText.BACK,
-                  ButtonText.NEXT,
-                  () {
-                    _controller.previous(animation: true);
-                  },
-                  () {
-                    _controller.next(animation: true);
-                  },
-                  animationController: _animationController,
-                ));
+            : _bottomBarWithTitle(screnTitle, iconPath);
       },
     );
+  }
+
+  Positioned _bottomBarWithTitle(String screnTitle, String iconPath) {
+    return Positioned(
+        bottom: 0,
+        left: 0,
+        right: 0,
+        child: BottomClipperTitle(
+          screnTitle,
+          iconPath,
+          ButtonText.BACK,
+          ButtonText.NEXT,
+          () {
+            _controller.previous(animation: true);
+          },
+          () {
+            _controller.next(animation: true);
+          },
+          animationController: _animationController,
+        ));
   }
 
   notificationWidget(BuildContext context, int notiNo, bool isUnread) {
@@ -822,8 +817,7 @@ class _HomeScreenState extends State<HomeScreen>
           child: Text(
             AppStrings.noData,
             style: TextStyle(
-                fontSize: _util.setWidth(48),
-                color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
+                fontSize: 48.w, color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
           ),
         ),
       );
@@ -874,19 +868,15 @@ class _HomeScreenState extends State<HomeScreen>
           children: <Widget>[
             Padding(
               padding: EdgeInsets.only(
-                left: _util.setWidth(24),
+                left: 24.w,
               ),
               child: Text(
                 ScreenTitle.MARINE.toUpperCase(),
-                style:
-                    TextStyle(fontSize: _util.setSp(48), color: Colors.white),
+                style: TextStyle(fontSize: 48.sp, color: Colors.white),
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(
-                  top: _util.setHeight(16),
-                  left: _util.setWidth(16),
-                  right: _util.setWidth(16)),
+              padding: EdgeInsets.only(top: 16.h, left: 16.w, right: 16.w),
               child: Container(
                 color: Colors.white,
                 height: 2,
@@ -984,7 +974,7 @@ class _HomeScreenState extends State<HomeScreen>
         image: new DecorationImage(
             image: AssetImage(wetherItemBkgImagePath), fit: BoxFit.fill),
         borderRadius: BorderRadius.circular(
-          _util.setWidth(48),
+          48.w,
         ),
       ),
       child: Center(
@@ -996,19 +986,15 @@ class _HomeScreenState extends State<HomeScreen>
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(
-                    left: _util.setWidth(24),
+                    left: 24.w,
                   ),
                   child: Text(
                     ScreenTitle.WEATHER.toUpperCase(),
-                    style: TextStyle(
-                        fontSize: _util.setSp(48), color: Colors.white),
+                    style: TextStyle(fontSize: 48.sp, color: Colors.white),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(
-                      top: _util.setHeight(16),
-                      left: _util.setWidth(16),
-                      right: _util.setWidth(16)),
+                  padding: EdgeInsets.only(top: 16.h, left: 16.w, right: 16.w),
                   child: Container(
                     color: Colors.white,
                     height: 2,

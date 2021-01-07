@@ -35,6 +35,8 @@ class _AccessEventScreenState extends State<AccessEventScreen> {
   ScreenUtil _util;
 
   AccessEvents _accessEvents;
+  int len = 0;
+  List<AccessEvent> _accessEventList = [];
 
   @override
   void initState() {
@@ -47,14 +49,274 @@ class _AccessEventScreenState extends State<AccessEventScreen> {
   Widget build(BuildContext context) {
     // GlobalContext.currentScreenContext = context;
     _util = ScreenUtil();
-
     final UserProvider userProvider = Provider.of<UserProvider>(context);
-    int len = 0;
-    List<AccessEvent> _accessEventList = [];
 
-    debugPrint(
-        ' ---------------------- accessEvents -------- ${_accessEvents.toJson()}');
+    _parseAccessEvents(context);
 
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        drawer: HomeDrawer(
+          isSecondLevel: true,
+          screenIndex: DrawerIndex.NOTIFICATIONS,
+        ),
+        drawerScrimColor: AppTheme.drawerScrimColor.withOpacity(.65),
+        key: _scaffoldKey,
+        body: Container(
+            decoration: BoxDecoration(
+                // gradient: profileGradient,
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8)),
+            child: Stack(
+              children: <Widget>[
+                CustomScrollView(
+                  slivers: <Widget>[
+                    UIHelper.getTopEmptyContainer(
+                        _util.setHeight(256), //ScreenUtil.statusBarHeight * 3,
+                        false),
+                    len > 0
+                        ? _buildAccessEventList(userProvider)
+                        : _noEventFound(),
+                    UIHelper.getTopEmptyContainer(90, false),
+                  ],
+                ),
+                _titleBar()
+              ],
+            )
+            // ),
+            ),
+      ),
+    );
+  }
+
+  Positioned _titleBar() {
+    return Positioned(
+      top: ScreenUtil.statusBarHeight,
+      left: 0,
+      right: 0,
+      child: Container(
+        color: Colors.white,
+        // padding: EdgeInsets.only(top: 8.0, right: 12.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                InkWell(
+                  onTap: () {
+                    _scaffoldKey.currentState.openDrawer();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.all(32.h),
+                    child: ImageIcon(
+                      AssetImage(
+                        ImagePaths.icHamburger,
+                      ),
+                      size: 50.w,
+                      color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: 48.w,
+                    top: 32.h,
+                    bottom: 32.h,
+                  ),
+                  child: Text(
+                    () {
+                      if (widget.accessType == AccessType.RECEIVED_INVITATION)
+                        return AppStrings.receivedInvitations;
+                      else if (widget.accessType == AccessType.RECEIVED_REQUEST)
+                        return AppStrings.receivedRequests;
+                      else if (widget.accessType == AccessType.SENT_INVITATION)
+                        return AppStrings.sentInvitations;
+                      else if (widget.accessType == AccessType.SENT_REQUEST)
+                        return AppStrings.sentRequests;
+
+                      return AppStrings.accessEvent;
+                    }(),
+                    style: TextStyle(
+                        color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 60.sp),
+                  ),
+                ),
+                Spacer(),
+                InkWell(
+                  onTap: () {
+                    if (!_updatingNotification) goBack();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      right: 48.w,
+                      top: 32.h,
+                      bottom: 32.h,
+                    ),
+                    child: Image.asset(
+                      ImagePaths.cross,
+                      width: 48.h,
+                      height: 48.h,
+                      color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _noEventFound() {
+    return SliverToBoxAdapter(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            () {
+              if (widget.accessType == AccessType.RECEIVED_INVITATION)
+                return AppStrings.noInvitationFound;
+              else if (widget.accessType == AccessType.RECEIVED_REQUEST)
+                return AppStrings.noRequestFound;
+              else if (widget.accessType == AccessType.SENT_INVITATION)
+                return AppStrings.noInvitationFound;
+              else if (widget.accessType == AccessType.SENT_REQUEST)
+                return AppStrings.noRequestFound;
+
+              return AppStrings.accessEvent;
+            }(),
+            style: TextStyle(
+                fontSize: 24, color: ColorConstants.COLOR_NOTIFICATION_ITEM),
+          ),
+        ),
+      ),
+    );
+  }
+
+  SliverList _buildAccessEventList(UserProvider userProvider) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate((context, index) {
+        AccessEvent accessEvent = _accessEventList[index];
+        String oceanBuilderId = accessEvent.seaPod.id;
+        String oceanBuilderName = accessEvent.seaPod.name;
+        DateTime dateTime =
+            new DateTime.fromMillisecondsSinceEpoch(accessEvent.checkIn);
+        String formatedDateTime =
+            DateFormat('yyyy-MM-dd  HH:mm:ss a').format(dateTime);
+
+        return InkWell(
+          onTap: () async {
+            if ( //_isUobExists &&
+                accessEvent.accesEventType.contains(
+                        describeEnum(AccessType.SENT_REQUEST)
+                            .replaceAll('_', ' ')) &&
+                    accessEvent.status
+                        .contains(NotificationConstants.pending)) {
+              _showCancelAlert(userProvider, oceanBuilderId, oceanBuilderName);
+              MethodHelper.parseNotifications(context);
+            } else if (accessEvent.accesEventType.contains(
+                describeEnum(AccessType.RECEIVED_REQUEST)
+                    .replaceAll('_', ' '))) {
+              print(accessEvent.accesEventType);
+              MethodHelper.parseNotifications(context);
+
+              Navigator.of(context).pushNamed(
+                  GuestRequestResponseScreen.routeName,
+                  arguments: accessEvent);
+            } else if (accessEvent.accesEventType.contains(
+                describeEnum(AccessType.RECEIVED_INVITATION)
+                    .replaceAll('_', ' '))) {
+              MethodHelper.parseNotifications(context);
+
+              Navigator.of(context).pushNamed(
+                  InvitationResponseScreen.routeName,
+                  arguments: accessEvent);
+            } else if (accessEvent.accesEventType.contains(
+                describeEnum(AccessType.SENT_INVITATION)
+                    .replaceAll('_', ' '))) {
+              _showCancelAlert(userProvider, oceanBuilderId, oceanBuilderName);
+
+              MethodHelper.parseNotifications(context);
+            }
+          },
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
+            // decoration: UIHelper.customDecoration(
+            // 2, 12, ColorConstants.TOP_CLIPPER_END.withOpacity(.4),bkgColor: ColorConstants.TOP_CLIPPER_START),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        SvgPicture.asset(
+                          ImagePaths.svgSeapod,
+                          color: ColorConstants.COLOR_NOTIFICATION_NORMAL,
+                          width: 40,
+                          height: 40,
+                        )
+                      ],
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text('$formatedDateTime',
+                                    style: TextStyle(
+                                        color: ColorConstants
+                                            .COLOR_NOTIFICATION_SUB_ITEM)),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Text(accessEvent.reqMessage.trim(),
+                                style: TextStyle(
+                                    color: ColorConstants
+                                        .COLOR_NOTIFICATION_ITEM)),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Text(
+                                '${accessEvent.accesEventType.replaceAll('_', ' ').toUpperCase()}',
+                                style: TextStyle(
+                                    color: ColorConstants
+                                        .COLOR_NOTIFICATION_SUB_ITEM)),
+                            // Text('Status: $requestStatus'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Divider(
+                  height: 4,
+                  color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
+                )
+              ],
+            ),
+          ),
+        );
+      }, childCount: len),
+    );
+  }
+
+  void _parseAccessEvents(BuildContext context) {
     if (widget.accessType == AccessType.RECEIVED_INVITATION) {
       _accessEventList =
           new List<AccessEvent>.from(_accessEvents.receivedInvitations);
@@ -125,289 +387,6 @@ class _AccessEventScreenState extends State<AccessEventScreen> {
       MethodHelper.parseNotifications(context);
       parseNotificationsCallCout++;
     }
-
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Scaffold(
-        drawer: HomeDrawer(
-          isSecondLevel: true,
-          screenIndex: DrawerIndex.NOTIFICATIONS,
-        ),
-        drawerScrimColor: AppTheme.drawerScrimColor.withOpacity(.65),
-        key: _scaffoldKey,
-        body: Container(
-            decoration: BoxDecoration(
-                // gradient: profileGradient,
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8)),
-            child: Stack(
-              children: <Widget>[
-                CustomScrollView(
-                  slivers: <Widget>[
-                    UIHelper.getTopEmptyContainer(
-                        _util.setHeight(256), //ScreenUtil.statusBarHeight * 3,
-                        false),
-                    len > 0
-                        ? SliverList(
-                            delegate:
-                                SliverChildBuilderDelegate((context, index) {
-                              AccessEvent accessEvent = _accessEventList[index];
-                              String oceanBuilderId = accessEvent.seaPod.id;
-                              String oceanBuilderName = accessEvent.seaPod.name;
-                              DateTime dateTime =
-                                  new DateTime.fromMillisecondsSinceEpoch(
-                                      accessEvent.checkIn);
-                              String formatedDateTime =
-                                  DateFormat('yyyy-MM-dd  HH:mm:ss a')
-                                      .format(dateTime);
-
-                              return InkWell(
-                                onTap: () async {
-                                  if ( //_isUobExists &&
-                                      accessEvent.accesEventType.contains(
-                                              describeEnum(
-                                                      AccessType.SENT_REQUEST)
-                                                  .replaceAll('_', ' ')) &&
-                                          accessEvent.status.contains(
-                                              NotificationConstants.pending)) {
-                                    _showCancelAlert(userProvider,
-                                        oceanBuilderId, oceanBuilderName);
-                                    MethodHelper.parseNotifications(context);
-                                  } else if (accessEvent.accesEventType
-                                      .contains(describeEnum(
-                                              AccessType.RECEIVED_REQUEST)
-                                          .replaceAll('_', ' '))) {
-                                    print(accessEvent.accesEventType);
-                                    MethodHelper.parseNotifications(context);
-
-                                    Navigator.of(context).pushNamed(
-                                        GuestRequestResponseScreen.routeName,
-                                        arguments: accessEvent);
-                                  } else if (accessEvent.accesEventType
-                                      .contains(describeEnum(
-                                              AccessType.RECEIVED_INVITATION)
-                                          .replaceAll('_', ' '))) {
-                                    MethodHelper.parseNotifications(context);
-
-                                    Navigator.of(context).pushNamed(
-                                        InvitationResponseScreen.routeName,
-                                        arguments: accessEvent);
-                                  } else if (accessEvent.accesEventType
-                                      .contains(describeEnum(
-                                              AccessType.SENT_INVITATION)
-                                          .replaceAll('_', ' '))) {
-                                    _showCancelAlert(userProvider,
-                                        oceanBuilderId, oceanBuilderName);
-
-                                    MethodHelper.parseNotifications(context);
-                                  }
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal: 8.0, vertical: 4.0),
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 8.0, horizontal: 8),
-                                  // decoration: UIHelper.customDecoration(
-                                  // 2, 12, ColorConstants.TOP_CLIPPER_END.withOpacity(.4),bkgColor: ColorConstants.TOP_CLIPPER_START),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Column(
-                                            children: <Widget>[
-                                              SvgPicture.asset(
-                                                ImagePaths.svgSeapod,
-                                                color: ColorConstants
-                                                    .COLOR_NOTIFICATION_NORMAL,
-                                                width: 40,
-                                                height: 40,
-                                              )
-                                            ],
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 8, right: 8, bottom: 8),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.stretch,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: <Widget>[
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: <Widget>[
-                                                      Text('$formatedDateTime',
-                                                          style: TextStyle(
-                                                              color: ColorConstants
-                                                                  .COLOR_NOTIFICATION_SUB_ITEM)),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    height: 8,
-                                                  ),
-                                                  Text(
-                                                      accessEvent.reqMessage
-                                                          .trim(),
-                                                      style: TextStyle(
-                                                          color: ColorConstants
-                                                              .COLOR_NOTIFICATION_ITEM)),
-                                                  SizedBox(
-                                                    height: 8,
-                                                  ),
-                                                  Text(
-                                                      '${accessEvent.accesEventType.replaceAll('_', ' ').toUpperCase()}',
-                                                      style: TextStyle(
-                                                          color: ColorConstants
-                                                              .COLOR_NOTIFICATION_SUB_ITEM)),
-                                                  // Text('Status: $requestStatus'),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Divider(
-                                        height: 4,
-                                        color: ColorConstants
-                                            .COLOR_NOTIFICATION_DIVIDER,
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }, childCount: len),
-                          )
-                        : SliverToBoxAdapter(
-                            child: Center(
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Text(
-                                  () {
-                                    if (widget.accessType ==
-                                        AccessType.RECEIVED_INVITATION)
-                                      return AppStrings.noInvitationFound;
-                                    else if (widget.accessType ==
-                                        AccessType.RECEIVED_REQUEST)
-                                      return AppStrings.noRequestFound;
-                                    else if (widget.accessType ==
-                                        AccessType.SENT_INVITATION)
-                                      return AppStrings.noInvitationFound;
-                                    else if (widget.accessType ==
-                                        AccessType.SENT_REQUEST)
-                                      return AppStrings.noRequestFound;
-
-                                    return AppStrings.accessEvent;
-                                  }(),
-                                  style: TextStyle(
-                                      fontSize: 24,
-                                      color: ColorConstants
-                                          .COLOR_NOTIFICATION_ITEM),
-                                ),
-                              ),
-                            ),
-                          ),
-                    UIHelper.getTopEmptyContainer(90, false),
-                  ],
-                ),
-                Positioned(
-                  top: ScreenUtil.statusBarHeight,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    color: Colors.white,
-                    // padding: EdgeInsets.only(top: 8.0, right: 12.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            InkWell(
-                              onTap: () {
-                                _scaffoldKey.currentState.openDrawer();
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.all(32.h),
-                                child: ImageIcon(
-                                  AssetImage(
-                                    ImagePaths.icHamburger,
-                                  ),
-                                  size: 50.w,
-                                  color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left: 48.w,
-                                top: 32.h,
-                                bottom: 32.h,
-                              ),
-                              child: Text(
-                                () {
-                                  if (widget.accessType ==
-                                      AccessType.RECEIVED_INVITATION)
-                                    return AppStrings.receivedInvitations;
-                                  else if (widget.accessType ==
-                                      AccessType.RECEIVED_REQUEST)
-                                    return AppStrings.receivedRequests;
-                                  else if (widget.accessType ==
-                                      AccessType.SENT_INVITATION)
-                                    return AppStrings.sentInvitations;
-                                  else if (widget.accessType ==
-                                      AccessType.SENT_REQUEST)
-                                    return AppStrings.sentRequests;
-
-                                  return AppStrings.accessEvent;
-                                }(),
-                                style: TextStyle(
-                                    color:
-                                        ColorConstants.WEATHER_MORE_ICON_COLOR,
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 60.sp),
-                              ),
-                            ),
-                            Spacer(),
-                            InkWell(
-                              onTap: () {
-                                if (!_updatingNotification) goBack();
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  right: 48.w,
-                                  top: 32.h,
-                                  bottom: 32.h,
-                                ),
-                                child: Image.asset(
-                                  ImagePaths.cross,
-                                  width: 48.h,
-                                  height: 48.h,
-                                  color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            )
-            // ),
-            ),
-      ),
-    );
   }
 
   goBack() {

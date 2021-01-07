@@ -55,7 +55,7 @@ class LightingScreen extends StatefulWidget {
 class _LightingScreenState extends State<LightingScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   // UserProvider userProvider;
-  ScreenUtil _util = ScreenUtil();
+  // ScreenUtil _util = ScreenUtil();
   LightSceneBloc _bloc = LightSceneBloc();
   TextEditingController _renameTextController = TextEditingController();
 
@@ -112,7 +112,7 @@ class _LightingScreenState extends State<LightingScreen> {
         _allLightScenes.add(lc);
       }).toList();
     }
-    switchOn = _oceanBuilderUser.lighting.isLightON;
+    switchOn = _oceanBuilderUser.lighting.isLightON ?? false;
 
     if (widget.selectedLightSceneIdFromPopup != null) {
       // debugPrint('widget.selectedLightSceneIdFromPopup --------- ');
@@ -142,6 +142,12 @@ class _LightingScreenState extends State<LightingScreen> {
   _setDataListener() {
     _bloc.lightSceneController.listen((onData) {
       _renameTextController.text = onData;
+      // isSeaPodSourceSelected
+      if(_selectedScene == null)
+      isSeaPodSourceSelected = false;
+      else
+      isSeaPodSourceSelected =
+          _selectedScene.source.compareTo('seapod') == 0 ?? false;
     });
   }
 
@@ -345,8 +351,8 @@ class _LightingScreenState extends State<LightingScreen> {
   Padding _selectRoomDropdown() {
     return Padding(
       padding: EdgeInsets.only(
-        top: _util.setHeight(32),
-        bottom: _util.setHeight(32),
+        top: 32.h,
+        bottom: 32.h,
       ),
       child: _getDropdown(
           _selectedScene != null
@@ -367,8 +373,8 @@ class _LightingScreenState extends State<LightingScreen> {
   Padding _viewAllSceneButton() {
     return Padding(
       padding: EdgeInsets.only(
-        top: _util.setHeight(16),
-        bottom: _util.setHeight(16),
+        top: 16.h,
+        bottom: 16.h,
       ),
       child: _isLoading
           ? Center(child: CircularProgressIndicator())
@@ -391,7 +397,7 @@ class _LightingScreenState extends State<LightingScreen> {
                   Text(
                     AppStrings.viewAllTheScenes,
                     style: TextStyle(
-                        fontSize: _util.setSp(36),
+                        fontSize: 36.sp,
                         color: ColorConstants.LIGHT_POPUP_TEXT),
                   ),
                 ],
@@ -403,8 +409,8 @@ class _LightingScreenState extends State<LightingScreen> {
   Padding _selectLightSceneDropdown() {
     return Padding(
       padding: EdgeInsets.only(
-        top: _util.setHeight(16),
-        bottom: _util.setHeight(32),
+        top: 16.h,
+        bottom: 32.h,
       ),
       child: _getLightSceneDropdown(
         _allLightScenes,
@@ -475,11 +481,10 @@ class _LightingScreenState extends State<LightingScreen> {
         color: _colorPickerDataProvider
             .initialColor, //Color(0xffffed27), //Color(0xFF2741D3),
         onChanged: (value) {
-          // // debugPrint('Selected color -- ' + value.toString().substring(10,16).toUpperCase());
+          debugPrint('Selected color -- ' + value.toString().substring(6, 16));
           setState(() {
             selectedColor = value;
-            selectedLight.lightColor =
-                value.toString().substring(6, 16).toUpperCase();
+            selectedLight.lightColor = value.toString().substring(6, 16);
 
             Light light;
             _selectedRoom.lightModes.map((f) {
@@ -569,24 +574,24 @@ class _LightingScreenState extends State<LightingScreen> {
                   borderSide: BorderSide(
                       color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                       width: 1),
-                  borderRadius: BorderRadius.circular(_util.setWidth(32))),
+                  borderRadius: BorderRadius.circular(32.w)),
               contentPadding: EdgeInsets.only(
                 left: 48.w,
-                top: _util.setWidth(16),
-                bottom: _util.setWidth(16),
+                top: 16.w,
+                bottom: 16.w,
               ),
               labelText: label,
               // hintStyle: TextStyle(color: Colors.red),
               labelStyle: TextStyle(
                   color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                  fontSize: _util.setSp(36)),
+                  fontSize: 36.sp),
             ),
             child: DropdownButtonHideUnderline(
               child: ButtonTheme(
                 alignedDropdown: true,
                 child: DropdownButton<String>(
                   icon: Icon(Icons.arrow_drop_down,
-                      size: _util.setSp(96),
+                      size: 96.sp,
                       color: snapshot.hasData
                           ? ColorConstants.ACCESS_MANAGEMENT_TITLE
                           : ColorConstants
@@ -600,7 +605,7 @@ class _LightingScreenState extends State<LightingScreen> {
                         ? ColorConstants.ACCESS_MANAGEMENT_TITLE
                         : ColorConstants
                             .ACCESS_MANAGEMENT_SUBTITLE, //ColorConstants.INVALID_TEXTFIELD,
-                    fontSize: _util.setSp(36),
+                    fontSize: 36.sp,
                     fontWeight: FontWeight.w400,
                     // letterSpacing: 1.2,
                     // wordSpacing: 4
@@ -673,24 +678,24 @@ class _LightingScreenState extends State<LightingScreen> {
                   borderSide: BorderSide(
                       color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                       width: 1),
-                  borderRadius: BorderRadius.circular(_util.setWidth(32))),
+                  borderRadius: BorderRadius.circular(32.w)),
               contentPadding: EdgeInsets.only(
                 left: 48.w,
-                top: _util.setWidth(16),
-                bottom: _util.setWidth(16),
+                top: 16.w,
+                bottom: 16.w,
               ),
               labelText: label,
               // hintStyle: TextStyle(color: Colors.red),
               labelStyle: TextStyle(
                   color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                  fontSize: _util.setSp(36)),
+                  fontSize: 36.sp),
             ),
             child: DropdownButtonHideUnderline(
               child: ButtonTheme(
                 alignedDropdown: true,
                 child: DropdownButton<String>(
                   icon: Icon(Icons.arrow_drop_down,
-                      size: _util.setSp(96),
+                      size: 96.sp,
                       color: snapshot.hasData
                           ? ColorConstants.ACCESS_MANAGEMENT_TITLE
                           : ColorConstants
@@ -707,7 +712,7 @@ class _LightingScreenState extends State<LightingScreen> {
                         ? ColorConstants.ACCESS_MANAGEMENT_TITLE
                         : ColorConstants
                             .ACCESS_MANAGEMENT_SUBTITLE, //ColorConstants.INVALID_TEXTFIELD,
-                    fontSize: _util.setSp(36),
+                    fontSize: 36.sp,
                     fontWeight: FontWeight.w400,
                     // letterSpacing: 1.2,
                     // wordSpacing: 4
@@ -754,12 +759,12 @@ class _LightingScreenState extends State<LightingScreen> {
                                             0)
                                 ? Padding(
                                     padding: EdgeInsets.only(
-                                      top: _util.setHeight(32),
+                                      top: 32.h,
                                     ),
                                     child: Divider(
                                       color: ColorConstants
                                           .ACCESS_MANAGEMENT_DIVIDER,
-                                      height: _util.setHeight(8),
+                                      height: 8.h,
                                     ),
                                   )
                                 : Container(),
@@ -825,7 +830,7 @@ class _LightingScreenState extends State<LightingScreen> {
             // ),
             Container(
               margin: EdgeInsets.only(
-                bottom: _util.setHeight(32),
+                bottom: 32.h,
               ),
               child: TextField(
                 autofocus: false,
@@ -842,19 +847,19 @@ class _LightingScreenState extends State<LightingScreen> {
                       borderSide: BorderSide(
                           color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                           width: 1),
-                      borderRadius: BorderRadius.circular(_util.setWidth(16))),
+                      borderRadius: BorderRadius.circular(16.w)),
                   border: OutlineInputBorder(
                       borderSide: BorderSide(
                           color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                           width: 1),
-                      borderRadius: BorderRadius.circular(_util.setWidth(16))),
+                      borderRadius: BorderRadius.circular(16.w)),
                   labelText: 'Rename Scene',
                   labelStyle: TextStyle(
                       color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                      fontSize: _util.setSp(38)),
+                      fontSize: 38.sp),
                 ),
                 style: TextStyle(
-                  fontSize: _util.setSp(38),
+                  fontSize: 38.sp,
                   fontWeight: FontWeight.w400,
                   color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
                 ),
@@ -875,61 +880,31 @@ class _LightingScreenState extends State<LightingScreen> {
                     _bloc.lightSceneController.add(null);
 
                     _selectedScene.name = _renameTextController.text;
-
-                    // _oceanBuilderProvider
-                    //     .updateOceanBuilderUser(
-                    //         currentUserID: _user.userID,
-                    //         oceanBuilderID: _selectedOBIdProvider.selectedObId,
-                    //         oceanBuilderUser: _oceanBuilderUser)
-                    //     .then((onValue) {
-                    //   _oceanBuilderProvider
-                    //       .getOceanBuilder(_selectedOBIdProvider.selectedObId)
-                    //       .then((oceanBuilder) {
-                    //     _resetOceanBuilder(oceanBuilder);
-                    //   });
-                    // });
                   },
                   child: Text(
                     'RENAME SCENE',
                   ),
                   shape: RoundedRectangleBorder(
-                      borderRadius:
-                          new BorderRadius.circular(_util.setWidth(16)),
+                      borderRadius: new BorderRadius.circular(16.w),
                       side: BorderSide(
                         color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                       )),
                   textColor: ColorConstants.ACCESS_MANAGEMENT_BUTTON,
                   color: Colors.white, //ColorConstants.TOP_CLIPPER_END
                 ),
-                SizedBox(
-                  width: _util.setHeight(32),
-                ),
+                SpaceH32(),
                 InkWell(
                   onTap: () {
                     Navigator.of(context).pop();
                     _oceanBuilderUser.lighting.sceneList.remove(_selectedScene);
                     _bloc.lightRoomController.add(null);
                     _bloc.lightSceneController.add(null);
-
-                    // _oceanBuilderProvider
-                    //     .updateOceanBuilderUser(
-                    //         currentUserID: _user.userID,
-                    //         oceanBuilderID: _selectedOBIdProvider.selectedObId,
-                    //         oceanBuilderUser: _oceanBuilderUser)
-                    //     .then((onValue) {
-                    //   _oceanBuilderProvider
-                    //       .getOceanBuilder(_selectedOBIdProvider.selectedObId)
-                    //       .then((oceanBuilder) {
-                    //     _resetOceanBuilder(oceanBuilder);
-                    //   });
-                    // });
                   },
                   child: Padding(
-                    padding: EdgeInsets.all(_util.setWidth(32)),
+                    padding: EdgeInsets.all(32.w),
                     child: Text(
                       'DELETE SCENE',
-                      style: TextStyle(
-                          fontSize: _util.setSp(38), color: Colors.red),
+                      style: TextStyle(fontSize: 38.sp, color: Colors.red),
                     ),
                   ),
                 )
@@ -971,7 +946,7 @@ class _LightingScreenState extends State<LightingScreen> {
             // ),
             Container(
               margin: EdgeInsets.only(
-                bottom: _util.setHeight(32),
+                bottom: 32.h,
               ),
               child: TextField(
                 autofocus: false,
@@ -988,19 +963,19 @@ class _LightingScreenState extends State<LightingScreen> {
                       borderSide: BorderSide(
                           color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                           width: 1),
-                      borderRadius: BorderRadius.circular(_util.setWidth(16))),
+                      borderRadius: BorderRadius.circular(16.w)),
                   border: OutlineInputBorder(
                       borderSide: BorderSide(
                           color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                           width: 1),
-                      borderRadius: BorderRadius.circular(_util.setWidth(16))),
+                      borderRadius: BorderRadius.circular(16.w)),
                   labelText: 'Name your scene',
                   labelStyle: TextStyle(
                       color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                      fontSize: _util.setSp(38)),
+                      fontSize: 38.sp),
                 ),
                 style: TextStyle(
-                  fontSize: _util.setSp(38),
+                  fontSize: 38.sp,
                   fontWeight: FontWeight.w400,
                   color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
                 ),
@@ -1016,7 +991,7 @@ class _LightingScreenState extends State<LightingScreen> {
                 Text('Save scene in',
                     style: TextStyle(
                         color: ColorConstants.COLOR_NOTIFICATION_ITEM,
-                        fontSize: _util.setSp(42)))
+                        fontSize: 42.sp))
               ],
             ),
             SpaceH32(),
@@ -1025,7 +1000,7 @@ class _LightingScreenState extends State<LightingScreen> {
               return Column(
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.only(left: _util.setWidth(64)),
+                    padding: EdgeInsets.only(left: 64.w),
                     child: InkWell(
                       onTap: () {
                         stateSetter(() {
@@ -1042,11 +1017,9 @@ class _LightingScreenState extends State<LightingScreen> {
                             color: isSeaPodSourceSelected
                                 ? ColorConstants.COLOR_NOTIFICATION_BUBBLE
                                 : Colors.grey, //Color(0xFF064390),
-                            size: _util.setWidth(36),
+                            size: 36.w,
                           ),
-                          SizedBox(
-                            width: _util.setWidth(32),
-                          ),
+                          SpaceH32(),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1057,7 +1030,7 @@ class _LightingScreenState extends State<LightingScreen> {
                                 style: TextStyle(
                                     color:
                                         ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                                    fontSize: _util.setSp(36)),
+                                    fontSize: 36.sp),
                               ),
                               Text(
                                 'Anyone with acces will be able to see it',
@@ -1065,7 +1038,7 @@ class _LightingScreenState extends State<LightingScreen> {
                                 style: TextStyle(
                                     color:
                                         ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                                    fontSize: _util.setSp(24)),
+                                    fontSize: 24.sp),
                               ),
                             ],
                           ),
@@ -1073,11 +1046,9 @@ class _LightingScreenState extends State<LightingScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: _util.setHeight(32),
-                  ),
+                  SpaceH32(),
                   Padding(
-                    padding: EdgeInsets.only(left: _util.setWidth(64)),
+                    padding: EdgeInsets.only(left: 64.w),
                     child: InkWell(
                       onTap: () {
                         stateSetter(() {
@@ -1094,11 +1065,9 @@ class _LightingScreenState extends State<LightingScreen> {
                             color: !isSeaPodSourceSelected
                                 ? ColorConstants.COLOR_NOTIFICATION_BUBBLE
                                 : Colors.grey, //Color(0xFF064390),
-                            size: _util.setWidth(36),
+                            size: 36.w,
                           ),
-                          SizedBox(
-                            width: _util.setWidth(32),
-                          ),
+                          SpaceH32(),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1109,7 +1078,7 @@ class _LightingScreenState extends State<LightingScreen> {
                                 style: TextStyle(
                                     color:
                                         ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                                    fontSize: _util.setSp(36)),
+                                    fontSize: 36.sp),
                               ),
                               Text(
                                 'Available only to you',
@@ -1117,7 +1086,7 @@ class _LightingScreenState extends State<LightingScreen> {
                                 style: TextStyle(
                                     color:
                                         ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                                    fontSize: _util.setSp(24)),
+                                    fontSize: 24.sp),
                               ),
                             ],
                           ),
@@ -1251,26 +1220,12 @@ class _LightingScreenState extends State<LightingScreen> {
                         }
                       });
                     }
-/* 
-                      _oceanBuilderProvider.updateOceanBuilderUser(
-                        currentUserID: _user.userID,
-                        oceanBuilderID: _selectedOBIdProvider.selectedObId,
-                        oceanBuilderUser: _oceanBuilderUser).then((onValue){
-                          
-                        _oceanBuilderProvider.getOceanBuilder(_selectedOBIdProvider.selectedObId).then((oceanBuilder){
-                              _resetOceanBuilder(oceanBuilder);
-                             
-                          });
-
-                        }); 
-                         */
                   },
                   child: Text(
                     'SAVE SCENE',
                   ),
                   shape: RoundedRectangleBorder(
-                      borderRadius:
-                          new BorderRadius.circular(_util.setWidth(16)),
+                      borderRadius: new BorderRadius.circular(16.w),
                       side: BorderSide(
                         color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                       )),

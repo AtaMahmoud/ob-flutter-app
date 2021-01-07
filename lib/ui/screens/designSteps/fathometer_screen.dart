@@ -48,7 +48,6 @@ class _FathometerScreenState extends State<FathometerScreen> {
 
     if (designDataProvider.oceanBuilder.hasFathometer != null) {
       _hasFathometer = designDataProvider.oceanBuilder.hasFathometer;
-
       if (_hasFathometer)
         _bloc.sink.add(list);
       else
@@ -60,40 +59,60 @@ class _FathometerScreenState extends State<FathometerScreen> {
       child: Scaffold(
         body: Stack(
           children: <Widget>[
-            CustomScrollView(
-              slivers: <Widget>[
-                UIHelper.getTopEmptyContainer(
-                    MediaQuery.of(context).size.height / 2, true),
-                SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                  return InkWell(
-                    onTap: () => selectItem(list[index]),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 32.0),
-                      child: UIHelper.getCustomCheckbox(
-                          _bloc.stream, list[index], price[index],
-                          isVertical: true, subtitle: subtitle),
-                    ),
-                  );
-                }, childCount: list.length)),
-                UIHelper.getTopEmptyContainer(90, false),
-              ],
-            ),
-            Appbar(
-              ScreenTitle.FATHOMETER,
-              isDesignScreen: true,
-            ),
-            Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: BottomClipper(ButtonText.BACK, ButtonText.NEXT,
-                    () => goBack(), () => goNext(designDataProvider)))
+            _mainContent(context),
+            _topBar(),
+            _bottomBar(designDataProvider)
           ],
         ),
       ),
     );
+  }
+
+  CustomScrollView _mainContent(BuildContext context) {
+    return CustomScrollView(
+      slivers: <Widget>[
+        _startSpace(context),
+        _checkBoxList(),
+        _endSpace(),
+      ],
+    );
+  }
+
+  Positioned _bottomBar(DesignDataProvider designDataProvider) {
+    return Positioned(
+        bottom: 0,
+        left: 0,
+        right: 0,
+        child: BottomClipper(ButtonText.BACK, ButtonText.NEXT, () => goBack(),
+            () => goNext(designDataProvider)));
+  }
+
+  Appbar _topBar() {
+    return Appbar(
+      ScreenTitle.FATHOMETER,
+      isDesignScreen: true,
+    );
+  }
+
+  SliverList _checkBoxList() {
+    return SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+      return InkWell(
+        onTap: () => selectItem(list[index]),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
+          child: UIHelper.getCustomCheckbox(
+              _bloc.stream, list[index], price[index],
+              isVertical: true, subtitle: subtitle),
+        ),
+      );
+    }, childCount: list.length));
+  }
+
+  _endSpace() => UIHelper.getTopEmptyContainer(90, false);
+
+  _startSpace(BuildContext context) {
+    return UIHelper.getTopEmptyContainer(MediaQuery.of(context).size.height / 2, true);
   }
 
   goNext(DesignDataProvider designDataProvider) {

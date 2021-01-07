@@ -21,6 +21,8 @@ import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/shared/shared_pref_data.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
+import 'package:ocean_builder/ui/widgets/progress_indicator.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 
@@ -44,8 +46,6 @@ class _RequestAccessScreenState extends State<RequestAccessScreen> {
   DateTime _pickedDate; //  = DateTime.now();
   bool _isMemberSelected = false;
 
-  ScreenUtil _util;
-
   bool _isGuestSelected = false;
 
   @override
@@ -56,7 +56,6 @@ class _RequestAccessScreenState extends State<RequestAccessScreen> {
       _bloc.vasselCodeChanged(widget.qrCode);
     }
 
-    _util = ScreenUtil();
     _setUserDataListener();
   }
 
@@ -121,21 +120,11 @@ class _RequestAccessScreenState extends State<RequestAccessScreen> {
     _user = userDataProvider.user;
 
     if (_user != null) {
-      // if(_vessleCode!=null){
-      //   _bloc.vasselCodeController.add(_vessleCode);
-      //   _codeController.text = _vessleCode;// qrCodeDataProvider.qrCodeData;
-      // }
-
-      if (_user.userType != null) {
-        // _bloc.requestAccessAsController.add(_user.userType);
-        // _bloc.requestAccessAsChanged(_user.userType);
-      }
-
+      if (_user.userType != null) {}
       if (_user.requestAccessTime != null) {
         _bloc.requestAccessTimeController.add(_user.requestAccessTime);
         _bloc.requestAccessTimeChanged(_user.requestAccessTime);
       }
-
       if (_user.checkInDate != null) {
         _pickedDate = _user.checkInDate;
         _bloc.checkInChanged(DateFormat('yMMMMd').format(_pickedDate));
@@ -147,10 +136,6 @@ class _RequestAccessScreenState extends State<RequestAccessScreen> {
       _qrCodeDataProvider.qrCodeData = _vessleCode;
     });
 
-    //     _codeController.text = qrCodeDataProvider.qrCodeData;
-    //         _bloc.vasselCodeChanged(qrCodeDataProvider.qrCodeData);
-
-    double sizedBoxHeight = 30;
     double topClipperRatio =
         Platform.isIOS ? (153.5) / 813 : (153.5 + 16) / 813;
     double height = MediaQuery.of(context).size.height * topClipperRatio;
@@ -167,90 +152,100 @@ class _RequestAccessScreenState extends State<RequestAccessScreen> {
             child: CustomScrollView(
               shrinkWrap: true,
               slivers: <Widget>[
-                UIHelper.getTopEmptyContainer(height + 48.h, false),
+                _startSpace(height),
                 _userProvider.isLoading
-                    ? SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                      )
-                    : SliverPadding(
-                        padding: EdgeInsets.symmetric(horizontal: 64.w),
-                        sliver: SliverList(
-                            delegate: SliverChildListDelegate([
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 1),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: UIHelper.getRegistrationTextField(
-                                      context,
-                                      _bloc.vasselCode,
-                                      _bloc.vasselCodeChanged,
-                                      TextFieldHints.VASSEL_CODE_OR_QR_CODE,
-                                      _codeController,
-                                      null,
-                                      null,
-                                      false,
-                                      TextInputAction.done,
-                                      null,
-                                      null,
-                                      addContentPadding: true),
-                                ),
-                                InkWell(
-                                  onTap: () => Navigator.of(context)
-                                      .pushReplacementNamed(
-                                          QRcodeScreen.routeName,
-                                          arguments:
-                                              RequestAccessScreen.routeName),
-                                  child: SvgPicture.asset(
-                                    ImagePaths.barcodeImage,
-                                    width: 96.w,
-                                    height: 96.w,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 24),
-                          UIHelper.getUnderlinedDropdown(
-                              ListHelper.getAccessForList(),
-                              _bloc.requestAccessAs,
-                              _bloc.requestAccessAsChanged,
-                              false),
-                          SizedBox(height: 24),
-                          _isGuestSelected
-                              ? UIHelper.getUnderlinedDropdown(
-                                  ListHelper.getStayForTimeList(),
-                                  _bloc.requestAccessTime,
-                                  _bloc.requestAccessTimeChanged,
-                                  false)
-                              : Container(),
-                          SizedBox(height: 24),
-                          checkInDatePicker(),
-                        ])),
-                      ),
-                UIHelper.getTopEmptyContainer(90, false),
+                    ? ProgressIndicatorBoxAdapter()
+                    : _mainContent(context),
+                _endSpace(),
               ],
             ),
           ),
         ),
-        Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Appbar(ScreenTitle.REQUEST_ACCESS)),
-        Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: registerButton(userDataProvider))
+        _topBar(),
+        _bottomBar(userDataProvider)
       ],
     ));
   }
+
+  SliverPadding _mainContent(BuildContext context) {
+    return SliverPadding(
+      padding: EdgeInsets.symmetric(horizontal: 64.w),
+      sliver: SliverList(
+          delegate: SliverChildListDelegate([
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 1),
+          child: Row(
+            children: <Widget>[
+              _inputVesselcode(context),
+              _buttonScanBarcode(context),
+            ],
+          ),
+        ),
+        SpaceH32(),
+        _dropdownAccessType(),
+        SpaceH32(),
+        _isGuestSelected ? _dropdownAccessTime() : Container(),
+        SpaceH32(),
+        checkInDatePicker(),
+      ])),
+    );
+  }
+
+  Positioned _bottomBar(UserDataProvider userDataProvider) {
+    return Positioned(
+        bottom: 0, left: 0, right: 0, child: registerButton(userDataProvider));
+  }
+
+  Positioned _topBar() {
+    return Positioned(
+        top: 0, left: 0, right: 0, child: Appbar(ScreenTitle.REQUEST_ACCESS));
+  }
+
+  _endSpace() => UIHelper.getTopEmptyContainer(90, false);
+
+  Widget _dropdownAccessTime() {
+    return UIHelper.getUnderlinedDropdown(ListHelper.getStayForTimeList(),
+        _bloc.requestAccessTime, _bloc.requestAccessTimeChanged, false);
+  }
+
+  Widget _dropdownAccessType() {
+    return UIHelper.getUnderlinedDropdown(ListHelper.getAccessForList(),
+        _bloc.requestAccessAs, _bloc.requestAccessAsChanged, false);
+  }
+
+  InkWell _buttonScanBarcode(BuildContext context) {
+    return InkWell(
+      onTap: () => Navigator.of(context).pushReplacementNamed(
+          QRcodeScreen.routeName,
+          arguments: RequestAccessScreen.routeName),
+      child: SvgPicture.asset(
+        ImagePaths.barcodeImage,
+        width: 96.w,
+        height: 96.w,
+      ),
+    );
+  }
+
+  Expanded _inputVesselcode(BuildContext context) {
+    return Expanded(
+      child: UIHelper.getRegistrationTextField(
+          context,
+          _bloc.vasselCode,
+          _bloc.vasselCodeChanged,
+          TextFieldHints.VASSEL_CODE_OR_QR_CODE,
+          _codeController,
+          null,
+          null,
+          false,
+          TextInputAction.done,
+          null,
+          null,
+          addContentPadding: true),
+    );
+  }
+
+  _startSpace(double height) =>
+      UIHelper.getTopEmptyContainer(height + 48.h, false);
 
   // SOF7C6C
 

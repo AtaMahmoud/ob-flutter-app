@@ -7,6 +7,7 @@ import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper.dart';
 import 'package:ocean_builder/ui/screens/designSteps/spar_finishing_screen.dart';
 import 'package:ocean_builder/ui/shared/app_colors.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 
@@ -66,119 +67,149 @@ class _ExteriorColorScreenState extends State<ExteriorColorScreen> {
       }
     }
 
-    var _util = ScreenUtil();
+    // var _util = ScreenUtil();
 
     return Container(
       decoration: BoxDecoration(gradient: blueBackgroundGradient),
       child: Scaffold(
         body: Stack(
           children: <Widget>[
-            CustomScrollView(
-              slivers: [
-                UIHelper.getTopEmptyContainer(
-                    MediaQuery.of(context).size.height / 4, false),
-                SliverToBoxAdapter(
-                    child: Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        InkWell(
-                          onTap: () => _bloc.sink.add(list[0]),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Image.asset(
-                                ImagePaths.defaultIcon,
-                                width: _util.setWidth(380),
-                                height: _util.setWidth(380),
-                              ),
-                              SizedBox(height: 16.0),
-                              UIHelper.getCustomRadioButtonVertical(
-                                  _bloc.stream, list[0])
-                            ],
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () => _bloc.sink.add(list[1]),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Image.asset(
-                                ImagePaths.defaultIcon,
-                                width: _util.setWidth(380),
-                                height: _util.setWidth(380),
-                              ),
-                              SizedBox(height: 16.0),
-                              UIHelper.getCustomRadioButtonVertical(
-                                  _bloc.stream, list[1])
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                )),
-                StreamBuilder<String>(
-                    stream: _bloc.stream,
-                    builder: (context, snapshot) {
-                      return snapshot.data ==
-                              ListHelper.getExteriorColorList()[1]
-                          ? UIHelper.getSliverGridColor(_colorCountBloc.stream,
-                              _selectedColor.stream, (data) => selectItem(data))
-                          : SliverPadding(padding: EdgeInsets.all(0.0));
-                    }),
-                StreamBuilder<String>(
-                    stream: _bloc.stream,
-                    builder: (context, snapshot) {
-                      return StreamBuilder<int>(
-                          stream: _colorCountBloc.stream,
-                          builder: (context, snap) {
-                            return SliverToBoxAdapter(
-                              child: snapshot.data ==
-                                          ListHelper.getExteriorColorList()[
-                                              1] &&
-                                      snap.data == 8
-                                  ? Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: <Widget>[
-                                          FlatButton(
-                                              onPressed: () =>
-                                                  _colorCountBloc.sink.add(50),
-                                              child: Text(
-                                                ButtonText.SHOW_MORE_COLORS,
-                                                style: TextStyle(
-                                                    color: ColorConstants
-                                                        .TOP_CLIPPER_END),
-                                              ))
-                                        ],
-                                      ),
-                                    )
-                                  : Container(),
-                            );
-                          });
-                    }),
-                UIHelper.getTopEmptyContainer(90, false),
-              ],
-            ),
-            Appbar(
-              ScreenTitle.EXTERIOR_COLOR,
-              isDesignScreen: true,
-            ),
-            Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: BottomClipper(ButtonText.BACK, ButtonText.NEXT,
-                    () => goBack(), () => goNext(designDataProvider)))
+            _mainContent(context),
+            _topBar(),
+            _bottomBar(designDataProvider)
           ],
         ),
       ),
+    );
+  }
+
+  CustomScrollView _mainContent(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        _startSpace(context),
+        _colorButtons(),
+        _colorGrid(),
+        _exteriorColorList(),
+        _endSpace(),
+      ],
+    );
+  }
+
+  SliverToBoxAdapter _colorButtons() {
+    return SliverToBoxAdapter(
+        child: Column(
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            _defaultColor(),
+            _customColor(),
+          ],
+        ),
+      ],
+    ));
+  }
+
+  InkWell _customColor() {
+    return InkWell(
+      onTap: () => _bloc.sink.add(list[1]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Image.asset(
+            ImagePaths.defaultIcon,
+            width: 380.w,
+            height: 380.w,
+          ),
+          SpaceH32(),
+          UIHelper.getCustomRadioButtonVertical(_bloc.stream, list[1])
+        ],
+      ),
+    );
+  }
+
+  InkWell _defaultColor() {
+    return InkWell(
+      onTap: () => _bloc.sink.add(list[0]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Image.asset(
+            ImagePaths.defaultIcon,
+            width: 380.w,
+            height: 380.w,
+          ),
+          SizedBox(height: 16.0),
+          UIHelper.getCustomRadioButtonVertical(_bloc.stream, list[0])
+        ],
+      ),
+    );
+  }
+
+  StreamBuilder<String> _exteriorColorList() {
+    return StreamBuilder<String>(
+        stream: _bloc.stream,
+        builder: (context, snapshot) {
+          return StreamBuilder<int>(
+              stream: _colorCountBloc.stream,
+              builder: (context, snap) {
+                return SliverToBoxAdapter(
+                  child: snapshot.data ==
+                              ListHelper.getExteriorColorList()[1] &&
+                          snap.data == 8
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              FlatButton(
+                                  onPressed: () => _colorCountBloc.sink.add(50),
+                                  child: Text(
+                                    ButtonText.SHOW_MORE_COLORS,
+                                    style: TextStyle(
+                                        color: ColorConstants.TOP_CLIPPER_END),
+                                  ))
+                            ],
+                          ),
+                        )
+                      : Container(),
+                );
+              });
+        });
+  }
+
+  StreamBuilder<String> _colorGrid() {
+    return StreamBuilder<String>(
+        stream: _bloc.stream,
+        builder: (context, snapshot) {
+          return snapshot.data == ListHelper.getExteriorColorList()[1]
+              ? UIHelper.getSliverGridColor(_colorCountBloc.stream,
+                  _selectedColor.stream, (data) => selectItem(data))
+              : SliverPadding(padding: EdgeInsets.all(0.0));
+        });
+  }
+
+  _startSpace(BuildContext context) {
+    return UIHelper.getTopEmptyContainer(
+        MediaQuery.of(context).size.height / 4, false);
+  }
+
+  _endSpace() => UIHelper.getTopEmptyContainer(90, false);
+
+  Positioned _bottomBar(DesignDataProvider designDataProvider) {
+    return Positioned(
+        bottom: 0,
+        left: 0,
+        right: 0,
+        child: BottomClipper(ButtonText.BACK, ButtonText.NEXT, () => goBack(),
+            () => goNext(designDataProvider)));
+  }
+
+  Appbar _topBar() {
+    return Appbar(
+      ScreenTitle.EXTERIOR_COLOR,
+      isDesignScreen: true,
     );
   }
 

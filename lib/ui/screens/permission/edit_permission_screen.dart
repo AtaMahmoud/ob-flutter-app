@@ -34,7 +34,7 @@ class _EditPermissionScreenState extends State<EditPermissionScreen> {
 
   String permissionSetName;
 
-  ScreenUtil _util;
+  // ScreenUtil _util;
 
   OceanBuilderProvider _oceanBuilderProvider;
   SelectedOBIdProvider _selectedOBIdProvider;
@@ -76,7 +76,7 @@ class _EditPermissionScreenState extends State<EditPermissionScreen> {
     _oceanBuilderProvider = Provider.of<OceanBuilderProvider>(context);
     _userProvider = Provider.of<UserProvider>(context);
 
-    _util = ScreenUtil();
+    // _util = ScreenUtil();
 
     if (!mounted)
       MethodHelper.parseNotifications(GlobalContext.currentScreenContext);
@@ -91,63 +91,80 @@ class _EditPermissionScreenState extends State<EditPermissionScreen> {
           screenIndex: DrawerIndex.NOTIFICATIONS,
         ),
         drawerScrimColor: AppTheme.drawerScrimColor.withOpacity(.65),
-        body: CustomScrollView(
-          controller: _scrollController,
-          // shrinkWrap: true,
-          slivers: <Widget>[
-            UIHelper.defaultSliverAppbar(_scaffoldKey, goBack,
-                screnTitle: ScreenTitle.EDIT_PERMISSION),
-            SliverToBoxAdapter(
-                child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: _util.setWidth(32),
-                vertical: _util.setHeight(32),
-              ),
-              child: _permissionSetNameContainer(),
-            )),
-            SliverPadding(
-              padding: EdgeInsets.symmetric(
-                horizontal: _util.setWidth(32),
-                vertical: _util.setHeight(32),
-              ),
-              sliver: SliverList(
-                  delegate: SliverChildListDelegate(
-                      // [
-                      _permissionSet.permissionGroups.map((permissionGroup) {
-                return Padding(
-                  padding: EdgeInsets.only(
-                    bottom: _util.setHeight(16),
-                  ),
-                  child: PermissionDropdown(permissionGroup, _scrollController),
-                );
-              }).toList()
-
-                      // PermissionDropdown('title', TempPermissionData.mainControllPermissionSet, _scrollController),
-                      // ]
-                      )),
-            ),
-
-            SliverToBoxAdapter(
-                child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: _util.setWidth(32),
-                vertical: _util.setHeight(32),
-              ),
-              child: _updatePermissionButtonWidget(),
-            )),
-            SliverToBoxAdapter(
-                child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: _util.setWidth(32),
-                vertical: _util.setHeight(32),
-              ),
-              child: _saveWithNewNameButtonWidget(),
-            )),
-            // UIHelper.getTopEmptyContainer(90, false),
-          ],
-        ),
+        body: _body(),
       ),
     );
+  }
+
+  CustomScrollView _body() {
+    return CustomScrollView(
+      controller: _scrollController,
+      slivers: <Widget>[
+        _topBar(),
+        _inputPermissionSetName(),
+        _listOfPermission(),
+        _buttonUpdate(),
+        _buttonSaveWithName(),
+      ],
+    );
+  }
+
+  SliverToBoxAdapter _buttonSaveWithName() {
+    return SliverToBoxAdapter(
+        child: Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: 32.w,
+        vertical: 32.h,
+      ),
+      child: _saveWithNewNameButtonWidget(),
+    ));
+  }
+
+  SliverToBoxAdapter _buttonUpdate() {
+    return SliverToBoxAdapter(
+        child: Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: 32.w,
+        vertical: 32.h,
+      ),
+      child: _updatePermissionButtonWidget(),
+    ));
+  }
+
+  SliverPadding _listOfPermission() {
+    return SliverPadding(
+      padding: EdgeInsets.symmetric(
+        horizontal: 32.w,
+        vertical: 32.h,
+      ),
+      sliver: SliverList(
+          delegate: SliverChildListDelegate(
+              // [
+              _permissionSet.permissionGroups.map((permissionGroup) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: 16.h,
+          ),
+          child: PermissionDropdown(permissionGroup, _scrollController),
+        );
+      }).toList())),
+    );
+  }
+
+  SliverToBoxAdapter _inputPermissionSetName() {
+    return SliverToBoxAdapter(
+        child: Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: 32.w,
+        vertical: 32.h,
+      ),
+      child: _permissionSetNameContainer(),
+    ));
+  }
+
+  _topBar() {
+    return UIHelper.defaultSliverAppbar(_scaffoldKey, goBack,
+        screnTitle: ScreenTitle.EDIT_PERMISSION);
   }
 
   Widget _permissionSetNameContainer() {
@@ -177,15 +194,13 @@ class _EditPermissionScreenState extends State<EditPermissionScreen> {
         ),
         labelText: 'Permission Set Name',
         labelStyle: TextStyle(
-            color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-            fontSize: _util.setSp(48)),
+            color: ColorConstants.ACCESS_MANAGEMENT_TITLE, fontSize: 48.sp),
         hintText: 'PLEASE NAME YOUR PERMISSION SET',
         hintStyle: TextStyle(
-            color: ColorConstants.ACCESS_MANAGEMENT_SUBTITLE,
-            fontSize: _util.setSp(40)),
+            color: ColorConstants.ACCESS_MANAGEMENT_SUBTITLE, fontSize: 40.sp),
       ),
       style: TextStyle(
-        fontSize: _util.setSp(48),
+        fontSize: 48.sp,
         fontWeight: FontWeight.w400,
         color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
       ),
@@ -198,7 +213,6 @@ class _EditPermissionScreenState extends State<EditPermissionScreen> {
   _updatePermissionButtonWidget() {
     return InkWell(
       onTap: () {
-
         String selectedSeaPodId = _selectedOBIdProvider.selectedObId;
 
         if (permissionSetName != null && permissionSetName.length > 0) {
@@ -218,17 +232,16 @@ class _EditPermissionScreenState extends State<EditPermissionScreen> {
           showInfoBar('Update Permission',
               'Please input a valid permission set name', context);
         }
-
       },
       child: Container(
         // height: h,
         // width: MediaQuery.of(context).size.width * .4,
         padding: EdgeInsets.symmetric(
-          horizontal: _util.setWidth(32),
-          vertical: _util.setHeight(32),
+          horizontal: 32.w,
+          vertical: 32.h,
         ),
         decoration: BoxDecoration(
-            borderRadius: new BorderRadius.circular(ScreenUtil().setWidth(72)),
+            borderRadius: new BorderRadius.circular(72.w),
             color: ColorConstants.TOP_CLIPPER_END_DARK),
         child: Center(
             child: Row(
@@ -237,8 +250,7 @@ class _EditPermissionScreenState extends State<EditPermissionScreen> {
             Text(
               'UPDATE PERMISSIONS',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.white, fontSize: ScreenUtil().setSp(48)),
+              style: TextStyle(color: Colors.white, fontSize: 48.sp),
             ),
           ],
         )),
@@ -249,13 +261,13 @@ class _EditPermissionScreenState extends State<EditPermissionScreen> {
   _saveWithNewNameButtonWidget() {
     return InkWell(
       onTap: () {
-
         String selectedSeaPodId = _selectedOBIdProvider.selectedObId;
 
         if (permissionSetName != null && permissionSetName.length > 0) {
           // _userProvider
           _oceanBuilderProvider
-              .renamePermission(selectedSeaPodId, _permissionSet.id, permissionSetName)
+              .renamePermission(
+                  selectedSeaPodId, _permissionSet.id, permissionSetName)
               .then((responseStatus) {
             if (responseStatus.status == 200) {
               _userProvider.autoLogin().then((value) => showInfoBar(
@@ -269,15 +281,13 @@ class _EditPermissionScreenState extends State<EditPermissionScreen> {
           showInfoBar('Rename Permission',
               'Please input a valid permission set name', context);
         }
-
-
       },
       child: Container(
         // height: h,
         // width: MediaQuery.of(context).size.width * .4,
         padding: EdgeInsets.symmetric(
-          horizontal: _util.setWidth(32),
-          vertical: _util.setHeight(32),
+          horizontal: 32.w,
+          vertical: 32.h,
         ),
         decoration: BoxDecoration(
             borderRadius: new BorderRadius.circular(ScreenUtil().setWidth(72)),
@@ -299,6 +309,6 @@ class _EditPermissionScreenState extends State<EditPermissionScreen> {
   }
 
   goBack() async {
- Navigator.pop(context,isPermissionUpdated);
+    Navigator.pop(context, isPermissionUpdated);
   }
 }

@@ -16,6 +16,8 @@ import 'package:ocean_builder/ui/screens/sign_in_up/set_password_screen.dart';
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
+import 'package:ocean_builder/ui/widgets/progress_indicator.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 
@@ -46,7 +48,6 @@ class _AcceptInvitationScreenState extends State<AcceptInvitationScreen> {
       _codeController.text = widget.qrCode;
       _bloc.vasselCodeChanged(widget.qrCode);
     }
-
     _setUserDataListener();
   }
 
@@ -68,42 +69,12 @@ class _AcceptInvitationScreenState extends State<AcceptInvitationScreen> {
         Provider.of<UserDataProvider>(context);
 
     _qrCodeDataProvider = Provider.of<QrCodeDataProvider>(context);
-
     _userProvider = Provider.of<UserProvider>(context);
-
     _user = userDataProvider.user;
-
-/*     if(_user!=null){
-
-      // if(_vessleCode!=null){
-      //   _bloc.vasselCodeController.add(_vessleCode);
-      //   _codeController.text = _vessleCode;// qrCodeDataProvider.qrCodeData;
-      // }
-
-      if(_user.userType!=null){
-        _bloc.requestAccessAsController.add(_user.userType);
-        _bloc.requestAccessAsChanged(_user.userType);
-      }
-
-      if(_user.requestAccessTime!=null){
-        _bloc.requestAccessTimeController.add(_user.requestAccessTime);
-        _bloc.requestAccessTimeChanged(_user.requestAccessTime);
-      }
-
-      if(_user.checkInDate!=null){
-        _pickedDate = _user.checkInDate;
-        _bloc.checkInChanged(DateFormat('yMMMMd').format(_pickedDate));
-      }
-
-    } */
-
     _bloc.vasselCodeController.listen((onData) {
       _vessleCode = onData;
       _qrCodeDataProvider.qrCodeData = _vessleCode;
     });
-
-    //     _codeController.text = qrCodeDataProvider.qrCodeData;
-    //         _bloc.vasselCodeChanged(qrCodeDataProvider.qrCodeData);
 
     double sizedBoxHeight = 30;
     double topClipperRatio =
@@ -119,85 +90,85 @@ class _AcceptInvitationScreenState extends State<AcceptInvitationScreen> {
           alignment: Alignment.center,
           child: ScrollConfiguration(
             behavior: CustomBehaviour(),
-            child: CustomScrollView(
-              shrinkWrap: true,
-              slivers: <Widget>[
-                UIHelper.getTopEmptyContainer(height + 20, false),
-                _userProvider.isLoading
-                    ? SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                      )
-                    : SliverList(
-                        delegate: SliverChildListDelegate([
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: UIHelper.getRegistrationTextField(
-                                  context,
-                                  _bloc.vasselCode,
-                                  _bloc.vasselCodeChanged,
-                                  TextFieldHints.VASSEL_CODE_OR_QR_CODE,
-                                  _codeController,
-                                  null,
-                                  null,
-                                  true,
-                                  TextInputAction.done,
-                                  null,
-                                  null),
-                            ),
-                            InkWell(
-                              onTap: () => Navigator.of(context)
-                                  .pushReplacementNamed(QRcodeScreen.routeName,
-                                      arguments:
-                                          AcceptInvitationScreen.routeName),
-                              child: SvgPicture.asset(
-                                ImagePaths.barcodeImage,
-                                width: 60,
-                                height: 60,
-                              ),
-                            ),
-                            SizedBox(width: 16)
-                          ],
-                        ),
-                        SizedBox(height: 24),
-                        /*                UIHelper.getRegistrationDropdown(
-                      ListHelper.getAccessAsList(),
-                      _bloc.requestAccessAs,
-                      _bloc.requestAccessAsChanged,
-                      true),
-                  SizedBox(height: 24),
-                 _isMemberSelected ? Container()
-                 :UIHelper.getRegistrationDropdown(
-                      ListHelper.getAccessTimeList().sublist(0,9),
-                      _bloc.requestAccessTime,
-                      _bloc.requestAccessTimeChanged,
-                      true),
-                  SizedBox(height: 24),
-                  checkInDatePicker(), */
-                      ])),
-                UIHelper.getTopEmptyContainer(90, false),
-              ],
-            ),
+            child: _mainContent(height, context),
           ),
         ),
-        Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Appbar(ScreenTitle.ACCEPT_INVITATION)),
-        Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: registerButton(userDataProvider))
+        _topBar(),
+        _bottomBar(userDataProvider)
       ],
     ));
   }
+
+  CustomScrollView _mainContent(double height, BuildContext context) {
+    return CustomScrollView(
+      shrinkWrap: true,
+      slivers: <Widget>[
+        _startSpace(height),
+        _userProvider.isLoading
+            ? ProgressIndicatorBoxAdapter()
+            : SliverList(
+                delegate: SliverChildListDelegate([
+                Row(
+                  children: <Widget>[
+                    _inputVesselCode(context),
+                    _imageBarCode(context),
+                    SpaceW16()
+                  ],
+                ),
+                SpaceH32(),
+              ])),
+        _endSpace(),
+      ],
+    );
+  }
+
+  Positioned _bottomBar(UserDataProvider userDataProvider) {
+    return Positioned(
+        bottom: 0, left: 0, right: 0, child: registerButton(userDataProvider));
+  }
+
+  Positioned _topBar() {
+    return Positioned(
+        top: 0,
+        left: 0,
+        right: 0,
+        child: Appbar(ScreenTitle.ACCEPT_INVITATION));
+  }
+
+  _endSpace() => UIHelper.getTopEmptyContainer(90, false);
+
+  InkWell _imageBarCode(BuildContext context) {
+    return InkWell(
+      onTap: () => Navigator.of(context).pushReplacementNamed(
+          QRcodeScreen.routeName,
+          arguments: AcceptInvitationScreen.routeName),
+      child: SvgPicture.asset(
+        ImagePaths.barcodeImage,
+        width: 60,
+        height: 60,
+      ),
+    );
+  }
+
+  Expanded _inputVesselCode(BuildContext context) {
+    return Expanded(
+      child: UIHelper.getRegistrationTextField(
+          context,
+          _bloc.vasselCode,
+          _bloc.vasselCodeChanged,
+          TextFieldHints.VASSEL_CODE_OR_QR_CODE,
+          _codeController,
+          null,
+          null,
+          true,
+          TextInputAction.done,
+          null,
+          null),
+    );
+  }
+
+  _startSpace(double height) =>
+      UIHelper.getTopEmptyContainer(height + 20, false);
 
   Widget registerButton(UserDataProvider userDataProvider) {
     return StreamBuilder<bool>(

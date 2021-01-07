@@ -25,8 +25,6 @@ class _WeatherMoreWidgetState extends State<WeatherMoreWidget> {
   // Future<StormGlassData> _futureWeatherData;
   Future<StormGlassData> _futureWOWWeatherData;
 
-  ScreenUtil _util;
-
   bool tempInCelsius = true;
 
   bool isShortTerm = true;
@@ -49,7 +47,6 @@ class _WeatherMoreWidgetState extends State<WeatherMoreWidget> {
   @override
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
-    _util = ScreenUtil();
     return _mainContent(); //customDrawer(_innerDrawerKey, _mainContent());
   }
 
@@ -72,8 +69,7 @@ class _WeatherMoreWidgetState extends State<WeatherMoreWidget> {
             children: <Widget>[
               CustomScrollView(
                 slivers: <Widget>[
-                  UIHelper.getTopEmptyContainerWithColor(
-                      ScreenUtil.statusBarHeight * 4, Colors.white),
+                  _startSpace(),
                   SliverToBoxAdapter(
                     child: Container(
                       // height: util.setHeight(960),
@@ -84,99 +80,7 @@ class _WeatherMoreWidgetState extends State<WeatherMoreWidget> {
                 ],
               ),
               // Appbar(ScreenTitle.OB_SELECTION),
-              Positioned(
-                top: ScreenUtil.statusBarHeight,
-                left: 0,
-                right: 0,
-                child: Container(
-                  color: Colors.white,
-                  // padding: EdgeInsets.only(top: 8.0, right: 12.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              InkWell(
-                                onTap: () {
-                                  _scaffoldKey.currentState.openDrawer();
-                                },
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    left: _util.setWidth(32),
-                                    right: _util.setWidth(32),
-                                    top: _util.setHeight(32),
-                                    bottom: _util.setHeight(32),
-                                  ),
-                                  child: ImageIcon(
-                                    AssetImage(ImagePaths.icHamburger),
-                                    color:
-                                        ColorConstants.WEATHER_MORE_ICON_COLOR,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                    _util.setWidth(32),
-                                    _util.setHeight(32),
-                                    0.0, //_util.setWidth(32),
-                                    _util.setHeight(32)),
-                                child: Text(
-                                  ScreenTitle.WEATHER,
-                                  style: TextStyle(
-                                      color: ColorConstants
-                                          .WEATHER_MORE_ICON_COLOR,
-                                      fontSize: ScreenUtil().setSp(70),
-                                      fontWeight: FontWeight.w400),
-                                ),
-                              ),
-                            ],
-                          ),
-                          InkWell(
-                            onTap: () {
-                              goBack();
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                left: _util.setWidth(32),
-                                right: _util.setWidth(32),
-                                top: _util.setHeight(32),
-                                bottom: _util.setHeight(32),
-                              ),
-                              child: Image.asset(
-                                ImagePaths.cross,
-                                width: 15,
-                                height: 15,
-                                color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: _util.setHeight(8), horizontal: 8),
-                            child: Text(
-                              'Next 24 Hours',
-                              style: TextStyle(
-                                  color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 17),
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              )
+              _topBar()
             ],
           ),
         ),
@@ -184,11 +88,105 @@ class _WeatherMoreWidgetState extends State<WeatherMoreWidget> {
     );
   }
 
+  Positioned _topBar() {
+    return Positioned(
+      top: ScreenUtil.statusBarHeight,
+      left: 0,
+      right: 0,
+      child: Container(
+        color: Colors.white,
+        // padding: EdgeInsets.only(top: 8.0, right: 12.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () {
+                        _scaffoldKey.currentState.openDrawer();
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            left: 32.w, right: 32.w, top: 32.h, bottom: 32.h),
+                        child: ImageIcon(
+                          AssetImage(ImagePaths.icHamburger),
+                          color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          32.w,
+                          32.h,
+                          0.0, //_util.setWidth(32),
+                          32.h),
+                      child: Text(
+                        ScreenTitle.WEATHER,
+                        style: TextStyle(
+                            color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                            fontSize: 70.sp,
+                            fontWeight: FontWeight.w400),
+                      ),
+                    ),
+                  ],
+                ),
+                InkWell(
+                  onTap: () {
+                    goBack();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: 32.w,
+                      right: 32.w,
+                      top: 32.h,
+                      bottom: 32.h,
+                    ),
+                    child: Image.asset(
+                      ImagePaths.cross,
+                      width: 15,
+                      height: 15,
+                      color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8),
+                  child: Text(
+                    'Next 24 Hours',
+                    style: TextStyle(
+                        color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 17),
+                  ),
+                )
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _startSpace() {
+    return UIHelper.getTopEmptyContainerWithColor(
+        ScreenUtil.statusBarHeight * 4, Colors.white);
+  }
+
   Widget _shortTermLongTerm() {
     return Padding(
-      padding: EdgeInsets.all(_util.setWidth(32)),
+      padding: EdgeInsets.all(32.w),
       child: Container(
-        height: _util.setHeight(54),
+        height: 54.h,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
@@ -198,17 +196,14 @@ class _WeatherMoreWidgetState extends State<WeatherMoreWidget> {
                     isShortTerm = true;
                   });
                 },
-                padding: EdgeInsets.only(
-                    left: _util.setWidth(32),
-                    right: _util.setWidth(32),
-                    top: 0,
-                    bottom: 0),
+                padding:
+                    EdgeInsets.only(left: 32.w, right: 32.w, top: 0, bottom: 0),
                 child: Text(
                   'SHORT TERM',
-                  style: TextStyle(fontSize: _util.setSp(28)),
+                  style: TextStyle(fontSize: 28.sp),
                 ),
                 shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(_util.setWidth(48)),
+                    borderRadius: new BorderRadius.circular(48.w),
                     side: BorderSide(
                       color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                     )),
@@ -219,7 +214,7 @@ class _WeatherMoreWidgetState extends State<WeatherMoreWidget> {
                     ? ColorConstants.LIGHT_POPUP_TEXT
                     : Colors.white),
             SizedBox(
-              width: _util.setWidth(32),
+              width: 32.w,
             ),
             RaisedButton(
                 onPressed: () {
@@ -227,17 +222,14 @@ class _WeatherMoreWidgetState extends State<WeatherMoreWidget> {
                     isShortTerm = false;
                   });
                 },
-                padding: EdgeInsets.only(
-                    left: _util.setWidth(32),
-                    right: _util.setWidth(32),
-                    top: 0,
-                    bottom: 0),
+                padding:
+                    EdgeInsets.only(left: 32.w, right: 32.w, top: 0, bottom: 0),
                 child: Text(
                   'LONG TERM',
-                  style: TextStyle(fontSize: _util.setSp(28)),
+                  style: TextStyle(fontSize: 28.sp),
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(_util.setWidth(48)),
+                  borderRadius: new BorderRadius.circular(48.w),
                   side: BorderSide(
                     color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
                   ),
@@ -293,7 +285,7 @@ class _WeatherMoreWidgetState extends State<WeatherMoreWidget> {
             child: Text(
               AppStrings.noData,
               style: TextStyle(
-                  fontSize: ScreenUtil().setWidth(48),
+                  fontSize: 48.w,
                   color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
             ),
           ),
@@ -1136,8 +1128,7 @@ class _WeatherMoreWidgetState extends State<WeatherMoreWidget> {
           child: Text(
             AppStrings.noData,
             style: TextStyle(
-                fontSize: _util.setWidth(48),
-                color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
+                fontSize: 48.w, color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
           ),
         ),
       );

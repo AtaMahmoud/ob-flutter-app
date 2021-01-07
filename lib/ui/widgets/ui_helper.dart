@@ -21,23 +21,21 @@ class UIHelper {
       textColor = Colors.white,
       bool showText = true,
       IconData icon = Icons.arrow_left}) {
-    var util = ScreenUtil();
-
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         SizedBox(
-          width: util.setWidth(16),
+          width: 16.w,
         ),
         SvgPicture.asset(
           ImagePaths.svgBack,
-          width: util.setWidth(38),
-          height: util.setHeight(46),
+          width: 38.w,
+          height: 46.h,
           color: iconColor,
         ),
         SizedBox(
-          width: util.setWidth(24),
+          width: 24.w,
         ),
         showText
             ? Text(
@@ -45,7 +43,7 @@ class UIHelper {
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: textColor,
-                    fontSize: util.setSp(textSize)),
+                    fontSize: textSize.sp),
               )
             : Container()
       ],
@@ -60,8 +58,6 @@ class UIHelper {
       textColor = Colors.white,
       bool showText = true,
       IconData icon = Icons.arrow_right}) {
-    var util = ScreenUtil();
-
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -71,21 +67,21 @@ class UIHelper {
                 text,
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
-                    fontSize: util.setSp(textSize),
+                    fontSize: textSize.sp,
                     color: partiallyTransparent ? Colors.grey : textColor),
               )
             : Container(),
         SizedBox(
-          width: util.setWidth(24),
+          width: 24.w,
         ),
         SvgPicture.asset(
           ImagePaths.svgNext,
-          width: util.setWidth(38),
-          height: util.setHeight(46),
+          width: 38.w,
+          height: 46.h,
           color: partiallyTransparent ? Colors.grey : iconColor,
         ),
         SizedBox(
-          width: util.setWidth(16),
+          width: 16.w,
         ),
       ],
     );
@@ -98,7 +94,6 @@ class UIHelper {
       double textSize = 14,
       textColor = Colors.white,
       IconData icon = Icons.arrow_right}) {
-    var util = ScreenUtil();
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -108,7 +103,7 @@ class UIHelper {
           size: iconSize,
         ),
         SizedBox(
-          width: util.setWidth(16),
+          width: 16.w,
         ),
         Text(
           text,
@@ -251,14 +246,12 @@ class UIHelper {
 
   static Widget getRegistrationDropdown(
       List<String> list, Observable<String> stream, changed, bool addPadding) {
-    var _util = ScreenUtil();
-
     return StreamBuilder<String>(
         stream: stream,
         builder: (context, snapshot) {
           return Padding(
             padding: addPadding
-                ? EdgeInsets.symmetric(horizontal: _util.setWidth(24))
+                ? EdgeInsets.symmetric(horizontal: 24.w)
                 : EdgeInsets.symmetric(horizontal: 0),
             child: SizedBox(
               width: double.maxFinite,
@@ -268,7 +261,7 @@ class UIHelper {
                   child: DropdownButton<String>(
                     icon: Icon(
                       Icons.arrow_drop_down,
-                      size: _util.setWidth(98.30),
+                      size: 98.3.w,
                       color: snapshot.hasData
                           ? ColorConstants.TOP_CLIPPER_START
                           : ColorConstants.INVALID_TEXTFIELD,
@@ -280,7 +273,7 @@ class UIHelper {
                         color: snapshot.hasData
                             ? ColorConstants.TOP_CLIPPER_START
                             : ColorConstants.INVALID_TEXTFIELD,
-                        fontSize: _util.setSp(43.69),
+                        fontSize: 43.69.sp,
                         fontWeight: FontWeight.w400,
                         letterSpacing: 1.2,
                         wordSpacing: 4),
@@ -298,14 +291,12 @@ class UIHelper {
 
   static Widget getUnderlinedDropdown(
       List<String> list, Observable<String> stream, changed, bool addPadding) {
-    var _util = ScreenUtil();
-
     return StreamBuilder<String>(
         stream: stream,
         builder: (context, snapshot) {
           return Padding(
             padding: addPadding
-                ? EdgeInsets.symmetric(horizontal: _util.setWidth(24))
+                ? EdgeInsets.symmetric(horizontal: 24.w)
                 : EdgeInsets.symmetric(horizontal: 0),
             child: SizedBox(
               width: double.maxFinite,
@@ -314,7 +305,7 @@ class UIHelper {
                 child: DropdownButtonFormField<String>(
                   icon: Icon(
                     Icons.arrow_drop_down,
-                    size: _util.setWidth(98.30),
+                    size: 98.30.w,
                     color: snapshot.hasData
                         ? ColorConstants.TOP_CLIPPER_START
                         : ColorConstants.INVALID_TEXTFIELD,
@@ -334,7 +325,7 @@ class UIHelper {
                       color: snapshot.hasData
                           ? ColorConstants.TOP_CLIPPER_START
                           : ColorConstants.INVALID_TEXTFIELD,
-                      fontSize: _util.setSp(43.69),
+                      fontSize: 43.69.sp,
                       fontWeight: FontWeight.w400,
                       letterSpacing: 1.2,
                       wordSpacing: 4),
@@ -351,13 +342,12 @@ class UIHelper {
 
   static Widget getCountryDropdown(
       List<String> list, Observable<String> stream, changed, bool addPadding) {
-    var _util = ScreenUtil();
     return StreamBuilder<String>(
         stream: stream,
         builder: (context, snapshot) {
           return Padding(
             padding: addPadding
-                ? EdgeInsets.symmetric(horizontal: _util.setWidth(65.535))
+                ? EdgeInsets.symmetric(horizontal: 65.535.w)
                 : EdgeInsets.symmetric(horizontal: 0),
             child: SizedBox(
               width: double.maxFinite,
@@ -370,10 +360,10 @@ class UIHelper {
                       changed: changed,
                     ),
                     'SELECT A COUNTRY',
-                    paddingTop: _util.setHeight(96),
-                    paddingBottom: _util.setHeight(96),
-                    paddingLeft: _util.setWidth(96),
-                    paddingright: _util.setWidth(96),
+                    paddingTop: 96.h,
+                    paddingBottom: 96.h,
+                    paddingLeft: 96.w,
+                    paddingright: 96.w,
                   );
                 },
                 child: Row(
@@ -385,14 +375,14 @@ class UIHelper {
                           color: snapshot.hasData
                               ? ColorConstants.TOP_CLIPPER_START
                               : ColorConstants.INVALID_TEXTFIELD,
-                          fontSize: _util.setSp(43.69),
+                          fontSize: 43.69.sp,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 1.2,
                           wordSpacing: 4),
                     ),
                     Icon(
                       Icons.arrow_drop_down,
-                      size: _util.setWidth(98.30),
+                      size: 98.30.w,
                       color: snapshot.hasData
                           ? ColorConstants.TOP_CLIPPER_START
                           : ColorConstants.INVALID_TEXTFIELD,
@@ -400,32 +390,6 @@ class UIHelper {
                   ],
                 ),
               ),
-
-/*               DropdownButton<String>(
-                
-                icon: Icon(
-                  Icons.arrow_drop_down,
-                  size: 36,
-                  color: snapshot.hasData
-                      ? ColorConstants.TOP_CLIPPER_START
-                      : ColorConstants.INVALID_TEXTFIELD,
-                ),
-                value: snapshot.hasData ? snapshot.data : list[0],
-                isExpanded: true,
-                underline: Container(),
-                style: TextStyle(
-                    color: snapshot.hasData
-                        ? ColorConstants.TOP_CLIPPER_START
-                        : ColorConstants.INVALID_TEXTFIELD,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    letterSpacing: 1.2,
-                    wordSpacing: 4),
-                onChanged: changed,
-                items: list.map((data) {
-                  return DropdownMenuItem(value: data, child: Text(data));
-                }).toList(),
-              ), */
             ),
           );
         });
@@ -499,16 +463,16 @@ class UIHelper {
                                       .transparent //ColorConstants.TOP_CLIPPER_START
                                   )),
                           hintStyle: TextStyle(
-                              fontSize: ScreenUtil().setSp(43.69),
+                              fontSize: 43.69.sp,
                               fontWeight: FontWeight.w400,
                               color: ColorConstants.INVALID_TEXTFIELD),
                           errorStyle: TextStyle(
-                              fontSize: ScreenUtil().setSp(30),
+                              fontSize: 30.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.white),
                         ),
                         style: TextStyle(
-                          fontSize: ScreenUtil().setSp(40.9599),
+                          fontSize: 40.9599.sp,
                           fontWeight: FontWeight.w400,
                           color: Colors.white70,
                         ),
@@ -601,16 +565,16 @@ class UIHelper {
                                         .transparent //ColorConstants.TOP_CLIPPER_START
                                     )),
                             hintStyle: TextStyle(
-                                fontSize: ScreenUtil().setSp(43.69),
+                                fontSize: 43.69.sp,
                                 fontWeight: FontWeight.w400,
                                 color: ColorConstants.INVALID_TEXTFIELD),
                             errorStyle: TextStyle(
-                                fontSize: ScreenUtil().setSp(30),
+                                fontSize: 30.sp,
                                 fontWeight: FontWeight.w400,
                                 color: Colors.white),
                           ),
                           style: TextStyle(
-                            fontSize: ScreenUtil().setSp(40.9599),
+                            fontSize: 40.9599.sp,
                             fontWeight: FontWeight.w400,
                             color: Colors.white70,
                           ),
@@ -725,8 +689,7 @@ class UIHelper {
         width: w,
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          borderRadius:
-              new BorderRadius.circular(ScreenUtil().setWidth(borderRadius)),
+          borderRadius: new BorderRadius.circular(borderRadius.w),
           gradient: isInactive
               ? LinearGradient(colors: [
                   ColorConstants.CONTROL_END,
@@ -784,7 +747,6 @@ class UIHelper {
 
   static Widget getCustomRadioButtonVertical(Stream<String> stream, String text,
       {String price = ''}) {
-    var util = ScreenUtil();
     return StreamBuilder<String>(
         stream: stream,
         builder: (context, snapshot) {
@@ -793,26 +755,24 @@ class UIHelper {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Container(
-                width: util.setWidth(65.5),
-                height: util.setWidth(65.5),
+                width: 65.5.w,
+                height: 65.5.w,
                 decoration: BoxDecoration(
                     color: isSelected
                         ? ColorConstants.TOP_CLIPPER_END
                         : Colors.white,
                     shape: BoxShape.circle,
                     border: Border.all(
-                        color: ColorConstants.TOP_CLIPPER_END,
-                        width: util.setWidth(5.46))),
+                        color: ColorConstants.TOP_CLIPPER_END, width: 5.46.w)),
                 child: isSelected
-                    ? Icon(Icons.check,
-                        color: Colors.white, size: util.setWidth(43.7))
+                    ? Icon(Icons.check, color: Colors.white, size: 43.7.w)
                     : Container(),
               ),
-              SizedBox(height: util.setHeight(19.3103448)),
+              SizedBox(height: 19.3103448.h),
               Text(
                 '$text$price',
                 style: TextStyle(
-                    fontSize: util.setSp(49.15),
+                    fontSize: 49.15.sp,
                     color: ColorConstants.TOP_CLIPPER_START),
               )
             ],
@@ -823,7 +783,6 @@ class UIHelper {
   static Widget getCustomRadioButtonHorizontal(
       Stream<String> stream, String text, String price,
       {String subtitle}) {
-    var _util = ScreenUtil();
     return StreamBuilder<String>(
         stream: stream,
         builder: (context, snapshot) {
@@ -832,22 +791,22 @@ class UIHelper {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
-                width: _util.setWidth(65.5),
-                height: _util.setWidth(65.5),
+                width: 65.5.w,
+                height: 65.5.w,
                 decoration: BoxDecoration(
                     color: isSelected
                         ? ColorConstants.TOP_CLIPPER_END
                         : Colors.white,
                     shape: BoxShape.circle,
                     border: Border.all(
-                        color: ColorConstants.TOP_CLIPPER_END,
-                        width: _util.setWidth(5.46))),
+                      color: ColorConstants.TOP_CLIPPER_END,
+                      width: 5.46.w,
+                    )),
                 child: isSelected
-                    ? Icon(Icons.check,
-                        color: Colors.white, size: _util.setWidth(43.7))
+                    ? Icon(Icons.check, color: Colors.white, size: 43.7.sp)
                     : Container(),
               ),
-              SizedBox(width: _util.setHeight(19.3103448)),
+              SizedBox(width: 19.3103448.h),
               Expanded(
                 flex: 7,
                 child: Column(
@@ -857,27 +816,27 @@ class UIHelper {
                     Text(
                       text,
                       style: TextStyle(
-                          fontSize: _util.setSp(49.15),
+                          fontSize: 49.15.sp,
                           color: ColorConstants.TOP_CLIPPER_START),
                     ),
                     subtitle != null
                         ? Text(
                             subtitle,
                             style: TextStyle(
-                                fontSize: _util.setSp(49.15),
+                                fontSize: 49.15.sp,
                                 color: ColorConstants.TOP_CLIPPER_END),
                           )
                         : Container()
                   ],
                 ),
               ),
-              SizedBox(width: _util.setHeight(19.3103448)),
+              SizedBox(width: 19.3103448.w),
               Expanded(
                 flex: 2,
                 child: Text(
                   price,
                   style: TextStyle(
-                      fontSize: _util.setSp(49.15),
+                      fontSize: 49.15.sp,
                       color: ColorConstants.TOP_CLIPPER_START),
                 ),
               ),
@@ -889,8 +848,6 @@ class UIHelper {
   static Widget getCustomCheckbox(
       Stream<List<String>> stream, String text, String price,
       {bool isVertical = false, String subtitle}) {
-    var _util = ScreenUtil();
-
     return StreamBuilder<List<String>>(
         stream: stream,
         builder: (context, snapshot) {
@@ -899,8 +856,8 @@ class UIHelper {
               ? Column(
                   children: <Widget>[
                     Container(
-                      width: _util.setWidth(65.5),
-                      height: _util.setWidth(65.5),
+                      width: 65.5.w,
+                      height: 65.5.w,
                       decoration: BoxDecoration(
                           color: isSelected
                               ? ColorConstants.TOP_CLIPPER_END
@@ -908,33 +865,31 @@ class UIHelper {
                           shape: BoxShape.rectangle,
                           border: Border.all(
                               color: ColorConstants.TOP_CLIPPER_END,
-                              width: _util.setWidth(5.46))),
+                              width: 5.46.w)),
                       child: isSelected
-                          ? Icon(Icons.check,
-                              color: Colors.white, size: _util.setWidth(43.7))
+                          ? Icon(Icons.check, color: Colors.white, size: 43.7.w)
                           : Container(),
                     ),
                     Text(
                       text,
                       style: TextStyle(
-                          fontSize: _util.setSp(49.15),
+                          fontSize: 49.15.sp,
                           color: ColorConstants.TOP_CLIPPER_START),
                     ),
                     Text(
                       price,
                       style: TextStyle(
-                          fontSize: _util.setSp(49.15),
+                          fontSize: 49.15.sp,
                           color: ColorConstants.TOP_CLIPPER_START),
                     ),
-                    SizedBox(height: _util.setHeight(38.62)),
+                    SizedBox(height: 38.62.h),
                     Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: _util.setWidth(43.69)),
+                      padding: EdgeInsets.symmetric(horizontal: 43.69.w),
                       child: Text(
                         subtitle ?? '',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: _util.setSp(49.15),
+                            fontSize: 49.15.sp,
                             color: ColorConstants.TOP_CLIPPER_END),
                       ),
                     ),
@@ -944,8 +899,8 @@ class UIHelper {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(
-                      width: _util.setWidth(65.5),
-                      height: _util.setWidth(65.5),
+                      width: 65.5.w,
+                      height: 65.5.w,
                       decoration: BoxDecoration(
                           color: isSelected
                               ? ColorConstants.TOP_CLIPPER_END
@@ -953,28 +908,28 @@ class UIHelper {
                           shape: BoxShape.rectangle,
                           border: Border.all(
                               color: ColorConstants.TOP_CLIPPER_END,
-                              width: _util.setWidth(5.46))),
+                              width: 5.46.w)),
                       child: isSelected
                           ? Icon(Icons.check,
-                              size: _util.setWidth(43.69), color: Colors.white)
+                              size: 43.69.w, color: Colors.white)
                           : Container(),
                     ),
-                    SizedBox(width: _util.setHeight(19.3103448)),
+                    SizedBox(width: 19.3103448.w),
                     Expanded(
                         flex: 7,
                         child: Text(
                           text,
                           style: TextStyle(
-                              fontSize: _util.setSp(49.15),
+                              fontSize: 49.15.sp,
                               color: ColorConstants.TOP_CLIPPER_START),
                         )),
-                    SizedBox(width: _util.setHeight(19.3103448)),
+                    SizedBox(width: 19.3103448.h),
                     Expanded(
                       flex: 2,
                       child: Text(
                         price,
                         style: TextStyle(
-                            fontSize: _util.setSp(49.15),
+                            fontSize: 49.15.sp,
                             color: ColorConstants.TOP_CLIPPER_START),
                       ),
                     ),
@@ -991,8 +946,6 @@ class UIHelper {
         return StreamBuilder<int>(
             stream: colorStream,
             builder: (context, snapshot) {
-              // // debugPrint('no of color grids ${snap.data.toString()}');
-              // // debugPrint('selected color ${snapshot.data.toString()}');
               return snap.hasData
                   ? SliverPadding(
                       padding: EdgeInsets.symmetric(
@@ -1005,7 +958,6 @@ class UIHelper {
                                 return callback(ListHelper.colorList()[index]);
                               },
                               child: Container(
-                                //TODO: need to avoid manual height
                                 height: 10,
                                 color: Color(ListHelper.colorList()[index]),
                                 child: snapshot.data ==
@@ -1097,19 +1049,14 @@ class UIHelper {
         SvgPicture.asset(
           imagePath,
           color: ColorConstants.SVG_ICON_COLOR,
-          width: ScreenUtil().setWidth(196),
-          height: ScreenUtil().setWidth(196),
+          width: 196.w,
+          height: 196.w,
         ),
-        // SvgPicture.asset(
-        //   imagePath,
-        //   new Size(80, 80),
-        // ),
-        SizedBox(height: ScreenUtil().setHeight(32)),
+        SizedBox(height: 32.h),
         Text(
           text,
           style: TextStyle(
-              color: ColorConstants.TEXT_COLOR,
-              fontSize: ScreenUtil().setSp(textSize)),
+              color: ColorConstants.TEXT_COLOR, fontSize: textSize.sp),
         ),
       ],
     );
@@ -1151,7 +1098,7 @@ class UIHelper {
         screnTitle,
         style: TextStyle(
             color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-            fontSize: ScreenUtil().setSp(60),
+            fontSize: 60.sp,
             fontWeight: FontWeight.w400),
       ),
       centerTitle: false,

@@ -37,7 +37,6 @@ class TopClipperControl extends StatefulWidget {
 enum DayState { YESTERDAY, TODAY, TOMORROW }
 
 class _TopClipperControlState extends State<TopClipperControl> {
-  ScreenUtil _util;
   var useMobileLayout;
   User _user;
   SelectedOBIdProvider _selectedOBIdProvider;
@@ -51,7 +50,6 @@ class _TopClipperControlState extends State<TopClipperControl> {
     _userProvider = Provider.of<UserProvider>(context);
     _user = _userProvider.authenticatedUser;
 
-    _util = ScreenUtil();
     var shortestSide = MediaQuery.of(context).size.shortestSide;
     useMobileLayout = shortestSide < 600;
 
@@ -70,38 +68,27 @@ class _TopClipperControlState extends State<TopClipperControl> {
       height: useMobileLayout
           ? MediaQuery.of(context).size.height * 0.45
           : MediaQuery.of(context).size.height *
-              0.6, //ScreenUtil().setHeight(990),
+              0.6,
       decoration: BoxDecoration(gradient: topGradientDark),
       child: Padding(
-        padding: EdgeInsets.fromLTRB(
-            0.0, //_util.setWidth(32),
-            0.0, //_util.setHeight(32),
-            0.0, //_util.setWidth(32),
-            _util.setHeight(32)),
+        padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 32.h),
         child: widget.scaffoldKey != null
             ? Column(
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.fromLTRB(
-                        _util.setWidth(16),
-                        0.0, //_util.setHeight(32),
-                        0.0, //_util.setWidth(32),
-                        _util.setHeight(32)),
+                    padding: EdgeInsets.fromLTRB(16.w, 0.0, 0.0, 32.h),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         InkWell(
                           onTap: () {
                             widget.scaffoldKey.currentState.openDrawer();
-                            // widget.innerDrawerKey.currentState.toggle();
+                            
                           },
                           child: Padding(
-                            padding: EdgeInsets.fromLTRB(
-                                _util.setWidth(32),
-                                _util.setHeight(32),
-                                _util.setWidth(32),
-                                _util.setHeight(32)),
+                            padding:
+                                EdgeInsets.fromLTRB(32.w, 32.h, 32.w, 32.h),
                             child: ImageIcon(
                               AssetImage(ImagePaths.icHamburger),
                               color: Colors.white,
@@ -109,16 +96,12 @@ class _TopClipperControlState extends State<TopClipperControl> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.fromLTRB(
-                              _util.setWidth(32),
-                              _util.setHeight(32),
-                              0.0, //_util.setWidth(32),
-                              _util.setHeight(32)),
+                          padding: EdgeInsets.fromLTRB(32.w, 32.h, 0.0, 32.h),
                           child: Text(
                             widget.title.toUpperCase(),
                             style: TextStyle(
                                 color: Colors.white,
-                                fontSize: ScreenUtil().setSp(48),
+                                fontSize: 48.sp,
                                 fontWeight: FontWeight.w400),
                           ),
                         ),
@@ -130,10 +113,10 @@ class _TopClipperControlState extends State<TopClipperControl> {
                     children: <Widget>[
                       Container(
                           padding: EdgeInsets.fromLTRB(
-                            ScreenUtil().setWidth(0.0),
-                            ScreenUtil().setHeight(0.0),
-                            ScreenUtil().setWidth(32.0),
-                            ScreenUtil().setHeight(0.0),
+                            0,
+                            0,
+                            32.w,
+                            0,
                           ),
                           child: _controlSummaryContainer()),
                     ],
@@ -144,7 +127,7 @@ class _TopClipperControlState extends State<TopClipperControl> {
                 widget.title.toUpperCase(),
                 style: TextStyle(
                     color: Colors.white,
-                    fontSize: ScreenUtil().setSp(48),
+                    fontSize: 48.sp,
                     fontWeight: FontWeight.w400),
               ),
       ),
@@ -162,7 +145,7 @@ class _TopClipperControlState extends State<TopClipperControl> {
               maxRadius: constraint.maxWidth / 4,
               backgroundColor: ColorConstants.WEATHER_BKG_CIRCLE,
               child: Container(
-                margin: EdgeInsets.only(left: ScreenUtil().setWidth(64.0)),
+                margin: EdgeInsets.only(left: 64.w),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -194,9 +177,7 @@ class _TopClipperControlState extends State<TopClipperControl> {
           Align(
             alignment: Alignment.center,
             child: Container(
-              margin: EdgeInsets.only(top: ScreenUtil().setHeight(24)),
-              // height: constraint.maxWidth / 1.5,
-              // color: Colors.red,
+              margin: EdgeInsets.only(top: 24.h),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
@@ -224,17 +205,6 @@ class _TopClipperControlState extends State<TopClipperControl> {
     );
   }
 
-  // Widget _solarBatteryDataWidgetFuture(double d) {
-  //   return FutureBuilder<FakeData>(
-  //       future: widget.fakeDataProvider.getFakeData(),
-  //       // initialData: stormGlassDataProvider.weatherDataToday,
-  //       builder: (context, snapshot) {
-  //         return snapshot.hasData
-  //             ? _solarBatteryDataColumn(snapshot.data, d)
-  //             : Center(child: CircularProgressIndicator());
-  //       });
-  // }
-
 // int degree = 0x00B0;
   _solarBatteryDataColumn(ControlData data, double d) {
     if (data.insideTemperature == null)
@@ -243,8 +213,7 @@ class _TopClipperControlState extends State<TopClipperControl> {
           child: Text(
             AppStrings.noData,
             style: TextStyle(
-                fontSize: _util.setWidth(48),
-                color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
+                fontSize: 48.w, color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
           ),
         ),
       );
@@ -257,7 +226,7 @@ class _TopClipperControlState extends State<TopClipperControl> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
+          padding: EdgeInsets.all(32.w),
           child: SvgPicture.asset(
             ImagePaths.svgSoalrBattery,
             color: Colors.white,
@@ -269,29 +238,18 @@ class _TopClipperControlState extends State<TopClipperControl> {
         Text(
           AppStrings.solarBatteryTitle,
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: ScreenUtil().setSp(36)),
+          style: TextStyle(fontSize: 36.sp),
         ),
         Padding(
-          padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
+          padding: EdgeInsets.all(32.w),
           child: Text(
             '$_solarBatteryLevel%',
-            style: TextStyle(fontSize: ScreenUtil().setSp(108)),
+            style: TextStyle(fontSize: 108.sp),
           ),
         ),
       ],
     );
   }
-
-  // Widget _cameraDataWidgetFuture(double d) {
-  //   return FutureBuilder<FakeData>(
-  //       future: widget.fakeDataProvider.getFakeData(),
-  //       // initialData: stormGlassDataProvider.weatherDataToday,
-  //       builder: (context, snapshot) {
-  //         return snapshot.hasData
-  //             ? _cameraDataColumn(snapshot.data, d)
-  //             : Center(child: CircularProgressIndicator());
-  //       });
-  // }
 
   _cameraDataColumn(ControlData data, double d) {
     if (data == null)
@@ -300,8 +258,7 @@ class _TopClipperControlState extends State<TopClipperControl> {
           child: Text(
             AppStrings.noData,
             style: TextStyle(
-                fontSize: _util.setWidth(48),
-                color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
+                fontSize: 48.w, color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
           ),
         ),
       );
@@ -315,7 +272,7 @@ class _TopClipperControlState extends State<TopClipperControl> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.all(ScreenUtil().setWidth(16)),
+            padding: EdgeInsets.all(16.w),
             child: SvgPicture.asset(
               ImagePaths.svgCamera,
               // fit: BoxFit.scaleDown,
@@ -327,23 +284,13 @@ class _TopClipperControlState extends State<TopClipperControl> {
           Text(
             AppStrings.cameras,
             style: TextStyle(
-              fontSize: ScreenUtil().setSp(48),
+              fontSize: 48.sp,
             ),
           ),
         ],
       ),
     );
   }
-
-  // Widget _lightingDataWidgetFuture(double d) {
-  //   return FutureBuilder<FakeData>(
-  //       future: widget.fakeDataProvider.getFakeData(),
-  //       builder: (context, snapshot) {
-  //         return snapshot.hasData
-  //             ? _lightingColumn(snapshot.data, d) //movieGrid(snapshot.data)
-  //             : Center(child: CircularProgressIndicator());
-  //       });
-  // }
 
   _lightingColumn(ControlData data, double d) {
     if (data == null)
@@ -352,27 +299,13 @@ class _TopClipperControlState extends State<TopClipperControl> {
           child: Text(
             AppStrings.noData,
             style: TextStyle(
-                fontSize: _util.setWidth(48),
-                color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
+                fontSize: 48.w, color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
           ),
         ),
       );
 
     return InkWell(
       onTap: () async {
-        // if (_user.lightiningScenes.length > 0) {
-        //   PopUpHelpers.showPopup(
-        //       context, LightingPopupContent(), 'Lighting Screen');
-        // } else {
-        //   SeaPod seaPod = await _oceanBuilderProvider.getSeaPod(
-        //       _selectedOBIdProvider.selectedObId, _userProvider);
-        //   OceanBuilderUser _oceanBuilderUser = seaPod.activeUser;
-        //   Navigator.of(context).pushNamed(LightingScreen.routeName,
-        //       arguments: LightingScreenParams(
-        //           _oceanBuilderUser, _userProvider, null) //_oceanBuilderUser
-        //       );
-        // }
-
         SeaPod seaPod = await _oceanBuilderProvider.getSeaPod(
             _selectedOBIdProvider.selectedObId, _userProvider);
         if (seaPod == null) {
@@ -389,8 +322,7 @@ class _TopClipperControlState extends State<TopClipperControl> {
         } else {
           Navigator.of(context).pushNamed(LightingScreen.routeName,
               arguments: LightingScreenParams(_oceanBuilderUser, _userProvider,
-                  _selectedOBIdProvider, null) //_oceanBuilderUser
-              );
+                  _selectedOBIdProvider, null));
         }
       },
       child: Stack(
@@ -406,7 +338,7 @@ class _TopClipperControlState extends State<TopClipperControl> {
             child: CircleAvatar(
               backgroundColor:
                   Colors.transparent, // ColorConstants.CONTROL_END,
-              radius: _util.setWidth(296),
+              radius: 296.w,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -426,20 +358,20 @@ class _TopClipperControlState extends State<TopClipperControl> {
             left: 0,
             right: 0,
             child: Padding(
-              padding: EdgeInsets.all(_util.setWidth(48)),
+              padding: EdgeInsets.all(48.w),
               child: CircularText(
                 children: [
                   TextItem(
                       text: Text(
                         'L I G H T I N G', //AppStrings.lighting,
                         style: TextStyle(
-                          fontSize: _util.setSp(96),
+                          fontSize: 96.sp,
                         ),
                       ),
                       startAngle: 160,
                       direction: CircularTextDirection.anticlockwise)
                 ],
-                radius: _util.setWidth(256),
+                radius: 256.w,
                 position: CircularTextPosition.outside,
               ),
             ),
