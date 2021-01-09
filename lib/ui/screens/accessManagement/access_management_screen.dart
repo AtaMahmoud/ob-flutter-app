@@ -73,13 +73,16 @@ class _AccessManagementScreenState extends State<AccessManagementScreen> {
 
   Future<AccessEvents> _accessEventsFuture;
 
+  // UserProvider userProvider;
+
   @override
   void initState() {
     UIHelper.setStatusBarColor(color: AppTheme.nearlyWhite);
-    // Future.delayed(Duration.zero).then((_) {
-    //   _accessEventsFuture =
-    //       Provider.of<UserProvider>(context).getAccessEvents();
-    // });
+    Future.delayed(Duration.zero).then((_) {
+      _accessEventsFuture =
+          Provider.of<UserProvider>(context).getAccessEvents();
+      // _accessEventsFuture = userProvider.getAccessEvents();
+    });
     super.initState();
     _firstNameController = TextEditingController(text: '');
     _emailController = TextEditingController(text: '');
@@ -132,18 +135,24 @@ class _AccessManagementScreenState extends State<AccessManagementScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    // _accessEventsFuture = Provider.of<UserProvider>(context).getAccessEvents();
+  }
+
+  @override
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
     _oceanBuilderProvider = Provider.of<OceanBuilderProvider>(context);
 
-    final UserProvider userProvider = Provider.of<UserProvider>(context);
-    _accessEventsFuture = userProvider.getAccessEvents();
+    // _accessEventsFuture = userProvider.getAccessEvents();
 /*     if (userProvider.authenticatedUser != null) {
       userProvider
           .resetAuthenticatedUser(userProvider.authenticatedUser.userID);
     } */
 
-    _user = userProvider.authenticatedUser;
+    _user = Provider.of<UserProvider>(context).authenticatedUser;
     _util = ScreenUtil();
     return _mainContent();
   }
@@ -607,13 +616,28 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
   UserProvider _userProvider;
 
   @override
-  Widget build(BuildContext context) {
-    _oceanBuilderProvider = Provider.of<OceanBuilderProvider>(context);
-    _userProvider = Provider.of<UserProvider>(context);
+  void initState() {
+    super.initState();
+    // Future.delayed(Duration.zero).then((value) {
+    //   _userProvider = Provider.of<UserProvider>(context);
+    //   _oceanBuilderProvider = Provider.of<OceanBuilderProvider>(context);
+    //   _oceanBuildeFuture =
+    //       _oceanBuilderProvider.getSeaPod(widget.obId, _userProvider);
+    // });
+  }
 
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    _userProvider = Provider.of<UserProvider>(context);
+    _oceanBuilderProvider = Provider.of<OceanBuilderProvider>(context);
     _oceanBuildeFuture =
         _oceanBuilderProvider.getSeaPod(widget.obId, _userProvider);
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return _accessorItemsFuture();
   }
 
@@ -625,6 +649,8 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
           // debugPrint('FutureBuilder<SeaPod> -- ${snapshot.data.obName}');
           // else
           // debugPrint('FutureBuilder<SeaPod> -- ${snapshot.hasData}');
+          print(
+              'obfuture sate ----------------------------------${snapshot.connectionState.toString()}');
           return snapshot.hasData
               ? _obUserListWidget(snapshot.data)
               :

@@ -414,7 +414,7 @@ class _OBSelectionScreenWidgetModalState
         0)) {
       Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
     } else {
-      Navigator.of(context, rootNavigator: true).pop();
+      Navigator.of(context, rootNavigator: false).pop();
     }
   }
 

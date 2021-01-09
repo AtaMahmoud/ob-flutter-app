@@ -1139,6 +1139,7 @@ class UserProvider extends BaseProvider {
 
     Map<String, dynamic> userDataMap = {
       'email': user.email,
+      'type': user.userType,
       'permissionSetId': permissionSetId
     };
 
@@ -2057,12 +2058,11 @@ class UserProvider extends BaseProvider {
 
     try {
       final Response response = await _apiBaseHelper.put(
-          url: APP_CONFIG.Config.SET_WEATHER_SOURCE(weatherSource),
-          headers: _headerManager.authUserHeaders,
-          );
+        url: APP_CONFIG.Config.SET_WEATHER_SOURCE(weatherSource),
+        headers: _headerManager.authUserHeaders,
+      );
 
-      if (response != null &&
-          response.statusCode == 200) {
+      if (response != null && response.statusCode == 200) {
         // debugPrint('Set Weather Source  data ----------- $lightingSceneUpdateResponse');
         responseStatus.status = 200;
       } else {
