@@ -6,6 +6,7 @@ import 'package:ocean_builder/core/providers/fake_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/core/singletons/headers_manager.dart';
 import 'package:ocean_builder/helper/method_helper.dart';
+import 'package:ocean_builder/route_info/router_manager.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
 import 'package:ocean_builder/ui/screens/menu/landing_screen.dart';
 import 'package:ocean_builder/ui/screens/profile/profile_screen.dart';
@@ -98,13 +99,14 @@ class _SplashScreenState extends State<SplashScreen> {
         // await userProvider.autoAuthenticate().then((onValue) {
         await userProvider.autoLogin().then((onValue) async {
           if (userProvider.authenticatedUser == null) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => LandingScreen(),
-                  settings: RouteSettings(name: LandingScreen.routeName)),
-              (Route<dynamic> route) => false,
-            );
+            // Navigator.pushAndRemoveUntil(
+            //   context,
+            //   MaterialPageRoute(
+            //       builder: (context) => LandingScreen(),
+            //       settings: RouteSettings(name: LandingScreen.routeName)),
+            //   (Route<dynamic> route) => false,
+            // );
+            RoutePageManager.of(context).openMainMenu();
           } else {
             await MethodHelper.selectOnlyOBasSelectedOB();
             MethodHelper.parseNotifications(context);
@@ -116,24 +118,26 @@ class _SplashScreenState extends State<SplashScreen> {
               Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
             } else {
               // Navigator.of(context).pushReplacementNamed(ProfileScreen.routeName);
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ProfileScreen(),
-                    settings: RouteSettings(name: ProfileScreen.routeName)),
-                (Route<dynamic> route) => false,
-              );
+              // Navigator.pushAndRemoveUntil(
+              //   context,
+              //   MaterialPageRoute(
+              //       builder: (context) => ProfileScreen(),
+              //       settings: RouteSettings(name: ProfileScreen.routeName)),
+              //   (Route<dynamic> route) => false,
+              // );
+
             }
           }
         }).catchError((e) {
-          // // print(e);
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => LandingScreen(),
-                settings: RouteSettings(name: LandingScreen.routeName)),
-            (Route<dynamic> route) => false,
-          );
+          print(e);
+          // Navigator.pushAndRemoveUntil(
+          //   context,
+          //   MaterialPageRoute(
+          //       builder: (context) => LandingScreen(),
+          //       settings: RouteSettings(name: LandingScreen.routeName)),
+          //   (Route<dynamic> route) => false,
+          // );
+          RoutePageManager.of(context).openMainMenu();
         });
       }
     }
