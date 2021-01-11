@@ -15,7 +15,7 @@ class RoutePageManager extends ChangeNotifier {
 
   final List<Page> _pages = [
     MaterialPage(
-      child:SplashScreen(),// MainScreen(),
+      child: SplashScreen(), // MainScreen(),
       key: const Key('MainScreen'),
       name: SplashScreen.routeName,
     ),
@@ -26,22 +26,27 @@ class RoutePageManager extends ChangeNotifier {
   }
 
   void didPop(Page page) {
-    _pages.remove(page);
-    notifyListeners();
+    // _pages.remove(page);
+    // notifyListeners();
+    if (_pages.isNotEmpty) {
+      if (_pages.last == page) {
+        _pages.remove(page);
+        notifyListeners();
+      }
+    }
   }
 
   /// This is where we handle new route information and manage the pages list
   Future<void> setNewRoutePath(TheAppPath configuration) async {
-    if(configuration.isMainMenu){
-            _pages.add(
+    if (configuration.isMainMenu) {
+      _pages.add(
         MaterialPage(
           child: LandingScreen(),
           key: UniqueKey(),
           name: LandingScreen.routeName,
         ),
       );
-    }
-    else if (configuration.isUnknown) {
+    } else if (configuration.isUnknown) {
       // Handling 404
       _pages.add(
         MaterialPage(
@@ -73,7 +78,7 @@ class RoutePageManager extends ChangeNotifier {
     setNewRoutePath(TheAppPath.details(_pages.length));
   }
 
-  void openMainMenu(){
+  void openMainMenu() {
     setNewRoutePath(TheAppPath.mainMenu());
   }
 

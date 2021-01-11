@@ -41,8 +41,7 @@ class _LandingScreenState extends State<LandingScreen> {
     GlobalContext.currentScreenContext = context;
     // return customDrawer(_innerDrawerKey, _currentScreen());
     userProvider = Provider.of<UserProvider>(context);
-
-    return _currentScreen();
+    return WillPopScope(child: _currentScreen(), onWillPop: () async => false);
   }
 
   _currentScreen() {

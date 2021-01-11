@@ -25,8 +25,8 @@ class RouterDelegateOB extends RouterDelegate<TheAppPath>
             key: navigatorKey,
             onPopPage: _onPopPage,
             pages: List.of(pageManager.pages),
-          initialRoute: obRoute.initialRoute,
-          onGenerateRoute: obRoute.Router.generateRoute,
+            initialRoute: obRoute.initialRoute,
+            onGenerateRoute: obRoute.Router.generateRoute,
           );
         },
       ),
@@ -55,5 +55,4 @@ class RouterDelegateOB extends RouterDelegate<TheAppPath>
   Future<void> setNewRoutePath(TheAppPath configuration) async {
     await pageManager.setNewRoutePath(configuration);
   }
-
 }
