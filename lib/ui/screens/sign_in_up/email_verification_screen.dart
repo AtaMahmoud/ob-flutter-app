@@ -8,7 +8,6 @@ import 'package:ocean_builder/core/providers/design_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper_2.dart';
-import 'package:ocean_builder/ui/screens/sign_in_up/email_verification_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/login_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/set_password_screen.dart';
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
@@ -17,24 +16,18 @@ import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 
-class YourInfoScreen extends StatefulWidget {
-  static const String routeName = '/yourInfo';
+class EmailVerificationScreen extends StatefulWidget {
+  static const String routeName = '/emailVerification';
 
   @override
-  _YourInfoScreenState createState() => _YourInfoScreenState();
+  _EmailVerificationScreenState createState() =>
+      _EmailVerificationScreenState();
 }
 
-class _YourInfoScreenState extends State<YourInfoScreen> {
-  TextEditingController _firstNameController,
-      _lastNameController,
-      _emailController,
-      _phoneController;
+class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   ScrollController _controller = ScrollController();
 
-  FocusNode _firstNameNode = FocusNode();
-  FocusNode _lastNameNode = FocusNode();
-  FocusNode _emailNode = FocusNode();
   FocusNode _phoneNode = FocusNode();
 
   RegistrationValidationBloc _bloc = RegistrationValidationBloc();
@@ -45,10 +38,6 @@ class _YourInfoScreenState extends State<YourInfoScreen> {
   @override
   void initState() {
     super.initState();
-    _firstNameController = TextEditingController(text: '');
-    _lastNameController = TextEditingController(text: '');
-    _emailController = TextEditingController(text: '');
-    _phoneController = TextEditingController(text: '');
     _setUserDataListener();
 
     _phoneNode.addListener(() {
@@ -58,12 +47,6 @@ class _YourInfoScreenState extends State<YourInfoScreen> {
       }
     });
 
-    _emailNode.addListener(() {
-      if (_emailNode.hasFocus) {
-        _controller.animateTo(100,
-            duration: Duration(milliseconds: 500), curve: Curves.ease);
-      }
-    });
   }
 
   _setUserDataListener() {
@@ -91,13 +74,6 @@ class _YourInfoScreenState extends State<YourInfoScreen> {
   @override
   void dispose() {
     super.dispose();
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    _firstNameNode.dispose();
-    _lastNameNode.dispose();
-    _emailNode.dispose();
     _phoneNode.dispose();
     _controller.dispose();
     _bloc.dispose();
@@ -128,17 +104,13 @@ class _YourInfoScreenState extends State<YourInfoScreen> {
                 SliverList(
                     delegate: SliverChildListDelegate([
                   SpaceH48(),
-                  _inputFirstName(context),
+                  _title(),
                   SpaceH48(),
-                  _inputLastName(context),
+                  _emailConfirmationText1(),
                   SpaceH48(),
-                  _inputEmail(context),
+                  _emailConfirmationText2(),
                   SpaceH48(),
-                  _dropdownCountry(),
-                  SpaceH48(),
-                  _inputPhone(context),
                 ])),
-                _buttonAlreadyMember(),
                 _endSpace(),
               ],
             ),
@@ -160,102 +132,13 @@ class _YourInfoScreenState extends State<YourInfoScreen> {
 
   Positioned _topBar() {
     return Positioned(
-        top: 0, left: 0, right: 0, child: Appbar(ScreenTitle.YOUR_INFO));
+        top: 0,
+        left: 0,
+        right: 0,
+        child: Appbar(ScreenTitle.EMAIL_CONFIRMATION));
   }
 
   _endSpace() => UIHelper.getTopEmptyContainer(330.h, false);
-
-  SliverToBoxAdapter _buttonAlreadyMember() {
-    return SliverToBoxAdapter(
-      child: Container(
-        padding: EdgeInsets.only(
-            top: 48.0, //util.setHeight(64),
-            right: 16.0,
-            bottom: 16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            InkWell(
-              onTap: () {
-                goToLogInPageFromInfo();
-              },
-              child: Text(
-                'ALREADY A MEMBER ?',
-                style: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    color: ColorConstants.PROFILE_BKG_1),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _inputPhone(BuildContext context) {
-    return UIHelper.getRegistrationTextField(
-        context,
-        _bloc.phone,
-        _bloc.phoneChanged,
-        TextFieldHints.PHONE,
-        _phoneController,
-        InputTypes.NUMBER,
-        null,
-        true,
-        TextInputAction.done,
-        _phoneNode,
-        null);
-  }
-
-  Widget _dropdownCountry() {
-    return UIHelper.getCountryDropdown(
-        ListHelper.getCountryList(), _bloc.country, _bloc.countryChanged, true);
-  }
-
-  Widget _inputEmail(BuildContext context) {
-    return UIHelper.getRegistrationTextField(
-        context,
-        _bloc.email,
-        _bloc.emailChanged,
-        TextFieldHints.ENTER_EMAIL,
-        _emailController,
-        InputTypes.EMAIL,
-        null,
-        true,
-        TextInputAction.next,
-        _emailNode,
-        () => FocusScope.of(context).requestFocus(_phoneNode));
-  }
-
-  Widget _inputLastName(BuildContext context) {
-    return UIHelper.getRegistrationTextField(
-        context,
-        _bloc.lastName,
-        _bloc.lastNameChanged,
-        TextFieldHints.LAST_NAME,
-        _lastNameController,
-        null,
-        null,
-        true,
-        TextInputAction.next,
-        _lastNameNode,
-        () => FocusScope.of(context).requestFocus(_emailNode));
-  }
-
-  Widget _inputFirstName(BuildContext context) {
-    return UIHelper.getRegistrationTextField(
-        context,
-        _bloc.firstName,
-        _bloc.firstNameChanged,
-        TextFieldHints.FIRST_NAME,
-        _firstNameController,
-        null,
-        null,
-        true,
-        TextInputAction.next,
-        _firstNameNode,
-        () => FocusScope.of(context).requestFocus(_lastNameNode));
-  }
 
   _startSpace() => UIHelper.getTopEmptyContainer(500.h, false);
 
@@ -292,10 +175,41 @@ class _YourInfoScreenState extends State<YourInfoScreen> {
       return;
     } else {
       userDataProvider.user = _user;
-      // Navigator.of(context)
-      //     .pushNamed(PasswordScreen.routeName, arguments: true);
-            Navigator.of(context)
-          .pushNamed(EmailVerificationScreen.routeName);
+      Navigator.of(context)
+          .pushNamed(PasswordScreen.routeName, arguments: true);
     }
+  }
+
+  _title() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 48.w),
+      child: Text(
+        AppStrings.checkYourInbox,
+        style: TextStyle(
+            color: ColorConstants.WEATHER_MORE_ICON_COLOR, fontSize: 48.sp),
+      ),
+    );
+  }
+
+  _emailConfirmationText1() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 48.w),
+      child: Text(
+        AppStrings.confirmEmailText1,
+        style: TextStyle(
+            color: ColorConstants.WEATHER_MORE_ICON_COLOR, fontSize: 40.sp),
+      ),
+    );
+  }
+
+  _emailConfirmationText2() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 48.w),
+      child: Text(
+        AppStrings.confirmEmailText2,
+        style: TextStyle(
+            color: ColorConstants.WEATHER_MORE_ICON_COLOR, fontSize: 40.sp),
+      ),
+    );
   }
 }

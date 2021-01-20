@@ -225,6 +225,7 @@ class ScreenTitle {
   static const DECK_FLOOR_FINISH_MATERIALS = 'Deck Floor Finish Materials';
   static const MAKE_A_DEPOSIT = 'Make a deposit';
   static const YOUR_INFO = 'Your info';
+  static const EMAIL_CONFIRMATION = 'Email Confirmation';
   static const GUEST_REQUEST = 'Guest Request';
   static const INVITATION_REQUEST = 'Access Invitation';
   static const YOUR_OBS = 'Your SeaPods';
@@ -1244,6 +1245,13 @@ class AppStrings {
   static String humidity = 'Humidity';
 
   static String chanceOfRain = 'Chance of Rain';
+
+  static String checkYourInbox = 'Check your inbox';
+
+  static String confirmEmailText1 = 'We have sent you an email with a link that will allow you to finish your account setup.';
+
+  static String confirmEmailText2 = 'Alternatively, you can enter the code provided in the email here';
+
 }
 
 class NotificationConstants {
