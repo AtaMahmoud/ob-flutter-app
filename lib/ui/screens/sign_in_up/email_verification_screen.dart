@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,6 +16,7 @@ import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
 import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
@@ -35,6 +38,15 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   UserProvider userProvider;
   DesignDataProvider designDataProvider;
 
+    final formKey = GlobalKey<FormState>();
+  bool hasError = false;
+
+  TextEditingController textEditingController = TextEditingController();
+
+  StreamController<ErrorAnimationType> errorController;
+
+  String currentText = "";
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +58,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
             duration: Duration(milliseconds: 500), curve: Curves.ease);
       }
     });
+
+    errorController = StreamController<ErrorAnimationType>();
 
   }
 
@@ -77,6 +91,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     _phoneNode.dispose();
     _controller.dispose();
     _bloc.dispose();
+    errorController.close();
   }
 
   @override
@@ -110,6 +125,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   SpaceH48(),
                   _emailConfirmationText2(),
                   SpaceH48(),
+                  _authenticationCode()
                 ])),
                 _endSpace(),
               ],
@@ -212,4 +228,80 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       ),
     );
   }
+
+    _authenticationCode(){
+    return Form(
+                key: formKey,
+                child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: 16.h, horizontal: 128.w),
+                    child: PinCodeTextField(
+                      appContext: context,
+                      pastedTextStyle: TextStyle(
+                        color: ColorConstants.BCKG_COLOR_END,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      length: 4,
+                      obscureText: false,
+                      obscuringCharacter: '*',
+                      animationType: AnimationType.fade,
+                      // validator: (v) {
+                      //   if (v.length < 3) {
+                      //     return "I'm from validator";
+                      //   } else {
+                      //     return null;
+                      //   }
+                      // },
+                      pinTheme: PinTheme(
+                        shape: PinCodeFieldShape.box,
+                        borderRadius: BorderRadius.circular(8),
+                        fieldHeight: 70,
+                        fieldWidth: 60,
+                        activeColor: ColorConstants.ACCESS_MANAGEMENT_HINT,
+                        activeFillColor:
+                            hasError ? Colors.red : Colors.white,
+                        inactiveColor: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
+                        inactiveFillColor: Colors.white,
+                        selectedColor: ColorConstants.ACCESS_MANAGEMENT_LIST_TITLE,
+                        selectedFillColor: Colors.white,
+                        // borderWidth: 4,
+                        disabledColor: Colors.grey     
+                      ),
+                      cursorColor: ColorConstants.ACCESS_MANAGEMENT_HINT,
+                      animationDuration: Duration(milliseconds: 300),
+                      textStyle: TextStyle(fontSize: 48,),
+                      backgroundColor: Color(0xFFFEFEFE),
+                      enableActiveFill: true,
+                      errorAnimationController: errorController,
+                      controller: textEditingController,
+                      keyboardType: TextInputType.text,
+                      // boxShadows: [
+                      //   BoxShadow(
+                      //     offset: Offset(0, 1),
+                      //     color: Colors.black12,
+                      //     blurRadius: 10,
+                      //   )
+                      // ],
+                      onCompleted: (v) {
+                        print("Completed");
+                      },
+                      // onTap: () {
+                      //   print("Pressed");
+                      // },
+                      onChanged: (value) {
+                        print(value);
+                        setState(() {
+                          currentText = value;
+                        });
+                      },
+                      beforeTextPaste: (text) {
+                        print("Allowing to paste $text");
+                        //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
+                        //but you can show anything you want here, like your pop up saying wrong paste format or etc
+                        return true;
+                      },
+                    )),
+              );
+  }
+
 }
