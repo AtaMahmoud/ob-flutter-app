@@ -97,6 +97,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    initPlatformStateForUriDeepLinks();
   
   GlobalListeners.listener = DataConnectionChecker().onStatusChange.listen((status) {
     switch (status) {
@@ -136,8 +137,8 @@ class _MyAppState extends State<MyApp> {
                     //   title: new Text('${item.key}'),
                     //   trailing: new Text('${item.value?.join(', ')}'),
                     // );
-                    print('${item.key}');
-                    print('${item.value?.join(', ')}');
+                    print('key ---- ${item.key}');
+                    print('value ----- ${item.value?.join(', ')}');
                   })?.toList();
 
     return MultiProvider(
@@ -216,7 +217,7 @@ void dispose() {
   super.dispose();
 }
 
-  Future<void> initPlatformStateForUriUniLinks() async {
+  Future<void> initPlatformStateForUriDeepLinks() async {
     // Attach a listener to the Uri links stream
     _sub = getUriLinksStream().listen((Uri uri) {
       if (!mounted) return;
@@ -260,6 +261,7 @@ void dispose() {
     if (!mounted) return;
 
     setState(() {
+      debugPrint('set state with latest uri   $_latestUri and latest link  $_latestLink');
       _latestUri = _initialUri;
       _latestLink = _initialLink;
     });
