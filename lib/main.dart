@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' as service;
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ocean_builder/configs/config_reader.dart';
 import 'package:ocean_builder/core/notification/firebase_notification_handler.dart';
@@ -28,6 +31,7 @@ import 'package:provider/provider.dart';
 
 import 'constants/constants.dart';
 import 'core/providers/device_type_provider.dart';
+import 'package:uni_links/uni_links.dart';
 
 
 // Future<void> main() async {
@@ -84,6 +88,11 @@ class _MyAppState extends State<MyApp> {
   // static FirebaseAnalytics analytics = FirebaseAnalytics();
   // static FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
 
+  String _initialLink;
+  Uri _initialUri;
+  String _latestLink = 'Unknown';
+  Uri _latestUri;
+  StreamSubscription _sub;
 
   @override
   void initState() {
@@ -119,6 +128,18 @@ class _MyAppState extends State<MyApp> {
     ]);
 
    UIHelper.setStatusBarColor(color:ColorConstants.TOP_CLIPPER_START);
+
+   final queryParams = _latestUri?.queryParametersAll?.entries?.toList();
+
+   queryParams?.map((item) {
+                    // return new ListTile(
+                    //   title: new Text('${item.key}'),
+                    //   trailing: new Text('${item.value?.join(', ')}'),
+                    // );
+                    print('${item.key}');
+                    print('${item.value?.join(', ')}');
+                  })?.toList();
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -191,7 +212,63 @@ class _MyAppState extends State<MyApp> {
 void dispose() {
   // _listener.cancel();
   GlobalListeners.listener.cancel();
+  if (_sub != null) _sub.cancel();
   super.dispose();
 }
 
+  Future<void> initPlatformStateForUriUniLinks() async {
+    // Attach a listener to the Uri links stream
+    _sub = getUriLinksStream().listen((Uri uri) {
+      if (!mounted) return;
+      setState(() {
+        _latestUri = uri;
+        _latestLink = uri?.toString() ?? 'Unknown';
+      });
+    }, onError: (Object err) {
+      if (!mounted) return;
+      setState(() {
+        _latestUri = null;
+        _latestLink = 'Failed to get latest link: $err.';
+      });
+    });
+
+    // Attach a second listener to the stream
+    getUriLinksStream().listen((Uri uri) {
+      print('got uri: ${uri?.path} ${uri?.queryParametersAll}');
+    }, onError: (Object err) {
+      print('got err: $err');
+    });
+
+    // Get the latest Uri
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      _initialUri = await getInitialUri();
+      print('initial uri: ${_initialUri?.path}'
+          ' ${_initialUri?.queryParametersAll}');
+      _initialLink = _initialUri?.toString();
+    } on PlatformException {
+      _initialUri = null;
+      _initialLink = 'Failed to get initial uri.';
+    } on FormatException {
+      _initialUri = null;
+      _initialLink = 'Bad parse the initial link as Uri.';
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      _latestUri = _initialUri;
+      _latestLink = _initialLink;
+    });
+  }
+
 }
+
+/*
+
+/usr/bin/xcrun simctl openurl booted "ss://ob.com/auth/verify/?uid=123&token=abc1"
+
+*/
