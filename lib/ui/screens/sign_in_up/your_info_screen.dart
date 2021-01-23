@@ -292,10 +292,8 @@ class _YourInfoScreenState extends State<YourInfoScreen> {
       return;
     } else {
       userDataProvider.user = _user;
-      // Navigator.of(context)
-      //     .pushNamed(PasswordScreen.routeName, arguments: true);
-            Navigator.of(context)
-          .pushNamed(EmailVerificationScreen.routeName);
+      Navigator.of(context)
+          .pushNamed(PasswordScreen.routeName, arguments: true);
     }
   }
 }

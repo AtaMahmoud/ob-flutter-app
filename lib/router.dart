@@ -272,6 +272,7 @@ class Router {
             builder: (_) => YourInfoScreen(),
             settings: RouteSettings(name: YourInfoScreen.routeName));
       case EmailVerificationScreen.routeName:
+      final EmailVerificationData data = settings.arguments;
         return CupertinoPageRoute(
             builder: (_) => EmailVerificationScreen(),
             fullscreenDialog: true,
