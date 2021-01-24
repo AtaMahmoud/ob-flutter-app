@@ -36,6 +36,11 @@ class Config {
   static const LOGIN = 'https://oceanbuilders.herokuapp.com/v1/api/auth';
   static const REG_WITH_SEAPOD_CREATION =
       'https://oceanbuilders.herokuapp.com/v1/api/auth';
+
+  static String EMAIL_CONFIRMATION(String token) => 'v1/api/auth/confirmation/$token';
+
+  static const RESEND_CONFIRMATION_CODE = 'v1/api/auth/resend';
+
   static const AUTO_LOGIN =
       'https://oceanbuilders.herokuapp.com/v1/api/auth/me';
   static const CREATE_NEW_SEAPOD =
