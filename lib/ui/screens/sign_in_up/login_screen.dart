@@ -14,6 +14,7 @@ import 'package:ocean_builder/helper/custom_behaviour.dart';
 import 'package:ocean_builder/helper/method_helper.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
+import 'package:ocean_builder/ui/screens/sign_in_up/email_verification_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/forgot_password_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/request_access_screen.dart';
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
@@ -238,28 +239,39 @@ class _LoginScreenState extends State<LoginScreen> {
     if (email != null && password != null)
       userProvider.logIn(email, password).then((status) async {
         if (status.status == 200) {
-          MethodHelper.parseNotifications(context);
-          if (widget.sourceScreen.contains(ScreenTitle.REGISTER)) {
-            _userDataProvider.user.firstName =
-                userProvider.authenticatedUser.firstName;
-            _userDataProvider.user.lastName =
-                userProvider.authenticatedUser.lastName;
-            _userDataProvider.user.email = userProvider.authenticatedUser.email;
-            _userDataProvider.user.country =
-                userProvider.authenticatedUser.country;
-            _userDataProvider.user.phone = userProvider.authenticatedUser.phone;
-            Navigator.of(context).pushNamed(RequestAccessScreen.routeName);
-          } else if (widget.sourceScreen.contains(ScreenTitle.YOUR_INFO)) {
-            _createNewObForExistingUser(userProvider);
-          } else {
-            await MethodHelper.selectOnlyOBasSelectedOB();
-            if (userProvider.authenticatedUser.userOceanBuilder == null ||
-                userProvider.authenticatedUser.userOceanBuilder.length > 1) {
-              Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
-            } else if (userProvider.authenticatedUser.userOceanBuilder.length <=
-                1) {
-              Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+          if (userProvider.authenticatedUser.isVerified) {
+            MethodHelper.parseNotifications(context);
+            if (widget.sourceScreen.contains(ScreenTitle.REGISTER)) {
+              _userDataProvider.user.firstName =
+                  userProvider.authenticatedUser.firstName;
+              _userDataProvider.user.lastName =
+                  userProvider.authenticatedUser.lastName;
+              _userDataProvider.user.email =
+                  userProvider.authenticatedUser.email;
+              _userDataProvider.user.country =
+                  userProvider.authenticatedUser.country;
+              _userDataProvider.user.phone =
+                  userProvider.authenticatedUser.phone;
+              Navigator.of(context).pushNamed(RequestAccessScreen.routeName);
+            } else if (widget.sourceScreen.contains(ScreenTitle.YOUR_INFO)) {
+              _createNewObForExistingUser(userProvider);
+            } else {
+              await MethodHelper.selectOnlyOBasSelectedOB();
+              if (userProvider.authenticatedUser.userOceanBuilder == null ||
+                  userProvider.authenticatedUser.userOceanBuilder.length > 1) {
+                Navigator.of(context)
+                    .pushReplacementNamed(HomeScreen.routeName);
+              } else if (userProvider
+                      .authenticatedUser.userOceanBuilder.length <=
+                  1) {
+                Navigator.of(context)
+                    .pushReplacementNamed(HomeScreen.routeName);
+              }
             }
+          } else {
+            Navigator.of(context).pushReplacementNamed(
+                EmailVerificationScreen.routeName,
+                arguments: EmailVerificationData(isDeepLinkData: false));
           }
         } else {
           _passwordController.text = '';

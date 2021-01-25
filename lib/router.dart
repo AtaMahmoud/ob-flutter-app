@@ -272,11 +272,13 @@ class Router {
             builder: (_) => YourInfoScreen(),
             settings: RouteSettings(name: YourInfoScreen.routeName));
       case EmailVerificationScreen.routeName:
-      final EmailVerificationData data = settings.arguments;
+        final EmailVerificationData data = settings.arguments;
         return CupertinoPageRoute(
-            builder: (_) => EmailVerificationScreen(),
+            builder: (_) => EmailVerificationScreen(
+                  emailVerificationData: data,
+                ),
             fullscreenDialog: true,
-            settings: RouteSettings(name: EmailVerificationScreen.routeName));      
+            settings: RouteSettings(name: EmailVerificationScreen.routeName));
       case OBSelectionScreenWidgetModal.routeName:
         return CupertinoPageRoute(
             builder: (_) => OBSelectionScreenWidgetModal(),
