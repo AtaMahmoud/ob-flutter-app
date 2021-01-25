@@ -6,6 +6,7 @@ import 'package:ocean_builder/core/providers/fake_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/core/singletons/headers_manager.dart';
 import 'package:ocean_builder/helper/method_helper.dart';
+import 'package:ocean_builder/route_info/page_manager.dart';
 import 'package:ocean_builder/route_info/router_manager.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
 import 'package:ocean_builder/ui/screens/menu/landing_screen.dart';
@@ -106,7 +107,7 @@ class _SplashScreenState extends State<SplashScreen> {
             //       settings: RouteSettings(name: LandingScreen.routeName)),
             //   (Route<dynamic> route) => false,
             // );
-            RoutePageManager.of(context).openMainMenu();
+            PageManager.of(context).openDetails();
           } else {
             await MethodHelper.selectOnlyOBasSelectedOB();
             MethodHelper.parseNotifications(context);
@@ -137,7 +138,8 @@ class _SplashScreenState extends State<SplashScreen> {
           //       settings: RouteSettings(name: LandingScreen.routeName)),
           //   (Route<dynamic> route) => false,
           // );
-          RoutePageManager.of(context).openMainMenu();
+          // RoutePageManager.of(context).openMainMenu();
+          PageManager.of(context).openDetails();
         });
       }
     }

@@ -6,6 +6,10 @@ import 'package:ocean_builder/core/models/lighting.dart';
 import 'package:ocean_builder/ui/screens/rooms/room_light.dart';
 
 class RoomDetails extends StatefulWidget {
+  static const String routeName = '/roomDashboard';
+
+  static Key pageKey = Key('pageKey');
+
   RoomDetails(
       {Key key,
       this.name,

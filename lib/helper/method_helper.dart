@@ -101,10 +101,11 @@ class MethodHelper {
       unreadRequestAccessNotiList.retainWhere((item) {
         // // debugPrint('notification read status --- ${item.isRead} ');
         // // debugPrint('notification data -- ${item.data.toJson()}');
-        // // debugPrint('notificationType ---- ${item.data.notificationType} -------------requestStatus ------------- ${item.data.requestStatus}' );
+        debugPrint(
+            'notificationType ---- ${item.data.type} -------------requestStatus ------------- ${item.data.status}');
         return (item.seen == null || item.seen == false) &&
-            item.data.type.compareTo(NotificationConstants.request) == 0 &&
-            item.data.status.compareTo(NotificationConstants.initiated) == 0 &&
+            item.data.type != null && item.data.type.compareTo(NotificationConstants.request) == 0 &&
+            item.data.status != null && item.data.status.compareTo(NotificationConstants.initiated) == 0 &&
             item.data.id.compareTo(currentUserID) == 0;
       });
       unReadRequestAccessNotiNo = unreadRequestAccessNotiList.length;

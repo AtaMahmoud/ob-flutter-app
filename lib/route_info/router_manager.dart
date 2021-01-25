@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ocean_builder/route_info/route_info_parser.dart';
 import 'package:ocean_builder/splash/splash_screen.dart';
 import 'package:ocean_builder/ui/screens/menu/landing_screen.dart';
+import 'package:ocean_builder/ui/screens/rooms/room_details.dart';
 import 'package:provider/provider.dart';
 
 class RoutePageManager extends ChangeNotifier {
@@ -55,15 +56,16 @@ class RoutePageManager extends ChangeNotifier {
           name: '/404',
         ),
       );
-    } else if (configuration.isDetailsPage) {
+    } else if (configuration.isRoomDashboard) {
       // Handling details screens
-      // _pages.add(
-      //   MaterialPage(
-      //     child: DetailsScreen(id: configuration.id),
-      //     key: UniqueKey(),
-      //     name: '/details/${configuration.id}',
-      //   ),
-      // );
+      _pages.insert(
+        0,
+        MaterialPage(
+          child: RoomDetails(),
+          key: UniqueKey(),
+          name: "/",
+        ),
+      );
     } else if (configuration.isHomePage) {
       // Restoring to MainScreen
       _pages.removeWhere(
@@ -80,6 +82,10 @@ class RoutePageManager extends ChangeNotifier {
 
   void openMainMenu() {
     setNewRoutePath(TheAppPath.mainMenu());
+  }
+
+  void openRoomsDashboard() {
+    setNewRoutePath(TheAppPath.roomDashboard());
   }
 
   void resetToHome() {

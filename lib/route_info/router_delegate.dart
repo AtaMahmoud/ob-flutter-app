@@ -34,6 +34,8 @@ class RouterDelegateOB extends RouterDelegate<TheAppPath>
   }
 
   bool _onPopPage(Route<dynamic> route, dynamic result) {
+    print('_onPop page called');
+    print(route.settings.name);
     final didPop = route.didPop(result);
     if (!didPop) {
       return false;

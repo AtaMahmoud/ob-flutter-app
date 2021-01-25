@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 
 class SparDesignScreen extends StatefulWidget {
   static const String routeName = '/sparDesign';
+  static const pageKey = Key('sparDesign');
 
   @override
   _SparDesignScreenState createState() => _SparDesignScreenState();

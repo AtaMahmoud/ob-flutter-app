@@ -47,6 +47,8 @@ class TheAppPath {
 
   TheAppPath.home() : id = null;
 
+  TheAppPath.roomDashboard() : id = 2;
+
   TheAppPath.mainMenu() : id = null;
 
   TheAppPath.details(this.id);
@@ -60,4 +62,6 @@ class TheAppPath {
   bool get isUnknown => id == -1;
 
   bool get isMainMenu => id == null;
+
+  bool get isRoomDashboard => id == 2;
 }

@@ -6,6 +6,8 @@ import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/common_widgets/buttons.dart';
 import 'package:ocean_builder/core/providers/user_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
+import 'package:ocean_builder/route_info/page_manager.dart';
+import 'package:ocean_builder/route_info/router_manager.dart';
 import 'package:ocean_builder/ui/screens/designSteps/design_screen.dart';
 import 'package:ocean_builder/ui/screens/reusableWidgetsShowcase.dart';
 import 'package:ocean_builder/ui/screens/rooms/rooms.dart';
@@ -19,6 +21,8 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 
 class LandingScreen extends StatefulWidget {
   static const String routeName = '/landingScreen';
+
+  static Key pageKey = Key('landingScreen');
 
   @override
   _LandingScreenState createState() => _LandingScreenState();
@@ -41,7 +45,8 @@ class _LandingScreenState extends State<LandingScreen> {
     GlobalContext.currentScreenContext = context;
     // return customDrawer(_innerDrawerKey, _currentScreen());
     userProvider = Provider.of<UserProvider>(context);
-    return WillPopScope(child: _currentScreen(), onWillPop: () async => false);
+    // return WillPopScope(child: _currentScreen(), onWillPop: () async => false);
+    return _currentScreen();
   }
 
   _currentScreen() {
@@ -97,7 +102,8 @@ class _LandingScreenState extends State<LandingScreen> {
             UIHelper.imageTextColumn(ImagePaths.svgSeapod, 'Rooms Dashboard'),
       ),
       onTap: () {
-        Navigator.of(context).pushNamed(Rooms.routeName);
+        // Navigator.of(context).pushNamed(Rooms.routeName);
+        PageManager.of(context).openMainMenu();
       },
     );
   }

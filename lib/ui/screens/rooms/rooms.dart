@@ -11,6 +11,8 @@ import 'package:ocean_builder/ui/screens/rooms/room_details.dart';
 
 class Rooms extends StatefulWidget {
   static const String routeName = '/rooms';
+  static const Key pageKey = Key('rooms');
+
   Rooms({Key key}) : super(key: key);
 
   @override
