@@ -104,3 +104,24 @@ class RoutePageManager extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+/*
+basic navigation structure 
+1 st root
+"/" - root - SplashScreen
+main root 
+"/" - landingScreen / Dashboard [at this point root will be changed to this screen from the splashscreen]
+DashboardScreen nav
+back button should be dispatched a prompt about exiting the app
+  Room/overview and 
+    - sub modules e.g - lightScreen
+                                - color picker modal window [get color value from this widget and back to parent ]
+                      - weatherScreen
+                                - sub modules
+  -- try to use router wihtin a widget to use the back button of android or left swipe of ios // 
+  or  add backbutton dispatcher in the child widgets.
+
+
+  Platfrom notification [ push notification/ notification from app ]
+  - routerDelegate will navigate to the notification detail screen setting Dashboard as root route
+*/
