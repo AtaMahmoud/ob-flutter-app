@@ -229,65 +229,85 @@ class _PasswordScreenState extends State<PasswordScreen> {
         arguments: EmailVerificationData(
             verificationCode: 'Asad', isDeepLinkData: false));
 
-    // if (widget.isNewUser) {
-    //   userProvider
-    //       .registrationWithSeaPodCreation(
-    //           userDataProvider.user, designDataProvider.oceanBuilder)
-    //       .then((responseStatus) async {
-    //     if (responseStatus.status == 200) {
-    //       await MethodHelper.selectOnlyOBasSelectedOB();
-    //       // Navigator.of(context).pushNamed(HomeScreen.routeName);
+    if (widget.isNewUser) {
+      userProvider
+          .registrationWithSeaPodCreation(
+              userDataProvider.user, designDataProvider.oceanBuilder)
+          .then((responseStatus) async {
+        if (responseStatus.status == 200) {
+          // await MethodHelper.selectOnlyOBasSelectedOB();
+          // Navigator.of(context).pushNamed(HomeScreen.routeName);
 
-    //       Navigator.pushAndRemoveUntil(
-    //         context,
-    //         MaterialPageRoute(
-    //             builder: (context) => EmailVerificationScreen(),
-    //             settings:
-    //                 RouteSettings(name: EmailVerificationScreen.routeName)),
-    //         (Route<dynamic> route) => false,
-    //       );
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EmailVerificationScreen(emailVerificationData: EmailVerificationData(
+            verificationCode: 'Asad', isDeepLinkData: false)),
+                settings:
+                    RouteSettings(name: EmailVerificationScreen.routeName)),
+            (Route<dynamic> route) => false,
+          );
 
-    //     } else {
-    //       showInfoBar(parseErrorTitle(responseStatus.code),
-    //           responseStatus.message, context);
-    //     }
-    //   });
-    // } else {
-    //   String oceanBuilderId =
-    //       qrCodeDataProvider.qrCodeData; //'-LhmsP9Mc-E_VREoTYfV';
-    //   userProvider
-    //       .sendAccessReqForNewuser(userDataProvider.user, oceanBuilderId)
-    //       .then((responseStatus) async {
-    //     if (responseStatus.status == 200) {
-    //       await MethodHelper.selectOnlyOBasSelectedOB();
+        } else {
+          showInfoBar(parseErrorTitle(responseStatus.code),
+              responseStatus.message, context);
+        }
+      });
+    } else {
+      String oceanBuilderId =
+          qrCodeDataProvider.qrCodeData; //'-LhmsP9Mc-E_VREoTYfV';
+      userProvider
+          .sendAccessReqForNewuser(userDataProvider.user, oceanBuilderId)
+          .then((responseStatus) async {
+        if (responseStatus.status == 200) {
 
-    //       if (!(_selectedOBIdProvider.selectedObId
-    //               .compareTo(AppStrings.selectOceanBuilder) ==
-    //           0)) {
-    //         Navigator.of(context).pushNamed(HomeScreen.routeName);
-    //       } else {
-    //         // Navigator.pushAndRemoveUntil(
-    //         //   context,
-    //         //   MaterialPageRoute(
-    //         //       builder: (context) => ProfileScreen(),
-    //         //       settings: RouteSettings(name: ProfileScreen.routeName)),
-    //         //   (Route<dynamic> route) => false,
-    //         // );
 
-    //         Navigator.pushAndRemoveUntil(
-    //           context,
-    //           MaterialPageRoute(
-    //               builder: (context) => EmailVerificationScreen(),
-    //               settings:
-    //                   RouteSettings(name: EmailVerificationScreen.routeName)),
-    //           (Route<dynamic> route) => false,
-    //         );
-    //       }
-    //     } else {
-    //       showInfoBar(parseErrorTitle(responseStatus.code),
-    //           responseStatus.message, context);
-    //     }
-    //   });
-    // }
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => EmailVerificationScreen(emailVerificationData: EmailVerificationData(
+            verificationCode: 'Asad', isDeepLinkData: false),),
+                  settings:
+                      RouteSettings(name: EmailVerificationScreen.routeName)),
+              (Route<dynamic> route) => false,
+            );
+
+
+
+
+
+          // await MethodHelper.selectOnlyOBasSelectedOB();
+
+
+
+          // if (!(_selectedOBIdProvider.selectedObId
+          //         .compareTo(AppStrings.selectOceanBuilder) ==
+          //     0)) {
+          //   Navigator.of(context).pushNamed(HomeScreen.routeName);
+          // } else {
+          //   // Navigator.pushAndRemoveUntil(
+          //   //   context,
+          //   //   MaterialPageRoute(
+          //   //       builder: (context) => ProfileScreen(),
+          //   //       settings: RouteSettings(name: ProfileScreen.routeName)),
+          //   //   (Route<dynamic> route) => false,
+          //   // );
+
+          //   Navigator.pushAndRemoveUntil(
+          //     context,
+          //     MaterialPageRoute(
+          //         builder: (context) => EmailVerificationScreen(emailVerificationData: EmailVerificationData(
+          //   verificationCode: 'Asad', isDeepLinkData: false),),
+          //         settings:
+          //             RouteSettings(name: EmailVerificationScreen.routeName)),
+          //     (Route<dynamic> route) => false,
+          //   );
+          // }
+        } else {
+          showInfoBar(parseErrorTitle(responseStatus.code),
+              responseStatus.message, context);
+        }
+      });
+    }
   }
 }

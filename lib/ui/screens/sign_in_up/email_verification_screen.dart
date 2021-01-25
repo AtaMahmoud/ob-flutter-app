@@ -9,6 +9,7 @@ import 'package:ocean_builder/core/models/user.dart';
 import 'package:ocean_builder/core/providers/design_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
+import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper_2.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/login_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/set_password_screen.dart';
@@ -195,14 +196,15 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     return StreamBuilder(
       stream: _bloc.infoCheck,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        return BottomClipper2(
+        return BottomClipper(
             ButtonText.BACK,
             userProvider.isLoading
                 ? ButtonText.CHECKING
                 : ButtonText.SET_PASSWORD,
-            !snapshot.hasData,
             () => goBack(),
-            () => goNext(userDataProvider));
+            () => null,
+            isNextEnabled: false,
+            );
       },
     );
   }
@@ -211,18 +213,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     Navigator.pop(context);
   }
 
-  goNext(UserDataProvider userDataProvider) async {
-    bool internetStatus = await DataConnectionChecker().hasConnection;
-    if (!internetStatus) {
-      displayInternetInfoBar(context, AppStrings.noInternetConnectionTryAgain);
-      // showInfoBar('NO INTERNET', AppStrings.noInternetConnection, context);
-      return;
-    } else {
-      userDataProvider.user = _user;
-      Navigator.of(context)
-          .pushNamed(PasswordScreen.routeName, arguments: true);
-    }
-  }
 
   _title() {
     return Padding(
@@ -373,10 +363,11 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16.w),
-                  gradient: ColorConstants.BKG_GRADIENT),
+                  color: ColorConstants.ACCESS_MANAGEMENT_BUTTON
+                  ),
               child: Text(
-                'Resend',
-                style: TextStyle(),
+                'Resend code',
+                style: TextStyle(color: Colors.white,)
               ),
             ),
           )
@@ -385,7 +376,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     );
   }
 
-  void _resendCode() {}
+  void _resendCode() {
+
+  }
 }
 
 class EmailVerificationData {

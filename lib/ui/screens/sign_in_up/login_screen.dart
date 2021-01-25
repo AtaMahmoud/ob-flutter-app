@@ -273,7 +273,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 EmailVerificationScreen.routeName,
                 arguments: EmailVerificationData(isDeepLinkData: false));
           }
-        } else {
+        }else if(status.status == 401){
+            Navigator.of(context).pushReplacementNamed(
+                EmailVerificationScreen.routeName,
+                arguments: EmailVerificationData(isDeepLinkData: false));
+        }else {
           _passwordController.text = '';
           _bloc.passwordChanged('');
           String title = parseErrorTitle(status.code);
