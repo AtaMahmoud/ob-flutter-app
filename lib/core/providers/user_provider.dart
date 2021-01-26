@@ -167,7 +167,7 @@ class UserProvider extends BaseProvider {
     return responseStatus;
   }
 
-    // ------------------------------------------------------- Login ( PUT ) --------------------------------------------------------------------
+  // ------------------------------------------------------- Login ( PUT ) --------------------------------------------------------------------
 
   Future<ResponseStatus> confirmEmail(String token) async {
     isLoading = true;
@@ -179,7 +179,8 @@ class UserProvider extends BaseProvider {
           url: APP_CONFIG.Config.EMAIL_CONFIRMATION(token),
           headers: _headerManager.headers);
 
-      debugPrint('email confirmation _response ~~~~~~~~~~~~~~~~~~~~~~~ -- ${_response}');
+      debugPrint(
+          'email confirmation _response ~~~~~~~~~~~~~~~~~~~~~~~ -- ${_response}');
 
       if (_response != null && _response.statusCode == 200) {
         responseStatus.status = 200;
@@ -368,69 +369,10 @@ class UserProvider extends BaseProvider {
           data: regWithSeaPod.toJson(),
           headers: _headerManager.headers);
 
-      User userData;
-
       if (loginResponse != null && loginResponse.statusCode == 200) {
-        User userData = User.fromJson(loginResponse.data);
-
-        List<UserOceanBuilder> userOceanBuilderList = [];
-        userData.seaPods.map((f) {
-          UserOceanBuilder userOceanBuilder = UserOceanBuilder();
-          userOceanBuilder.oceanBuilderName = f.obName;
-          userOceanBuilder.oceanBuilderId = f.id;
-          userOceanBuilder.userType = f.users[0].userType;
-          userOceanBuilder.accessTime = Duration(hours: 48);
-          userOceanBuilder.checkInDate = null;
-          userOceanBuilder.reqStatus = 'NA';
-          userOceanBuilder.vessleCode = f.vessleCode;
-          userOceanBuilderList.add(userOceanBuilder);
-        }).toList();
-
-        userData.accessRequests.map((f) {
-          // debugPrint('accessRequests --------  ${f.seaPod.name}');
-          UserOceanBuilder userOceanBuilder = UserOceanBuilder();
-          userOceanBuilder.accessRequestID = f.id;
-          userOceanBuilder.oceanBuilderName = f.seaPod.name;
-          userOceanBuilder.vessleCode = f.seaPod.vessleCode;
-          userOceanBuilder.oceanBuilderId = f.seaPod.id;
-          userOceanBuilder.userType = f.type;
-          userOceanBuilder.accessTime = Duration(milliseconds: f.period);
-          userOceanBuilder.checkInDate =
-              DateTime.fromMicrosecondsSinceEpoch(f.checkIn);
-          userOceanBuilder.reqStatus = f.status;
-          if (userOceanBuilder.reqStatus
-                  .compareTo(NotificationConstants.pending) ==
-              0) userOceanBuilderList.add(userOceanBuilder);
-        }).toList();
-
-        userOceanBuilderList.map((f) {
-          // debugPrint('userOceanBuilder --------  ${f.oceanBuilderName}');
-        }).toList();
-
-        userData.userOceanBuilder = userOceanBuilderList;
-
-        if (userData.emergencyContacts != null &&
-            userData.emergencyContacts.length > 0) {
-          userData.emergencyContact = userData.emergencyContacts[0];
-        }
-
-        if (loginResponse.headers.value("X-Auth-Token") != null) {
-          userData.xAuthToken = loginResponse.headers.value("X-Auth-Token");
-
-          authenticatedUser = userData;
-          _isUserAuthenticated = true;
-
-          SharedPrefHelper.setAuthKey(
-              loginResponse.headers.value("X-Auth-Token"));
-
-          // debugPrint(
-          // 'loginResponse ~~~~~~~~~~~~~~~~~~~~~~~ -- ${authenticatedUser.toJson()}');
-        } else {
-          // debugPrint('error code ');
-          responseStatus.code = 'Login Failed';
-          responseStatus.message = loginResponse.statusMessage;
-          responseStatus.status = loginResponse.statusCode;
-        }
+        debugPrint(
+            '-----------------registration response ----- ${loginResponse.data.toString()}');
+        responseStatus.status = 200;
       } else {
         // debugPrint('error code ');
         responseStatus.code = 'Registration Failed';
@@ -459,10 +401,6 @@ class UserProvider extends BaseProvider {
       responseStatus.code = 'Registration Failed';
       responseStatus.message = ea.message;
       responseStatus.status = ea.statusCode;
-    }
-
-    if (authenticatedUser != null) {
-      responseStatus.status = 200;
     }
 
     isLoading = false;

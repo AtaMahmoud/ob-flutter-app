@@ -53,6 +53,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   bool isEmailVerified = false;
   bool isLoading;
+  bool isAuthCodeComplete = false;
 
   @override
   void initState() {
@@ -106,6 +107,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     _controller.dispose();
     _bloc.dispose();
     errorController.close();
+    textEditingController.dispose();
   }
 
   @override
@@ -134,11 +136,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 _startSpace(),
                 SliverList(
                     delegate: SliverChildListDelegate([
-                  SpaceH48(),
-                  _title(),
-                  SpaceH48(),
                   Provider.of<UserProvider>(context).isLoading
-                      ? CircularProgressIndicator()
+                      ? Center(child: CircularProgressIndicator())
                       : widget.emailVerificationData.isDeepLinkData
                           ? Container()
                           : _emailConfirmationManual(),
@@ -157,6 +156,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   _emailConfirmationManual() {
     return Column(
       children: [
+        SpaceH48(),
+        _title(),
+        SpaceH48(),
         _emailConfirmationText1(),
         SpaceH48(),
         _emailConfirmationText2(),
@@ -197,14 +199,12 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       stream: _bloc.infoCheck,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         return BottomClipper(
-            ButtonText.BACK,
-            userProvider.isLoading
-                ? ButtonText.CHECKING
-                : ButtonText.SET_PASSWORD,
-            () => goBack(),
-            () => null,
-            isNextEnabled: false,
-            );
+          ButtonText.BACK,
+          userProvider.isLoading ? ButtonText.CHECKING : ButtonText.NEXT,
+          () => goBack(),
+          () => _verifyEmailCode(currentText),
+          isNextEnabled: isAuthCodeComplete,
+        );
       },
     );
   }
@@ -213,14 +213,18 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     Navigator.pop(context);
   }
 
-
   _title() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 48.w),
-      child: Text(
-        AppStrings.checkYourInbox,
-        style: TextStyle(
-            color: ColorConstants.WEATHER_MORE_ICON_COLOR, fontSize: 48.sp),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            AppStrings.checkYourInbox,
+            style: TextStyle(
+                color: ColorConstants.WEATHER_MORE_ICON_COLOR, fontSize: 48.sp),
+          ),
+        ],
       ),
     );
   }
@@ -262,6 +266,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
             obscureText: false,
             obscuringCharacter: '*',
             animationType: AnimationType.fade,
+            autoDisposeControllers: false,
             // validator: (v) {
             //   if (v.length < 3) {
             //     return "I'm from validator";
@@ -301,8 +306,12 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
             // ],
             onCompleted: (v) {
               print("Completed");
-              _verifyEmailCode(v);
+              setState(() {
+                isAuthCodeComplete = true;
+              });
+              // _verifyEmailCode(v);
             },
+
             // onTap: () {
             //   print("Pressed");
             // },
@@ -323,30 +332,32 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   _verifyEmailCode(String token) async {
-    UserProvider userProvider = Provider.of<UserProvider>(context);
+    textEditingController.clear();
+    print(token);
+    // UserProvider userProvider = Provider.of<UserProvider>(context);
 
-    if (userProvider.isLoading) return;
-    bool internetStatus = await DataConnectionChecker().hasConnection;
-    if (!internetStatus) {
-      displayInternetInfoBar(context, AppStrings.noInternetConnectionTryAgain);
-      return;
-    }
+    // if (userProvider.isLoading) return;
+    // bool internetStatus = await DataConnectionChecker().hasConnection;
+    // if (!internetStatus) {
+    //   displayInternetInfoBar(context, AppStrings.noInternetConnectionTryAgain);
+    //   return;
+    // }
 
-    if (token != null)
-      userProvider.confirmEmail(token).then((status) async {
-        if (status.status == 200) {
-          showInfoBarWithDissmissCallback('Email Confirmation',
-              'Your account is verified now, sign in to continue', context, () {
-            Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
-          });
-        } else {
-          String title = parseErrorTitle(status.code);
-          showInfoBar(title, status.message, context);
-        }
-      });
-    else {
-      showInfoBar('Email confirmation', "Token is not valid", context);
-    }
+    // if (token != null)
+    //   userProvider.confirmEmail(token).then((status) async {
+    //     if (status.status == 200) {
+    //       showInfoBarWithDissmissCallback('Email Confirmation',
+    //           'Your account is verified now, sign in to continue', context, () {
+    //         Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+    //       });
+    //     } else {
+    //       String title = parseErrorTitle(status.code);
+    //       showInfoBar(title, status.message, context);
+    //     }
+    //   });
+    // else {
+    //   showInfoBar('Email confirmation', "Token is not valid", context);
+    // }
   }
 
   _resendButton() {
@@ -363,12 +374,11 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16.w),
-                  color: ColorConstants.ACCESS_MANAGEMENT_BUTTON
-                  ),
-              child: Text(
-                'Resend code',
-                style: TextStyle(color: Colors.white,)
-              ),
+                  color: ColorConstants.ACCESS_MANAGEMENT_BUTTON),
+              child: Text('Resend code',
+                  style: TextStyle(
+                    color: Colors.white,
+                  )),
             ),
           )
         ],
@@ -376,9 +386,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     );
   }
 
-  void _resendCode() {
-
-  }
+  void _resendCode() {}
 }
 
 class EmailVerificationData {
