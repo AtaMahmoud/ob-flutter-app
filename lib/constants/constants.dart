@@ -1312,6 +1312,7 @@ class SharedPreferanceKeys {
   static String KEY_SELECTED_OB_ID = 'selected_ob_id';
   static String KEY_X_AUTH_TOKEN = 'x-auth-token';
   static String KEY_X_AUTH_TOKEN_EARTH_STATION = 'x-auth-token-es';
+  static String KEY_EMAIL = 'key_email';
 }
 
 class ApplicationStatics {

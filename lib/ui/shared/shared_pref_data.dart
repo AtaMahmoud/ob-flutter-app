@@ -72,4 +72,20 @@ class SharedPrefHelper {
         key: SharedPreferanceKeys.KEY_X_AUTH_TOKEN_EARTH_STATION);
     return authToken;
   }
+
+    static setEmail(String email) async {
+    final storage = new FlutterSecureStorage();
+    await storage.write(
+        key: SharedPreferanceKeys.KEY_EMAIL,
+        value: email);
+  }
+
+  static Future<String> getEmail() async {
+    String email = '';
+    final storage = new FlutterSecureStorage();
+    email = await storage.read(
+        key: SharedPreferanceKeys.KEY_EMAIL);
+    return email;
+  }
+
 }

@@ -10,10 +10,9 @@ import 'package:ocean_builder/core/providers/design_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper.dart';
-import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper_2.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/login_screen.dart';
-import 'package:ocean_builder/ui/screens/sign_in_up/set_password_screen.dart';
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
+import 'package:ocean_builder/ui/shared/shared_pref_data.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
 import 'package:ocean_builder/ui/widgets/space_widgets.dart';
@@ -55,9 +54,13 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   bool isLoading;
   bool isAuthCodeComplete = false;
 
+  String _email;
+
   @override
   void initState() {
     super.initState();
+
+    SharedPrefHelper.getEmail().then((value) => _email = value);
 
     Future.delayed(Duration.zero).then((value) {
       if (widget.emailVerificationData.isDeepLinkData) {
@@ -222,7 +225,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
           Text(
             AppStrings.checkYourInbox,
             style: TextStyle(
-                color: ColorConstants.WEATHER_MORE_ICON_COLOR, fontSize: 48.sp),
+                color: ColorConstants.WEATHER_MORE_ICON_COLOR, fontSize: 64.sp),
           ),
         ],
       ),
@@ -252,115 +255,116 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   _authenticationCode() {
-    return Form(
-      key: formKey,
-      child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 128.w),
-          child: PinCodeTextField(
-            appContext: context,
-            pastedTextStyle: TextStyle(
-              color: ColorConstants.BCKG_COLOR_END,
-              fontWeight: FontWeight.bold,
-            ),
-            length: 4,
-            obscureText: false,
-            obscuringCharacter: '*',
-            animationType: AnimationType.fade,
-            autoDisposeControllers: false,
-            // validator: (v) {
-            //   if (v.length < 3) {
-            //     return "I'm from validator";
-            //   } else {
-            //     return null;
-            //   }
-            // },
-            pinTheme: PinTheme(
-                shape: PinCodeFieldShape.box,
-                borderRadius: BorderRadius.circular(8),
-                fieldHeight: 70,
-                fieldWidth: 60,
-                activeColor: ColorConstants.ACCESS_MANAGEMENT_HINT,
-                activeFillColor: hasError ? Colors.red : Colors.white,
-                inactiveColor: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
-                inactiveFillColor: Colors.white,
-                selectedColor: ColorConstants.ACCESS_MANAGEMENT_LIST_TITLE,
-                selectedFillColor: Colors.white,
-                // borderWidth: 4,
-                disabledColor: Colors.grey),
-            cursorColor: ColorConstants.ACCESS_MANAGEMENT_HINT,
-            animationDuration: Duration(milliseconds: 300),
-            textStyle: TextStyle(
-              fontSize: 48,
-            ),
-            backgroundColor: Color(0xFFFEFEFE),
-            enableActiveFill: true,
-            errorAnimationController: errorController,
-            controller: textEditingController,
-            keyboardType: TextInputType.text,
-            // boxShadows: [
-            //   BoxShadow(
-            //     offset: Offset(0, 1),
-            //     color: Colors.black12,
-            //     blurRadius: 10,
-            //   )
-            // ],
-            onCompleted: (v) {
-              print("Completed");
-              setState(() {
-                isAuthCodeComplete = true;
-              });
-              // _verifyEmailCode(v);
-            },
+    return Padding(
+        padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 128.w),
+        child: PinCodeTextField(
+          appContext: context,
+          pastedTextStyle: TextStyle(
+            color: ColorConstants.BCKG_COLOR_END,
+            fontWeight: FontWeight.bold,
+          ),
+          length: 4,
+          obscureText: false,
+          obscuringCharacter: '*',
+          animationType: AnimationType.fade,
+          autoDisposeControllers: false,
+          validator: (v) {
+            if (v.length < 4) {
+              isAuthCodeComplete = false;
+              return null;
+            } else {
+              return null;
+            }
+          },
+          pinTheme: PinTheme(
+              shape: PinCodeFieldShape.box,
+              borderRadius: BorderRadius.circular(8),
+              fieldHeight: 70,
+              fieldWidth: 60,
+              activeColor: ColorConstants.ACCESS_MANAGEMENT_HINT,
+              activeFillColor: hasError ? Colors.red : Colors.white,
+              inactiveColor: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
+              inactiveFillColor: Colors.white,
+              selectedColor: ColorConstants.ACCESS_MANAGEMENT_LIST_TITLE,
+              selectedFillColor: Colors.white,
+              // borderWidth: 4,
+              disabledColor: Colors.grey),
+          cursorColor: ColorConstants.ACCESS_MANAGEMENT_HINT,
+          animationDuration: Duration(milliseconds: 300),
+          textStyle: TextStyle(
+            fontSize: 48,
+          ),
+          backgroundColor: Color(0xFFFEFEFE),
+          enableActiveFill: true,
+          errorAnimationController: errorController,
+          controller: textEditingController,
+          keyboardType: TextInputType.text,
+          // boxShadows: [
+          //   BoxShadow(
+          //     offset: Offset(0, 1),
+          //     color: Colors.black12,
+          //     blurRadius: 10,
+          //   )
+          // ],
+          onCompleted: (v) {
+            print("Completed");
+            setState(() {
+              isAuthCodeComplete = true;
+            });
+            // _verifyEmailCode(v);
+          },
 
-            // onTap: () {
-            //   print("Pressed");
-            // },
-            onChanged: (value) {
-              print(value);
-              setState(() {
-                currentText = value;
-              });
-            },
-            beforeTextPaste: (text) {
-              print("Allowing to paste $text");
-              //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
-              //but you can show anything you want here, like your pop up saying wrong paste format or etc
-              return true;
-            },
-          )),
-    );
+          // onTap: () {
+          //   print("Pressed");
+          // },
+          onChanged: (value) {
+            print(value);
+            setState(() {
+              currentText = value;
+            });
+          },
+          beforeTextPaste: (text) {
+            print("Allowing to paste $text");
+            //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
+            //but you can show anything you want here, like your pop up saying wrong paste format or etc
+            return true;
+          },
+        ));
   }
 
   _verifyEmailCode(String token) async {
+
     textEditingController.clear();
     print(token);
-    // UserProvider userProvider = Provider.of<UserProvider>(context);
+    UserProvider userProvider = Provider.of<UserProvider>(context);
 
-    // if (userProvider.isLoading) return;
-    // bool internetStatus = await DataConnectionChecker().hasConnection;
-    // if (!internetStatus) {
-    //   displayInternetInfoBar(context, AppStrings.noInternetConnectionTryAgain);
-    //   return;
-    // }
+    if (userProvider.isLoading) return;
+    bool internetStatus = await DataConnectionChecker().hasConnection;
+    if (!internetStatus) {
+      displayInternetInfoBar(context, AppStrings.noInternetConnectionTryAgain);
+      return;
+    }
 
-    // if (token != null)
-    //   userProvider.confirmEmail(token).then((status) async {
-    //     if (status.status == 200) {
-    //       showInfoBarWithDissmissCallback('Email Confirmation',
-    //           'Your account is verified now, sign in to continue', context, () {
-    //         Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
-    //       });
-    //     } else {
-    //       String title = parseErrorTitle(status.code);
-    //       showInfoBar(title, status.message, context);
-    //     }
-    //   });
-    // else {
-    //   showInfoBar('Email confirmation', "Token is not valid", context);
-    // }
+    if (token != null)
+      userProvider.confirmEmail(token).then((status) async {
+        if (status.status == 200) {
+          showInfoBarWithDissmissCallback('Email Confirmation',
+              'Your account is verified now, sign in to continue', context, () {
+            Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+          });
+        } else {
+          String title = parseErrorTitle(status.code);
+          showInfoBar(title, status.message, context);
+        }
+      });
+    else {
+      showInfoBar('Email confirmation', "Token is not valid", context);
+    }
+
   }
 
-  _resendButton() {
+  _resendButton(){
+    
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 128.w),
       child: Row(
@@ -368,7 +372,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
         children: [
           InkWell(
             onTap: () {
-              _resendCode();
+              _resendCode(_email);
             },
             child: Container(
               padding: EdgeInsets.all(16.w),
@@ -386,7 +390,32 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     );
   }
 
-  void _resendCode() {}
+  void _resendCode(String email) async{
+    UserProvider userProvider = Provider.of<UserProvider>(context);
+
+    if (userProvider.isLoading) return;
+    bool internetStatus = await DataConnectionChecker().hasConnection;
+    if (!internetStatus) {
+      displayInternetInfoBar(context, AppStrings.noInternetConnectionTryAgain);
+      return;
+    }
+
+    if (email!=null)
+      userProvider.resendCode(email).then((status) async {
+        if (status.status == 200) {
+          showInfoBarWithDissmissCallback('Resend Code',
+              'Code had been resent to your email', context, () {
+            Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+          });
+        } else {
+          String title = parseErrorTitle(status.code);
+          showInfoBar(title, status.message, context);
+        }
+      });
+    else {
+      showInfoBar('Resend Code', "Failed to resend code", context);
+    }
+  }
 }
 
 class EmailVerificationData {

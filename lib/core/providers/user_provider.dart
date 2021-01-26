@@ -167,7 +167,7 @@ class UserProvider extends BaseProvider {
     return responseStatus;
   }
 
-  // ------------------------------------------------------- Login ( PUT ) --------------------------------------------------------------------
+  // ------------------------------------------------------- Confirm Email ( GET ) --------------------------------------------------------------------
 
   Future<ResponseStatus> confirmEmail(String token) async {
     isLoading = true;
@@ -199,6 +199,54 @@ class UserProvider extends BaseProvider {
     } on BadRequestException catch (e) {
       AppException ea = e;
       responseStatus.code = 'Invalid Token';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+    }
+
+    isLoading = false;
+    notifyListeners();
+    return responseStatus;
+  }
+
+
+    // ------------------------------------------------------- Resend Email Code ( GET ) --------------------------------------------------------------------
+
+  Future<ResponseStatus> resendCode(String email) async {
+    isLoading = true;
+    notifyListeners();
+    ResponseStatus responseStatus = ResponseStatus();
+
+        Map<String, dynamic> reqBody = {
+      "email": email,
+    };
+    debugPrint('resending code -- $email');
+    try {
+      final Response _response = await _apiBaseHelper.get(
+          url: APP_CONFIG.Config.RESEND_CONFIRMATION_CODE,
+          headers: _headerManager.headers,
+          data: reqBody
+          );
+
+      debugPrint(
+          'email resend _response ~~~~~~~~~~~~~~~~~~~~~~~ -- ${_response.statusCode}');
+
+      if (_response != null && _response.statusCode == 200) {
+        responseStatus.status = 200;
+      } else {
+        debugPrint('error code '+_response.statusCode.toString());
+        responseStatus.code = 'Couldn\'t send token';
+        responseStatus.message = _response.statusMessage;
+        responseStatus.status = _response.statusCode;
+      }
+    } on FetchDataException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Couldn\'t send token';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+      debugPrint('logIn  error ============================== ${ea.message}');
+    } on BadRequestException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Couldn\'t send token';
       responseStatus.message = ea.message;
       responseStatus.status = ea.statusCode;
     }
@@ -373,6 +421,7 @@ class UserProvider extends BaseProvider {
         debugPrint(
             '-----------------registration response ----- ${loginResponse.data.toString()}');
         responseStatus.status = 200;
+        SharedPrefHelper.setEmail(regWithSeaPod.user.email);
       } else {
         // debugPrint('error code ');
         responseStatus.code = 'Registration Failed';
