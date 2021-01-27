@@ -46,7 +46,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   TextEditingController textEditingController = TextEditingController();
 
-  StreamController<ErrorAnimationType> errorController;
+  // StreamController<ErrorAnimationType> errorController;
 
   String currentText = "";
 
@@ -59,8 +59,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   @override
   void initState() {
     super.initState();
-
-    SharedPrefHelper.getEmail().then((value) => _email = value);
 
     Future.delayed(Duration.zero).then((value) {
       if (widget.emailVerificationData.isDeepLinkData) {
@@ -78,7 +76,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       }
     });
 
-    errorController = StreamController<ErrorAnimationType>();
+    // errorController = StreamController<ErrorAnimationType>();
   }
 
   _setUserDataListener() {
@@ -109,7 +107,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     _phoneNode.dispose();
     _controller.dispose();
     _bloc.dispose();
-    errorController.close();
+    // errorController.close();
     textEditingController.dispose();
   }
 
@@ -296,16 +294,16 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
           ),
           backgroundColor: Color(0xFFFEFEFE),
           enableActiveFill: true,
-          errorAnimationController: errorController,
+          // errorAnimationController: errorController,
           controller: textEditingController,
           keyboardType: TextInputType.text,
-          // boxShadows: [
-          //   BoxShadow(
-          //     offset: Offset(0, 1),
-          //     color: Colors.black12,
-          //     blurRadius: 10,
-          //   )
-          // ],
+          boxShadows: [
+            BoxShadow(
+              offset: Offset(0, 1),
+              color: Colors.black12,
+              blurRadius: 10,
+            )
+          ],
           onCompleted: (v) {
             print("Completed");
             setState(() {
@@ -333,7 +331,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   _verifyEmailCode(String token) async {
-
     textEditingController.clear();
     print(token);
     UserProvider userProvider = Provider.of<UserProvider>(context);
@@ -360,11 +357,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     else {
       showInfoBar('Email confirmation', "Token is not valid", context);
     }
-
   }
 
-  _resendButton(){
-    
+  _resendButton() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 128.w),
       child: Row(
@@ -372,7 +367,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
         children: [
           InkWell(
             onTap: () {
-              _resendCode(_email);
+              _resendCode();
             },
             child: Container(
               padding: EdgeInsets.all(16.w),
@@ -390,7 +385,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     );
   }
 
-  void _resendCode(String email) async{
+  void _resendCode() async {
     UserProvider userProvider = Provider.of<UserProvider>(context);
 
     if (userProvider.isLoading) return;
@@ -400,21 +395,25 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       return;
     }
 
-    if (email!=null)
-      userProvider.resendCode(email).then((status) async {
-        if (status.status == 200) {
-          showInfoBarWithDissmissCallback('Resend Code',
-              'Code had been resent to your email', context, () {
-            Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
-          });
-        } else {
-          String title = parseErrorTitle(status.code);
-          showInfoBar(title, status.message, context);
-        }
-      });
-    else {
-      showInfoBar('Resend Code', "Failed to resend code", context);
-    }
+    SharedPrefHelper.getEmail().then((email) {
+      debugPrint('_email ---- $email');
+      if (email != null)
+        userProvider.resendCode(email).then((status) async {
+          if (status.status == 200) {
+            showInfoBarWithDissmissCallback(
+                'Resend Code', 'Code had been resent to your email', context,
+                () {
+              Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+            });
+          } else {
+            String title = parseErrorTitle(status.code);
+            showInfoBar(title, status.message, context);
+          }
+        });
+      else {
+        showInfoBar('Resend Code', "Failed to resend code", context);
+      }
+    });
   }
 }
 

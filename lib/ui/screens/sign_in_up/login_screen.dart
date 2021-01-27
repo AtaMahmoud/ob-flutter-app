@@ -17,6 +17,7 @@ import 'package:ocean_builder/ui/screens/home/home_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/email_verification_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/forgot_password_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/request_access_screen.dart';
+import 'package:ocean_builder/ui/shared/shared_pref_data.dart';
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
@@ -269,15 +270,17 @@ class _LoginScreenState extends State<LoginScreen> {
               }
             }
           } else {
+            SharedPrefHelper.setEmail(email);
             Navigator.of(context).pushReplacementNamed(
                 EmailVerificationScreen.routeName,
                 arguments: EmailVerificationData(isDeepLinkData: false));
           }
-        }else if(status.status == 401){
-            Navigator.of(context).pushReplacementNamed(
-                EmailVerificationScreen.routeName,
-                arguments: EmailVerificationData(isDeepLinkData: false));
-        }else {
+        } else if (status.status == 401) {
+          SharedPrefHelper.setEmail(email);
+          Navigator.of(context).pushReplacementNamed(
+              EmailVerificationScreen.routeName,
+              arguments: EmailVerificationData(isDeepLinkData: false));
+        } else {
           _passwordController.text = '';
           _bloc.passwordChanged('');
           String title = parseErrorTitle(status.code);

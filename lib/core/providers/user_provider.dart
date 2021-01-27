@@ -65,7 +65,7 @@ class UserProvider extends BaseProvider {
 
       // User userData;
 
-      // // debugPrint('loginResponse ~~~~~~~~~~~~~~~~~~~~~~~ -- ${loginResponse}');
+      debugPrint('loginResponse ~~~~~~~~~~~~~~~~~~~~~~~ -- ${loginResponse}');
 
       if (loginResponse != null && loginResponse.statusCode == 200) {
         User userData = User.fromJson(loginResponse.data);
@@ -208,15 +208,14 @@ class UserProvider extends BaseProvider {
     return responseStatus;
   }
 
-
-    // ------------------------------------------------------- Resend Email Code ( GET ) --------------------------------------------------------------------
+  // ------------------------------------------------------- Resend Email Code ( GET ) --------------------------------------------------------------------
 
   Future<ResponseStatus> resendCode(String email) async {
     isLoading = true;
     notifyListeners();
     ResponseStatus responseStatus = ResponseStatus();
 
-        Map<String, dynamic> reqBody = {
+    Map<String, dynamic> reqBody = {
       "email": email,
     };
     debugPrint('resending code -- $email');
@@ -224,16 +223,17 @@ class UserProvider extends BaseProvider {
       final Response _response = await _apiBaseHelper.get(
           url: APP_CONFIG.Config.RESEND_CONFIRMATION_CODE,
           headers: _headerManager.headers,
-          data: reqBody
-          );
+          parameters: {
+            "email": email,
+          });
 
       debugPrint(
-          'email resend _response ~~~~~~~~~~~~~~~~~~~~~~~ -- ${_response.statusCode}');
+          'email resend _response ~~~~~~~~~~~~~~~~~~~~~~~----- ${_response.statusCode}');
 
       if (_response != null && _response.statusCode == 200) {
         responseStatus.status = 200;
       } else {
-        debugPrint('error code '+_response.statusCode.toString());
+        debugPrint('error code ' + _response.statusCode.toString());
         responseStatus.code = 'Couldn\'t send token';
         responseStatus.message = _response.statusMessage;
         responseStatus.status = _response.statusCode;
