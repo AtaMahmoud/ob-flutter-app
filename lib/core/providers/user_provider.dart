@@ -220,12 +220,11 @@ class UserProvider extends BaseProvider {
     };
     debugPrint('resending code -- $email');
     try {
-      final Response _response = await _apiBaseHelper.get(
+      final Response _response = await _apiBaseHelper.postForResponse(
           url: APP_CONFIG.Config.RESEND_CONFIRMATION_CODE,
           headers: _headerManager.headers,
-          parameters: {
-            "email": email,
-          });
+          data: reqBody
+          );
 
       debugPrint(
           'email resend _response ~~~~~~~~~~~~~~~~~~~~~~~----- ${_response.statusCode}');

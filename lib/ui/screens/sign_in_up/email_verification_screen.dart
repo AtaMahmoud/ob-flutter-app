@@ -400,11 +400,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       if (email != null)
         userProvider.resendCode(email).then((status) async {
           if (status.status == 200) {
-            showInfoBarWithDissmissCallback(
+            showInfoBar(
                 'Resend Code', 'Code had been resent to your email', context,
-                () {
-              Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
-            });
+                );
           } else {
             String title = parseErrorTitle(status.code);
             showInfoBar(title, status.message, context);
