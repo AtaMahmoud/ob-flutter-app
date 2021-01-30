@@ -86,8 +86,7 @@ class Router {
         return CupertinoPageRoute(
             builder: (_) => AppSearchScreen(),
             settings: RouteSettings(name: AppSearchScreen.routeName),
-            fullscreenDialog: true
-            );
+            fullscreenDialog: true);
       case LandingScreen.routeName:
         return CupertinoPageRoute(
             builder: (_) => LandingScreen(),

@@ -66,6 +66,13 @@ Future<void> main() async {
   //     );
   // }, onError: Crashlytics.instance.recordError);
 
+  // SystemChrome.setSystemUIOverlayStyle(
+  //   const SystemUiOverlayStyle(
+  //     systemNavigationBarColor: Colors.red,
+
+  //   ),
+  // );
+
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -227,7 +234,6 @@ class _MyAppState extends State<MyApp> {
       //   _parseDeepLinkingUri(uri);
       // });
       _parseDeepLinkingUri(uri);
-
     }, onError: (Object err) {
       if (!mounted) return;
       setState(() {
@@ -264,8 +270,7 @@ class _MyAppState extends State<MyApp> {
     if (!mounted) return;
     _latestUri = _initialUri;
 
-    if(_latestUri != null)
-    _parseDeepLinkingUri(_initialUri);
+    if (_latestUri != null) _parseDeepLinkingUri(_initialUri);
     // setState(() {
     //   _latestUri = _initialUri;
     //   _latestLink = _initialLink;
@@ -284,7 +289,9 @@ class _MyAppState extends State<MyApp> {
     // Navigator.of(context).pushNamed(EmailVerificationScreen.routeName);
     String authCode = queryParams[0].value[0];
     print('------------- authCode  $authCode');
-    locator<NavigationService>().dpNavigateToEmailVeriScreen(EmailVerificationData(isDeepLinkData: true,verificationCode: authCode));
+    locator<NavigationService>().dpNavigateToEmailVeriScreen(
+        EmailVerificationData(
+            isDeepLinkData: true, verificationCode: authCode));
   }
 }
 

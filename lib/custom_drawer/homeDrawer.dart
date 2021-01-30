@@ -53,8 +53,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
   // ---------------------------
 
-  
-
   @override
   void initState() {
     super.initState();
@@ -692,11 +690,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
         margin: EdgeInsets.symmetric(horizontal: 48.w, vertical: 24.h),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(64.w),
-            border: Border.all(color: ColorConstants.COLOR_NOTIFICATION_DIVIDER),
+            border:
+                Border.all(color: ColorConstants.COLOR_NOTIFICATION_DIVIDER),
             color: AppTheme.notWhite),
         child: InkWell(
           onTap: () {
-            // Navigator.of(context).pop();
+            Navigator.of(context).pop();
             Navigator.pushNamed(context, AppSearchScreen.routeName);
           },
           child: Padding(
@@ -708,7 +707,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
                     style: Theme.of(context).textTheme.button.apply(
                           color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
                         )),
-                Icon(Icons.search,color:ColorConstants.COLOR_NOTIFICATION_DIVIDER ,),
+                Icon(
+                  Icons.search,
+                  color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
+                ),
               ],
             ),
           ),
