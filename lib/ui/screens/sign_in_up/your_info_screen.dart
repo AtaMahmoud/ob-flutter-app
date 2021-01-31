@@ -199,7 +199,7 @@ class _YourInfoScreenState extends State<YourInfoScreen> {
         _bloc.phoneChanged,
         TextFieldHints.PHONE,
         _phoneController,
-        InputTypes.NUMBER,
+        InputTypes.PHONE,
         null,
         true,
         TextInputAction.done,

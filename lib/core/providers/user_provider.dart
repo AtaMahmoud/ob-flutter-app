@@ -175,7 +175,7 @@ class UserProvider extends BaseProvider {
     ResponseStatus responseStatus = ResponseStatus();
 
     try {
-      final Response _response = await _apiBaseHelper.get(
+      final Response _response = await _apiBaseHelper.getForResponse(
           url: APP_CONFIG.Config.EMAIL_CONFIRMATION(token),
           headers: _headerManager.headers);
 

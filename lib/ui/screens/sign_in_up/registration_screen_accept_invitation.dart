@@ -174,7 +174,7 @@ class _RegistrationScreenAcceptInvitationState
         _bloc.phoneChanged,
         TextFieldHints.PHONE,
         _phoneController,
-        InputTypes.NUMBER,
+        InputTypes.PHONE,
         null,
         true,
         TextInputAction.done,

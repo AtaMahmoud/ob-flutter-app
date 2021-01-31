@@ -227,7 +227,7 @@ class _ClipperProfileEmergencyDropdownState
                             _bloc.phone,
                             _bloc.phoneChanged,
                             _phoneController,
-                            InputTypes.NUMBER,
+                            InputTypes.PHONE,
                             true,
                             _phoneNode,
                             _emailNode),

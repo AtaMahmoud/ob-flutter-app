@@ -51,8 +51,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:scheme="ss"
-                    android:host="ob.com"/>
+                    android:scheme="ob"
+                    android:host="oceanbuilders.com"/>
             </intent-filter>    
         </activity>
         <activity android:name="com.apptreesoftware.barcodescan.BarcodeScannerActivity"/>

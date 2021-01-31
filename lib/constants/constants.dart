@@ -142,6 +142,8 @@ class InputTypes {
   static const NUMBER =
       TextInputType.numberWithOptions(decimal: false, signed: false);
   static const EMAIL = TextInputType.emailAddress;
+  
+  static const PHONE = TextInputType.phone;
 }
 
 class InfoTexts {

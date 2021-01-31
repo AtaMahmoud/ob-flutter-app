@@ -292,5 +292,6 @@ class _MyAppState extends State<MyApp> {
 
 /usr/bin/xcrun simctl openurl booted "ss://ob.com/auth/verify/?uid=123&token=abc1"
 ob://oceanbuilders.com/auth/verify/?uid=123&token=abc1
+ob://oceanbuilders.com/auth/confirmation/?token=
 
 */
