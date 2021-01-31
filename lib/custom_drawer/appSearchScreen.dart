@@ -392,7 +392,9 @@ class _SelectHistoryState extends State<SelectHistory> {
         backgroundColor: AppTheme.nearlyWhite,
         onPressed: () {
           Navigator.of(context).pop();
-          // Navigator.of(context).pushReplacementNamed(ControlScreen.routeName);
+          Navigator.of(context)
+            .pushReplacementNamed(HomeScreen.routeName, arguments: 0);
+          Navigator.of(context).pushNamed(item.routeName);
         },
       ),
     );
