@@ -223,8 +223,7 @@ class UserProvider extends BaseProvider {
       final Response _response = await _apiBaseHelper.postForResponse(
           url: APP_CONFIG.Config.RESEND_CONFIRMATION_CODE,
           headers: _headerManager.headers,
-          data: reqBody
-          );
+          data: reqBody);
 
       debugPrint(
           'email resend _response ~~~~~~~~~~~~~~~~~~~~~~~----- ${_response.statusCode}');
@@ -704,6 +703,59 @@ class UserProvider extends BaseProvider {
       responseStatus.message = ea.message;
       responseStatus.status = ea.statusCode;
       ;
+    }
+
+    isLoading = false;
+    notifyListeners();
+
+    return responseStatus;
+  }
+
+  // ------------------------------------------------------- Forget User Password ( PUT ) --------------------------------------------------------------------
+
+  Future<ResponseStatus> sendPasswordRecoveryMail(String email) async {
+    isLoading = true;
+    notifyListeners();
+    ResponseStatus responseStatus = ResponseStatus();
+
+    Map<String, dynamic> updatePassword = {
+      "email": email,
+    };
+
+    try {
+      final Response userPasswordUpdateResponse = await _apiBaseHelper.put(
+          url: APP_CONFIG.Config.FORGET_USER_PASSWORD,
+          headers: _headerManager.headers,
+          data: updatePassword);
+      // debugPrint(
+      // 'update password response ============================== $userPasswordUpdateResponse');
+
+      if (userPasswordUpdateResponse != null &&
+          userPasswordUpdateResponse.statusCode == 200) {
+        String message = userPasswordUpdateResponse.data['message'];
+        print(message);
+        // debugPrint(
+        // 'updated user password ----------- $userPasswordUpdateResponse');
+        responseStatus.status = 200;
+      } else {
+        responseStatus.code = 'Sending Password Recovery Email Failed';
+        responseStatus.message = userPasswordUpdateResponse.statusMessage;
+        responseStatus.status = userPasswordUpdateResponse.statusCode;
+        // debugPrint(
+        // 'updateUserPassword error ============================== $userPasswordUpdateResponse');
+      }
+    } on FetchDataException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Sending Password Recovery Email Failed';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+      // debugPrint(
+      // 'updateUserPassword error ============================== ${ea.message}');
+    } on BadRequestException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Sending Password Recovery Email Failed';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
     }
 
     isLoading = false;
