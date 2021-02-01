@@ -22,6 +22,7 @@ import 'package:ocean_builder/ui/cleeper_ui/clipper_profile_ob_dropdown.dart';
 import 'package:ocean_builder/ui/shared/app_colors.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -228,6 +229,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
         ),
+        _userProvider.isLoading ? Center(child: CircularProgressIndicator()) : Container(),
         _bottomBar()
       ],
     );
@@ -373,7 +375,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       stream: _editBloc.emergencyInfoCheck,
       builder: (context, snapshot) {
         debugPrint(
-            'emergencyInfoCheck snapshot -------- ${snapshot.hasData}  data ----- ${snapshot.data} ');
+            'emergencyInfoCheck snapshot --------  data ----- ${snapshot.data} ');
         return BottomClipperProfile(
             ButtonText.BACK,
             ButtonText.SAVE,
@@ -406,136 +408,99 @@ class _ProfileScreenState extends State<ProfileScreen> {
   _save() async {
     FocusScope.of(context).unfocus();
 
-    EmergencyContact changedEmergencyCotnact = _user.emergencyContact;
+    // extracting only the changed or existing emergency contact information
 
+    // EmergencyContact changedEmergencyCotnact = _user.emergencyContact;
+
+    // checking if both user contact and emergenct contact get updated
     if (ProfileEditState.profileInfoChanged &&
         ProfileEditState.emergencyContactInfoChanged) {
       // debugPrint('Updating Profile data and emergency contacts ----------------------------------------------------------------------------------');
 
       if (!_userProvider.isLoading) {
+        // first update user data then update/add emergenct contact
         _userProvider.updateUserProfile(_user).then((responseStatus) {
           if (responseStatus.status == 200) {
             // _userProvider.autoLogin();
             // showInfoBar(
             //     'Profile Updated', 'Profile information updated', context);
-
+            ProfileEditState.profileInfoChanged = false;
             if (isEmergencyContactNull) {
               // debugPrint('emergency contact is null add it ');
-
-              _user.emergencyContact = changedEmergencyCotnact;
-
-              if (_user.emergencyContact.firstName != null &&
-                  _user.emergencyContact.lastName != null &&
-                  _user.emergencyContact.email != null &&
-                  _user.phone != null) {
-                if (!_userProvider.isLoading) {
-                  _userProvider
-                      .addEmergencyContact(_user)
-                      .then((responseStatus) {
-                    if (responseStatus.status == 200) {
-                      _userProvider.autoLogin();
-                      showInfoBar('Information Update',
-                          'Profile and Emergency information updated', context);
-                      // print(_userProvider.authenticatedUser.emergencyContact
-                      // .toJson()
-                      // .toString());
-                    } else {
-                      showInfoBar(parseErrorTitle(responseStatus.code),
-                          responseStatus.message, context);
-                    }
-                  });
-                } else {
-                  // debugPrint('is laoding ...');
-                }
-              } else {
-                showInfoBar('All Fields Required',
-                    'Please fill all the fields of emergency contact', context);
-              }
+              _addEmergencyContact();
             } else {
-              _userProvider
-                  .updateEmergencyContact(_user)
-                  .then((responseStatus) async {
-                if (responseStatus.status == 200) {
-                  await _userProvider.autoLogin();
-                  showInfoBar('Emergency Contact Updated',
-                      'Emergency contact updated', context);
-                  // print(_userProvider.authenticatedUser.emergencyContact
-                  // .toJson()
-                  // .toString());
-                } else {
-                  showInfoBar(parseErrorTitle(responseStatus.code),
-                      responseStatus.message, context);
-                }
-              });
+              _updateEmergencyContact();
             }
           } else {
             showInfoBar(parseErrorTitle(responseStatus.code),
                 responseStatus.message, context);
           }
         });
-      } else {
-        // debugPrint('is laoding ...');
       }
     } else if (ProfileEditState.profileInfoChanged) {
       // debugPrint('Updating Profile data  ----------------------------------------------------------------------------------');
       if (!_userProvider.isLoading) {
-        _userProvider.updateUserProfile(_user).then((responseStatus) {
-          if (responseStatus.status == 200) {
-            _userProvider.autoLogin();
-            showInfoBar(
-                'Profile Updated', 'Profile information updated', context);
-            // print(_userProvider.authenticatedUser.emergencyContact
-            // .toJson()
-            // .toString());
-          } else {
-            showInfoBar(parseErrorTitle(responseStatus.code),
-                responseStatus.message, context);
-          }
-        });
-      } else {
-        // debugPrint('is laoding ...');
+        _updateUserData();
       }
     } else if (ProfileEditState.emergencyContactInfoChanged) {
-      // debugPrint('Updating emergency contacts ----------------------------------------------------------------------------------');
+      // debugPrint('Updating emergency contacts ------------------- ---------------------------------------------------------------');
       // debugPrint('----------------------  $isEmergencyContactNull --------------------------------------------');
       if (isEmergencyContactNull) {
         // debugPrint('emergency contact is null add it ');
-        debugPrint(
-            'emeregency contact -------- ${changedEmergencyCotnact.toJson()}');
-        _user.emergencyContact = changedEmergencyCotnact;
-        debugPrint(
-            '_user emeregency contact -------- ${_user.emergencyContact.toJson()}');
-        if (_user.emergencyContact.firstName != null &&
-            _user.emergencyContact.lastName != null &&
-            _user.emergencyContact.email != null &&
-            _user.phone != null) {
-          if (!_userProvider.isLoading) {
-            _userProvider.addEmergencyContact(_user).then((responseStatus) {
-              if (responseStatus.status == 200) {
-                _userProvider.autoLogin();
-                showInfoBar('Emergency Contact Added',
-                    'Emergency contact Added', context);
-                // print(_userProvider.authenticatedUser.emergencyContact
-                // .toJson()
-                // .toString());
-              } else {
-                showInfoBar(parseErrorTitle(responseStatus.code),
-                    responseStatus.message, context);
-              }
-            });
-          } else {
-            // debugPrint('is laoding ...');
-          }
-        } else {
-          showInfoBar(
-              'All Fields Required', 'Please fill all the fields', context);
-        }
+        // debugPrint(
+        //     'emeregency contact -------- ${changedEmergencyCotnact.toJson()}');
+        // _user.emergencyContact = changedEmergencyCotnact;
+        _addEmergencyContact();
       } else if (!_userProvider.isLoading) {
-        _userProvider.updateEmergencyContact(_user).then((responseStatus) {
+        _updateEmergencyContact();
+      }
+    }
+  }
+
+  void _updateUserData() {
+    _userProvider.updateUserProfile(_user).then((responseStatus) {
+      if (responseStatus.status == 200) {
+        ProfileEditState.profileInfoChanged = false;
+        _userProvider.autoLogin();
+        showInfoBar('Profile Updated', 'Profile information updated', context);
+        // print(_userProvider.authenticatedUser.emergencyContact
+        // .toJson()
+        // .toString());
+      } else {
+        showInfoBar(parseErrorTitle(responseStatus.code),
+            responseStatus.message, context);
+      }
+    });
+  }
+
+  void _updateEmergencyContact() {
+    _userProvider.updateEmergencyContact(_user).then((responseStatus) {
+      if (responseStatus.status == 200) {
+        ProfileEditState.emergencyContactInfoChanged = false;
+        _userProvider.autoLogin();
+        showInfoBar('Profile Updated', 'Profile information updated', context);
+        // print(_userProvider.authenticatedUser.emergencyContact
+        // .toJson()
+        // .toString());
+      } else {
+        showInfoBar(parseErrorTitle(responseStatus.code),
+            responseStatus.message, context);
+      }
+    });
+  }
+
+  void _addEmergencyContact() {
+    if (_user.emergencyContact.firstName != null &&
+        _user.emergencyContact.lastName != null &&
+        _user.emergencyContact.email != null &&
+        _user.phone != null) {
+      if (!_userProvider.isLoading) {
+        _userProvider.addEmergencyContact(_user).then((responseStatus) {
           if (responseStatus.status == 200) {
+            isEmergencyContactNull = false;
+            ProfileEditState.emergencyContactInfoChanged = false;
             _userProvider.autoLogin();
-            showInfoBar('Emergency Contact Updated',
-                'Emergency contact updated', context);
+            showInfoBar('Profile Updated', 'Profile information updated', context);
             // print(_userProvider.authenticatedUser.emergencyContact
             // .toJson()
             // .toString());
@@ -544,9 +509,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 responseStatus.message, context);
           }
         });
-      } else {
-        // debugPrint('is laoding ...');
       }
+    } else {
+      showInfoBar('All Fields Required',
+          'Please fill all the fields of emergency contact', context);
     }
   }
 
