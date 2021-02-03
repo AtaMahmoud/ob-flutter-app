@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:ocean_builder/constants/constants.dart';
+import 'package:ocean_builder/core/services/locator.dart';
+import 'package:ocean_builder/core/services/navigation_service.dart';
 import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/access_event_screen.dart';
@@ -190,6 +192,10 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
 
   String selectedTerm;
 
+  var resutlItems;
+
+  double paddingTop = 0;
+
   List<String> filterSearchTerms({
     @required String filter,
   }) {
@@ -242,19 +248,38 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
     super.dispose();
   }
 
+  void _processSearchResult() {
+    if (selectedTerm != null && selectedTerm.isNotEmpty) {
+      resutlItems = _appItems
+          .where((term) =>
+              term.name.toLowerCase().startsWith(selectedTerm.toLowerCase()))
+          .toList();
+    }
+    if (resutlItems == null || resutlItems.isEmpty)
+      resutlItems = _appItems.toList();
+
+    if (searchHistory != null) {
+      paddingTop = searchHistory.length * 48.0;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    _processSearchResult();
     return Scaffold(
       backgroundColor: Colors.white, //AppTheme.notWhite,
       body: FloatingSearchBar(
-        backdropColor:
-            AppTheme.notWhite, // ColorConstants.COLOR_NOTIFICATION_DIVIDER,
+        backdropColor: Colors.transparent,
+        // AppTheme.notWhite, // ColorConstants.COLOR_NOTIFICATION_DIVIDER,
         controller: controller,
         body: FloatingSearchBarScrollNotifier(
           child: SearchResultsListView(
-              searchTerm: selectedTerm,
-              appItems: _appItems,
-              suggestedItems: searchedItems),
+            searchTerm: selectedTerm,
+            appItems: _appItems,
+            resutlItems: resutlItems,
+            suggestedItems: searchedItems,
+            paddingTop: paddingTop,
+          ),
         ),
         backgroundColor: AppTheme.nearlyWhite,
         iconColor: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
@@ -278,6 +303,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
         ],
         onQueryChanged: (query) {
           setState(() {
+            selectedTerm = query;
             filteredSearchHistory = filterSearchTerms(filter: query);
           });
         },
@@ -292,6 +318,8 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
           return ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Material(
+              borderOnForeground: true,
+              shadowColor: Colors.black,
               color: Colors.white,
               elevation: 4,
               child: Builder(
@@ -370,49 +398,65 @@ class SearchResultsListView extends StatelessWidget {
 
   final List<SearchItem> suggestedItems;
 
-  List<SearchItem> resutlItems = [];
+  final List<SearchItem> resutlItems;
+
+  final double paddingTop;
 
   SearchResultsListView(
       {Key key,
       @required this.searchTerm,
       @required this.appItems,
-      this.suggestedItems})
+      this.suggestedItems,
+      this.resutlItems,
+      this.paddingTop})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("print search term $searchTerm");
-    _processSearchResult();
     final fsb = FloatingSearchBar.of(context);
 
     if (searchTerm == null) {
       return Padding(
-        padding: EdgeInsets.only(top: fsb.height + fsb.margins.vertical),
+        padding: EdgeInsets.only(
+            top: fsb.height + fsb.margins.vertical + paddingTop),
         child: Stack(
           children: [
-            Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.search,
-                    size: 64,
-                    color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
-                  ),
-                  Text(
-                    'Start searching',
-                    style: Theme.of(context).textTheme.headline5.apply(
-                        color: ColorConstants.COLOR_NOTIFICATION_DIVIDER),
-                  )
-                ],
-              ),
-            ),
+            resutlItems.length < 4
+                ? _wdgt_startSearching(context)
+                : Container(),
+            _searchResultList(fsb, context),
             SelectHistory(suggestedItems)
           ],
         ),
       );
     }
 
+    return _searchResultList(fsb, context);
+  }
+
+  Center _wdgt_startSearching(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.search,
+            size: 64,
+            color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
+          ),
+          Text(
+            'Start searching',
+            style: Theme.of(context)
+                .textTheme
+                .headline5
+                .apply(color: ColorConstants.COLOR_NOTIFICATION_DIVIDER),
+          )
+        ],
+      ),
+    );
+  }
+
+  ListView _searchResultList(FloatingSearchBarState fsb, BuildContext context) {
     return ListView(
       padding: EdgeInsets.only(top: fsb.height + fsb.margins.vertical),
       children: List.generate(
@@ -435,37 +479,30 @@ class SearchResultsListView extends StatelessWidget {
       subtitle: Text('${resutlItems[index].shortDesc}'),
     );
   }
-
-  void _processSearchResult() {
-    if (searchTerm != null && searchTerm.isNotEmpty) {
-      resutlItems =
-          appItems.where((term) => term.name.startsWith(searchTerm)).toList();
-    }
-    // else {
-    //   resutlItems = appItems.reversed.toList();
-    // }
-  }
 }
 
-class SelectHistory extends StatefulWidget {
-  final List<SearchItem> items;
-  SelectHistory(this.items);
-  @override
-  _SelectHistoryState createState() => _SelectHistoryState();
-}
+// class SelectHistory extends StatefulWidget {
+//   final List<SearchItem> items;
+//   SelectHistory(this.items);
+//   @override
+//   _SelectHistoryState createState() => _SelectHistoryState();
+// }
 
-class _SelectHistoryState extends State<SelectHistory> {
+class SelectHistory extends StatelessWidget {
   SearchItem selectedChoice;
 
-  ScreenUtil _util = ScreenUtil();
+  // ScreenUtil _util = ScreenUtil();
+  BuildContext _context;
+  final List<SearchItem> items;
+  SelectHistory(this.items);
 
-  @override
-  void initState() {
-    // debugPrint('init stat4e called in multiselect chip state');
-    super.initState();
-    selectedIndex = 0;
-    // selectedLight = widget.lights[selectedIndex];
-  }
+  // @override
+  // void initState() {
+  //   // debugPrint('init stat4e called in multiselect chip state');
+  //   super.initState();
+  //   selectedIndex = 0;
+  //   // selectedLight = widget.lights[selectedIndex];
+  // }
 
   // this function will build and return the choice list
   _buildChoiceList() {
@@ -473,32 +510,32 @@ class _SelectHistoryState extends State<SelectHistory> {
     // debugPrint('widget.lights in MultiSelectChip ----- ${widget.lights.length}');
 
     return List<Widget>.generate(
-      widget.items.length,
+      items.length,
       (int index) {
-        return _buildChoiceChip(widget.items[index], index);
+        return _buildChoiceChip(items[index], index);
       },
     ).toList();
   }
 
   _buildChoiceChip(SearchItem item, index) {
     return Padding(
-      padding: EdgeInsets.all(_util.setSp(8)),
+      padding: EdgeInsets.all(8.sp),
       child: ActionChip(
         label: Text(item.name),
         labelStyle: TextStyle(
-            fontSize: _util.setSp(48),
+            fontSize: 48.sp,
             // fontWeight: FontWeight.w800,
             // letterSpacing: util.setSp(2),
             color: ColorConstants.COLOR_NOTIFICATION_DIVIDER),
         autofocus: false,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(_util.setWidth(64)),
+            borderRadius: BorderRadius.circular(64.w),
             side: BorderSide(
                 color: ColorConstants.COLOR_NOTIFICATION_DIVIDER, width: 1)),
-        elevation: _util.setWidth(8),
+        elevation: 8.w,
         backgroundColor: AppTheme.nearlyWhite,
         onPressed: () {
-          _navigateTo(context, item);
+          _navigateTo(_context, item);
         },
       ),
     );
@@ -506,6 +543,7 @@ class _SelectHistoryState extends State<SelectHistory> {
 
   @override
   Widget build(BuildContext context) {
+    _context = context;
     return Center(
       child: Column(
         children: [
@@ -520,9 +558,14 @@ class _SelectHistoryState extends State<SelectHistory> {
 }
 
 void _navigateTo(BuildContext context, SearchItem item) {
-  Navigator.of(context).pop();
-  Navigator.of(context)
-      .pushReplacementNamed(HomeScreen.routeName, arguments: 0);
-  Future.delayed(Duration(seconds: 1))
-      .then((value) => Navigator.of(context).pushNamed(item.routeName));
+  Navigator.of(context).pop(item);
+  // SELECTED_SEARCH_ITEM = item;
+  // Navigator.of(context)
+  //     .pushReplacementNamed(HomeScreen.routeName, arguments: 0);
+  // Navigator.of(context).pushNamed(item.routeName);
+
+  // locator<NavigationService>().navigateTo(item.routeName);
+
+  // Future.delayed(Duration(seconds: 1))
+  //     .then((value) => Navigator.of(context).pushNamed(item.routeName));
 }

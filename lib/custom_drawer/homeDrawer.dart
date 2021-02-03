@@ -11,14 +11,18 @@ import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/custom_drawer/appSearchScreen.dart';
 import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/access_management_screen.dart';
+import 'package:ocean_builder/ui/screens/controls/control_screen.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
+import 'package:ocean_builder/ui/screens/marine/marine_screen.dart';
 import 'package:ocean_builder/ui/screens/menu/landing_screen.dart';
 import 'package:ocean_builder/ui/screens/notification/noti_history_screen_with_drawer.dart';
 import 'package:ocean_builder/ui/screens/profile/profile_screen.dart';
 import 'package:ocean_builder/ui/screens/settings/settings_screen.dart';
+import 'package:ocean_builder/ui/screens/weather/weather_screen.dart';
 import 'package:ocean_builder/ui/shared/popup.dart';
 import 'package:ocean_builder/ui/widgets/drawer_topbar.dart';
 import 'package:provider/provider.dart';
+import 'package:ocean_builder/core/models/search_item.dart';
 
 class HomeDrawer extends StatefulWidget {
   final AnimationController iconAnimationController;
@@ -694,9 +698,30 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 Border.all(color: ColorConstants.COLOR_NOTIFICATION_DIVIDER),
             color: AppTheme.notWhite),
         child: InkWell(
-          onTap: () {
-            Navigator.of(context).pop();
-            Navigator.pushNamed(context, AppSearchScreen.routeName);
+          onTap: () async {
+            // Navigator.of(context).pop();
+            var result =
+                await Navigator.pushNamed(context, AppSearchScreen.routeName);
+            print('result ---------- $result');
+            SearchItem s = result;
+            if (s != null) {
+              if (s.routeName.compareTo(ControlScreen.routeName) == 0) {
+                Navigator.pop(context);
+                navigationtoScreen(DrawerIndex.CONTROLS);
+                // Navigator.of(context)
+                // .pushReplacementNamed(HomeScreen.routeName, arguments: 1);
+              } else if (s.routeName.compareTo(WeatherScreen.routeName) == 0) {
+                navigationtoScreen(DrawerIndex.WEATHER);
+
+                // Navigator.of(context)
+                //     .pushReplacementNamed(HomeScreen.routeName, arguments: 2);
+              } else if (s.routeName.compareTo(MarineScreen.routeName) == 0) {
+                navigationtoScreen(DrawerIndex.MARINE);
+                // Navigator.of(context)
+                // .pushReplacementNamed(HomeScreen.routeName, arguments: 3);
+              } else
+                Navigator.pushNamed(context, s.routeName);
+            }
           },
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 36.w),

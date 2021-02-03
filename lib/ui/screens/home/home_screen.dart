@@ -123,6 +123,7 @@ class _HomeScreenState extends State<HomeScreen>
     GlobalContext.dashBoardBuildCount = 0;
   }
 
+
   @override
   Widget build(BuildContext context) {
     if (GlobalContext.dashBoardBuildCount == 0) {

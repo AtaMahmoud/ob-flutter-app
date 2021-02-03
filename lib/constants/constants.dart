@@ -9,6 +9,7 @@ import 'package:ocean_builder/core/models/ocean_builder_user.dart';
 import 'package:ocean_builder/core/models/permission.dart';
 import 'package:ocean_builder/core/models/permission.dart';
 import 'package:ocean_builder/core/models/permission.dart';
+import 'package:ocean_builder/core/models/search_item.dart';
 import 'package:ocean_builder/custom_drawer/homeDrawer.dart';
 
 class ColorConstants {
@@ -1664,6 +1665,8 @@ List<String> WEATEHR_SOURCE_LIST = [
   'LOCAL (WEATHERFLOW STATION)',
   'EXTERNAL (STORMGLASS)'
 ];
+
+SearchItem SELECTED_SEARCH_ITEM;
 
 // List<App>
 
