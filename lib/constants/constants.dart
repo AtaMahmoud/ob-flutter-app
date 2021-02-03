@@ -1248,10 +1248,11 @@ class AppStrings {
 
   static String checkYourInbox = 'Check your inbox';
 
-  static String confirmEmailText1 = 'We have sent you an email with a link that will allow you to finish your account setup.';
+  static String confirmEmailText1 =
+      'We have sent you an email with a link that will allow you to finish your account setup.';
 
-  static String confirmEmailText2 = 'Alternatively, you can enter the code provided in the email here';
-
+  static String confirmEmailText2 =
+      'Alternatively, you can enter the code provided in the email here';
 }
 
 class NotificationConstants {
@@ -1663,6 +1664,8 @@ List<String> WEATEHR_SOURCE_LIST = [
   'LOCAL (WEATHERFLOW STATION)',
   'EXTERNAL (STORMGLASS)'
 ];
+
+// List<App>
 
 /*
 

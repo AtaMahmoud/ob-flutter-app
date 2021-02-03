@@ -68,6 +68,20 @@ import 'package:ocean_builder/ui/screens/sign_in_up/your_info_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/your_obs_screen.dart';
 import 'package:ocean_builder/ui/screens/weather/weather_more_widget.dart';
 import 'package:ocean_builder/ui/screens/weather/weather_screen.dart';
+import 'package:ocean_builder/core/models/search_item.dart';
+import 'package:ocean_builder/ui/screens/accessManagement/grant_access_screen.dart';
+
+const historyLength = 5;
+const selectHistoryLength = 5;
+
+List<String> searchHistory = [
+  'Home',
+  'Controll',
+  'Weather',
+  'Marine',
+];
+
+List<SearchItem> searchedItems = [];
 
 class AppSearchScreen extends StatefulWidget {
   static const String routeName = '/appSearch';
@@ -78,35 +92,98 @@ class AppSearchScreen extends StatefulWidget {
 }
 
 class _AppSearchScreenState extends State<AppSearchScreen> {
-  List<AppNavigationItem> _appItems = [
-    AppNavigationItem(name: 'Home', routeName: HomeScreen.routeName),
-    AppNavigationItem(name: 'Control', routeName: ControlScreen.routeName),
-    AppNavigationItem(name: 'Weather', routeName: WeatherScreen.routeName),
-    AppNavigationItem(name: 'Marine', routeName: MarineScreen.routeName),
-    AppNavigationItem(
-        name: 'Weather Details', routeName: WeatherMoreWidget.routeName),
-    AppNavigationItem(name: 'Profile', routeName: ProfileScreen.routeName),
-    AppNavigationItem(name: 'Settings', routeName: SettingsWidget.routeName),
-    AppNavigationItem(
-        name: 'Change Email', routeName: SettingsWidget.routeName),
-  ];
-
-  static const historyLength = 5;
-  static const selectHistoryLength = 5;
-
-  List<String> _searchHistory = [
-    'Home',
-    'Controll',
-    'Weather',
-    'Marine',
-  ];
-
-  List<String> _selectHistory = [
-    'Profile',
-    'Permission',
-    'Lighting',
-    'Design',
-    'Change Password'
+  List<SearchItem> _appItems = [
+    SearchItem(
+        name: 'Home',
+        routeName: HomeScreen.routeName,
+        shortDesc: 'Application Dashboard'),
+    SearchItem(
+        name: 'Control',
+        routeName: ControlScreen.routeName,
+        shortDesc:
+            'Lighting, camera, stair and tempertaure controls and other seapod device stats'),
+    SearchItem(
+        name: 'Weather',
+        routeName: WeatherScreen.routeName,
+        shortDesc: 'Check weather data, forcasts and history with graphs'),
+    SearchItem(
+        name: 'Marine',
+        routeName: MarineScreen.routeName,
+        shortDesc: 'Check weather data, forcasts and history with graphs'),
+    SearchItem(
+        name: 'Weather Details',
+        routeName: WeatherMoreWidget.routeName,
+        shortDesc: 'Check weather details for next 7 days'),
+    SearchItem(
+        name: 'Profile',
+        routeName: ProfileScreen.routeName,
+        shortDesc: 'Check or modifly profile information'),
+    SearchItem(
+        name: 'Settings',
+        routeName: SettingsWidget.routeName,
+        shortDesc: 'Check email, password and notification settings'),
+    SearchItem(
+        name: 'Change Email',
+        routeName: SettingsWidget.routeName,
+        shortDesc: 'Change current email address'),
+    SearchItem(
+        name: 'Change Password',
+        routeName: SettingsWidget.routeName,
+        shortDesc: 'Change current password'),
+    SearchItem(
+        name: 'Notification Settings',
+        routeName: SettingsWidget.routeName,
+        shortDesc:
+            'Check to enable or disable to get notification about access request, access inviation and urgent alarms'),
+    SearchItem(
+        name: 'Notifications',
+        routeName: NotificationHistoryScreenWidget.routeName,
+        shortDesc: 'Check to see all notifications'),
+    SearchItem(
+        name: 'Access Management',
+        routeName: AccessManagementScreen.routeName,
+        shortDesc:
+            'Check to see sent invitations, received invitaions, sent access requests, received access requests and options to manage permissions, reqeust or invite to seapod, check memebrs of seapod , remove memebr or cancel invitaions'),
+    SearchItem(
+        name: 'Request Access',
+        routeName: RequestAccessScreen.routeName,
+        shortDesc: 'Check to send request to access seapod'),
+    SearchItem(
+        name: 'Send Access Invitaion',
+        routeName: GrantAccessScreenWidget.routeName,
+        shortDesc: 'Check to send invitaion to grant seapod access'),
+    SearchItem(
+        name: 'Manage permission',
+        routeName: ManagePermissionScreen.routeName,
+        shortDesc: 'Check to create, manage permissions'),
+    SearchItem(
+        name: 'Sent Invitaion',
+        routeName: AccessEventScreen.routeName,
+        shortDesc: 'Check to ses sent invitaions and their details'),
+    SearchItem(
+        name: 'Received Invitaion',
+        routeName: AccessEventScreen.routeName,
+        shortDesc: 'Check to ses received invitaions and their details'),
+    SearchItem(
+        name: 'Sent Request',
+        routeName: AccessEventScreen.routeName,
+        shortDesc: 'Check to ses sent requests and their details'),
+    SearchItem(
+        name: 'Received Request',
+        routeName: AccessEventScreen.routeName,
+        shortDesc: 'Check to ses received requests and their details'),
+    SearchItem(
+        name: 'Lighting',
+        routeName: LightingScreen.routeName,
+        shortDesc: 'Check to create, manage lighting colors and light scenes'),
+    SearchItem(
+        name: 'Cameras',
+        routeName: CameraScreen.routeName,
+        shortDesc: 'Check to see cameras and movement detection sign'),
+    SearchItem(
+        name: 'New Permission',
+        routeName: CreatePermissionScreen.routeName,
+        shortDesc: 'Check to create new permission'),
   ];
 
   List<String> filteredSearchHistory;
@@ -117,30 +194,30 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
     @required String filter,
   }) {
     if (filter != null && filter.isNotEmpty) {
-      return _searchHistory.reversed
+      return searchHistory.reversed
           .where((term) => term.startsWith(filter))
           .toList();
     } else {
-      return _searchHistory.reversed.toList();
+      return searchHistory.reversed.toList();
     }
   }
 
   void addSearchTerm(String term) {
-    if (_searchHistory.contains(term)) {
+    if (searchHistory.contains(term)) {
       putSearchTermFirst(term);
       return;
     }
 
-    _searchHistory.add(term);
-    if (_searchHistory.length > historyLength) {
-      _searchHistory.removeRange(0, _searchHistory.length - historyLength);
+    searchHistory.add(term);
+    if (searchHistory.length > historyLength) {
+      searchHistory.removeRange(0, searchHistory.length - historyLength);
     }
 
     filteredSearchHistory = filterSearchTerms(filter: null);
   }
 
   void deleteSearchTerm(String term) {
-    _searchHistory.removeWhere((t) => t == term);
+    searchHistory.removeWhere((t) => t == term);
     filteredSearchHistory = filterSearchTerms(filter: null);
   }
 
@@ -175,9 +252,9 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
         controller: controller,
         body: FloatingSearchBarScrollNotifier(
           child: SearchResultsListView(
-            searchTerm: selectedTerm,
-            appItems: _appItems,
-          ),
+              searchTerm: selectedTerm,
+              appItems: _appItems,
+              suggestedItems: searchedItems),
         ),
         backgroundColor: AppTheme.nearlyWhite,
         iconColor: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
@@ -289,14 +366,23 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
 class SearchResultsListView extends StatelessWidget {
   final String searchTerm;
 
-  final List<AppNavigationItem> appItems;
+  final List<SearchItem> appItems;
 
-  const SearchResultsListView(
-      {Key key, @required this.searchTerm, @required this.appItems})
+  final List<SearchItem> suggestedItems;
+
+  List<SearchItem> resutlItems = [];
+
+  SearchResultsListView(
+      {Key key,
+      @required this.searchTerm,
+      @required this.appItems,
+      this.suggestedItems})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("print search term $searchTerm");
+    _processSearchResult();
     final fsb = FloatingSearchBar.of(context);
 
     if (searchTerm == null) {
@@ -321,7 +407,7 @@ class SearchResultsListView extends StatelessWidget {
                 ],
               ),
             ),
-            SelectHistory(appItems)
+            SelectHistory(suggestedItems)
           ],
         ),
       );
@@ -330,25 +416,46 @@ class SearchResultsListView extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.only(top: fsb.height + fsb.margins.vertical),
       children: List.generate(
-        50,
-        (index) => ListTile(
-          title: Text('$searchTerm search result'),
-          subtitle: Text(index.toString()),
-        ),
+        resutlItems.length,
+        (index) {
+          return _resultWidget(context, index);
+        },
       ),
     );
+  }
+
+  ListTile _resultWidget(BuildContext context, int index) {
+    return ListTile(
+      onTap: () {
+        searchedItems.add(resutlItems[
+            index]); // write add suggested items, push to first and remove searched items methods
+        _navigateTo(context, resutlItems[index]);
+      },
+      title: Text('${resutlItems[index].name}'),
+      subtitle: Text('${resutlItems[index].shortDesc}'),
+    );
+  }
+
+  void _processSearchResult() {
+    if (searchTerm != null && searchTerm.isNotEmpty) {
+      resutlItems =
+          appItems.where((term) => term.name.startsWith(searchTerm)).toList();
+    }
+    // else {
+    //   resutlItems = appItems.reversed.toList();
+    // }
   }
 }
 
 class SelectHistory extends StatefulWidget {
-  final List<AppNavigationItem> items;
+  final List<SearchItem> items;
   SelectHistory(this.items);
   @override
   _SelectHistoryState createState() => _SelectHistoryState();
 }
 
 class _SelectHistoryState extends State<SelectHistory> {
-  AppNavigationItem selectedChoice;
+  SearchItem selectedChoice;
 
   ScreenUtil _util = ScreenUtil();
 
@@ -373,7 +480,7 @@ class _SelectHistoryState extends State<SelectHistory> {
     ).toList();
   }
 
-  _buildChoiceChip(AppNavigationItem item, index) {
+  _buildChoiceChip(SearchItem item, index) {
     return Padding(
       padding: EdgeInsets.all(_util.setSp(8)),
       child: ActionChip(
@@ -391,10 +498,7 @@ class _SelectHistoryState extends State<SelectHistory> {
         elevation: _util.setWidth(8),
         backgroundColor: AppTheme.nearlyWhite,
         onPressed: () {
-          Navigator.of(context).pop();
-          Navigator.of(context)
-            .pushReplacementNamed(HomeScreen.routeName, arguments: 0);
-          Navigator.of(context).pushNamed(item.routeName);
+          _navigateTo(context, item);
         },
       ),
     );
@@ -415,8 +519,10 @@ class _SelectHistoryState extends State<SelectHistory> {
   }
 }
 
-class AppNavigationItem {
-  String name;
-  String routeName;
-  AppNavigationItem({this.name, this.routeName});
+void _navigateTo(BuildContext context, SearchItem item) {
+  Navigator.of(context).pop();
+  Navigator.of(context)
+      .pushReplacementNamed(HomeScreen.routeName, arguments: 0);
+  Future.delayed(Duration(seconds: 1))
+      .then((value) => Navigator.of(context).pushNamed(item.routeName));
 }
