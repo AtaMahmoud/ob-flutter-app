@@ -72,6 +72,7 @@ import 'package:ocean_builder/ui/screens/weather/weather_more_widget.dart';
 import 'package:ocean_builder/ui/screens/weather/weather_screen.dart';
 import 'package:ocean_builder/core/models/search_item.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/grant_access_screen.dart';
+import 'package:ocean_builder/bloc/generic_bloc.dart';
 
 const historyLength = 5;
 const selectHistoryLength = 5;
@@ -192,7 +193,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
 
   String selectedTerm;
 
-  var resutlItems;
+  List<SearchItem> resutlItems = [];
 
   double paddingTop = 0;
 
@@ -220,11 +221,18 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
     }
 
     filteredSearchHistory = filterSearchTerms(filter: null);
+
+    // setState(() {
+    //   filteredSearchHistory = filterSearchTerms(filter: null);
+    // });
   }
 
   void deleteSearchTerm(String term) {
     searchHistory.removeWhere((t) => t == term);
     filteredSearchHistory = filterSearchTerms(filter: null);
+    // setState(() {
+    //   filteredSearchHistory = filterSearchTerms(filter: null);
+    // });
   }
 
   void putSearchTermFirst(String term) {
@@ -234,10 +242,12 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
 
   FloatingSearchBarController controller;
 
+  GenericBloc<double> _blocPadding = GenericBloc(null);
+
   @override
   void initState() {
     super.initState();
-
+    _blocPadding.sink.add(10.0);
     controller = FloatingSearchBarController();
     filteredSearchHistory = filterSearchTerms(filter: null);
   }
@@ -245,6 +255,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
   @override
   void dispose() {
     controller.dispose();
+    _blocPadding.dispose();
     super.dispose();
   }
 
@@ -258,9 +269,8 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
     if (resutlItems == null || resutlItems.isEmpty)
       resutlItems = _appItems.toList();
 
-    if (searchHistory != null) {
-      paddingTop = searchHistory.length * 48.0;
-    }
+    debugPrint(
+        'after processing search result --- length is ${resutlItems.length}  --------filteredSearch result ---- ${filteredSearchHistory.length} ---- padding top is ---$paddingTop');
   }
 
   @override
@@ -301,12 +311,32 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
         actions: [
           FloatingSearchBarAction.searchToClear(),
         ],
+        onFocusChanged: (status) {
+          print(status);
+          setState(() {
+            if (status) {
+              if (filteredSearchHistory != null) {
+                paddingTop = filteredSearchHistory.length * 20.0;
+              } else {
+                paddingTop = searchHistory.length * 20.0;
+              }
+            } else {
+              paddingTop = 0.0;
+            }
+
+            print('reseting state');
+          });
+        },
         onQueryChanged: (query) {
           setState(() {
             selectedTerm = query;
             filteredSearchHistory = filterSearchTerms(filter: query);
+            if (filteredSearchHistory != null) {
+              paddingTop = filteredSearchHistory.length * 20.0 + 20.0;
+            }
           });
         },
+        clearQueryOnClose: true,
         onSubmitted: (query) {
           setState(() {
             addSearchTerm(query);
@@ -415,23 +445,24 @@ class SearchResultsListView extends StatelessWidget {
   Widget build(BuildContext context) {
     final fsb = FloatingSearchBar.of(context);
 
-    if (searchTerm == null) {
-      return Padding(
-        padding: EdgeInsets.only(
-            top: fsb.height + fsb.margins.vertical + paddingTop),
-        child: Stack(
-          children: [
-            resutlItems.length < 4
-                ? _wdgt_startSearching(context)
-                : Container(),
-            _searchResultList(fsb, context),
-            SelectHistory(suggestedItems)
-          ],
-        ),
-      );
-    }
+    debugPrint('padding applied to reasult result ---------- {$paddingTop }');
 
-    return _searchResultList(fsb, context);
+    // if (searchTerm == null) {
+    return Container(
+      margin:
+          EdgeInsets.only(top: fsb.height + fsb.margins.vertical + paddingTop),
+      child: Stack(
+        children: [
+          resutlItems.length < 2 ? _wdgt_startSearching(context) : Container(),
+          _searchResultList(fsb, context),
+          SelectHistory(suggestedItems)
+        ],
+      ),
+    );
+
+    // }
+
+    // return _searchResultList(fsb, context);
   }
 
   Center _wdgt_startSearching(BuildContext context) {
@@ -458,7 +489,8 @@ class SearchResultsListView extends StatelessWidget {
 
   ListView _searchResultList(FloatingSearchBarState fsb, BuildContext context) {
     return ListView(
-      padding: EdgeInsets.only(top: fsb.height + fsb.margins.vertical),
+      // padding:
+      //     EdgeInsets.only(top: fsb.height + fsb.margins.vertical + paddingTop),
       children: List.generate(
         resutlItems.length,
         (index) {
@@ -468,15 +500,19 @@ class SearchResultsListView extends StatelessWidget {
     );
   }
 
-  ListTile _resultWidget(BuildContext context, int index) {
-    return ListTile(
-      onTap: () {
-        searchedItems.add(resutlItems[
-            index]); // write add suggested items, push to first and remove searched items methods
-        _navigateTo(context, resutlItems[index]);
-      },
-      title: Text('${resutlItems[index].name}'),
-      subtitle: Text('${resutlItems[index].shortDesc}'),
+  Card _resultWidget(BuildContext context, int index) {
+    return Card(
+      elevation: 10.0,
+      color: Colors.blueAccent,
+      child: ListTile(
+        onTap: () {
+          searchedItems.add(resutlItems[
+              index]); // write add suggested items, push to first and remove searched items methods
+          _navigateTo(context, resutlItems[index]);
+        },
+        title: Text('${resutlItems[index].name}'),
+        subtitle: Text('${resutlItems[index].shortDesc}'),
+      ),
     );
   }
 }
