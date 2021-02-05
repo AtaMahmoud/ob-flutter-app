@@ -1,7 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
-
+import 'package:to_string/to_string.dart';
 part 'user_ocean_builder.g.dart';
 
+@ToString()
 @JsonSerializable()
 class UserOceanBuilder{
   String oceanBuilderId;
@@ -30,5 +31,10 @@ class UserOceanBuilder{
 
   static DateTime _dateTimeFromEpochUs(int us) => us == null ? null : new DateTime.fromMicrosecondsSinceEpoch(us);
   static int _dateTimeToEpochUs(DateTime dateTime) => dateTime?.microsecondsSinceEpoch;
+
+@override
+String toString() {
+return _$UserOceanBuilderToString(this);;
+ }
 
 }

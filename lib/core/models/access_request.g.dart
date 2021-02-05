@@ -6,7 +6,7 @@ part of 'access_request.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-AccessEvent _$AccessEventFromJson(Map json) {
+AccessEvent _$AccessEventFromJson(Map<String, dynamic> json) {
   return AccessEvent(
     id: json['_id'] as String,
     type: json['type'] as String,
@@ -19,14 +19,10 @@ AccessEvent _$AccessEventFromJson(Map json) {
     permissionSetId: json['permissionSetId'] as String,
     user: json['user'] == null
         ? null
-        : AccessRequestUser.fromJson((json['user'] as Map)?.map(
-            (k, e) => MapEntry(k as String, e),
-          )),
+        : AccessRequestUser.fromJson(json['user'] as Map<String, dynamic>),
     seaPod: json['seaPod'] == null
         ? null
-        : AccessRequestSeaPod.fromJson((json['seaPod'] as Map)?.map(
-            (k, e) => MapEntry(k as String, e),
-          )),
+        : AccessRequestSeaPod.fromJson(json['seaPod'] as Map<String, dynamic>),
     reqMessage: json['reqMessage'] as String,
     version: json['__v'] as int,
   );
@@ -49,7 +45,7 @@ Map<String, dynamic> _$AccessEventToJson(AccessEvent instance) =>
       'reqMessage': instance.reqMessage,
     };
 
-ServerNotification _$ServerNotificationFromJson(Map json) {
+ServerNotification _$ServerNotificationFromJson(Map<String, dynamic> json) {
   return ServerNotification(
     id: json['_id'] as String,
     title: json['title'] as String,
@@ -58,9 +54,7 @@ ServerNotification _$ServerNotificationFromJson(Map json) {
     priority: json['priority'] as int,
     data: json['data'] == null
         ? null
-        : NotificationData.fromJson((json['data'] as Map)?.map(
-            (k, e) => MapEntry(k as String, e),
-          )),
+        : NotificationData.fromJson(json['data'] as Map<String, dynamic>),
   );
 }
 
@@ -74,7 +68,7 @@ Map<String, dynamic> _$ServerNotificationToJson(ServerNotification instance) =>
       'data': instance.data,
     };
 
-NotificationData _$NotificationDataFromJson(Map json) {
+NotificationData _$NotificationDataFromJson(Map<String, dynamic> json) {
   return NotificationData(
     id: json['_id'] as String,
     type: json['type'] as String,
@@ -87,14 +81,10 @@ NotificationData _$NotificationDataFromJson(Map json) {
     permissionSetId: json['permissionSetId'] as String,
     seaPod: json['seaPod'] == null
         ? null
-        : AccessRequestSeaPod.fromJson((json['seaPod'] as Map)?.map(
-            (k, e) => MapEntry(k as String, e),
-          )),
+        : AccessRequestSeaPod.fromJson(json['seaPod'] as Map<String, dynamic>),
     user: json['user'] == null
         ? null
-        : AccessRequestUser.fromJson((json['user'] as Map)?.map(
-            (k, e) => MapEntry(k as String, e),
-          )),
+        : AccessRequestUser.fromJson(json['user'] as Map<String, dynamic>),
     version: json['__v'] as int,
   )..isRecived = json['isRecived'] as bool;
 }
@@ -116,7 +106,7 @@ Map<String, dynamic> _$NotificationDataToJson(NotificationData instance) =>
       'seaPod': instance.seaPod,
     };
 
-AccessRequestUser _$AccessRequestUserFromJson(Map json) {
+AccessRequestUser _$AccessRequestUserFromJson(Map<String, dynamic> json) {
   return AccessRequestUser(
     id: json['_id'] as String,
     name: json['name'] as String,
@@ -135,7 +125,7 @@ Map<String, dynamic> _$AccessRequestUserToJson(AccessRequestUser instance) =>
       'mobileNumber': instance.mobileNumber,
     };
 
-AccessRequestSeaPod _$AccessRequestSeaPodFromJson(Map json) {
+AccessRequestSeaPod _$AccessRequestSeaPodFromJson(Map<String, dynamic> json) {
   return AccessRequestSeaPod(
     id: json['_id'] as String,
     name: json['name'] as String,

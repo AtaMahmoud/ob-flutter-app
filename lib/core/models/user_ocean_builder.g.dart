@@ -6,7 +6,7 @@ part of 'user_ocean_builder.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-UserOceanBuilder _$UserOceanBuilderFromJson(Map json) {
+UserOceanBuilder _$UserOceanBuilderFromJson(Map<String, dynamic> json) {
   return UserOceanBuilder(
     oceanBuilderId: json['oceanBuilderId'] as String,
     oceanBuilderName: json['oceanBuilderName'] as String,
@@ -31,3 +31,11 @@ Map<String, dynamic> _$UserOceanBuilderToJson(UserOceanBuilder instance) =>
       'accessTime': UserOceanBuilder._toJson(instance.accessTime),
       'accessRequestID': instance.accessRequestID,
     };
+
+// **************************************************************************
+// ToStringGenerator
+// **************************************************************************
+
+String _$UserOceanBuilderToString(UserOceanBuilder o) {
+  return """UserOceanBuilder{oceanBuilderId: ${o.oceanBuilderId}, oceanBuilderName: ${o.oceanBuilderName}, vessleCode: ${o.vessleCode}, userType: ${o.userType}, reqStatus: ${o.reqStatus}, checkInDate: ${o.checkInDate}, accessTime: ${o.accessTime}, accessRequestID: ${o.accessRequestID}}""";
+}

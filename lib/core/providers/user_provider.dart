@@ -65,7 +65,7 @@ class UserProvider extends BaseProvider {
 
       // User userData;
 
-      debugPrint('loginResponse ~~~~~~~~~~~~~~~~~~~~~~~ -- ${loginResponse}');
+      // debugPrint('loginResponse ~~~~~~~~~~~~~~~~~~~~~~~ -- ${loginResponse}');
 
       if (loginResponse != null && loginResponse.statusCode == 200) {
         User userData = User.fromJson(loginResponse.data);
@@ -80,11 +80,15 @@ class UserProvider extends BaseProvider {
             userOceanBuilder.oceanBuilderName = f.obName;
             userOceanBuilder.oceanBuilderId = f.id;
             userOceanBuilder.userType = seapodUser.userType;
+            // debugPrint('Ob name  ${userOceanBuilder.oceanBuilderName}  --usr type ---${userOceanBuilder.userType}');
             userOceanBuilder.accessTime =
                 seapodUser.accessTime; //Duration(hours: 48);
             userOceanBuilder.checkInDate = seapodUser.checkInDate;
             userOceanBuilder.reqStatus = 'NA';
             userOceanBuilder.vessleCode = f.vessleCode;
+            print('printing user oceanbuilder info ------================');
+            print(userOceanBuilder);
+            if(seapodUser.userId.compareTo(userData.userID)==0)
             userOceanBuilderList.add(userOceanBuilder);
           }).toList();
         }).toList();
@@ -282,15 +286,32 @@ class UserProvider extends BaseProvider {
 
       List<UserOceanBuilder> userOceanBuilderList = [];
       userData.seaPods.map((f) {
-        UserOceanBuilder userOceanBuilder = UserOceanBuilder();
-        userOceanBuilder.oceanBuilderName = f.obName;
-        userOceanBuilder.oceanBuilderId = f.id;
-        userOceanBuilder.userType = f.users[0].userType;
-        userOceanBuilder.accessTime = Duration(hours: 48);
-        userOceanBuilder.reqStatus = 'NA';
-        userOceanBuilder.vessleCode = f.vessleCode;
-        userOceanBuilder.checkInDate = null;
-        userOceanBuilderList.add(userOceanBuilder);
+        // UserOceanBuilder userOceanBuilder = UserOceanBuilder();
+        // userOceanBuilder.oceanBuilderName = f.obName;
+        // userOceanBuilder.oceanBuilderId = f.id;
+        // userOceanBuilder.userType = f.users[0].userType;
+        // userOceanBuilder.accessTime = Duration(hours: 48);
+        // userOceanBuilder.reqStatus = 'NA';
+        // userOceanBuilder.vessleCode = f.vessleCode;
+        // userOceanBuilder.checkInDate = null;
+        
+        // userOceanBuilderList.add(userOceanBuilder);
+                  f.users.map((seapodUser) {
+            UserOceanBuilder userOceanBuilder = UserOceanBuilder();
+            userOceanBuilder.oceanBuilderName = f.obName;
+            userOceanBuilder.oceanBuilderId = f.id;
+            userOceanBuilder.userType = seapodUser.userType;
+            // debugPrint('Ob name  ${userOceanBuilder.oceanBuilderName}  --usr type ---${userOceanBuilder.userType}');
+            userOceanBuilder.accessTime =
+                seapodUser.accessTime; //Duration(hours: 48);
+            userOceanBuilder.checkInDate = seapodUser.checkInDate;
+            userOceanBuilder.reqStatus = 'NA';
+            userOceanBuilder.vessleCode = f.vessleCode;
+            print('printing user oceanbuilder info ------================');
+            print(userOceanBuilder);
+            if(seapodUser.userId.compareTo(userData.userID)==0)
+            userOceanBuilderList.add(userOceanBuilder);
+          }).toList();
       }).toList();
 
       userData.accessRequests.map((f) {

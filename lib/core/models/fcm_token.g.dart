@@ -6,7 +6,7 @@ part of 'fcm_token.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-FcmToken _$FcmTokenFromJson(Map json) {
+FcmToken _$FcmTokenFromJson(Map<String, dynamic> json) {
   return FcmToken(
     createdAt: FcmToken._fromJson(json['createdAt'] as int),
     platform: json['platform'] as String,
