@@ -233,6 +233,7 @@ class ApiBaseHelper {
   }
 
   String _handleError(DioError error) {
+    debugPrint('error --- ${error.message}');
     String errorDescription = "";
     if (error is DioError) {
       switch (error.type) {

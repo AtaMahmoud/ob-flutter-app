@@ -22,6 +22,7 @@ import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:ocean_builder/ui/screens/profile/profile_screen.dart';
 
 class OBSelectionScreenWidgetModal extends StatefulWidget {
   static const String routeName = '/obSelectionScreenWidgetModal';
@@ -414,7 +415,8 @@ class _OBSelectionScreenWidgetModalState
         0)) {
       Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
     } else {
-      Navigator.of(context, rootNavigator: false).pop();
+      // Navigator.of(context, rootNavigator: true).pop();
+      Navigator.of(context).pushReplacementNamed(ProfileScreen.routeName);
     }
   }
 

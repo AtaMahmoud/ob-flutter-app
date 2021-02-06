@@ -1459,23 +1459,23 @@ class UserProvider extends BaseProvider {
       );
 
       if (removeUserResponse != null && removeUserResponse.statusCode == 200) {
-        // debugPrint('Remove Member data ----------- $removeUserResponse');
+        debugPrint('Remove Member data ----------- $removeUserResponse');
 
         responseStatus.status = 200;
       } else {
         responseStatus.code = 'Remove Member Failed';
         responseStatus.message = removeUserResponse.statusMessage;
         responseStatus.status = removeUserResponse.statusCode;
-        // debugPrint(
-        // 'Remove Member error ============================== $responseStatus');
+        debugPrint(
+            'Remove Member error ============================== $responseStatus');
       }
     } on FetchDataException catch (e) {
       AppException ea = e;
       responseStatus.code = 'Remove Member Failed';
       responseStatus.message = ea.message;
       responseStatus.status = ea.statusCode;
-      // debugPrint(
-      // 'Remove Member error ============================== ${ea.message}');
+      debugPrint(
+          'Remove Member error FetchDataException============================== ${ea.message}');
     } on BadRequestException catch (e) {
       AppException ea = e;
       responseStatus.code = 'Remove Member Failed';

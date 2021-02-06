@@ -102,16 +102,27 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
                                   fcmNotification.data.status;
                               String notificationType = fcmNotification.message;
 
-                              String ownerID = fcmNotification.data.user.id;
+                              String ownerID =
+                                  fcmNotification.data.user != null &&
+                                          fcmNotification.data.user.id != null
+                                      ? fcmNotification.data.user.id
+                                      : 'id';
 
                               String currentUserID =
                                   userProvider.authenticatedUser.userID;
 
                               String oceanBuilderId =
-                                  fcmNotification.data.seaPod.id;
+                                  fcmNotification.data.seaPod != null &&
+                                          fcmNotification.data.seaPod.id != null
+                                      ? fcmNotification.data.seaPod.id
+                                      : 'id';
 
                               String oceanBuilderName =
-                                  fcmNotification.data.seaPod.name;
+                                  fcmNotification.data.seaPod != null &&
+                                          fcmNotification.data.seaPod.name !=
+                                              null
+                                      ? fcmNotification.data.seaPod.name
+                                      : 'name';
                               List<UserOceanBuilder> uobList =
                                   new List<UserOceanBuilder>.from(userProvider
                                       .authenticatedUser.userOceanBuilder);
