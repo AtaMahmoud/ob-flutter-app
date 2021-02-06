@@ -34,16 +34,30 @@ class Config {
 
   // heroku server APIs
   static const LOGIN = 'https://oceanbuilders.herokuapp.com/v1/api/auth';
+
   static const REG_WITH_SEAPOD_CREATION =
       'https://oceanbuilders.herokuapp.com/v1/api/auth';
+
+  static String EMAIL_CONFIRMATION(String token) =>
+      'https://oceanbuilders.herokuapp.com/v1/api/auth/confirmation/$token';
+
+  static const RESEND_CONFIRMATION_CODE =
+      'https://oceanbuilders.herokuapp.com/v1/api/auth/resend';
+
   static const AUTO_LOGIN =
       'https://oceanbuilders.herokuapp.com/v1/api/auth/me';
+
   static const CREATE_NEW_SEAPOD =
       'https://oceanbuilders.herokuapp.com/v1/api/seapods';
+
   static const UPDATE_USER_PROFILE =
       'https://oceanbuilders.herokuapp.com/v1/api/users';
+
   static const UPDATE_USER_PASSWORD =
-      'https://oceanbuilders.herokuapp.com/v1/api/users/password';
+      'https://oceanbuilders.herokuapp.com/v1/api/users/reset';
+
+  static const FORGET_USER_PASSWORD =
+      'https://oceanbuilders.herokuapp.com/v1/api/users/forget';
 
   static String UPDATE_SEAPOD_NAME(String seapodId) =>
       'https://oceanbuilders.herokuapp.com/v1/api/seapods/$seapodId/name';

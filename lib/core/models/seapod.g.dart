@@ -6,7 +6,7 @@ part of 'seapod.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-SeaPod _$SeaPodFromJson(Map json) {
+SeaPod _$SeaPodFromJson(Map<String, dynamic> json) {
   return SeaPod(
     id: json['_id'] as String,
     ownerId: json['ownerId'] as String,
@@ -45,45 +45,31 @@ SeaPod _$SeaPodFromJson(Map json) {
     users: (json['users'] as List)
         ?.map((e) => e == null
             ? null
-            : OceanBuilderUser.fromJson((e as Map)?.map(
-                (k, e) => MapEntry(k as String, e),
-              )))
+            : OceanBuilderUser.fromJson(e as Map<String, dynamic>))
         ?.toList(),
     defaultLightiningScenes: (json['defaultLightiningScenes'] as List)
-        ?.map((e) => e == null
-            ? null
-            : Scene.fromJson((e as Map)?.map(
-                (k, e) => MapEntry(k as String, e),
-              )))
+        ?.map(
+            (e) => e == null ? null : Scene.fromJson(e as Map<String, dynamic>))
         ?.toList(),
     lightScenes: (json['lightScenes'] as List)
-        ?.map((e) => e == null
-            ? null
-            : Scene.fromJson((e as Map)?.map(
-                (k, e) => MapEntry(k as String, e),
-              )))
+        ?.map(
+            (e) => e == null ? null : Scene.fromJson(e as Map<String, dynamic>))
         ?.toList(),
     seaPodOrientation: json['seaPodOrientation'] as int,
     seaPodStatus: json['seaPodStatus'] as String,
     vessleCode: json['vessleCode'] as String,
     controlData: json['data'] == null
         ? null
-        : ControlData.fromJson((json['data'] as Map)?.map(
-            (k, e) => MapEntry(k as String, e),
-          )),
+        : ControlData.fromJson(json['data'] as Map<String, dynamic>),
     version: json['__v'] as int,
   )
     ..activeUser = json['user'] == null
         ? null
-        : OceanBuilderUser.fromJson((json['user'] as Map)?.map(
-            (k, e) => MapEntry(k as String, e),
-          ))
+        : OceanBuilderUser.fromJson(json['user'] as Map<String, dynamic>)
     ..permissionSets = (json['permissionSets'] as List)
         ?.map((e) => e == null
             ? null
-            : PermissionSet.fromJson((e as Map)?.map(
-                (k, e) => MapEntry(k as String, e),
-              )))
+            : PermissionSet.fromJson(e as Map<String, dynamic>))
         ?.toList()
     ..seaPodType = json['seaPodType'] as String ?? 'private';
 }

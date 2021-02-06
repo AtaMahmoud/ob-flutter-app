@@ -6,18 +6,14 @@ part of 'reg_with_seapod.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-RegWithSeaPod _$RegWithSeaPodFromJson(Map json) {
+RegWithSeaPod _$RegWithSeaPodFromJson(Map<String, dynamic> json) {
   return RegWithSeaPod(
     user: json['user'] == null
         ? null
-        : RegUser.fromJson((json['user'] as Map)?.map(
-            (k, e) => MapEntry(k as String, e),
-          )),
+        : RegUser.fromJson(json['user'] as Map<String, dynamic>),
     seaPod: json['seaPod'] == null
         ? null
-        : RegSeaPod.fromJson((json['seaPod'] as Map)?.map(
-            (k, e) => MapEntry(k as String, e),
-          )),
+        : RegSeaPod.fromJson(json['seaPod'] as Map<String, dynamic>),
   );
 }
 
@@ -27,7 +23,7 @@ Map<String, dynamic> _$RegWithSeaPodToJson(RegWithSeaPod instance) =>
       'seaPod': instance.seaPod,
     };
 
-RegUser _$RegUserFromJson(Map json) {
+RegUser _$RegUserFromJson(Map<String, dynamic> json) {
   return RegUser(
     firstName: json['firstName'] as String,
     lastName: json['lastName'] as String,
@@ -47,7 +43,7 @@ Map<String, dynamic> _$RegUserToJson(RegUser instance) => <String, dynamic>{
       'country': instance.country,
     };
 
-RegSeaPod _$RegSeaPodFromJson(Map json) {
+RegSeaPod _$RegSeaPodFromJson(Map<String, dynamic> json) {
   return RegSeaPod(
     seaPodName: json['SeaPodName'] as String,
     exteriorFinish: json['exteriorFinish'] as String,

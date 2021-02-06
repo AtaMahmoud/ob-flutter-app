@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/user.dart';
 import 'package:ocean_builder/core/providers/current_ob_id_provider.dart';
@@ -49,15 +50,24 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
   bool _expandAccessManagement = false;
 
+  // ---------------------------
+
   @override
   void initState() {
-    setdDrawerListArray();
-
-    // UIHelper.setStatusBarColor(color:ColorConstants.TOP_CLIPPER_START_DARK);
     super.initState();
+    setdDrawerListArray();
+    // UIHelper.setStatusBarColor(color:ColorConstants.TOP_CLIPPER_START_DARK);
+
     // currentlySelectedDrawerIndex = widget.screenIndex;
     // debugPrint('current drawer index --------------------------------------------------------------------- ${ApplicationStatics.selectedScreenIndex}');
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  //----------------------------
 
   void setdDrawerListArray() {
     drawerList = [
@@ -137,81 +147,84 @@ class _HomeDrawerState extends State<HomeDrawer> {
       width: MediaQuery.of(context).size.width * .80,
       child: Scaffold(
         key: _scaffoldKey,
-        backgroundColor: AppTheme.notWhite, //.withOpacity(0.85),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              width: double.infinity,
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Drawerbar(
-                      scaffoldKey: _scaffoldKey,
-                      hasAvator: true,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+        backgroundColor: AppTheme.notWhite,
+        resizeToAvoidBottomInset: false, //.withOpacity(0.85),
+        body: _drawerContent(),
+      ),
+    );
+  }
+
+  Column _drawerContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          width: double.infinity,
+          child: Container(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: ScreenUtil().setHeight(8),
-                    right: ScreenUtil().setWidth(32),
-                  ),
-                  child: Text(
-                    _user != null
-                        ? '${_user.firstName} ${_user.lastName}'
-                        : ' ',
-                    style: TextStyle(
-                      color: Color(0xFF0C48A4),
-                      fontSize: ScreenUtil().setSp(48), //20.0,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    textAlign: TextAlign.start,
-                  ),
+                Drawerbar(
+                  scaffoldKey: _scaffoldKey,
+                  hasAvator: true,
                 ),
               ],
             ),
-            Expanded(
-              child: ListView.builder(
-                physics: BouncingScrollPhysics(),
-                padding: EdgeInsets.all(0.0),
-                itemCount: drawerList.length,
-                itemBuilder: (context, index) {
-                  if (index == 4) {
-                    return Column(
-                      children: <Widget>[
-                        inkwell(index),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            left: ScreenUtil().setWidth(48),
-                            right: ScreenUtil().setWidth(48),
-                            // top:ScreenUtil().setHeight(72),
-                            // bottom:ScreenUtil().setHeight(72)
-                          ),
-                          child: Container(
-                            height: ScreenUtil().setHeight(4),
-                            color: AppTheme.divider,
-                          ),
-                        )
-                      ],
-                    );
-                  }
-                  return inkwell(index);
-                },
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(
+                // top: ScreenUtil().setHeight(8),
+                right: ScreenUtil().setWidth(32),
+              ),
+              child: Text(
+                _user != null ? '${_user.firstName} ${_user.lastName}' : ' ',
+                style: TextStyle(
+                  color: Color(0xFF0C48A4),
+                  fontSize: ScreenUtil().setSp(48), //20.0,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.start,
               ),
             ),
           ],
         ),
-      ),
+        Expanded(
+          child: ListView.builder(
+            physics: BouncingScrollPhysics(),
+            padding: EdgeInsets.only(top: 32.h),
+            itemCount: drawerList.length,
+            itemBuilder: (context, index) {
+              if (index == 4) {
+                return Column(
+                  children: <Widget>[
+                    inkwell(index),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: ScreenUtil().setWidth(48),
+                        right: ScreenUtil().setWidth(48),
+                        // top:ScreenUtil().setHeight(72),
+                        // bottom:ScreenUtil().setHeight(72)
+                      ),
+                      child: Container(
+                        height: ScreenUtil().setHeight(4),
+                        color: AppTheme.divider,
+                      ),
+                    )
+                  ],
+                );
+              }
+              return inkwell(index);
+            },
+          ),
+        ),
+      ],
     );
   }
 

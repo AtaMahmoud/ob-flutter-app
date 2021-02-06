@@ -157,6 +157,35 @@ class ApiBaseHelper {
     return responseMap;
   }
 
+    Future<dynamic> getForResponse(
+      {String url,
+      Map<String, dynamic> headers,
+      Map<String, dynamic> parameters = const {},
+      dynamic data = const {}}) async {
+    var responseMap;
+
+    try {
+      final Response response = await _dio.get(
+        url,
+        queryParameters: parameters,
+        options: Options(headers: headers),
+      );
+      responseMap = response;//_returnResponse(response);
+    } on SocketException {
+      throw FetchDataException("No Internet connection");
+    } on DioError catch (error) {
+      String exceptionText = _handleError(error);
+
+      if (error.response != null && error.response.statusCode != null)
+        throw FetchDataException(exceptionText, error.response.statusCode);
+      else
+        throw FetchDataException(exceptionText);
+    }
+
+    return responseMap;
+  }
+
+
   Future<dynamic> del(
       {String url,
       Map<String, dynamic> headers,

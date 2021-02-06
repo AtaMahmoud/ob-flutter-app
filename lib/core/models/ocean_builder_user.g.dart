@@ -6,7 +6,7 @@ part of 'ocean_builder_user.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-OceanBuilderUser _$OceanBuilderUserFromJson(Map json) {
+OceanBuilderUser _$OceanBuilderUserFromJson(Map<String, dynamic> json) {
   return OceanBuilderUser(
     userId: json['_id'] as String,
     userName: json['userName'] as String,
@@ -15,9 +15,7 @@ OceanBuilderUser _$OceanBuilderUserFromJson(Map json) {
     reqStatus: json['reqStatus'] as String,
     lighting: json['lighting'] == null
         ? null
-        : Lighting.fromJson((json['lighting'] as Map)?.map(
-            (k, e) => MapEntry(k as String, e),
-          )),
+        : Lighting.fromJson(json['lighting'] as Map<String, dynamic>),
   )
     ..checkInDate =
         OceanBuilderUser._dateTimeFromEpochUs(json['checkInDate'] as int)

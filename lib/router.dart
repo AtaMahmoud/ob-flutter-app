@@ -57,6 +57,7 @@ import 'package:ocean_builder/ui/screens/seapod_selection/ob_selection_widget_sc
 import 'package:ocean_builder/ui/screens/settings/notification_settings.dart';
 import 'package:ocean_builder/ui/screens/settings/settings_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/accept_invitation_screen.dart';
+import 'package:ocean_builder/ui/screens/sign_in_up/email_verification_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/forgot_password_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/login_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/qr_code_screen.dart';
@@ -270,6 +271,14 @@ class Router {
         return CupertinoPageRoute(
             builder: (_) => YourInfoScreen(),
             settings: RouteSettings(name: YourInfoScreen.routeName));
+      case EmailVerificationScreen.routeName:
+        final EmailVerificationData data = settings.arguments;
+        return CupertinoPageRoute(
+            builder: (_) => EmailVerificationScreen(
+                  emailVerificationData: data,
+                ),
+            fullscreenDialog: true,
+            settings: RouteSettings(name: EmailVerificationScreen.routeName));
       case OBSelectionScreenWidgetModal.routeName:
         return CupertinoPageRoute(
             builder: (_) => OBSelectionScreenWidgetModal(),

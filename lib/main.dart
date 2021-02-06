@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' as service;
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ocean_builder/configs/config_reader.dart';
 import 'package:ocean_builder/core/notification/firebase_notification_handler.dart';
@@ -22,20 +25,20 @@ import 'package:ocean_builder/core/providers/wow_data_provider.dart';
 import 'package:ocean_builder/core/services/locator.dart';
 import 'package:ocean_builder/core/services/navigation_service.dart';
 import 'package:ocean_builder/router.dart' as obRoute;
+import 'package:ocean_builder/ui/screens/sign_in_up/email_verification_screen.dart';
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 
 import 'constants/constants.dart';
 import 'core/providers/device_type_provider.dart';
-
+import 'package:uni_links/uni_links.dart';
 
 // Future<void> main() async {
 //   await mainCommon();
 // }
 
 Future<void> main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   // Load the JSON config into memory
   await ConfigReader.initialize();
@@ -63,62 +66,76 @@ Future<void> main() async {
   //     );
   // }, onError: Crashlytics.instance.recordError);
 
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: MyApp() ,
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: MyApp(),
     ),
   );
-  
 }
-
 
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
-
 }
 
 class _MyAppState extends State<MyApp> {
-
   bool isConnected;
   // static FirebaseAnalytics analytics = FirebaseAnalytics();
   // static FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
 
+  String _initialLink;
+  Uri _initialUri;
+  String _latestLink = 'Unknown';
+  Uri _latestUri;
+  StreamSubscription _sub;
 
   @override
   void initState() {
     super.initState();
-  
-  GlobalListeners.listener = DataConnectionChecker().onStatusChange.listen((status) {
-    switch (status) {
-      case DataConnectionStatus.connected:
-        // // print('Data connection is available.');
-        if(GlobalContext.internetStatus!=null && !GlobalContext.internetStatus)
-        {
-        displayInternetInfoBar(context,AppStrings.internetConnection);
-        GlobalContext.internetStatus = true;
-        }
-        break;
-      case DataConnectionStatus.disconnected:
-        // // print('You are disconnected from the internet.');
-        displayInternetInfoBar(context,AppStrings.noInternetConnection);
-         GlobalContext.internetStatus = false;
-        break;
-    }
-  });  
+    initPlatformStateForUriDeepLinks();
 
+    GlobalListeners.listener =
+        DataConnectionChecker().onStatusChange.listen((status) {
+      switch (status) {
+        case DataConnectionStatus.connected:
+          // // print('Data connection is available.');
+          if (GlobalContext.internetStatus != null &&
+              !GlobalContext.internetStatus) {
+            displayInternetInfoBar(context, AppStrings.internetConnection);
+            GlobalContext.internetStatus = true;
+          }
+          break;
+        case DataConnectionStatus.disconnected:
+          // // print('You are disconnected from the internet.');
+          displayInternetInfoBar(context, AppStrings.noInternetConnection);
+          GlobalContext.internetStatus = false;
+          break;
+      }
+    });
   }
-  
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context,allowFontScaling: true);
+    ScreenUtil.init(context, allowFontScaling: true);
     service.SystemChrome.setPreferredOrientations([
       service.DeviceOrientation.portraitUp,
       service.DeviceOrientation.portraitDown,
     ]);
 
-   UIHelper.setStatusBarColor(color:ColorConstants.TOP_CLIPPER_START);
+    UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START);
+
+    final queryParams = _latestUri?.queryParametersAll?.entries?.toList();
+
+    queryParams?.map((item) {
+      // return new ListTile(
+      //   title: new Text('${item.key}'),
+      //   trailing: new Text('${item.value?.join(', ')}'),
+      // );
+      print('key ---- ${item.key}');
+      print('value ----- ${item.value?.join(', ')}');
+    })?.toList();
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -171,7 +188,6 @@ class _MyAppState extends State<MyApp> {
         ),
         // Provider<FirebaseAnalytics>.value(value: analytics),
         // Provider<FirebaseAnalyticsObserver>.value(value: observer),
-        
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -188,10 +204,94 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
-void dispose() {
-  // _listener.cancel();
-  GlobalListeners.listener.cancel();
-  super.dispose();
+  void dispose() {
+    // _listener.cancel();
+    GlobalListeners.listener.cancel();
+    if (_sub != null) _sub.cancel();
+    super.dispose();
+  }
+
+  Future<void> initPlatformStateForUriDeepLinks() async {
+    // Attach a listener to the Uri links stream
+    _sub = getUriLinksStream().listen((Uri uri) {
+      if (!mounted) return;
+      print(
+          'got uri in first listener : ${uri?.path} ${uri?.queryParametersAll}');
+      _latestUri = uri;
+      // setState(() {
+      //   _latestUri = uri;
+      //   _latestLink = uri?.toString() ?? 'Unknown';
+      // });
+
+      // setState(() {
+      //   _parseDeepLinkingUri(uri);
+      // });
+      _parseDeepLinkingUri(uri);
+
+    }, onError: (Object err) {
+      if (!mounted) return;
+      setState(() {
+        _latestUri = null;
+        _latestLink = 'Failed to get latest link: $err.';
+      });
+    });
+
+    // // Attach a second listener to the stream
+    // getUriLinksStream().listen((Uri uri) {
+    //   print('got uri: ${uri?.path} ${uri?.queryParametersAll}');
+    // }, onError: (Object err) {
+    //   print('got err: $err');
+    // });
+
+    // Get the latest Uri
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      _initialUri = await getInitialUri();
+      print('initial uri: ${_initialUri?.path}'
+          ' ${_initialUri?.queryParametersAll}');
+      _initialLink = _initialUri?.toString();
+    } on PlatformException {
+      _initialUri = null;
+      _initialLink = 'Failed to get initial uri.';
+    } on FormatException {
+      _initialUri = null;
+      _initialLink = 'Bad parse the initial link as Uri.';
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+    _latestUri = _initialUri;
+
+    if(_latestUri != null)
+    _parseDeepLinkingUri(_initialUri);
+    // setState(() {
+    //   _latestUri = _initialUri;
+    //   _latestLink = _initialLink;
+    // });
+  }
+
+  _parseDeepLinkingUri(Uri uri) {
+    String parh = uri?.path;
+    print('path ------ $parh');
+    final queryParams = _latestUri?.queryParametersAll?.entries?.toList();
+
+    queryParams?.map((item) {
+      print('key ---- ${item.key}');
+      print('value ----- ${item.value?.join(', ')}');
+    })?.toList();
+    // Navigator.of(context).pushNamed(EmailVerificationScreen.routeName);
+    String authCode = queryParams[0].value[0];
+    print('------------- authCode  $authCode');
+    locator<NavigationService>().dpNavigateToEmailVeriScreen(EmailVerificationData(isDeepLinkData: true,verificationCode: authCode));
+  }
 }
 
-}
+/*
+
+/usr/bin/xcrun simctl openurl booted "ss://ob.com/auth/verify/?uid=123&token=abc1"
+ob://oceanbuilders.com/auth/verify/?uid=123&token=abc1
+ob://oceanbuilders.com/auth/confirmation/?token=
+
+*/
