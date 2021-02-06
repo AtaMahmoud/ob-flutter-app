@@ -344,14 +344,14 @@ class _RecoverPasswordVerificationScreenState extends State<RecoverPasswordVerif
       return;
     }
 
-              showInfoBarWithDissmissCallback('Password Recovery Confirmation',
-              'Your request is verified now, submit new password to continue', context, () {
-            Navigator.of(context).pushReplacementNamed(PasswordScreen.routeName,arguments: [false,true,false,false]);
-          });
-          return;
+          //     showInfoBarWithDissmissCallback('Password Recovery Confirmation',
+          //     'Your request is verified now, submit new password to continue', context, () {
+          //   Navigator.of(context).pushReplacementNamed(PasswordScreen.routeName,arguments: [false,true,false,false]);
+          // });
+          // return;
 
     if (token != null)
-      userProvider.confirmEmail(token).then((status) async {
+      userProvider.confirmRecoverPassword(token).then((status) async {
         if (status.status == 200) {
           showInfoBarWithDissmissCallback('Password Recovery Confirmation',
               'Your request is verified now, submit new password to continue', context, () {

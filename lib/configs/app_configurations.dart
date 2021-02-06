@@ -41,6 +41,10 @@ class Config {
   static String EMAIL_CONFIRMATION(String token) =>
       'https://oceanbuilders.herokuapp.com/v1/api/auth/confirmation/$token';
 
+      // PASSWORD_RECOVERY_CONFIRMATION
+        static String PASSWORD_RECOVERY_CONFIRMATION(String token) =>
+      'https://oceanbuilders.herokuapp.com/v1/api/auth/confirmation/$token';
+
   static const RESEND_CONFIRMATION_CODE =
       'https://oceanbuilders.herokuapp.com/v1/api/auth/resend';
 

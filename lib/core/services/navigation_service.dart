@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/notification.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/email_verification_screen.dart';
+import 'package:ocean_builder/ui/screens/sign_in_up/recover_password_verification_screen.dart';
 
 class NavigationService {
   final GlobalKey<NavigatorState> navigatorKey =
@@ -33,4 +34,13 @@ class NavigationService {
     return navigatorKey.currentState
         .pushNamed(EmailVerificationScreen.routeName, arguments: data);
   }  
+
+    Future<dynamic> dpNavigateToRecoverPassScreen(EmailVerificationData data) async {
+      await Future.delayed(Duration(seconds: 3));
+    navigatorKey.currentState
+        .popUntil((Route<dynamic> route) => route is PageRoute);
+
+    return navigatorKey.currentState
+        .pushNamed(RecoverPasswordVerificationScreen.routeName, arguments: data);
+  } 
 }
