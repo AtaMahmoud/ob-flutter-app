@@ -10,7 +10,9 @@ import 'package:ocean_builder/core/providers/design_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper.dart';
+import 'package:ocean_builder/ui/screens/sign_in_up/email_verification_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/login_screen.dart';
+import 'package:ocean_builder/ui/screens/sign_in_up/set_password_screen.dart';
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/shared/shared_pref_data.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
@@ -20,18 +22,18 @@ import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 
-class EmailVerificationScreen extends StatefulWidget {
-  static const String routeName = '/emailVerification';
+class RecoverPasswordVerificationScreen extends StatefulWidget {
+  static const String routeName = '/revoverPasswordVerification';
   final EmailVerificationData emailVerificationData;
 
-  EmailVerificationScreen({this.emailVerificationData});
+  RecoverPasswordVerificationScreen({this.emailVerificationData});
 
   @override
-  _EmailVerificationScreenState createState() =>
-      _EmailVerificationScreenState();
+  _RecoverPasswordVerificationScreenState createState() =>
+      _RecoverPasswordVerificationScreenState();
 }
 
-class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
+class _RecoverPasswordVerificationScreenState extends State<RecoverPasswordVerificationScreen> {
   ScrollController _controller = ScrollController();
 
   FocusNode _phoneNode = FocusNode();
@@ -183,7 +185,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
         top: 0,
         left: 0,
         right: 0,
-        child: Appbar(ScreenTitle.EMAIL_CONFIRMATION));
+        child: Appbar(ScreenTitle.PASSWORD_RECOVERY_CONFIRMATION));
   }
 
   _endSpace() => UIHelper.getTopEmptyContainer(330.h, false);
@@ -234,7 +236,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 48.w),
       child: Text(
-        AppStrings.confirmEmailText1,
+        AppStrings.confirmRecoverPassText1,
         style: TextStyle(
             color: ColorConstants.WEATHER_MORE_ICON_COLOR, fontSize: 40.sp),
       ),
@@ -245,7 +247,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 48.w),
       child: Text(
-        AppStrings.confirmEmailText2,
+        AppStrings.confirmRecoverPassText2,
         style: TextStyle(
             color: ColorConstants.WEATHER_MORE_ICON_COLOR, fontSize: 40.sp),
       ),
@@ -342,12 +344,18 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       return;
     }
 
+              showInfoBarWithDissmissCallback('Password Recovery Confirmation',
+              'Your request is verified now, submit new password to continue', context, () {
+            Navigator.of(context).pushReplacementNamed(PasswordScreen.routeName,arguments: [false,true]);
+          });
+          return;
+
     if (token != null)
       userProvider.confirmEmail(token).then((status) async {
         if (status.status == 200) {
-          showInfoBarWithDissmissCallback('Email Confirmation',
-              'Your account is verified now, sign in to continue', context, () {
-            Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+          showInfoBarWithDissmissCallback('Password Recovery Confirmation',
+              'Your request is verified now, submit new password to continue', context, () {
+            Navigator.of(context).pushReplacementNamed(PasswordScreen.routeName);
           });
         } else {
           String title = parseErrorTitle(status.code);
@@ -355,7 +363,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
         }
       });
     else {
-      showInfoBar('Email confirmation', "Token is not valid", context);
+      showInfoBar('Password Recovery Confirmation', "Token is not valid", context);
     }
   }
 
@@ -415,10 +423,3 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 }
 
-class EmailVerificationData {
-  String token;
-  String verificationCode;
-  bool isDeepLinkData;
-  EmailVerificationData(
-      {this.token, this.verificationCode, this.isDeepLinkData});
-}

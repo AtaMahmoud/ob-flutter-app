@@ -61,6 +61,7 @@ import 'package:ocean_builder/ui/screens/sign_in_up/email_verification_screen.da
 import 'package:ocean_builder/ui/screens/sign_in_up/forgot_password_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/login_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/qr_code_screen.dart';
+import 'package:ocean_builder/ui/screens/sign_in_up/recover_password_verification_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/registration_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/registration_screen_accept_invitation.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/request_access_screen.dart';
@@ -279,6 +280,14 @@ class Router {
                 ),
             fullscreenDialog: true,
             settings: RouteSettings(name: EmailVerificationScreen.routeName));
+      case RecoverPasswordVerificationScreen.routeName:
+        final EmailVerificationData data = settings.arguments;
+        return CupertinoPageRoute(
+            builder: (_) => RecoverPasswordVerificationScreen(
+              emailVerificationData: data,
+            ),
+            fullscreenDialog: true,
+            settings: RouteSettings(name: RecoverPasswordVerificationScreen.routeName));
       case OBSelectionScreenWidgetModal.routeName:
         return CupertinoPageRoute(
             builder: (_) => OBSelectionScreenWidgetModal(),
@@ -301,9 +310,11 @@ class Router {
       //       builder: (_) => RadarMap(),
       //       settings: RouteSettings(name: RadarMap.routeName));
       case PasswordScreen.routeName:
-        final bool newUser = settings.arguments;
+      // if(settings.arguments.runtimeType ==)
+        final bool newUser = (settings.arguments as List)[0]?? settings.arguments ?? false;
+        final bool isRecoverPassword = (settings.arguments as List)[1]?? false;
         return CupertinoPageRoute(
-            builder: (_) => PasswordScreen(isNewUser: newUser),
+            builder: (_) => PasswordScreen(isNewUser: newUser,isRecoverPassword: isRecoverPassword,),
             settings: RouteSettings(name: PasswordScreen.routeName));
       case InvitationResponseScreen.routeName:
         final AccessEvent accessInvitation = settings.arguments;

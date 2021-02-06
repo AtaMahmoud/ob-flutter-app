@@ -11,6 +11,8 @@ import 'package:ocean_builder/core/singletons/headers_manager.dart';
 import 'package:ocean_builder/helper/custom_behaviour.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper.dart';
 import 'package:ocean_builder/ui/screens/menu/landing_screen.dart';
+import 'package:ocean_builder/ui/screens/sign_in_up/email_verification_screen.dart';
+import 'package:ocean_builder/ui/screens/sign_in_up/recover_password_verification_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/request_access_screen.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
@@ -169,14 +171,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           StreamBuilder<bool>(
               stream: _bloc.emailCheck,
               builder: (context, snapshot) {
+                
                 return InkWell(
+
                   onTap: () {
                     if (snapshot.hasData && snapshot.data) {
                       _userProvider
                           .sendPasswordRecoveryMail(_emailController.text)
                           .then((status) {
                         if (status.status == 200) {
-                          _showEmailSentMessage();
+                          // _showEmailSentMessage();
+                                      Navigator.of(context).pushReplacementNamed(
+                RecoverPasswordVerificationScreen.routeName,
+                arguments: EmailVerificationData(isDeepLinkData: false));
+
                         } else {
                           String title = parseErrorTitle(status.code);
                           showInfoBar(title, status.message, context);

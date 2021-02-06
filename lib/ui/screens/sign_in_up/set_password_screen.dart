@@ -27,8 +27,11 @@ import 'package:provider/provider.dart';
 class PasswordScreen extends StatefulWidget {
   static const String routeName = '/password';
   final bool isNewUser;
+  final bool isRecoverPassword;
+  final bool isAccessRequest;
+  final bool isAccessInvitaion;
 
-  const PasswordScreen({Key key, this.isNewUser}) : super(key: key);
+  PasswordScreen({Key key, this.isNewUser,this.isRecoverPassword = false, this.isAccessRequest, this.isAccessInvitaion}) : super(key: key);
 
   @override
   _PasswordScreenState createState() => _PasswordScreenState();
@@ -48,6 +51,9 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
   SelectedOBIdProvider _selectedOBIdProvider;
 
+  String _title ;
+  String _nextButtonText;
+
   @override
   void initState() {
     super.initState();
@@ -56,7 +62,24 @@ class _PasswordScreenState extends State<PasswordScreen> {
     _bloc.showPasswordChanged(false);
     _bloc.showConfirmPasswordChanged(false);
     _setUserDataListener();
+    _setTitleandNext();
   }
+
+    void _setTitleandNext() {
+      if(widget.isNewUser){
+        _title = ScreenTitle.SET_PASSWORD;
+        _nextButtonText = 'Submit Order';
+      }else if(widget.isRecoverPassword){
+        _title = ScreenTitle.RECOVER_PASSWORD;
+        _nextButtonText = ButtonText.RESET_PASSWORD;
+      }else if(widget.isAccessRequest){
+                _title = ScreenTitle.SET_PASSWORD;
+        _nextButtonText = ButtonText.REQUEST_ACCESS;
+      }else if(widget.isAccessInvitaion){
+                _title = ScreenTitle.SET_PASSWORD;
+        _nextButtonText = ButtonText.ACCEPT_INVITATION;
+      }
+    }
 
   _setUserDataListener() {
     _bloc.password.listen((onData) {
@@ -145,7 +168,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
   Positioned _topBar() {
     return Positioned(
-        top: 0, left: 0, right: 0, child: Appbar(ScreenTitle.CREATE_ACCOUNT));
+        top: 0, left: 0, right: 0, child: Appbar(_title));
   }
 
   _endSpace() => UIHelper.getTopEmptyContainer(90, false);
@@ -197,7 +220,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
       builder: (context, snapshot) {
         return BottomClipper2(
             ButtonText.BACK,
-            ButtonText.SUBMIT_ORDER,
+            _nextButtonText,
             !snapshot.hasData || !snapshot.data,
             () => goBack(),
             () => goNext(userDataProvider, designDataProvider, userProvider,
@@ -225,9 +248,9 @@ class _PasswordScreenState extends State<PasswordScreen> {
       userDataProvider.user.password = _password;
     }
 
-    Navigator.of(context).pushNamed(EmailVerificationScreen.routeName,
-        arguments: EmailVerificationData(
-            verificationCode: 'Asad', isDeepLinkData: false));
+    // Navigator.of(context).pushNamed(EmailVerificationScreen.routeName,
+    //     arguments: EmailVerificationData(
+    //         verificationCode: 'Asad', isDeepLinkData: false));
 
     if (widget.isNewUser) {
       userProvider
@@ -253,7 +276,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
               responseStatus.message, context);
         }
       });
-    } else {
+    } else if(widget.isAccessRequest) {
       String oceanBuilderId =
           qrCodeDataProvider.qrCodeData; //'-LhmsP9Mc-E_VREoTYfV';
       userProvider
@@ -308,6 +331,12 @@ class _PasswordScreenState extends State<PasswordScreen> {
               responseStatus.message, context);
         }
       });
+    } else if(widget.isAccessInvitaion) {
+      // call create new user with access invitation and on success navigate to login screen
+    }else if(widget.isRecoverPassword){
+      // call recover password api and on success navigate to login screen
     }
   }
+
+
 }

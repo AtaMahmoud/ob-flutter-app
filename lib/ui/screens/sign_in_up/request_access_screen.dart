@@ -372,7 +372,7 @@ class _RequestAccessScreenState extends State<RequestAccessScreen> {
     } else {
       // debugPrint('going to password screen');
       Navigator.of(context)
-          .pushNamed(PasswordScreen.routeName, arguments: false);
+          .pushNamed(PasswordScreen.routeName, arguments: [false,false]);
     }
   }
 
