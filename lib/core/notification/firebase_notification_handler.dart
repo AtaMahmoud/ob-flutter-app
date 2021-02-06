@@ -76,7 +76,7 @@ int  counter = 0;
 
     _firebaseMessaging.configure(
       
-      onBackgroundMessage:myBackgroundMessageHandler,
+      onBackgroundMessage: myBackgroundMessageHandler,
       
       // ----------------------------------------------- onMessage -----------------------------------------------------
       

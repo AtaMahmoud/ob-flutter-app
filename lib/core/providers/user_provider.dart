@@ -1075,6 +1075,7 @@ class UserProvider extends BaseProvider {
       String accessRequestId, String type, int period) async {
     isLoading = true;
     notifyListeners();
+    print('accept access request 0-------------type -----$type--------period ------$period');
     ResponseStatus responseStatus = ResponseStatus();
 
     await _headerManager.initalizeAuthenticatedUserHeaders();
