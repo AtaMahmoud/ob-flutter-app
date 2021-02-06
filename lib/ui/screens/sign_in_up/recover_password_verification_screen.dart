@@ -346,7 +346,7 @@ class _RecoverPasswordVerificationScreenState extends State<RecoverPasswordVerif
 
               showInfoBarWithDissmissCallback('Password Recovery Confirmation',
               'Your request is verified now, submit new password to continue', context, () {
-            Navigator.of(context).pushReplacementNamed(PasswordScreen.routeName,arguments: [false,true]);
+            Navigator.of(context).pushReplacementNamed(PasswordScreen.routeName,arguments: [false,true,false,false]);
           });
           return;
 

@@ -16,6 +16,7 @@ import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper_2.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
 import 'package:ocean_builder/ui/screens/profile/profile_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/email_verification_screen.dart';
+import 'package:ocean_builder/ui/screens/sign_in_up/login_screen.dart';
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
@@ -31,7 +32,7 @@ class PasswordScreen extends StatefulWidget {
   final bool isAccessRequest;
   final bool isAccessInvitaion;
 
-  PasswordScreen({Key key, this.isNewUser,this.isRecoverPassword = false, this.isAccessRequest, this.isAccessInvitaion}) : super(key: key);
+  PasswordScreen({Key key, this.isNewUser = false,this.isRecoverPassword = false, this.isAccessRequest = false, this.isAccessInvitaion = false}) : super(key: key);
 
   @override
   _PasswordScreenState createState() => _PasswordScreenState();
@@ -335,6 +336,10 @@ class _PasswordScreenState extends State<PasswordScreen> {
       // call create new user with access invitation and on success navigate to login screen
     }else if(widget.isRecoverPassword){
       // call recover password api and on success navigate to login screen
+                showInfoBarWithDissmissCallback('Reset Password',
+              'Your password is reseted now, sign in to continue', context, () {
+            Navigator.of(context).pushReplacementNamed(LoginScreen.routeName,arguments: ScreenTitle.YOUR_INFO);
+          });
     }
   }
 

@@ -313,8 +313,11 @@ class Router {
       // if(settings.arguments.runtimeType ==)
         final bool newUser = (settings.arguments as List)[0]?? settings.arguments ?? false;
         final bool isRecoverPassword = (settings.arguments as List)[1]?? false;
+        final bool isAccessRequest = (settings.arguments as List)[2]?? false;
+        final bool isAccessInvitation = (settings.arguments as List)[3]?? false;
+
         return CupertinoPageRoute(
-            builder: (_) => PasswordScreen(isNewUser: newUser,isRecoverPassword: isRecoverPassword,),
+            builder: (_) => PasswordScreen(isNewUser: newUser,isRecoverPassword: isRecoverPassword,isAccessRequest: isAccessRequest, isAccessInvitaion: isAccessInvitation,),
             settings: RouteSettings(name: PasswordScreen.routeName));
       case InvitationResponseScreen.routeName:
         final AccessEvent accessInvitation = settings.arguments;
