@@ -13,6 +13,7 @@ import 'package:ocean_builder/helper/method_helper.dart';
 import 'package:ocean_builder/ui/screens/permission/custom_permission_screen.dart';
 import 'package:ocean_builder/ui/shared/drop_downs.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -50,8 +51,6 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
   DateTime _pickedDate; //  = DateTime.now();
   bool _isMemberSelected = false;
 
-  ScreenUtil _util;
-
   String _selectedObName;
 
   UserProvider _userProvider;
@@ -67,8 +66,8 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
 
   @override
   void initState() {
-    UIHelper.setStatusBarColor();
     super.initState();
+    UIHelper.setStatusBarColor();
     _firstNameController = TextEditingController(text: '');
     _emailController = TextEditingController(text: '');
     _messageController = TextEditingController(text: '');
@@ -82,9 +81,7 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
     _firstNameController.dispose();
     _emailController.dispose();
     _messageController.dispose();
-
-    // _bloc.dispose();
-
+    _bloc.dispose();
     super.dispose();
   }
 
@@ -99,20 +96,27 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
 
     //-----
     _bloc.requestAccessAsController.listen((onData) {
-      if (onData.compareTo(ListHelper.getAccessAsList()[1]) == 0) {
+      print('acces type --- $onData');
+      if (onData.compareTo(ListHelper.getGrantAccessAsList()[3]) == 0) {
         _reciever.userType = ListHelper.getAccessAsList()[1];
-        // // debugPrint(_user.userType.toString());
-        _bloc.permissionChanged(ListHelper.getPermissionList()[4]);
+        _setPermissionsDropdownValue(_reciever.userType);
 
         if (!_isMemberSelected)
           setState(() {
             _isMemberSelected = true;
             _reciever.requestAccessTime = ListHelper.getAccessTimeList()[9];
           });
-      } else if (onData.compareTo(ListHelper.getAccessAsList()[2]) == 0) {
+      } else if (onData.compareTo(ListHelper.getGrantAccessAsList()[2]) == 0) {
         _reciever.userType = ListHelper.getAccessAsList()[2];
-        // // debugPrint(_user.userType.toString());
-        _bloc.permissionChanged(ListHelper.getPermissionList()[3]);
+        _setPermissionsDropdownValue(_reciever.userType);
+        if (_isMemberSelected)
+          setState(() {
+            _isMemberSelected = false;
+            _reciever.requestAccessTime = ListHelper.getAccessTimeList()[1];
+          });
+      } else if (onData.compareTo(ListHelper.getGrantAccessAsList()[1]) == 0) {
+        _reciever.userType = ListHelper.getAccessAsList()[3];
+        _setPermissionsDropdownValue(_reciever.userType);
         if (_isMemberSelected)
           setState(() {
             _isMemberSelected = false;
@@ -130,9 +134,6 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
     _bloc.requestAccessTimeController.listen((onData) {
       _reciever.requestAccessTime = onData;
     });
-
-    // _bloc.permissionChanged(ListHelper.getPermissionList()[1]);
-    // permissionSet = ListHelper.getPermissionList()[0];
     _bloc.permissionController.listen((onData) {
       permissionSet = onData;
     });
@@ -140,14 +141,24 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
     //-----
   }
 
+  void _setPermissionsDropdownValue(String onData) {
+    String permissionSetName = _findPermissionSetName(onData);
+    if (permissionSetName.length > 1) {
+      _bloc.permissionChanged(permissionSetName);
+    } else {
+      _bloc.permissionChanged('Grant permissions');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    _util = ScreenUtil();
-    // GlobalContext.currentScreenContext = context;
     _userProvider = Provider.of<UserProvider>(context);
 
     _selectedPermissionSet =
         _userProvider.authenticatedUser.seaPods[0].permissionSets;
+    print(_selectedPermissionSet.map((permission) {
+      return permission.permissionSetName;
+    }).toList());
     _user = _userProvider.authenticatedUser;
     return Container(
         padding:
@@ -164,105 +175,33 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
                 screnTitle: 'Grant new access', isDrawer: false),
             SliverPadding(
               padding: EdgeInsets.only(
-                  top: _util.setHeight(8),
+                  top: 8.h,
                   // bottom: _util.setHeight(128),
                   bottom: MediaQuery.of(context).viewInsets.bottom),
               sliver: SliverList(
                 delegate: SliverChildListDelegate(
                   [
-                    Container(
-                      // margin: EdgeInsets.symmetric(horizontal: 12.0),
-                      padding: EdgeInsets.symmetric(
-                          vertical: 12.0, horizontal: _util.setWidth(48)),
-                      child: Text(
-                        'This will send an invitation that has to be accepted by the recipient',
-                        style: TextStyle(
-                            color: ColorConstants.ACCESS_MANAGEMENT_SUBTITLE,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 48.sp),
-                      ),
-                    ),
-                    _getEditTextUnit(
-                      context,
-                      TextFieldHints.NAME,
-                      _bloc.firstName,
-                      _bloc.firstNameChanged,
-                      _firstNameController,
-                      null,
-                      true,
-                      _firstNameNode,
-                      _emailNode,
-                      maxLength: 30,
-                    ),
-                    SizedBox(height: 36.h),
-                    _getEditTextUnit(
-                      context,
-                      TextFieldHints.EMAIL_ADDRESS,
-                      _bloc.email,
-                      _bloc.emailChanged,
-                      _emailController,
-                      null,
-                      true,
-                      _emailNode,
-                      _messageNode,
-                      maxLength: 30,
-                    ),
-                    // SizedBox(height: util.setHeight(175)),
-                    SizedBox(height: 36.h),
-                    getDropdown(getSeaPodList(), _bloc.vasselCode,
-                        _bloc.vasselCodeChanged, true,
-                        label: 'SeaPods'),
-                    SizedBox(height: 36.h),
-                    getDropdown(
-                        ListHelper.getGrantAccessAsList(),
-                        _bloc.requestAccessAs,
-                        _bloc.requestAccessAsChanged,
-                        true,
-                        label: 'Access type'),
-                    SizedBox(height: 36.h),
+                    _headerTitle(),
+                    // _firstNameField(context),
+                    SpaceH64(),
+                    _emailField(context),
+                    SpaceH64(),
+                    _seaPodDropdown(),
+                    SpaceH32(),
+                    _accessTypeDropdown(),
+                    SpaceH32(),
                     _permissionSetRow(),
-                    SizedBox(height: 36.h),
+                    SpaceH32(),
                     _customPermissionsRow(),
-                    SizedBox(height: 36.h),
+                    SpaceH32(),
                     checkInDatePicker(),
-                    _isMemberSelected ? Container() : SizedBox(height: 36.h),
-                    _isMemberSelected
-                        ? Container()
-                        : getDropdown(
-                            ListHelper.getGrantAccessTimeList().sublist(0, 9),
-                            _bloc.requestAccessTime,
-                            _bloc.requestAccessTimeChanged,
-                            true,
-                            label: 'Access for',
-                          ),
-                    SizedBox(height: 36.h),
+                    _isMemberSelected ? Container() : SpaceH32(),
+                    _isMemberSelected ? Container() : _accessTimeDropdown(),
+                    SpaceH32(),
                     _messageContainer(),
-                    SizedBox(height: 36.h),
-                    Container(
-                      padding: EdgeInsets.all(32.w),
-                      margin: EdgeInsets.symmetric(horizontal: 32.w),
-                      child: DialogButton(
-                        child: Text(
-                          'Send invitation',
-                          style:
-                              TextStyle(color: Colors.white, fontSize: 36.sp),
-                        ),
-                        onPressed: () {
-                          // Navigator.of(context).pop();
-                          if (permissionSet != null && _reciever.email != null)
-                            _showConfirmGrantAccessDialog();
-                          else
-                            showInfoBar(
-                                'Fill all the fields',
-                                'Please fill all the fields to continue',
-                                context);
-                          // _showDeleteGrantAccessDialog();
-                        },
-                        color: ColorConstants.ACCESS_MANAGEMENT_BUTTON,
-                        radius: BorderRadius.circular(72.w),
-                      ),
-                    ),
-                    SizedBox(height: 36.h),
+                    SpaceH32(),
+                    _sendInvitationButton(context),
+                    SpaceH32(),
                   ],
                 ),
               ),
@@ -272,6 +211,96 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
         )
         // ),
         );
+  }
+
+  Container _sendInvitationButton(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(32.w),
+      margin: EdgeInsets.symmetric(horizontal: 32.w),
+      child: DialogButton(
+        child: Text(
+          'Send invitation',
+          style: TextStyle(color: Colors.white, fontSize: 36.sp),
+        ),
+        onPressed: () {
+          // Navigator.of(context).pop();
+          if (permissionSet != null && _reciever.email != null)
+            _showConfirmGrantAccessDialog();
+          else
+            showInfoBar('Fill all the fields',
+                'Please fill all the fields to continue', context);
+          // _showDeleteGrantAccessDialog();
+        },
+        color: ColorConstants.ACCESS_MANAGEMENT_BUTTON,
+        radius: BorderRadius.circular(72.w),
+      ),
+    );
+  }
+
+  Widget _accessTimeDropdown() {
+    return getDropdown(
+      ListHelper.getGrantAccessTimeList().sublist(0, 9),
+      _bloc.requestAccessTime,
+      _bloc.requestAccessTimeChanged,
+      true,
+      label: 'Access for',
+    );
+  }
+
+  Widget _accessTypeDropdown() {
+    return getDropdown(ListHelper.getGrantAccessAsList(), _bloc.requestAccessAs,
+        _bloc.requestAccessAsChanged, true,
+        label: 'Access type');
+  }
+
+  Widget _seaPodDropdown() {
+    return getDropdown(
+        getSeaPodList(), _bloc.vasselCode, _bloc.vasselCodeChanged, true,
+        label: 'SeaPods');
+  }
+
+  Widget _emailField(BuildContext context) {
+    return _getEditTextUnit(
+      context,
+      TextFieldHints.EMAIL_ADDRESS,
+      _bloc.email,
+      _bloc.emailChanged,
+      _emailController,
+      null,
+      true,
+      _emailNode,
+      _messageNode,
+      maxLength: 30,
+    );
+  }
+
+  Widget _firstNameField(BuildContext context) {
+    return _getEditTextUnit(
+      context,
+      TextFieldHints.NAME,
+      _bloc.firstName,
+      _bloc.firstNameChanged,
+      _firstNameController,
+      null,
+      true,
+      _firstNameNode,
+      _emailNode,
+      maxLength: 30,
+    );
+  }
+
+  Container _headerTitle() {
+    return Container(
+      // margin: EdgeInsets.symmetric(horizontal: 12.0),
+      padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 48.w),
+      child: Text(
+        'This will send an invitation that has to be accepted by the recipient',
+        style: TextStyle(
+            color: ColorConstants.ACCESS_MANAGEMENT_SUBTITLE,
+            fontWeight: FontWeight.w400,
+            fontSize: 48.sp),
+      ),
+    );
   }
 
   List<String> getSeaPodList() {
@@ -287,7 +316,7 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
 
   Widget _messageContainer() {
     return Container(
-        margin: EdgeInsets.symmetric(horizontal: _util.setWidth(48)),
+        margin: EdgeInsets.symmetric(horizontal: 48.w),
         child: TextField(
           autofocus: false,
           controller: _messageController,
@@ -316,10 +345,10 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
               labelText: 'Message (Optional)',
               labelStyle: TextStyle(
                   color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                  fontSize: _util.setSp(40)),
+                  fontSize: 40.sp),
               contentPadding: EdgeInsets.only(left: 48.w, top: 48.h)),
           style: TextStyle(
-            fontSize: _util.setSp(36),
+            fontSize: 36.sp,
             fontWeight: FontWeight.w400,
             color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
           ),
@@ -341,7 +370,7 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
       FocusNode nextNode,
       {maxLength = 50}) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: _util.setWidth(48)),
+      margin: EdgeInsets.symmetric(horizontal: 48.w),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -352,7 +381,7 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
               Text(title,
                   style: TextStyle(
                       color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                      fontSize: _util.setSp(40))),
+                      fontSize: 40.sp)),
               SizedBox(width: 16),
               Expanded(
                 child: TextField(
@@ -372,7 +401,7 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
                       : FocusScope.of(context).unfocus(),
                   decoration: InputDecoration.collapsed(hintText: null),
                   style: TextStyle(
-                    fontSize: _util.setSp(40),
+                    fontSize: 40.sp,
                     fontWeight: FontWeight.w400,
                     color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
                   ),
@@ -451,11 +480,10 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
               // hintStyle: TextStyle(color: Colors.red),
               labelStyle: TextStyle(
                   color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-                  fontSize: _util.setSp(48)),
+                  fontSize: 48.sp),
             ),
             child: Padding(
-              padding: EdgeInsets.only(
-                  top: _util.setHeight(16), bottom: _util.setHeight(16)),
+              padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
@@ -464,7 +492,7 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
                         ? 'Tap to change'
                         : DateFormat('yMd').format(_pickedDate),
                     style: TextStyle(
-                        fontSize: _util.setSp(40),
+                        fontSize: 40.sp,
                         fontWeight: FontWeight.w400,
                         color: _pickedDate == null
                             ? ColorConstants.ACCESS_MANAGEMENT_SUBTITLE
@@ -503,12 +531,6 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
           fontSize: 2),
       isOverlayTapDismiss: true,
       isCloseButton: false,
-
-      // buttonAreaPadding: EdgeInsets.only(
-      //   left: _util.setWidth(32),
-      //   right: _util.setWidth(32),
-      //   bottom: _util.setHeight(48),
-      // )
     );
     Alert(
         context: context,
@@ -518,54 +540,43 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // SizedBox(
-            //   height: 16.0,
-            // ),
             Container(
               margin: EdgeInsets.only(
-                bottom: _util.setHeight(32),
+                bottom: 32.h,
               ),
               child: Text(
                 'Grant new access',
                 style: TextStyle(
                     color: ColorConstants.COLOR_NOTIFICATION_TITLE,
                     fontWeight: FontWeight.w400,
-                    fontSize: _util.setSp(60)),
+                    fontSize: 60.sp),
               ),
             ),
             Container(
               margin: EdgeInsets.only(
-                bottom: _util.setHeight(64),
-                // top: _util.setHeight(64)
+                bottom: 64.h,
               ),
               child: Text(
                 'You are about to share ownership of the SeaPod $_selectedObName, giving this person full control of your home.\n\n\nPlease confirm that you really want to share ownership.',
                 style: TextStyle(
                     color: ColorConstants.ACCESS_MANAGEMENT_SUBTITLE,
                     fontWeight: FontWeight.w400,
-                    fontSize: _util.setSp(48)),
+                    fontSize: 48.sp),
               ),
             ),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Expanded(
                   child: RaisedButton(
                       onPressed: () {
-                        // Navigator.of(context).pop();
                         Navigator.of(context, rootNavigator: true).pop();
                       },
-                      // padding: EdgeInsets.only(
-                      //   left: _util.setWidth(128),
-                      //   right:  _util.setWidth(128)
-                      // ),
                       child: Text(
                         'CANCEL',
                       ),
                       shape: RoundedRectangleBorder(
-                          borderRadius:
-                              new BorderRadius.circular(_util.setWidth(48)),
+                          borderRadius: new BorderRadius.circular(48.w),
                           side: BorderSide(
                             color:
                                 ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
@@ -576,23 +587,17 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
                       ),
                 ),
                 SizedBox(
-                  width: _util.setWidth(24),
+                  width: 24.w,
                 ),
                 Expanded(
                   child: RaisedButton(
                       onPressed: () {
-                        // Navigator.of(context).pop();
                         Navigator.of(context, rootNavigator: true).pop();
                         _sendInvitationToUser();
                       },
-                      // padding: EdgeInsets.only(
-                      //     left: _util.setWidth(64),
-                      //     right:  _util.setWidth(64)
-                      //   ),
                       child: Text('CONFIRM'),
                       shape: RoundedRectangleBorder(
-                          borderRadius:
-                              new BorderRadius.circular(_util.setWidth(48)),
+                          borderRadius: new BorderRadius.circular(48.w),
                           side: BorderSide(
                             color:
                                 ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
@@ -609,20 +614,14 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
 
   _sendInvitationToUser() async {
     _sender = _userProvider.authenticatedUser;
-
-    // debugPrint('_reciever info -- ' + _reciever.toJson().toString());
-    // debugPrint('_sender info -- ' + _sender.toJson().toString());
-
     String permissionSetId = _getPermissionSetId(permissionSet);
-
     _userProvider
         .sendInvitation(_reciever, _selectedObInfo.documentId, permissionSetId)
         .then((responseStatus) {
       if (responseStatus.status == 200) {
-        // Navigator.of(context).pop();
         showInfoBar(
             'Invitation sent',
-            'Access invitation has been sent to " ${_reciever.firstName} ${_reciever.lastName}."',
+            'Access invitation has been sent to "${_reciever.email}"',
             GlobalContext.currentScreenContext);
       } else {
         showInfoBar(parseErrorTitle(responseStatus.code),
@@ -646,20 +645,17 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
 
   _getPermissionListOfSeapod() {
     SeaPod _seaPod;
-
     _userProvider.authenticatedUser.seaPods.map((f) {
-      // // debugPrint('comparing with -- ${f.id}');
       if (f.obName.compareTo(_selectedObName) == 0) {
         _seaPod = f;
       }
     }).toList();
-    // // print("got SeaPod  =====================================================");
     _selectedPermissionSet = _seaPod.permissionSets;
   }
 
   _customPermissionsRow() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: _util.setWidth(48)),
+      padding: EdgeInsets.symmetric(horizontal: 48.w),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.end,
@@ -681,7 +677,7 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
                 Text(
                   'CUSTOM PERMISSIONS',
                   style: TextStyle(
-                      fontSize: _util.setSp(48),
+                      fontSize: 48.sp,
                       color: ColorConstants.COLOR_NOTIFICATION_ITEM),
                 ),
               ],
@@ -693,8 +689,13 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
   }
 
   _permissionSetRow() {
+    List<String> list = [];
+    list.add('Grant permissions');
+    list.addAll(_selectedPermissionSet.map((permission) {
+      return permission.permissionSetName;
+    }).toList());
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: _util.setWidth(48)),
+      padding: EdgeInsets.symmetric(horizontal: 48.w),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -702,12 +703,7 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
         children: <Widget>[
           Expanded(
             child: getDropdown(
-                _selectedPermissionSet.map((permission) {
-                  return permission.permissionSetName;
-                }).toList(),
-                _bloc.permission,
-                _bloc.permissionChanged,
-                false,
+                list, _bloc.permission, _bloc.permissionChanged, false,
                 label: 'Permissions'),
           )
         ],
@@ -723,5 +719,18 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
       }
     }).toList();
     return _id;
+  }
+
+  String _findPermissionSetName(String onData) {
+    String defaultPermissionName = '';
+    for (var i = 0; i < _selectedPermissionSet.length; i++) {
+      PermissionSet ps = _selectedPermissionSet[i];
+      if (ps.permissionSetName.contains(onData) &&
+          ps.permissionSetName.contains('Default')) {
+        defaultPermissionName = ps.permissionSetName;
+      }
+    }
+    print(defaultPermissionName);
+    return defaultPermissionName;
   }
 }

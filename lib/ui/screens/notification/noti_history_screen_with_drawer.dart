@@ -38,29 +38,18 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
   @override
   void initState() {
     UIHelper.setStatusBarColor(color: Colors.white);
-    // Future.delayed(Duration.zero).then((_) {
-    //   UserProvider userProvider = Provider.of<UserProvider>(context);
-    //   userProvider.getNotifications();
-    // });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // GlobalContext.currentScreenContext = context;
     _util = ScreenUtil();
     final UserProvider userProvider = Provider.of<UserProvider>(context);
-
-    //         if (userProvider.authenticatedUser != null) {
-    // userProvider.resetAuthenticatedUser(userProvider.authenticatedUser.userID);
-    //     }
 
     int len = userProvider?.authenticatedUser?.notifications?.length ?? 0;
     List<ServerNotification> notificationList = [];
 
     if (len > 0) {
-      // notificationList =  userProvider.authenticatedUser.notifications.reversed.toList();
-
       notificationList = new List<ServerNotification>.from(
           userProvider.authenticatedUser.notifications);
 
@@ -72,13 +61,9 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
               noti.data.user.id.contains(currentUserID);
         });
         len = notificationList.length;
-        // debugPrint('access request count -- $len');
       }
-
-      // notificationList = notificationList.reversed.toList();
     }
 
-    // debugPrint('parseNotificationsCallCout $parseNotificationsCallCout');
     if (parseNotificationsCallCout == 0) {
       MethodHelper.parseNotifications(context);
       parseNotificationsCallCout++;
@@ -228,17 +213,7 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                          Column(
-                                            children: <Widget>[
-                                              SvgPicture.asset(
-                                                ImagePaths.svgSeapod,
-                                                color: ColorConstants
-                                                    .COLOR_NOTIFICATION_NORMAL,
-                                                width: 40,
-                                                height: 40,
-                                              )
-                                            ],
-                                          ),
+                                          _imageSeaPod(),
                                           Expanded(
                                             child: Padding(
                                               padding: const EdgeInsets.only(
@@ -256,10 +231,8 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: <Widget>[
-                                                      Text('$formatedDateTime',
-                                                          style: TextStyle(
-                                                              color: ColorConstants
-                                                                  .COLOR_NOTIFICATION_SUB_ITEM)),
+                                                      _timeStamp(
+                                                          formatedDateTime),
                                                       InkWell(
                                                           onTap: () async {
                                                             if (_updatingNotification)
@@ -314,18 +287,12 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
                                                   SizedBox(
                                                     height: 8,
                                                   ),
-                                                  Text(notiMsg.trim(),
-                                                      style: TextStyle(
-                                                          color: ColorConstants
-                                                              .COLOR_NOTIFICATION_ITEM)),
+                                                  _notificationMessage(notiMsg),
                                                   SizedBox(
                                                     height: 8,
                                                   ),
-                                                  Text(
-                                                      '${notificationType.toUpperCase()}',
-                                                      style: TextStyle(
-                                                          color: ColorConstants
-                                                              .COLOR_NOTIFICATION_SUB_ITEM)),
+                                                  _notificationType(
+                                                      notificationType),
                                                   // Text('Status: $requestStatus'),
                                                 ],
                                               ),
@@ -333,148 +300,152 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
                                           ),
                                         ],
                                       ),
-                                      Divider(
-                                        height: 4,
-                                        color: ColorConstants
-                                            .COLOR_NOTIFICATION_DIVIDER,
-                                      )
+                                      _dividerH4()
                                     ],
                                   ),
                                 ),
                               );
                             }, childCount: len),
                           )
-                        : SliverToBoxAdapter(
-                            child: Center(
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Text(
-                                  'No notification Found!!',
-                                  style: TextStyle(
-                                      fontSize: 24,
-                                      color: ColorConstants
-                                          .COLOR_NOTIFICATION_ITEM),
-                                ),
-                              ),
-                            ),
-                          ),
-                    UIHelper.getTopEmptyContainer(90, false),
+                        : _textNoNotification(),
+                    _endSpace(),
                   ],
                 ),
-                Positioned(
-                  top: ScreenUtil.statusBarHeight,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    color: Colors.white,
-                    // padding: EdgeInsets.only(top: 8.0, right: 12.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            InkWell(
-                              onTap: () {
-                                _scaffoldKey.currentState.openDrawer();
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                  _util.setWidth(32),
-                                  _util.setHeight(32),
-                                  _util.setWidth(32),
-                                  _util.setHeight(32),
-                                ),
-                                child: ImageIcon(
-                                  AssetImage(
-                                    ImagePaths.icHamburger,
-                                  ),
-                                  size: _util.setWidth(50),
-                                  color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left: _util.setWidth(48),
-                                top: _util.setHeight(32),
-                                bottom: _util.setHeight(32),
-                              ),
-                              child: Text(
-                                widget.showOnlyAccessRequests
-                                    ? AppStrings.pendingRequests
-                                    : AppStrings.notifications,
-                                style: TextStyle(
-                                    color:
-                                        ColorConstants.WEATHER_MORE_ICON_COLOR,
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: _util.setSp(60)),
-                              ),
-                            ),
-                            Spacer(),
-                            InkWell(
-                              onTap: () {
-                                if (!_updatingNotification) goBack();
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  right: _util.setWidth(48),
-                                  top: _util.setHeight(32),
-                                  bottom: _util.setHeight(32),
-                                ),
-                                child: Image.asset(
-                                  ImagePaths.cross,
-                                  width: _util.setWidth(58),
-                                  height: _util.setHeight(58),
-                                  color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-/*                 Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    //color: ColorConstants.MODAL_BKG.withOpacity(.375),
-                    padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            InkWell(
-                              onTap: () {
-                                // debugPrint(
-                                    '_updatingNotification -- $_updatingNotification');
-                                if (!_updatingNotification) goBack();
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Image.asset(
-                                  ImagePaths.cross,
-                                  width: 15,
-                                  height: 15,
-                                  color: ColorConstants.COLOR_NOTIFICATION_ITEM,
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ) */
+                _topBar()
               ],
             )
             // ),
             ),
+      ),
+    );
+  }
+
+  Text _notificationType(String notificationType) {
+    return Text('${notificationType.toUpperCase()}',
+        style: TextStyle(color: ColorConstants.COLOR_NOTIFICATION_SUB_ITEM));
+  }
+
+  Text _notificationMessage(String notiMsg) {
+    return Text(notiMsg.trim(),
+        style: TextStyle(color: ColorConstants.COLOR_NOTIFICATION_ITEM));
+  }
+
+  Text _timeStamp(String formatedDateTime) {
+    return Text('$formatedDateTime',
+        style: TextStyle(color: ColorConstants.COLOR_NOTIFICATION_SUB_ITEM));
+  }
+
+  Column _imageSeaPod() {
+    return Column(
+      children: <Widget>[
+        SvgPicture.asset(
+          ImagePaths.svgSeapod,
+          color: ColorConstants.COLOR_NOTIFICATION_NORMAL,
+          width: 40,
+          height: 40,
+        )
+      ],
+    );
+  }
+
+  Divider _dividerH4() {
+    return Divider(
+      height: 4,
+      color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
+    );
+  }
+
+  Positioned _topBar() {
+    return Positioned(
+      top: ScreenUtil.statusBarHeight,
+      left: 0,
+      right: 0,
+      child: Container(
+        color: Colors.white,
+        // padding: EdgeInsets.only(top: 8.0, right: 12.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                InkWell(
+                  onTap: () {
+                    _scaffoldKey.currentState.openDrawer();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      32.w,
+                      32.h,
+                      32.w,
+                      32.h,
+                    ),
+                    child: ImageIcon(
+                      AssetImage(
+                        ImagePaths.icHamburger,
+                      ),
+                      size: 50.w,
+                      color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: 48.w,
+                    top: 32.h,
+                    bottom: 32.h,
+                  ),
+                  child: Text(
+                    widget.showOnlyAccessRequests
+                        ? AppStrings.pendingRequests
+                        : AppStrings.notifications,
+                    style: TextStyle(
+                      color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 60.sp,
+                    ),
+                  ),
+                ),
+                Spacer(),
+                InkWell(
+                  onTap: () {
+                    if (!_updatingNotification) goBack();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      right: 48.w,
+                      top: 32.h,
+                      bottom: 32.h,
+                    ),
+                    child: Image.asset(
+                      ImagePaths.cross,
+                      width: 58.w,
+                      height: 58.h,
+                      color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _endSpace() => UIHelper.getTopEmptyContainer(90, false);
+
+  SliverToBoxAdapter _textNoNotification() {
+    return SliverToBoxAdapter(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'No notification Found!!',
+            style: TextStyle(
+                fontSize: 24, color: ColorConstants.COLOR_NOTIFICATION_ITEM),
+          ),
+        ),
       ),
     );
   }
@@ -496,8 +467,6 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
 // show cancel alert
   _showCancelAlert(UserProvider userProvider, String oceanBuilderId,
       String oceanBuilderName) {
-    // Navigator.of(context).pushReplacementNamed(PendingOBScreen.routeName,arguments: userOceanBuilder);
-    // _showCancelAlert(userOceanBuilder);
     _cancelUserProvider = userProvider;
     _cancelUserOceanBuilderId = oceanBuilderId;
 
@@ -534,36 +503,5 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
         break;
       }
     }
-    // debugPrint('noti to cancel ' + fcmNotification.data.id);
-    // User requestedBy =
-    //     await userProvider.getAuthUserProfile(fcmNotification.data.user.id);
-
-    // User owner =
-    //     await userProvider.getAuthUserProfile(fcmNotification.data.user.id);
-
-    // String notificationId = fcmNotification.data.id;
-
-    // userProvider
-    //     .updateNotificationStatus(
-    //         notificationId, NotificationConstants.canceled, owner.userID)
-    //     .then((onValue) {
-    //   userProvider
-    //       .deleteOceanBuilderFromUser(
-    //           userId: requestedBy.userID,
-    //           oceanBuilderId: fcmNotification.data.seaPod.id)
-    //       .then((onValue) {
-    //     // Navigator.of(context).pushReplacementNamed(OBEventScreen.routeName);
-    //     userProvider
-    //         .resetAuthenticatedUser(userProvider.authenticatedUser.userID)
-    //         .then((onValue) {
-    //       setState(() {
-    //         cancelling = false;
-    //         alertButtonText = 'Cancel';
-    //        Navigator.of(context, rootNavigator: true).pop();
-    //         showInfoBar('Cancel Request', 'Access request canceled', context);
-    //       });
-    //     });
-    //   });
-    // });
   }
 }

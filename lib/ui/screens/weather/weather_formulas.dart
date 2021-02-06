@@ -26,6 +26,8 @@ V = wind speed in mph
 // twc = wind chill
 import 'dart:math';
 
+import 'package:flutter/material.dart';
+
 double getFeelsLikeTemperature(t,rh,v){
 
   double thi = 0.0;
@@ -47,10 +49,11 @@ double getFeelsLikeTemperature(t,rh,v){
 
 }
 
-int getWeatherType(temperature, atmosphericPressure, wind, humidity, precipitation,cloudiness){
+int getWeatherType(temperature, atmosphericPressure, wind, humidity, precipitation){
   
+  debugPrint('detect weather type ---- temperature = $temperature\natmosphericPressure = $atmosphericPressure\nwind = $wind\nhumidity = $humidity\nprecipitation = $precipitation\n');
   
-  return 123;
+  return 113;
 
 }
 

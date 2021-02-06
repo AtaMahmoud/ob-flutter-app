@@ -21,7 +21,7 @@ class CameraScreen extends StatefulWidget {
 class _CameraScreenState extends State<CameraScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   UserProvider userProvider;
-  ScreenUtil _util;
+  // ScreenUtil _util;
 
   File _profileImageFile;
 
@@ -31,12 +31,7 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   void initState() {
     UIHelper.setStatusBarColor(color: Colors.white);
-    // Future.delayed(Duration.zero).then((_) {
-
-    // });
-    _util = ScreenUtil();
     _getProfilePicture();
-
     super.initState();
   }
 
@@ -48,10 +43,8 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
-
     userProvider = Provider.of<UserProvider>(context);
-
-    return _mainContent(); //customDrawer(_innerDrawerKey, _mainContent());
+    return _mainContent();
   }
 
   _mainContent() {
@@ -67,7 +60,6 @@ class _CameraScreenState extends State<CameraScreen> {
         body: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            // borderRadius: BorderRadius.circular(8)
           ),
           child: Stack(
             children: <Widget>[
@@ -75,137 +67,151 @@ class _CameraScreenState extends State<CameraScreen> {
                 slivers: <Widget>[
                   UIHelper.getTopEmptyContainerWithColor(
                       ScreenUtil.statusBarHeight * 3, Colors.white),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      // color: ColorConstants.MODAL_BKG.withOpacity(.375),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: _util.setWidth(32),
-                          vertical: _util.setHeight(32)),
-                      child: Text('Select Room',
-                          style: TextStyle(
-                              color: ColorConstants.CAMERA_TITLE,
-                              fontWeight: FontWeight.normal,
-                              fontSize: _util.setSp(36))),
-                    ),
-                  ),
-                  SliverToBoxAdapter(
-                      child: Container(
-                    height: _util.setHeight(235),
-                    child: ListView(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: _util.setWidth(8)),
-                      scrollDirection: Axis.horizontal,
-                      children: <Widget>[
-                        __horizontalSliderItem(CAMERA.BEDROOM),
-                        __horizontalSliderItem(CAMERA.KITCHEN),
-                        __horizontalSliderItem(CAMERA.LIVING_ROOM),
-                        __horizontalSliderItem(CAMERA.UNDERWATER_ROOM)
-                      ],
-                    ),
-                  )),
-                  SliverToBoxAdapter(
-                      child: Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: _util.setWidth(48),
-                        vertical: _util.setHeight(32)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        __camItem(1),
-                        __camItem(2),
-                        __camItem(3),
-                      ],
-                    ),
-                  )),
-                  SliverToBoxAdapter(
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * .622,
-                      padding: EdgeInsets.symmetric(
-                          // vertical: util.setHeight(32),
-                          horizontal: _util.setWidth(32)),
-                      child: Image.asset(
-                        ImagePaths.cameraPreview,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  )
-
-                  // UIHelper.getTopEmptyContainer(90, false),
+                  _selectRoomText(),
+                  _cameraSlider(),
+                  _camerasRow(),
+                  _cameraPreview()
                 ],
               ),
-              // Appbar(ScreenTitle.OB_SELECTION),
-              Positioned(
-                top: ScreenUtil.statusBarHeight,
-                left: 0,
-                right: 0,
-                child: Container(
-                  color: Colors.white,
-                  // padding: EdgeInsets.only(top: 8.0, right: 12.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          InkWell(
-                            onTap: () {
-                              _scaffoldKey.currentState.openDrawer();
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.fromLTRB(
-                                _util.setWidth(32),
-                                _util.setHeight(32),
-                                _util.setWidth(32),
-                                _util.setHeight(32),
-                              ),
-                              child: ImageIcon(
-                                AssetImage(ImagePaths.icHamburger),
-                                color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              left: _util.setWidth(48),
-                              top: _util.setHeight(32),
-                              bottom: _util.setHeight(32),
-                            ),
-                            child: Text(
-                              AppStrings.cameras,
-                              style: TextStyle(
-                                  color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 22),
-                            ),
-                          ),
-                          Spacer(),
-                          InkWell(
-                            onTap: () {
-                              goBack();
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                right: _util.setWidth(48),
-                                top: _util.setHeight(32),
-                                bottom: _util.setHeight(32),
-                              ),
-                              child: Image.asset(
-                                ImagePaths.cross,
-                                width: _util.setWidth(48),
-                                height: _util.setHeight(48),
-                                color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              )
+              _topBar()
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Positioned _topBar() {
+    return Positioned(
+      top: ScreenUtil.statusBarHeight,
+      left: 0,
+      right: 0,
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                InkWell(
+                  onTap: () {
+                    _scaffoldKey.currentState.openDrawer();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      32.w,
+                      32.h,
+                      32.w,
+                      32.h,
+                    ),
+                    child: ImageIcon(
+                      AssetImage(ImagePaths.icHamburger),
+                      color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: 48.w,
+                    top: 32.h,
+                    bottom: 32.h,
+                  ),
+                  child: Text(
+                    AppStrings.cameras,
+                    style: TextStyle(
+                        color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 22),
+                  ),
+                ),
+                Spacer(),
+                InkWell(
+                  onTap: () {
+                    goBack();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      right: 48.w,
+                      top: 32.h,
+                      bottom: 32.h,
+                    ),
+                    child: Image.asset(
+                      ImagePaths.cross,
+                      width: 48.w,
+                      height: 48.h,
+                      color: ColorConstants.WEATHER_MORE_ICON_COLOR,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _cameraPreview() {
+    return SliverToBoxAdapter(
+      child: Container(
+        height: MediaQuery.of(context).size.height * .622,
+        padding: EdgeInsets.symmetric(
+            // vertical: util.setHeight(32),
+            horizontal: 32.w),
+        child: Image.asset(
+          ImagePaths.cameraPreview,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _camerasRow() {
+    return SliverToBoxAdapter(
+        child: Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: 48.w,
+        vertical: 32.h,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          __camItem(1),
+          __camItem(2),
+          __camItem(3),
+        ],
+      ),
+    ));
+  }
+
+  SliverToBoxAdapter _cameraSlider() {
+    return SliverToBoxAdapter(
+        child: Container(
+      height: 235.h,
+      child: ListView(
+        padding: EdgeInsets.symmetric(horizontal: 8.w),
+        scrollDirection: Axis.horizontal,
+        children: <Widget>[
+          __horizontalSliderItem(CAMERA.BEDROOM),
+          __horizontalSliderItem(CAMERA.KITCHEN),
+          __horizontalSliderItem(CAMERA.LIVING_ROOM),
+          __horizontalSliderItem(CAMERA.UNDERWATER_ROOM)
+        ],
+      ),
+    ));
+  }
+
+  SliverToBoxAdapter _selectRoomText() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        // color: ColorConstants.MODAL_BKG.withOpacity(.375),
+        padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 32.h),
+        child: Text('Select Room',
+            style: TextStyle(
+                color: ColorConstants.CAMERA_TITLE,
+                fontWeight: FontWeight.normal,
+                fontSize: 36.sp)),
       ),
     );
   }
@@ -238,7 +244,7 @@ class _CameraScreenState extends State<CameraScreen> {
               // width: MediaQuery.of(context).size.width*.95,
             ),
             SizedBox(
-              width: _util.setWidth(8),
+              width: 8.w,
             ),
             Text(
               'Cam $index',
@@ -248,7 +254,7 @@ class _CameraScreenState extends State<CameraScreen> {
                       ? ColorConstants.CAMERA_TITLE
                       : ColorConstants.CAMERA_ITEM_INACTIVE,
                   fontWeight: FontWeight.normal,
-                  fontSize: _util.setSp(38.22)),
+                  fontSize: 38.22.sp),
             )
           ],
         ),
@@ -282,27 +288,23 @@ class _CameraScreenState extends State<CameraScreen> {
     return InkWell(
       onTap: () {
         setState(() {
-          // debugPrint('currentlySelectedCameraIndex 1--- ' +
-          // currentlySelectedCameraIndex.index.toString());
           currentlySelectedCameraIndex = cameraIndex;
-          // debugPrint('currentlySelectedCameraIndex --- ' +
-          // currentlySelectedCameraIndex.index.toString());
         });
       }, //onTap,
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(_util.setWidth(16)),
+          borderRadius: BorderRadius.circular(16.w),
           color: currentlySelectedCameraIndex == cameraIndex
               ? ColorConstants.CAMERA_TITLE
               : ColorConstants.CAMERA_SLIDER_ITEM_BKG,
         ),
-        margin: EdgeInsets.all(_util.setWidth(10)),
+        margin: EdgeInsets.all(10.w),
 
-        width: _util.setWidth(405), //MediaQuery.of(context).size.width/3,
+        width: 405.w, //MediaQuery.of(context).size.width/3,
         child: Stack(
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.all(_util.setWidth(16)),
+              padding: EdgeInsets.all(16.w),
               child: Align(
                 alignment: Alignment.center,
                 child: Column(
@@ -314,7 +316,6 @@ class _CameraScreenState extends State<CameraScreen> {
                       color: currentlySelectedCameraIndex == cameraIndex
                           ? ColorConstants.CAMERA_SLIDER_ITEM_SELECTED
                           : ColorConstants.CAMERA_SLIDER_ITEM,
-                      // width: MediaQuery.of(context).size.width*.95,
                     ),
                     Text(
                       title,
@@ -324,7 +325,7 @@ class _CameraScreenState extends State<CameraScreen> {
                               ? ColorConstants.CAMERA_SLIDER_ITEM_SELECTED
                               : ColorConstants.CAMERA_SLIDER_ITEM,
                           fontWeight: FontWeight.normal,
-                          fontSize: _util.setSp(38.22)),
+                          fontSize: 38.22.sp),
                     )
                   ],
                 ),
@@ -332,15 +333,14 @@ class _CameraScreenState extends State<CameraScreen> {
             ),
             cameraIndex == CAMERA.KITCHEN
                 ? Positioned(
-                    left: _util.setWidth(16),
-                    bottom: _util.setHeight(16),
+                    left: 16.w,
+                    bottom: 16.h,
                     child: SvgPicture.asset(
                       ImagePaths.svgMovement,
                       fit: BoxFit.fitWidth,
                       color: currentlySelectedCameraIndex == cameraIndex
                           ? ColorConstants.CAMERA_SLIDER_MOVEMENT
                           : ColorConstants.CAMERA_SLIDER_MOVEMENT,
-                      // width: MediaQuery.of(context).size.width*.95,
                     ),
                   )
                 : Container()
@@ -352,22 +352,14 @@ class _CameraScreenState extends State<CameraScreen> {
 
   goBack() {
     UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
-    // Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
     Navigator.of(context).pop();
-    // Navigator.of(context).pushNamedAndRemoveUntil(
-    //     LandingScreen.routeName, (Route<dynamic> route) => false);
   }
 
   _getProfilePicture() async {
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // String path = prefs.getString(SharedPreferanceKeys.KEY_PROFILE_PIC);
-
     String path = await SharedPrefHelper.getProfilePicFilePath();
-
     if (path != null) {
       final File imageFile = File(path);
       if (await imageFile.exists()) {
-        // Use the cached images if it exists
         setState(() {
           _profileImageFile = imageFile;
         });

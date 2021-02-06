@@ -39,11 +39,9 @@ class TopClipper extends StatefulWidget {
 
 class _TopClipperState extends State<TopClipper> {
   UserProvider _userProvider;
-  ScreenUtil _util;
   @override
   Widget build(BuildContext context) {
     _userProvider = Provider.of<UserProvider>(context);
-    _util = ScreenUtil();
 
     return Stack(
       children: <Widget>[
@@ -52,15 +50,15 @@ class _TopClipperState extends State<TopClipper> {
             child: widget.hasAvator ? _customContainer() : _defaultContainer()),
         widget.hasAvator
             ? Positioned(
-                right: ScreenUtil().setWidth(32),
-                top: ScreenUtil().setHeight(100),
+                right: 32.w,
+                top: 100.h,
                 child: InkWell(
                     onTap: () {
                       widget.scaffoldKey.currentState.openDrawer();
                     },
                     child: CircleAvatar(
                       backgroundColor: ColorConstants.CONTROL_END,
-                      radius: ScreenUtil().setHeight(86),
+                      radius: 86.h,
                       child: ImageIcon(
                         AssetImage(ImagePaths.icGroup),
                         color: ColorConstants.CONTROL_LIST_BKG,
@@ -74,7 +72,7 @@ class _TopClipperState extends State<TopClipper> {
 
   _defaultContainer() {
     return Container(
-      height: ScreenUtil().setHeight(400),
+      height: 400.h,
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: [
           ColorConstants.TOP_CLIPPER_START,
@@ -85,10 +83,10 @@ class _TopClipperState extends State<TopClipper> {
         alignment: Alignment.topLeft,
         child: Padding(
           padding: EdgeInsets.fromLTRB(
-              _util.setWidth(32),
-              _util.setHeight(32),
+              32.w,
+              32.h,
               0.0, //_util.setWidth(32),
-              _util.setHeight(32)),
+              32.h),
           child: widget.scaffoldKey != null
               ? Row(
                   children: <Widget>[
@@ -99,10 +97,10 @@ class _TopClipperState extends State<TopClipper> {
                       },
                       child: Padding(
                         padding: EdgeInsets.only(
-                          left: _util.setWidth(32),
-                          right: _util.setWidth(32),
-                          top: _util.setHeight(32),
-                          bottom: _util.setHeight(32),
+                          left: 32.w,
+                          right: 32.w,
+                          top: 32.h,
+                          bottom: 32.h,
                         ),
                         child: Icon(
                           Icons.sort,
@@ -114,7 +112,7 @@ class _TopClipperState extends State<TopClipper> {
                       widget.title,
                       style: TextStyle(
                           color: Colors.white,
-                          fontSize: ScreenUtil().setSp(70),
+                          fontSize: 70.sp,
                           fontWeight: FontWeight.w400),
                     ),
                   ],
@@ -129,7 +127,7 @@ class _TopClipperState extends State<TopClipper> {
                             widget.title.toUpperCase(),
                             style: TextStyle(
                                 color: Colors.white,
-                                fontSize: ScreenUtil().setSp(48),
+                                fontSize: 48.sp,
                                 fontWeight: FontWeight.w400),
                           ),
                         ),
@@ -138,15 +136,8 @@ class _TopClipperState extends State<TopClipper> {
                             // _skipLogin();
                           },
                           child: Padding(
-                              padding: EdgeInsets.only(
-                                  right: ScreenUtil().setWidth(32)),
-                              child: Container()
-                              // SvgPicture.asset(
-                              //   ImagePaths.svgSettings,
-                              //   // width: ScreenUtil().setWidth(196),
-                              //   // height: ScreenUtil().setWidth(196),
-                              // ),
-                              ),
+                              padding: EdgeInsets.only(right: 32.w),
+                              child: Container()),
                         )
                       ],
                     )
@@ -158,7 +149,7 @@ class _TopClipperState extends State<TopClipper> {
                           widget.title.toUpperCase(),
                           style: TextStyle(
                               color: Colors.white,
-                              fontSize: ScreenUtil().setSp(48),
+                              fontSize: 48.sp,
                               fontWeight: FontWeight.w400),
                         ),
                         widget.enableSkipLogin
@@ -167,13 +158,12 @@ class _TopClipperState extends State<TopClipper> {
                                   if (!_userProvider.isLoading) _skipLogin();
                                 },
                                 child: Padding(
-                                  padding: EdgeInsets.only(
-                                      right: ScreenUtil().setWidth(32)),
+                                  padding: EdgeInsets.only(right: 32.w),
                                   child: Text(
                                     "SKIP LOGIN",
                                     style: TextStyle(
                                         color: Colors.red,
-                                        fontSize: ScreenUtil().setSp(48),
+                                        fontSize: 48.sp,
                                         fontWeight: FontWeight.w400),
                                   ),
                                 ),
@@ -189,18 +179,13 @@ class _TopClipperState extends State<TopClipper> {
   _customContainer() {
     return Container(
       height: ScreenUtil().setHeight(400),
-      decoration: BoxDecoration(gradient: topGradientDark
-          // LinearGradient(colors: [
-          //   ColorConstants.TOP_CLIPPER_START,
-          //   ColorConstants.TOP_CLIPPER_END
-          // ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
-          ),
+      decoration: BoxDecoration(gradient: topGradientDark),
       child: Padding(
         padding: EdgeInsets.fromLTRB(
-            _util.setWidth(32),
-            _util.setHeight(32),
+            32.w,
+            32.h,
             0.0, //_util.setWidth(32),
-            _util.setHeight(32)),
+            32.h),
         child: widget.scaffoldKey != null
             ? Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,14 +197,14 @@ class _TopClipperState extends State<TopClipper> {
                     },
                     child: Padding(
                       padding: EdgeInsets.only(
-                        left: _util.setWidth(32),
-                        right: _util.setWidth(32),
-                        top: _util.setHeight(32),
-                        bottom: _util.setHeight(32),
+                        left: 32.w,
+                        right: 32.w,
+                        top: 32.h,
+                        bottom: 32.h,
                       ),
                       child: ImageIcon(
                         AssetImage(ImagePaths.icHamburger),
-                        size: _util.setWidth(50),
+                        size: 50.w,
                         color: Colors.white,
                       ),
                     ),
@@ -227,20 +212,20 @@ class _TopClipperState extends State<TopClipper> {
                   widget.isMarine != null && widget.isMarine
                       ? Container()
                       : SizedBox(
-                          width: ScreenUtil().setWidth(64),
+                          width: 64.w,
                         ),
                   widget.isMarine != null && widget.isMarine
                       ? Padding(
                           padding: EdgeInsets.fromLTRB(
-                              _util.setWidth(32),
-                              _util.setHeight(32),
+                              32.w,
+                              32.h,
                               0.0, //_util.setWidth(32),
-                              _util.setHeight(32)),
+                              32.h),
                           child: Text(
                             AppStrings.marine.toUpperCase(),
                             style: TextStyle(
                                 color: Colors.white,
-                                fontSize: ScreenUtil().setSp(48),
+                                fontSize: 48.sp,
                                 fontWeight: FontWeight.w400),
                           ),
                         )
@@ -256,7 +241,7 @@ class _TopClipperState extends State<TopClipper> {
                                   'Welcome ${_userProvider.authenticatedUser.firstName} ${_userProvider.authenticatedUser.lastName}',
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: ScreenUtil().setSp(48),
+                                      fontSize: 48.sp,
                                       fontWeight: FontWeight.w400),
                                 ),
                                 Text(
@@ -268,7 +253,7 @@ class _TopClipperState extends State<TopClipper> {
                                       : '',
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: ScreenUtil().setSp(48),
+                                      fontSize: 48.sp,
                                       fontWeight: FontWeight.w400),
                                 ),
                               ],
@@ -281,7 +266,7 @@ class _TopClipperState extends State<TopClipper> {
                 widget.title,
                 style: TextStyle(
                     color: Colors.white,
-                    fontSize: ScreenUtil().setSp(70),
+                    fontSize: 70.sp,
                     fontWeight: FontWeight.w400),
               ),
       ),
@@ -293,10 +278,8 @@ class _TopClipperState extends State<TopClipper> {
     String password = "Asad@123";
 
     bool internetStatus = await DataConnectionChecker().hasConnection;
-    // debugPrint('internte status  ' + internetStatus.toString());
     if (!internetStatus) {
       displayInternetInfoBar(context, AppStrings.noInternetConnectionTryAgain);
-      // showInfoBar('NO INTERNET', AppStrings.noInternetConnection, context);
       return;
     }
 
@@ -308,24 +291,13 @@ class _TopClipperState extends State<TopClipper> {
 
         await MethodHelper.selectOnlyOBasSelectedOB();
 
-        // debugPrint('--     ----------- ^^^^^^^^^^^^^^^^^^ ----- ${userProvider.authenticatedUser.userOceanBuilder.length}');
-
         if (userProvider.authenticatedUser.userOceanBuilder == null ||
             userProvider.authenticatedUser.userOceanBuilder.length >= 1) {
           Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
         } else if (userProvider.authenticatedUser.userOceanBuilder.length < 1) {
           Navigator.of(context).pushReplacementNamed(ProfileScreen.routeName);
-        } else {
-          // debugPrint('other case');
-        }
+        } else {}
       } else {
-        // debugPrint('status  ' +
-        // status.status.toString() +
-        // 'status code ' +
-        // status.code +
-        // ' msg ' +
-        // status.message);
-        // debugPrint("--" + parseErrorTitle(status.code) + "---");
         String title = parseErrorTitle(status.code);
         showInfoBar(title, status.message, context);
       }

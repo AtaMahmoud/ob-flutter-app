@@ -35,8 +35,6 @@ class _AdminAccessScreenState extends State<AdminAccessScreen> {
 
   String permissionSet;
 
-  ScreenUtil _util;
-
   File _avatarImageFile;
 
   @override
@@ -54,8 +52,6 @@ class _AdminAccessScreenState extends State<AdminAccessScreen> {
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
     final UserProvider userProvider = Provider.of<UserProvider>(context);
-
-    _util = ScreenUtil();
 
     if (!mounted)
       MethodHelper.parseNotifications(GlobalContext.currentScreenContext);
@@ -78,30 +74,38 @@ class _AdminAccessScreenState extends State<AdminAccessScreen> {
             UIHelper.defaultSliverAppbar(_scaffoldKey, goBack,
                 screnTitle: ScreenTitle.ADMINISTRATION_ACCESS),
             userProvider.isLoading
-                ? SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                  )
-                : SliverList(
-                    delegate: SliverChildListDelegate([
-                    SpaceH48(),
-                    _avatarWidget(),
-                    SpaceH48(),
-                    _nameWidget(),
-                    SpaceH48(),
-                    _accessNameWidget(),
-                    SpaceH48(),
-                    _permissionSetRow(),
-                    SpaceH48(),
-                    _editPermissionRow(),
-                    SpaceH48(),
-                  ])),
+                ? _circularProgressIndicator()
+                : _mainContent(),
             UIHelper.getTopEmptyContainer(90, false),
           ],
+        ),
+      ),
+    );
+  }
+
+  SliverList _mainContent() {
+    return SliverList(
+        delegate: SliverChildListDelegate([
+      SpaceH48(),
+      _avatarWidget(),
+      SpaceH48(),
+      _nameWidget(),
+      SpaceH48(),
+      _accessNameWidget(),
+      SpaceH48(),
+      _permissionSetRow(),
+      SpaceH48(),
+      _editPermissionRow(),
+      SpaceH48(),
+    ]));
+  }
+
+  SliverToBoxAdapter _circularProgressIndicator() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Center(
+          child: CircularProgressIndicator(),
         ),
       ),
     );

@@ -37,8 +37,6 @@ class _CustomPermissionScreenState extends State<CustomPermissionScreen> {
 
   String permissionSet;
 
-  ScreenUtil _util;
-
   OceanBuilderProvider _oceanBuilderProvider;
   SelectedOBIdProvider _selectedOBIdProvider;
 
@@ -53,8 +51,6 @@ class _CustomPermissionScreenState extends State<CustomPermissionScreen> {
   ScrollController _scrollController;
 
   PermissionEditBloc _editBloc = PermissionEditBloc();
-
-  // UserProvider userProvider;
 
   @override
   void initState() {
@@ -96,8 +92,6 @@ class _CustomPermissionScreenState extends State<CustomPermissionScreen> {
     _oceanBuildeFuture = _oceanBuilderProvider.getSeaPod(
         _selectedOBIdProvider.selectedObId, _userProvider);
 
-    _util = ScreenUtil();
-
     if (!mounted)
       MethodHelper.parseNotifications(GlobalContext.currentScreenContext);
 
@@ -115,156 +109,86 @@ class _CustomPermissionScreenState extends State<CustomPermissionScreen> {
           fit: StackFit.expand,
           alignment: Alignment.center,
           children: <Widget>[
-            CustomScrollView(
-              controller: _scrollController,
-              shrinkWrap: true,
-              slivers: <Widget>[
-                // UIHelper.getTopEmptyContainer(height * .9, false),
-                UIHelper.defaultSliverAppbar(_scaffoldKey, goBack,
-                    screnTitle: ScreenTitle.CUSTOMIZE_PERMISSION),
-                SliverToBoxAdapter(
-                    child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: _util.setWidth(32),
-                    vertical: _util.setHeight(32),
-                  ),
-                  child: _permissionSetNameContainer(),
-                )),
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: _util.setWidth(32),
-                    vertical: _util.setHeight(32),
-                  ),
-                  sliver: SliverList(
-                      delegate: SliverChildListDelegate(
-                          // [
-                          widget.permissionSet.permissionGroups
-                              .map((permissionGroup) {
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        bottom: _util.setHeight(16),
-                      ),
-                      child: PermissionDropdown(
-                          permissionGroup, _scrollController,
-                          editBloc: _editBloc),
-                    );
-                  }).toList()
-
-                          // PermissionDropdown('title', TempPermissionData.mainControllPermissionSet, _scrollController),
-                          // ]
-                          )),
-                ),
-                // userProvider.isLoading
-                //     ? SliverToBoxAdapter(
-                //         child: Padding(
-                //           padding: const EdgeInsets.all(16.0),
-                //           child: Center(
-                //             child: CircularProgressIndicator(),
-                //           ),
-                //         ),
-                //       )
-                //     : Container(),
-                SliverToBoxAdapter(
-                    child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: _util.setWidth(32),
-                    vertical: _util.setHeight(32),
-                  ),
-                  child: _updatePermissionButtonWidget(),
-                )),
-                SliverToBoxAdapter(
-                    child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: _util.setWidth(32),
-                    vertical: _util.setHeight(32),
-                  ),
-                  child: _saveWithNewNameButtonWidget(),
-                )),
-                UIHelper.getTopEmptyContainer(90, false),
-              ],
-            ),
-            // Positioned(
-            //   top: ScreenUtil.statusBarHeight,
-            //   left: 0,
-            //   right: 0,
-            //   child: Container(
-            //     // color: Colors.white,
-            //     // padding: EdgeInsets.only(top: 8.0, right: 12.0),
-            //     child: Column(
-            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       children: <Widget>[
-            //         Row(
-            //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //           crossAxisAlignment: CrossAxisAlignment.center,
-            //           children: <Widget>[
-            //             Row(
-            //               crossAxisAlignment: CrossAxisAlignment.center,
-            //               children: <Widget>[
-            //                 InkWell(
-            //                   onTap: () {
-            //                     _scaffoldKey.currentState.openDrawer();
-            //                     // _innerDrawerKey.currentState.toggle();
-            //                   },
-            //                   child: Padding(
-            //                     padding: EdgeInsets.only(
-            //                       left: _util.setWidth(32),
-            //                       right: _util.setWidth(32),
-            //                       top: _util.setHeight(32),
-            //                       bottom: _util.setHeight(32),
-            //                     ),
-            //                     child: ImageIcon(
-            //                       AssetImage(ImagePaths.icHamburger),
-            //                       color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-            //                     ),
-            //                   ),
-            //                 ),
-            //                 Padding(
-            //                   padding: EdgeInsets.fromLTRB(
-            //                       _util.setWidth(32),
-            //                       _util.setHeight(32),
-            //                       0.0, //_util.setWidth(32),
-            //                       _util.setHeight(32)),
-            //                   child: Text(
-            //                     ScreenTitle.CUSTOMIZE_PERMISSION,
-            //                     style: TextStyle(
-            //                         color:
-            //                             ColorConstants.WEATHER_MORE_ICON_COLOR,
-            //                         fontSize: ScreenUtil().setSp(64),
-            //                         fontWeight: FontWeight.w400),
-            //                   ),
-            //                 ),
-            //               ],
-            //             ),
-            //             InkWell(
-            //               onTap: () {
-            //                 Navigator.of(context).pop();
-            //               },
-            //               child: Padding(
-            //                 padding: EdgeInsets.only(
-            //                   left: _util.setWidth(32),
-            //                   right: _util.setWidth(32),
-            //                   top: _util.setHeight(32),
-            //                   bottom: _util.setHeight(32),
-            //                 ),
-            //                 child: Image.asset(
-            //                   ImagePaths.cross,
-            //                   width: _util.setWidth(48),
-            //                   height: _util.setHeight(48),
-            //                   color: ColorConstants.WEATHER_MORE_ICON_COLOR,
-            //                 ),
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-            // OB24sP6
+            _mainContent(),
           ],
         ),
       ),
     );
+  }
+
+  CustomScrollView _mainContent() {
+    return CustomScrollView(
+      controller: _scrollController,
+      shrinkWrap: true,
+      slivers: <Widget>[
+        _topBar(),
+        _inputPermissionSetName(),
+        _listOfPermission(),
+        _buttonUpdate(),
+        _buttonSaveWithName(),
+        _endSpace(),
+      ],
+    );
+  }
+
+  _endSpace() => UIHelper.getTopEmptyContainer(90, false);
+
+  SliverToBoxAdapter _buttonSaveWithName() {
+    return SliverToBoxAdapter(
+        child: Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: 32.w,
+        vertical: 32.h,
+      ),
+      child: _saveWithNewNameButtonWidget(),
+    ));
+  }
+
+  SliverToBoxAdapter _buttonUpdate() {
+    return SliverToBoxAdapter(
+        child: Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: 32.w,
+        vertical: 32.h,
+      ),
+      child: _updatePermissionButtonWidget(),
+    ));
+  }
+
+  SliverPadding _listOfPermission() {
+    return SliverPadding(
+      padding: EdgeInsets.symmetric(
+        horizontal: 32.w,
+        vertical: 32.h,
+      ),
+      sliver: SliverList(
+          delegate: SliverChildListDelegate(
+              widget.permissionSet.permissionGroups.map((permissionGroup) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: 16.h,
+          ),
+          child: PermissionDropdown(permissionGroup, _scrollController,
+              editBloc: _editBloc),
+        );
+      }).toList())),
+    );
+  }
+
+  SliverToBoxAdapter _inputPermissionSetName() {
+    return SliverToBoxAdapter(
+        child: Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: 32.w,
+        vertical: 32.h,
+      ),
+      child: _permissionSetNameContainer(),
+    ));
+  }
+
+  _topBar() {
+    return UIHelper.defaultSliverAppbar(_scaffoldKey, goBack,
+        screnTitle: ScreenTitle.CUSTOMIZE_PERMISSION);
   }
 
   Widget _permissionSetNameContainer() {
@@ -294,15 +218,16 @@ class _CustomPermissionScreenState extends State<CustomPermissionScreen> {
           ),
           labelText: 'Permission Set Name',
           labelStyle: TextStyle(
-              color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-              fontSize: _util.setSp(48)),
+            color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
+            fontSize: 48.sp,
+          ),
           hintText: 'PLEASE NAME YOUR PERMISSION SET',
           hintStyle: TextStyle(
               color: ColorConstants.ACCESS_MANAGEMENT_SUBTITLE,
-              fontSize: _util.setSp(40)),
+              fontSize: 40.sp),
           floatingLabelBehavior: FloatingLabelBehavior.always),
       style: TextStyle(
-        fontSize: _util.setSp(48),
+        fontSize: 48.sp,
         fontWeight: FontWeight.w400,
         color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
       ),
@@ -319,8 +244,8 @@ class _CustomPermissionScreenState extends State<CustomPermissionScreen> {
         // height: h,
         // width: MediaQuery.of(context).size.width * .4,
         padding: EdgeInsets.symmetric(
-          horizontal: _util.setWidth(32),
-          vertical: _util.setHeight(32),
+          horizontal: 32.w,
+          vertical: 32.h,
         ),
         decoration: BoxDecoration(
             borderRadius: new BorderRadius.circular(ScreenUtil().setWidth(72)),
@@ -348,8 +273,8 @@ class _CustomPermissionScreenState extends State<CustomPermissionScreen> {
         // height: h,
         // width: MediaQuery.of(context).size.width * .4,
         padding: EdgeInsets.symmetric(
-          horizontal: _util.setWidth(32),
-          vertical: _util.setHeight(32),
+          horizontal: 32.w,
+          vertical: 32.h,
         ),
         decoration: BoxDecoration(
             borderRadius: new BorderRadius.circular(ScreenUtil().setWidth(72)),
@@ -372,9 +297,5 @@ class _CustomPermissionScreenState extends State<CustomPermissionScreen> {
 
   goBack() async {
     Navigator.pop(context);
-/*     if (userProvider.authenticatedUser == null)
-      await userProvider
-          .resetAuthenticatedUser(widget.fcmNotification.data.ownerID); */
-    // Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
   }
 }

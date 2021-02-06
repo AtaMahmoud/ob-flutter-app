@@ -18,6 +18,8 @@ import 'package:ocean_builder/ui/screens/profile/profile_screen.dart';
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
+import 'package:ocean_builder/ui/widgets/progress_indicator.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 
@@ -105,66 +107,84 @@ class _PasswordScreenState extends State<PasswordScreen> {
             child: CustomScrollView(
               shrinkWrap: true,
               slivers: <Widget>[
-                UIHelper.getTopEmptyContainer(height + 20, false),
+                _startSpace(height),
                 userProvider.isLoading
-                    ? SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                      )
+                    ? ProgressIndicatorBoxAdapter()
                     : SliverList(
                         delegate: SliverChildListDelegate([
                         SizedBox(height: sizedBoxHeight),
-                        UIHelper.getPasswordTextField(
-                            context,
-                            _bloc.password,
-                            _bloc.showPassword,
-                            TextFieldHints.ENTER_PASSWORD,
-                            _passwordController,
-                            null,
-                            null,
-                            true,
-                            TextInputAction.next,
-                            _passwordNode,
-                            (data) => _bloc.passwordChanged(data),
-                            (show) => _bloc.showPasswordChanged(show),
-                            () => FocusScope.of(context)
-                                .requestFocus(_confirmPasswordNode)),
-                        SizedBox(height: 32),
-                        UIHelper.getPasswordTextField(
-                            context,
-                            _bloc.confirmPassword,
-                            _bloc.showConfirmPassword,
-                            TextFieldHints.CONFIRM_PASSWORD,
-                            _confirmPasswordController,
-                            null,
-                            null,
-                            true,
-                            TextInputAction.done,
-                            _confirmPasswordNode,
-                            (data) => _bloc.confirmPasswordChanged(data),
-                            (show) => _bloc.showConfirmPasswordChanged(show),
-                            null),
+                        _inputPassword(context),
+                        SpaceH32(),
+                        _inputConfirmPassword(context),
                       ])),
-                UIHelper.getTopEmptyContainer(90, false),
+                _endSpace(),
               ],
             ),
           ),
         ),
-        Positioned(
-            top: 0, left: 0, right: 0, child: Appbar(ScreenTitle.CREATE_ACCOUNT)),
-        Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: setSubmitOrderButton(userDataProvider, designDataProvider,
-                userProvider, qrCodeDataProvider))
+        _topBar(),
+        _bottomBar(userDataProvider, designDataProvider, userProvider,
+            qrCodeDataProvider)
       ],
     ));
   }
+
+  Positioned _bottomBar(
+      UserDataProvider userDataProvider,
+      DesignDataProvider designDataProvider,
+      UserProvider userProvider,
+      QrCodeDataProvider qrCodeDataProvider) {
+    return Positioned(
+        bottom: 0,
+        left: 0,
+        right: 0,
+        child: setSubmitOrderButton(userDataProvider, designDataProvider,
+            userProvider, qrCodeDataProvider));
+  }
+
+  Positioned _topBar() {
+    return Positioned(
+        top: 0, left: 0, right: 0, child: Appbar(ScreenTitle.CREATE_ACCOUNT));
+  }
+
+  _endSpace() => UIHelper.getTopEmptyContainer(90, false);
+
+  Widget _inputConfirmPassword(BuildContext context) {
+    return UIHelper.getPasswordTextField(
+        context,
+        _bloc.confirmPassword,
+        _bloc.showConfirmPassword,
+        TextFieldHints.CONFIRM_PASSWORD,
+        _confirmPasswordController,
+        null,
+        null,
+        true,
+        TextInputAction.done,
+        _confirmPasswordNode,
+        (data) => _bloc.confirmPasswordChanged(data),
+        (show) => _bloc.showConfirmPasswordChanged(show),
+        null);
+  }
+
+  Widget _inputPassword(BuildContext context) {
+    return UIHelper.getPasswordTextField(
+        context,
+        _bloc.password,
+        _bloc.showPassword,
+        TextFieldHints.ENTER_PASSWORD,
+        _passwordController,
+        null,
+        null,
+        true,
+        TextInputAction.next,
+        _passwordNode,
+        (data) => _bloc.passwordChanged(data),
+        (show) => _bloc.showPasswordChanged(show),
+        () => FocusScope.of(context).requestFocus(_confirmPasswordNode));
+  }
+
+  _startSpace(double height) =>
+      UIHelper.getTopEmptyContainer(height + 20, false);
 
   Widget setSubmitOrderButton(
       UserDataProvider userDataProvider,
@@ -197,7 +217,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
     bool internetStatus = await DataConnectionChecker().hasConnection;
     if (!internetStatus) {
       displayInternetInfoBar(context, AppStrings.noInternetConnectionTryAgain);
-      // showInfoBar('NO INTERNET', AppStrings.noInternetConnection, context);
       return;
     }
 
@@ -206,33 +225,26 @@ class _PasswordScreenState extends State<PasswordScreen> {
     }
 
     if (widget.isNewUser) {
-      // designDataProvider.oceanBuilder//
-     // designDataProvider.oceanBuilder//
-     // debugPrint('new user data - ${userDataProvider.user.toJson()}');
       userProvider
-      .registrationWithSeaPodCreation(userDataProvider.user, designDataProvider.oceanBuilder)
-          // .signUpAndCreateNewOB(userDataProvider.user.toJson(), designDataProvider.oceanBuilder)
+          .registrationWithSeaPodCreation(
+              userDataProvider.user, designDataProvider.oceanBuilder)
           .then((responseStatus) async {
         if (responseStatus.status == 200) {
-         await MethodHelper.selectOnlyOBasSelectedOB();
+          await MethodHelper.selectOnlyOBasSelectedOB();
           Navigator.of(context).pushNamed(HomeScreen.routeName);
         } else {
-          // debugPrint('Signup as new user failed');
           showInfoBar(parseErrorTitle(responseStatus.code),
               responseStatus.message, context);
         }
       });
     } else {
-      // debugPrint(
-          // 'guest user with access permission ---------------- ${_selectedOBIdProvider.selectedObId}');
-      // this should come from scanning the QR code
       String oceanBuilderId =
           qrCodeDataProvider.qrCodeData; //'-LhmsP9Mc-E_VREoTYfV';
       userProvider
           .sendAccessReqForNewuser(userDataProvider.user, oceanBuilderId)
           .then((responseStatus) async {
         if (responseStatus.status == 200) {
-         await MethodHelper.selectOnlyOBasSelectedOB();
+          await MethodHelper.selectOnlyOBasSelectedOB();
 
           if (!(_selectedOBIdProvider.selectedObId
                   .compareTo(AppStrings.selectOceanBuilder) ==
@@ -241,17 +253,17 @@ class _PasswordScreenState extends State<PasswordScreen> {
           } else {
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => ProfileScreen(),settings: RouteSettings(name: ProfileScreen.routeName)),
+              MaterialPageRoute(
+                  builder: (context) => ProfileScreen(),
+                  settings: RouteSettings(name: ProfileScreen.routeName)),
               (Route<dynamic> route) => false,
             );
           }
         } else {
-          // debugPrint('Signup as guest failed');
           showInfoBar(parseErrorTitle(responseStatus.code),
               responseStatus.message, context);
         }
       });
     }
-
   }
 }
