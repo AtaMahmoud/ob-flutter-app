@@ -14,56 +14,50 @@ import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 
 class FirebaseNotifications {
   FirebaseMessaging _firebaseMessaging;
-int  counter = 0;
+  int counter = 0;
   void setUpFirebase() {
     print('setup firebase message caleed $counter++');
     _firebaseMessaging = FirebaseMessaging();
     _firebaseCloudMessagingListeners();
   }
 
-  static Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) {
-  print("triggerd");
+  static Future<dynamic> myBackgroundMessageHandler(
+      Map<String, dynamic> message) {
+    print("triggerd");
 
-  if (message.containsKey('data')) {
-    // Handle data message
-    final dynamic data = message['data'];
-  }
+    if (message.containsKey('data')) {
+      // Handle data message
+      final dynamic data = message['data'];
+    }
 
-  if (message.containsKey('notification')) {
-    // Handle notification message
-    final dynamic notification = message['notification'];
-  }
+    if (message.containsKey('notification')) {
+      // Handle notification message
+      final dynamic notification = message['notification'];
+    }
 
-  // return null;
-  // Or do other work.
+    // return null;
+    // Or do other work.
 
     {
+      print(
+          'on backgroundMessage--------------------------------------------  $message');
 
-        print(
-            'on backgroundMessage--------------------------------------------  $message');
+      Map<String, dynamic> message_notificationData =
+          message['data']['notificationData'];
+      print('message_notificationData   -------- $message_notificationData');
+      // print('notification data ## -------------- ${message_notificationData['_id']}');
 
-        Map<String, dynamic> message_notificationData =
-            message['data']['notificationData'];
-        print('message_notificationData   -------- $message_notificationData');
-        // print('notification data ## -------------- ${message_notificationData['_id']}');
+      FcmNotification fcmNotificationData = FcmNotification.fromJson(message);
 
-        FcmNotification fcmNotificationData = FcmNotification.fromJson(message);
-
-        if (Platform.isIOS) {
-          NotificationData notificationData =
-              NotificationData.fromJson(message);
-          fcmNotificationData.data = notificationData;
-        }
-
-        debugPrint('notification data -----' +
-        fcmNotificationData.toJson().toString());
-
-
-
-
+      if (Platform.isIOS) {
+        NotificationData notificationData = NotificationData.fromJson(message);
+        fcmNotificationData.data = notificationData;
       }
-}
 
+      debugPrint(
+          'notification data -----' + fcmNotificationData.toJson().toString());
+    }
+  }
 
   void _firebaseCloudMessagingListeners() {
     if (Platform.isIOS) _iOSPermission();
@@ -75,11 +69,10 @@ int  counter = 0;
     });
 
     _firebaseMessaging.configure(
-      
-      onBackgroundMessage: myBackgroundMessageHandler,
-      
+      // onBackgroundMessage: myBackgroundMessageHandler,
+
       // ----------------------------------------------- onMessage -----------------------------------------------------
-      
+
       onMessage: (Map<String, dynamic> message) async {
         print(
             'on message--------------------------------------------  $message');
@@ -98,7 +91,7 @@ int  counter = 0;
         }
 
         debugPrint('notification data -----' +
-        fcmNotificationData.toJson().toString());
+            fcmNotificationData.toJson().toString());
 
         if (fcmNotificationData.data.notificationType
                 .toUpperCase()
