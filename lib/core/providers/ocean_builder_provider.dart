@@ -2,9 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:barcode_scan/barcode_scan.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:ocean_builder/core/models/ocean_builder.dart';
 import 'package:ocean_builder/core/models/ocean_builder_user.dart';
@@ -37,8 +35,8 @@ class OceanBuilderProvider extends BaseProvider {
       }
     }).toList();
 
-    print("got SeaPod  =====================================================");
-    print(seapod?.toJson());
+    // print("got SeaPod  =====================================================");
+    // print(seapod?.toJson());
 
     seapod ??= userProvider.authenticatedUser.seaPods[0];
 
@@ -471,15 +469,16 @@ class OceanBuilderProvider extends BaseProvider {
     return qrcode;
   }
 
-  Future<String> _uploadImage(File qrCodeImage) async {
-    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+  // Future<String> _uploadImage(File qrCodeImage) async {
+  //   String fileName = DateTime.now().millisecondsSinceEpoch.toString();
 
-    StorageReference ref = FirebaseStorage.instance.ref().child(fileName);
-    StorageUploadTask uploadTask = ref.putFile(qrCodeImage);
-    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+  //   StorageReference ref = FirebaseStorage.instance.ref().child(fileName);
+  //   StorageUploadTask uploadTask = ref.putFile(qrCodeImage);
+  //   StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
 
-    String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
+  //   String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
 
-    return downloadUrl;
-  }
+  //   return downloadUrl;
+  // }
+
 }

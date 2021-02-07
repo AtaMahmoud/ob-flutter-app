@@ -69,7 +69,7 @@ class FirebaseNotifications {
     });
 
     _firebaseMessaging.configure(
-      // onBackgroundMessage: myBackgroundMessageHandler,
+      onBackgroundMessage: myBackgroundMessageHandler,
 
       // ----------------------------------------------- onMessage -----------------------------------------------------
 

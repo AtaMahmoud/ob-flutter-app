@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/access_events.dart';
@@ -86,10 +85,10 @@ class UserProvider extends BaseProvider {
             userOceanBuilder.checkInDate = seapodUser.checkInDate;
             userOceanBuilder.reqStatus = 'NA';
             userOceanBuilder.vessleCode = f.vessleCode;
-            print('printing user oceanbuilder info ------================');
-            print(userOceanBuilder);
-            if(seapodUser.userId.compareTo(userData.userID)==0)
-            userOceanBuilderList.add(userOceanBuilder);
+            // print('printing user oceanbuilder info ------================');
+            // print(userOceanBuilder);
+            if (seapodUser.userId.compareTo(userData.userID) == 0)
+              userOceanBuilderList.add(userOceanBuilder);
           }).toList();
         }).toList();
 /*
@@ -294,24 +293,24 @@ class UserProvider extends BaseProvider {
         // userOceanBuilder.reqStatus = 'NA';
         // userOceanBuilder.vessleCode = f.vessleCode;
         // userOceanBuilder.checkInDate = null;
-        
+
         // userOceanBuilderList.add(userOceanBuilder);
-                  f.users.map((seapodUser) {
-            UserOceanBuilder userOceanBuilder = UserOceanBuilder();
-            userOceanBuilder.oceanBuilderName = f.obName;
-            userOceanBuilder.oceanBuilderId = f.id;
-            userOceanBuilder.userType = seapodUser.userType;
-            // debugPrint('Ob name  ${userOceanBuilder.oceanBuilderName}  --usr type ---${userOceanBuilder.userType}');
-            userOceanBuilder.accessTime =
-                seapodUser.accessTime; //Duration(hours: 48);
-            userOceanBuilder.checkInDate = seapodUser.checkInDate;
-            userOceanBuilder.reqStatus = 'NA';
-            userOceanBuilder.vessleCode = f.vessleCode;
-            print('printing user oceanbuilder info ------================');
-            print(userOceanBuilder);
-            if(seapodUser.userId.compareTo(userData.userID)==0)
+        f.users.map((seapodUser) {
+          UserOceanBuilder userOceanBuilder = UserOceanBuilder();
+          userOceanBuilder.oceanBuilderName = f.obName;
+          userOceanBuilder.oceanBuilderId = f.id;
+          userOceanBuilder.userType = seapodUser.userType;
+          // debugPrint('Ob name  ${userOceanBuilder.oceanBuilderName}  --usr type ---${userOceanBuilder.userType}');
+          userOceanBuilder.accessTime =
+              seapodUser.accessTime; //Duration(hours: 48);
+          userOceanBuilder.checkInDate = seapodUser.checkInDate;
+          userOceanBuilder.reqStatus = 'NA';
+          userOceanBuilder.vessleCode = f.vessleCode;
+          // print('printing user oceanbuilder info ------================');
+          // print(userOceanBuilder);
+          if (seapodUser.userId.compareTo(userData.userID) == 0)
             userOceanBuilderList.add(userOceanBuilder);
-          }).toList();
+        }).toList();
       }).toList();
 
       userData.accessRequests.map((f) {
@@ -1075,7 +1074,8 @@ class UserProvider extends BaseProvider {
       String accessRequestId, String type, int period) async {
     isLoading = true;
     notifyListeners();
-    print('accept access request 0-------------type -----$type--------period ------$period');
+    print(
+        'accept access request 0-------------type -----$type--------period ------$period');
     ResponseStatus responseStatus = ResponseStatus();
 
     await _headerManager.initalizeAuthenticatedUserHeaders();

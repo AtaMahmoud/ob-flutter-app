@@ -126,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     if (GlobalContext.dashBoardBuildCount == 0) {
-      MethodHelper.parseNotifications(context);
+      if (mounted) MethodHelper.parseNotifications(context);
       // MethodHelper.selectOnlyOBasSelectedOB();
       UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
       GlobalContext.dashBoardBuildCount++;

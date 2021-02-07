@@ -99,10 +99,10 @@ class MethodHelper {
       String currentUserID = userProvider.authenticatedUser.userID;
 
       unreadRequestAccessNotiList.retainWhere((item) {
-        debugPrint('notification read status --- ${item.seen} ');
-        debugPrint('notification data -- ${item.data.toJson()}');
-        debugPrint(
-            'notificationType ---- ${item.data.type} -------------requestStatus ------------- ${item.data.status}');
+        // debugPrint('notification read status --- ${item.seen} ');
+        // debugPrint('notification data -- ${item.data.toJson()}');
+        // debugPrint(
+        //     'notificationType ---- ${item.data.type} -------------requestStatus ------------- ${item.data.status}');
         return (item.seen == null || item.seen == false) &&
           item.data.type != null &&  item.data.type.compareTo(NotificationConstants.request) == 0 &&
           item.data.status != null &&  item.data.status.compareTo(NotificationConstants.initiated) == 0 &&

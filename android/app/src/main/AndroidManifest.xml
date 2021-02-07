@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET"/>     
     <application
-        
+        android:name=".App"
         android:label="Ocean Builders"
         android:screenOrientation="userPortrait"
         android:icon="@mipmap/ic_launcher"
@@ -56,7 +56,7 @@
             </intent-filter>    
         </activity>
         <activity android:name="com.apptreesoftware.barcodescan.BarcodeScannerActivity"/>
-          <meta-data
+        <meta-data
                 android:name="com.google.firebase.ml.vision.DEPENDENCIES"
                 android:value="barcode"/>
         <meta-data android:name="com.google.android.geo.API_KEY"
