@@ -142,7 +142,7 @@ class InputTypes {
   static const NUMBER =
       TextInputType.numberWithOptions(decimal: false, signed: false);
   static const EMAIL = TextInputType.emailAddress;
-  
+
   static const PHONE = TextInputType.phone;
 }
 
@@ -251,6 +251,8 @@ class ScreenTitle {
   static String CREATE_PERMISSION = 'Create New';
   static String EDIT_PERMISSION = 'Edit Permissions';
   static String CUSTOMIZE_PERMISSION = 'Customize Permissions';
+
+  static String OWNER_ACCESS = 'Owner Access';
 }
 
 class ListHelper {
@@ -1250,10 +1252,11 @@ class AppStrings {
 
   static String checkYourInbox = 'Check your inbox';
 
-  static String confirmEmailText1 = 'We have sent you an email with a link that will allow you to finish your account setup.';
+  static String confirmEmailText1 =
+      'We have sent you an email with a link that will allow you to finish your account setup.';
 
-  static String confirmEmailText2 = 'Alternatively, you can enter the code provided in the email here';
-
+  static String confirmEmailText2 =
+      'Alternatively, you can enter the code provided in the email here';
 }
 
 class NotificationConstants {

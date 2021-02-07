@@ -5,7 +5,7 @@ import 'package:rxdart/rxdart.dart';
 
 Widget getDropdown(
     List<String> list, Observable<String> stream, changed, bool addPadding,
-    {String label = 'Label'}) {
+    {String label = 'Label', bool isDisabled = false}) {
   ScreenUtil _util = ScreenUtil();
   return StreamBuilder<String>(
       stream: stream,
@@ -60,7 +60,7 @@ Widget getDropdown(
                     // letterSpacing: 1.2,
                     // wordSpacing: 4
                   ),
-                  onChanged: changed,
+                  onChanged: isDisabled ? null : changed,
                   items: list.map((data) {
                     return DropdownMenuItem(
                         value: data,

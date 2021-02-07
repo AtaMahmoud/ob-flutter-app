@@ -7,6 +7,7 @@ import 'package:ocean_builder/bloc/access_screen_data_bloc.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/ocean_builder_user.dart';
 import 'package:ocean_builder/core/models/permission.dart';
+import 'package:ocean_builder/core/models/seapod.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:ocean_builder/custom_drawer/homeDrawer.dart';
@@ -14,6 +15,7 @@ import 'package:ocean_builder/helper/method_helper.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
 import 'package:ocean_builder/ui/screens/permission/edit_permission_screen.dart';
 import 'package:ocean_builder/ui/shared/drop_downs.dart';
+import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/progress_indicator.dart';
 import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
@@ -24,8 +26,9 @@ class GuestAccessScreen extends StatefulWidget {
   static const String routeName = '/guestAccessScreen';
 
   final OceanBuilderUser oceanBuilderUser;
+  final SeaPod oceanBuilder;
 
-  const GuestAccessScreen({this.oceanBuilderUser});
+  const GuestAccessScreen({this.oceanBuilderUser, this.oceanBuilder});
 
   @override
   _GuestAccessScreenState createState() => _GuestAccessScreenState();
@@ -34,6 +37,7 @@ class GuestAccessScreen extends StatefulWidget {
 class _GuestAccessScreenState extends State<GuestAccessScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   AccessScreenDataBloc _bloc = AccessScreenDataBloc();
+  UserProvider _userProvider;
 
   String accessTime;
   String accesAs;
@@ -75,6 +79,7 @@ class _GuestAccessScreenState extends State<GuestAccessScreen> {
     } else {
       accessFor = '3 MONTHS';
     }
+
     int index = ListHelper.getAccessTimeList().indexOf(accessFor);
     // debugPrint('index   ' + index.toString());
     _bloc.accessTimeChanged(ListHelper.getAccessTimeList()[index]);
@@ -99,7 +104,7 @@ class _GuestAccessScreenState extends State<GuestAccessScreen> {
   @override
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
-    final UserProvider userProvider = Provider.of<UserProvider>(context);
+    _userProvider = Provider.of<UserProvider>(context);
     _util = ScreenUtil();
 
     if (!mounted)
@@ -117,12 +122,12 @@ class _GuestAccessScreenState extends State<GuestAccessScreen> {
         drawerScrimColor: AppTheme.drawerScrimColor.withOpacity(.65),
         body: CustomScrollView(
           physics: ClampingScrollPhysics(),
-          shrinkWrap: true,
+          // shrinkWrap: true,
           slivers: <Widget>[
             // UIHelper.getTopEmptyContainer(height * .9, false),
             UIHelper.defaultSliverAppbar(_scaffoldKey, goBack,
                 screnTitle: ScreenTitle.Guest_ACCESS),
-            userProvider.isLoading
+            _userProvider.isLoading
                 ? ProgressIndicatorBoxAdapter()
                 : SliverList(
                     delegate: SliverChildListDelegate([
@@ -141,6 +146,8 @@ class _GuestAccessScreenState extends State<GuestAccessScreen> {
                     SpaceH64(),
                     _editPermissionRow(),
                     SpaceH64(),
+                    _controlAccessRow(),
+                    SpaceH64()
                   ])),
             UIHelper.getTopEmptyContainer(90, false),
           ],
@@ -365,6 +372,144 @@ class _GuestAccessScreenState extends State<GuestAccessScreen> {
         ],
       ),
     );
+  }
+
+  _controlAccessRow() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: _util.setWidth(48)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          _buttonDisableAccess(),
+          _buttonRemoveAccess(),
+        ],
+      ),
+    );
+  }
+
+  InkWell _buttonRemoveAccess() {
+    return InkWell(
+      onTap: () {
+        // remove access
+        _removeAccess(widget.oceanBuilderUser, widget.oceanBuilder);
+      },
+      child: Container(
+        // height: h,
+        // width: MediaQuery.of(context).size.width * .4,
+        padding: EdgeInsets.all(32.w),
+        decoration: BoxDecoration(
+            borderRadius: new BorderRadius.circular(72.w),
+            color: ColorConstants.TOP_CLIPPER_END_DARK),
+        child: Center(
+            child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'REMOVE ACCESS',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white, fontSize: 36.sp),
+            ),
+          ],
+        )),
+      ),
+    );
+  }
+
+  InkWell _buttonDisableAccess() {
+    return InkWell(
+      onTap: () {
+        // disable access
+        _disableAccess(widget.oceanBuilderUser, widget.oceanBuilder);
+      },
+      child: Container(
+        padding: EdgeInsets.all(32.w),
+        decoration: BoxDecoration(
+            borderRadius: new BorderRadius.circular(72.w),
+            color: ColorConstants.TOP_CLIPPER_END_DARK),
+        child: Center(
+            child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'DISABLE ACCESS',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white, fontSize: 36.sp),
+            ),
+          ],
+        )),
+      ),
+    );
+  }
+
+  Future<void> _removeAccess(
+      OceanBuilderUser obUser, SeaPod oceanBuilder) async {
+    // debugPrint(
+    // '_remove Access_------------______________-----------__________-----------');
+
+    String seaPodId = oceanBuilder.id;
+    String userId = obUser.userId;
+
+    _userProvider
+        .removeMemberFromSeapod(seaPodId, userId)
+        .then((responseStatus) {
+      if (responseStatus.status == 200) {
+        _userProvider.autoLogin().then((onValue) {
+          // Navigator.of(context, rootNavigator: true).pop();
+          // debugPrint('----- remove user from seapod');
+          if (this.mounted) {
+            showInfoBarWithDissmissCallback(
+                'REMOVE ACCESS', 'User is removed from seapod', context, () {
+              setState(() {});
+            });
+          }
+        });
+      } else {
+        // debugPrint('----- remove user from seapod failed');
+        Navigator.of(context, rootNavigator: true).pop();
+        showInfoBar(parseErrorTitle(responseStatus.code),
+            responseStatus.message, context);
+      }
+    });
+  }
+
+  Future<void> _disableAccess(
+      OceanBuilderUser obUser, SeaPod oceanBuilder) async {
+    // debugPrint(
+    // '_remove Access_------------______________-----------__________-----------');
+
+    if (this.mounted) {
+      showInfoBarWithDissmissCallback(
+          'Disable ACCESS',
+          'Access to seapod ${oceanBuilder.obName} is disabled for ${obUser.userName}',
+          context, () {
+        setState(() {});
+      });
+    }
+
+    String seaPodId = oceanBuilder.id;
+    String userId = obUser.userId;
+
+    // _userProvider
+    //     .removeMemberFromSeapod(seaPodId, userId)
+    //     .then((responseStatus) {
+    //   if (responseStatus.status == 200) {
+    //     _userProvider.autoLogin().then((onValue) {
+    //       // Navigator.of(context, rootNavigator: true).pop();
+    //       // debugPrint('----- remove user from seapod');
+    //       if (this.mounted) {
+    //         showInfoBarWithDissmissCallback(
+    //             'REMOVE ACCESS', 'User is removed from seapod', context, () {
+    //           setState(() {});
+    //         });
+    //       }
+    //     });
+    //   } else {
+    //     // debugPrint('----- remove user from seapod failed');
+    //     Navigator.of(context, rootNavigator: true).pop();
+    //     showInfoBar(parseErrorTitle(responseStatus.code),
+    //         responseStatus.message, context);
+    //   }
+    // });
   }
 
   goBack() async {

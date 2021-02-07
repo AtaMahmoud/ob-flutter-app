@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:ocean_builder/core/models/notification.dart';
 import 'package:ocean_builder/core/models/ocean_builder_user.dart';
 import 'package:ocean_builder/core/models/permission.dart';
+import 'package:ocean_builder/core/models/seapod.dart';
 import 'package:ocean_builder/map/darksky_map.dart';
 import 'package:ocean_builder/splash/splash_screen.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/access_event_screen.dart';
@@ -11,7 +12,7 @@ import 'package:ocean_builder/ui/screens/accessManagement/admin_access_screen.da
 import 'package:ocean_builder/ui/screens/accessManagement/guest_access_screen.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/ob_access_req_events_screen.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/ob_events_screen.dart';
-import 'package:ocean_builder/ui/screens/accessManagement/visitor_access_screen.dart';
+import 'package:ocean_builder/ui/screens/accessManagement/owner_access_screen.dart';
 import 'package:ocean_builder/core/models/access_request.dart';
 import 'package:ocean_builder/ui/screens/controls/camera_screen.dart';
 import 'package:ocean_builder/ui/screens/controls/control_screen.dart';
@@ -359,10 +360,14 @@ class Router {
             builder: (_) => ForgotPasswordScreen(),
             settings: RouteSettings(name: ForgotPasswordScreen.routeName));
       case GuestAccessScreen.routeName:
-        final OceanBuilderUser oceanBuilderUser = settings.arguments;
+        final OceanBuilderUser oceanBuilderUser =
+            (settings.arguments as List)[0];
+        final SeaPod seapod = (settings.arguments as List)[1];
+
         return CupertinoPageRoute(
             builder: (_) => GuestAccessScreen(
                   oceanBuilderUser: oceanBuilderUser,
+                  oceanBuilder: seapod,
                 ),
             settings: RouteSettings(name: GuestAccessScreen.routeName));
       case AdminAccessScreen.routeName:
@@ -372,13 +377,13 @@ class Router {
                   oceanBuilderUser: oceanBuilderUser,
                 ),
             settings: RouteSettings(name: AdminAccessScreen.routeName));
-      case VisitorAccessScreen.routeName:
+      case OwnerAccessScreen.routeName:
         final OceanBuilderUser oceanBuilderUser = settings.arguments;
         return CupertinoPageRoute(
-            builder: (_) => VisitorAccessScreen(
+            builder: (_) => OwnerAccessScreen(
                   oceanBuilderUser: oceanBuilderUser,
                 ),
-            settings: RouteSettings(name: VisitorAccessScreen.routeName));
+            settings: RouteSettings(name: OwnerAccessScreen.routeName));
       case ManagePermissionScreen.routeName:
         return CupertinoPageRoute(
             builder: (_) => ManagePermissionScreen(),
