@@ -265,9 +265,12 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
           .where((term) =>
               term.name.toLowerCase().startsWith(selectedTerm.toLowerCase()))
           .toList();
+    }else{
+       resutlItems = _appItems.toList();
     }
-    if (resutlItems == null || resutlItems.isEmpty)
-      resutlItems = _appItems.toList();
+    // print('resultItem length -- ${resutlItems.length}');
+    // if (resutlItems == null || resutlItems.isEmpty)
+    //   resutlItems = _appItems.toList();
 
     debugPrint(
         'after processing search result --- length is ${resutlItems.length}  --------filteredSearch result ---- ${filteredSearchHistory.length} ---- padding top is ---$paddingTop');
@@ -285,7 +288,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
         body: FloatingSearchBarScrollNotifier(
           child: SearchResultsListView(
             searchTerm: selectedTerm,
-            appItems: _appItems,
+            // appItems: _appItems,
             resutlItems: resutlItems,
             suggestedItems: searchedItems,
             paddingTop: paddingTop,
@@ -312,19 +315,17 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
           FloatingSearchBarAction.searchToClear(),
         ],
         onFocusChanged: (status) {
-          print(status);
+          print('on focus changed status-- $status');
           setState(() {
             if (status) {
               if (filteredSearchHistory != null) {
-                paddingTop = filteredSearchHistory.length * 20.0;
+                paddingTop = filteredSearchHistory.length * 54.0;
               } else {
-                paddingTop = searchHistory.length * 20.0;
+                paddingTop = searchHistory.length * 54.0;
               }
             } else {
               paddingTop = 0.0;
             }
-
-            print('reseting state');
           });
         },
         onQueryChanged: (query) {
@@ -332,15 +333,17 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
             selectedTerm = query;
             filteredSearchHistory = filterSearchTerms(filter: query);
             if (filteredSearchHistory != null) {
-              paddingTop = filteredSearchHistory.length * 20.0 + 20.0;
+              paddingTop = filteredSearchHistory.length * 54.0 + 54.0;
             }
+            // if(searchedItems != null){
+            //   paddingTop = paddingTop + searchedItems.length % 4 * 32.0;
+            // }
           });
         },
-        clearQueryOnClose: true,
+        clearQueryOnClose: false,
         onSubmitted: (query) {
           setState(() {
             addSearchTerm(query);
-            selectedTerm = query;
           });
           controller.close();
         },
@@ -424,7 +427,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
 class SearchResultsListView extends StatelessWidget {
   final String searchTerm;
 
-  final List<SearchItem> appItems;
+  // final List<SearchItem> appItems;
 
   final List<SearchItem> suggestedItems;
 
@@ -435,7 +438,7 @@ class SearchResultsListView extends StatelessWidget {
   SearchResultsListView(
       {Key key,
       @required this.searchTerm,
-      @required this.appItems,
+      // @required this.appItems,
       this.suggestedItems,
       this.resutlItems,
       this.paddingTop})
@@ -487,23 +490,26 @@ class SearchResultsListView extends StatelessWidget {
     );
   }
 
-  ListView _searchResultList(FloatingSearchBarState fsb, BuildContext context) {
-    return ListView(
-      // padding:
-      //     EdgeInsets.only(top: fsb.height + fsb.margins.vertical + paddingTop),
-      children: List.generate(
-        resutlItems.length,
-        (index) {
-          return _resultWidget(context, index);
-        },
+  Container _searchResultList(FloatingSearchBarState fsb, BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(top: 40.0 * (suggestedItems.length~/3) + 40.0),
+      child: ListView(
+        padding:EdgeInsets.symmetric(horizontal: 8),
+        //     EdgeInsets.only(top: fsb.height + fsb.margins.vertical + paddingTop),
+        children: List.generate(
+          resutlItems.length,
+          (index) {
+            return _resultWidget(context, index);
+          },
+        ),
       ),
     );
   }
 
   Card _resultWidget(BuildContext context, int index) {
     return Card(
-      elevation: 10.0,
-      color: Colors.blueAccent,
+      elevation: 8.0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(64.w),side:BorderSide(color: AppTheme.lightText) ),
       child: ListTile(
         onTap: () {
           searchedItems.add(resutlItems[
@@ -532,19 +538,8 @@ class SelectHistory extends StatelessWidget {
   final List<SearchItem> items;
   SelectHistory(this.items);
 
-  // @override
-  // void initState() {
-  //   // debugPrint('init stat4e called in multiselect chip state');
-  //   super.initState();
-  //   selectedIndex = 0;
-  //   // selectedLight = widget.lights[selectedIndex];
-  // }
 
-  // this function will build and return the choice list
   _buildChoiceList() {
-    // print(widget.lights);
-    // debugPrint('widget.lights in MultiSelectChip ----- ${widget.lights.length}');
-
     return List<Widget>.generate(
       items.length,
       (int index) {
@@ -555,11 +550,11 @@ class SelectHistory extends StatelessWidget {
 
   _buildChoiceChip(SearchItem item, index) {
     return Padding(
-      padding: EdgeInsets.all(8.sp),
+      padding: EdgeInsets.only(left: 4,right: 4),
       child: ActionChip(
         label: Text(item.name),
         labelStyle: TextStyle(
-            fontSize: 48.sp,
+            fontSize: AppTheme.subtitle.fontSize,
             // fontWeight: FontWeight.w800,
             // letterSpacing: util.setSp(2),
             color: ColorConstants.COLOR_NOTIFICATION_DIVIDER),
