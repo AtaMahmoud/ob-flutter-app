@@ -211,7 +211,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   goBack() {
-    Navigator.pop(context);
+    Navigator.of(context).pushReplacementNamed(LoginScreen.routeName,
+        arguments: ScreenTitle.LANDING_SCREEN);
   }
 
   _title() {
@@ -401,8 +402,10 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
         userProvider.resendCode(email).then((status) async {
           if (status.status == 200) {
             showInfoBar(
-                'Resend Code', 'Code had been resent to your email', context,
-                );
+              'Resend Code',
+              'Code had been resent to your email',
+              context,
+            );
           } else {
             String title = parseErrorTitle(status.code);
             showInfoBar(title, status.message, context);

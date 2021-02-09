@@ -177,7 +177,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
         null,
         null,
         true,
-        TextInputAction.next,
+        TextInputAction.done,
         _passwordNode,
         (data) => _bloc.passwordChanged(data),
         (show) => _bloc.showPasswordChanged(show),
@@ -241,13 +241,13 @@ class _PasswordScreenState extends State<PasswordScreen> {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-                builder: (context) => EmailVerificationScreen(emailVerificationData: EmailVerificationData(
-            verificationCode: 'Asad', isDeepLinkData: false)),
+                builder: (context) => EmailVerificationScreen(
+                    emailVerificationData: EmailVerificationData(
+                        verificationCode: 'Asad', isDeepLinkData: false)),
                 settings:
                     RouteSettings(name: EmailVerificationScreen.routeName)),
             (Route<dynamic> route) => false,
           );
-
         } else {
           showInfoBar(parseErrorTitle(responseStatus.code),
               responseStatus.message, context);
@@ -260,25 +260,19 @@ class _PasswordScreenState extends State<PasswordScreen> {
           .sendAccessReqForNewuser(userDataProvider.user, oceanBuilderId)
           .then((responseStatus) async {
         if (responseStatus.status == 200) {
-
-
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => EmailVerificationScreen(emailVerificationData: EmailVerificationData(
-            verificationCode: 'Asad', isDeepLinkData: false),),
-                  settings:
-                      RouteSettings(name: EmailVerificationScreen.routeName)),
-              (Route<dynamic> route) => false,
-            );
-
-
-
-
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EmailVerificationScreen(
+                      emailVerificationData: EmailVerificationData(
+                          verificationCode: 'Asad', isDeepLinkData: false),
+                    ),
+                settings:
+                    RouteSettings(name: EmailVerificationScreen.routeName)),
+            (Route<dynamic> route) => false,
+          );
 
           // await MethodHelper.selectOnlyOBasSelectedOB();
-
-
 
           // if (!(_selectedOBIdProvider.selectedObId
           //         .compareTo(AppStrings.selectOceanBuilder) ==
