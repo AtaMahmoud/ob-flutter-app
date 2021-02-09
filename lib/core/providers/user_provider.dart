@@ -88,8 +88,8 @@ class UserProvider extends BaseProvider {
             userOceanBuilder.vessleCode = f.vessleCode;
             print('printing user oceanbuilder info ------================');
             print(userOceanBuilder);
-            if(seapodUser.userId.compareTo(userData.userID)==0)
-            userOceanBuilderList.add(userOceanBuilder);
+            if (seapodUser.userId.compareTo(userData.userID) == 0)
+              userOceanBuilderList.add(userOceanBuilder);
           }).toList();
         }).toList();
 /*
@@ -294,24 +294,24 @@ class UserProvider extends BaseProvider {
         // userOceanBuilder.reqStatus = 'NA';
         // userOceanBuilder.vessleCode = f.vessleCode;
         // userOceanBuilder.checkInDate = null;
-        
+
         // userOceanBuilderList.add(userOceanBuilder);
-                  f.users.map((seapodUser) {
-            UserOceanBuilder userOceanBuilder = UserOceanBuilder();
-            userOceanBuilder.oceanBuilderName = f.obName;
-            userOceanBuilder.oceanBuilderId = f.id;
-            userOceanBuilder.userType = seapodUser.userType;
-            // debugPrint('Ob name  ${userOceanBuilder.oceanBuilderName}  --usr type ---${userOceanBuilder.userType}');
-            userOceanBuilder.accessTime =
-                seapodUser.accessTime; //Duration(hours: 48);
-            userOceanBuilder.checkInDate = seapodUser.checkInDate;
-            userOceanBuilder.reqStatus = 'NA';
-            userOceanBuilder.vessleCode = f.vessleCode;
-            print('printing user oceanbuilder info ------================');
-            print(userOceanBuilder);
-            if(seapodUser.userId.compareTo(userData.userID)==0)
+        f.users.map((seapodUser) {
+          UserOceanBuilder userOceanBuilder = UserOceanBuilder();
+          userOceanBuilder.oceanBuilderName = f.obName;
+          userOceanBuilder.oceanBuilderId = f.id;
+          userOceanBuilder.userType = seapodUser.userType;
+          // debugPrint('Ob name  ${userOceanBuilder.oceanBuilderName}  --usr type ---${userOceanBuilder.userType}');
+          userOceanBuilder.accessTime =
+              seapodUser.accessTime; //Duration(hours: 48);
+          userOceanBuilder.checkInDate = seapodUser.checkInDate;
+          userOceanBuilder.reqStatus = 'NA';
+          userOceanBuilder.vessleCode = f.vessleCode;
+          print('printing user oceanbuilder info ------================');
+          print(userOceanBuilder);
+          if (seapodUser.userId.compareTo(userData.userID) == 0)
             userOceanBuilderList.add(userOceanBuilder);
-          }).toList();
+        }).toList();
       }).toList();
 
       userData.accessRequests.map((f) {
@@ -964,10 +964,10 @@ class UserProvider extends BaseProvider {
         SharedPrefHelper.setAuthKey(
             sendRequestResponse.headers.value("X-Auth-Token"));
 
-        await autoLogin();
+        // await autoLogin();
 // S1D07EDS1D
         // debugPrint(
-        // 'autoLogin response in sendAccessReqNew ~~~~~~~~~~~~~~~~~~~~~~~ -- ${authenticatedUser.toJson()}');
+        //     'autoLogin response in sendAccessReqNew ~~~~~~~~~~~~~~~~~~~~~~~ -- ${authenticatedUser.toJson()}');
       } else {
         // debugPrint('error code ');
         responseStatus.code = 'Registration Failed';
@@ -979,7 +979,7 @@ class UserProvider extends BaseProvider {
         responseStatus.status = sendRequestResponse.statusCode;
       }
 
-      if (authenticatedUser.userID != null) {
+      if (sendRequestResponse.statusCode == 200) {
         responseStatus.status = 200;
       } else {
         responseStatus.code = 'Access Request Sending Failed';
