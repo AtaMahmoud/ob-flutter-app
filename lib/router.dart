@@ -277,7 +277,7 @@ class Router {
             builder: (_) => EmailVerificationScreen(
                   emailVerificationData: data,
                 ),
-            fullscreenDialog: true,
+            // fullscreenDialog: true,
             settings: RouteSettings(name: EmailVerificationScreen.routeName));
       case OBSelectionScreenWidgetModal.routeName:
         return CupertinoPageRoute(

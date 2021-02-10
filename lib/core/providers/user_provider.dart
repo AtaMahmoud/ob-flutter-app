@@ -86,8 +86,8 @@ class UserProvider extends BaseProvider {
             userOceanBuilder.checkInDate = seapodUser.checkInDate;
             userOceanBuilder.reqStatus = 'NA';
             userOceanBuilder.vessleCode = f.vessleCode;
-            print('printing user oceanbuilder info ------================');
-            print(userOceanBuilder);
+            // print('printing user oceanbuilder info ------================');
+            // print(userOceanBuilder);
             if (seapodUser.userId.compareTo(userData.userID) == 0)
               userOceanBuilderList.add(userOceanBuilder);
           }).toList();
@@ -307,8 +307,8 @@ class UserProvider extends BaseProvider {
           userOceanBuilder.checkInDate = seapodUser.checkInDate;
           userOceanBuilder.reqStatus = 'NA';
           userOceanBuilder.vessleCode = f.vessleCode;
-          print('printing user oceanbuilder info ------================');
-          print(userOceanBuilder);
+          // print('printing user oceanbuilder info ------================');
+          // print(userOceanBuilder);
           if (seapodUser.userId.compareTo(userData.userID) == 0)
             userOceanBuilderList.add(userOceanBuilder);
         }).toList();
@@ -1218,27 +1218,33 @@ class UserProvider extends BaseProvider {
     return accessRequest;
   }
 
-  // ------------------------------------------------------- Send Invitation ( POST ) --------------------------------------------------------------------
+  // ------------------------------------------------------- Send Access Invitation / Grant Access ( POST ) --------------------------------------------------------------------
 
-  Future<ResponseStatus> sendInvitation(
-      User user, String seapodId, String permissionSetId) async {
+  Future<ResponseStatus> sendInvitation(User user, String seapodId,
+      String permissionSetId, String message) async {
     isLoading = true;
     notifyListeners();
     ResponseStatus responseStatus = ResponseStatus();
     responseStatus.status = 200;
-/*     Map<String, String> _authUserHeaders = {};
-
-    String authToken = await SharedPrefHelper.getAuthKey();
-    _authUserHeaders.addAll({
-      "X-Auth-Token": authToken,
-    });
+/*    
+{
+    "name": "John",
+    "message": "Come join me?",
+    "email": "JohDoe222@gmail.com",
+    "type": "MEMBER",
+    "checkIn": 1594131437830,
+    "permissionSetId": "5ffc1932d2c2c6067a0abff0"
+}
  */
 
     await _headerManager.initalizeAuthenticatedUserHeaders();
 
     Map<String, dynamic> userDataMap = {
+      'name': user.firstName,
+      'message': message,
       'email': user.email,
       'type': user.userType,
+      'checkIn': user.checkInDate.millisecondsSinceEpoch.toString(),
       'permissionSetId': permissionSetId
     };
 
