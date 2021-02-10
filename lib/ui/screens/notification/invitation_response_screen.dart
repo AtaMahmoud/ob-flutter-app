@@ -350,7 +350,7 @@ class _InvitationResponseScreenState extends State<InvitationResponseScreen> {
           Expanded(
             child: getDropdown(ListHelper.getAccessTimeList(),
                 _bloc.requestAccessTime, _bloc.requestAccessTimeChanged, false,
-                label: 'Access for'),
+                label: 'Access for', isEnabled: false),
           )
 /*           Text('Access for',
               style: TextStyle(

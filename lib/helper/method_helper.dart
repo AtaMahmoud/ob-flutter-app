@@ -120,7 +120,8 @@ class MethodHelper {
 
     localNotiDataProvider.localNotification = localNotification;
 
-    // // debugPrint("Method helper Total noti: ${localNotiDataProvider.localNotification.totalNotificationCount} Method helper unread noti: ${localNotiDataProvider.localNotification.unreadNotificationCount} ---  Method helper unread request access noti: ${localNotiDataProvider.localNotification.unreadAccessRequestCount} ------ isUnread -- ${localNotiDataProvider.localNotification.isUnread}");
+    debugPrint(
+        "Method helper Total noti: ${localNotiDataProvider.localNotification.totalNotificationCount} Method helper unread noti: ${localNotiDataProvider.localNotification.unreadNotificationCount} ---  Method helper unread request access noti: ${localNotiDataProvider.localNotification.unreadAccessRequestCount} ------ isUnread -- ${localNotiDataProvider.localNotification.isUnread}");
   }
 
   static selectOnlyOBasSelectedOB() async {
