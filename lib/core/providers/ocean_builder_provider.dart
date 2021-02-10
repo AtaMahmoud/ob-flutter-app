@@ -26,7 +26,7 @@ class OceanBuilderProvider extends BaseProvider {
   HeadersManager _headerManager = HeadersManager.getInstance();
 
   Future<SeaPod> getSeaPod(String obId, UserProvider userProvider) async {
-    debugPrint('get SeaPod info for  ' + obId);
+    // debugPrint('get SeaPod info for  ' + obId);
 
     SeaPod seapod;
 
@@ -37,12 +37,12 @@ class OceanBuilderProvider extends BaseProvider {
       }
     }).toList();
 
-    print("got SeaPod  =====================================================");
-    print(seapod?.toJson());
+    // print("got SeaPod  =====================================================");
+    // print(seapod?.toJson());
 
     seapod ??= userProvider.authenticatedUser.seaPods[0];
 
-    debugPrint('returning seapod -- $seapod');
+    // debugPrint('returning seapod -- $seapod');
 
     return seapod;
   }

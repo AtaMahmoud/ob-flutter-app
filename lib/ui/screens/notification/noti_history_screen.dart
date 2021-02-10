@@ -189,13 +189,13 @@ class _NotificationHistoryScreenWidgetState
                               } else if (notificationType
                                   .contains(NotificationConstants.invitation)) {
                                 fcmNotification.seen = true;
-                                await userProvider.updateNotificationReadStatus(
-                                    fcmNotification.id);
+                                // await userProvider.updateNotificationReadStatus(
+                                //     fcmNotification.id);
                                 // await userProvider.resetAuthenticatedUser(userProvider.authenticatedUser.userID);
                                 //  await userProvider.autoLogin();
-                                MethodHelper.parseNotifications(context);
+                                // MethodHelper.parseNotifications(context);
 
-                                userProvider
+                                /* userProvider
                                     .getAccessRequest(fcmNotification.data.id)
                                     .then((accessRequest) {
                                   if (accessRequest != null) {
@@ -213,7 +213,18 @@ class _NotificationHistoryScreenWidgetState
                                             InvitationResponseScreen.routeName,
                                             arguments: accessRequest);
                                   }
-                                });
+                                }); */
+
+                                AccessEvent _accessEvent = new AccessEvent();
+                                _accessEvent.notificationId =
+                                    fcmNotification.id;
+                                _accessEvent.id = fcmNotification.data.id;
+                                _accessEvent.reqMessage = fcmNotification.title;
+
+                                Navigator.of(GlobalContext.currentScreenContext)
+                                    .pushNamed(
+                                        InvitationResponseScreen.routeName,
+                                        arguments: _accessEvent);
 
                                 // Navigator.of(context).pushNamed(
                                 //     InvitationResponseScreen.routeName,
