@@ -465,7 +465,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 future: _futureUvIndexData,
                 // initialData: stormGlassDataProvider.weatherDataToday,
                 builder: (context, snapshot) {
-                  debugPrint('----------------${snapshot.connectionState}');
+                  // debugPrint('----------------${snapshot.connectionState}');
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.connectionState == ConnectionState.done) {
