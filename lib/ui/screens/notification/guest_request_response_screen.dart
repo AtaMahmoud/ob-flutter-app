@@ -49,10 +49,38 @@ class _GuestRequestResponseScreenState
 
   bool _isGuestSelected = false;
 
+  AccessEvent _accessRequest;
+
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
-    Duration d = Duration(milliseconds: widget.accessRequest.period);
+
+    Future.delayed(Duration.zero).then((value) {
+      Provider.of<UserProvider>(context)
+          .getAccessRequest(widget.accessRequest.id)
+          .then((acceessEvent) {
+        if (acceessEvent != null) {
+          _accessRequest = acceessEvent;
+          _accessRequest.accesEventType = 'Access Request';
+          _accessRequest.reqMessage = widget.accessRequest.reqMessage;
+          print('---------------------printing access request------------');
+          print(_accessRequest.toJson().toString());
+          _convertAccessDuration();
+        }
+        setState(() {
+          _isLoading = false;
+        });
+        Provider.of<UserProvider>(context)
+            .updateNotificationReadStatus(widget.accessRequest.notificationId)
+            .then((value) => MethodHelper.parseNotifications(context));
+      });
+    });
+  }
+
+  void _convertAccessDuration() {
+    Duration d = Duration(milliseconds: _accessRequest.period);
     // debugPrint('acces request time in days-- ' + d.inDays.toString());
     String accessFor;
     if (d.inDays <= 15) {
@@ -78,7 +106,7 @@ class _GuestRequestResponseScreenState
     _bloc.requestAccessTimeController.listen((onData) {
       requestAccessTime = onData;
     });
-    _bloc.requestAccessAsChanged(widget.accessRequest.type);
+    _bloc.requestAccessAsChanged(_accessRequest.type);
     _bloc.requestAccessAsController.listen((onData) {
       if (onData.compareTo(ListHelper.getAccessAsList()[1]) == 0) {
         // _reciever.userType = ListHelper.getAccessAsList()[1];
@@ -135,7 +163,7 @@ class _GuestRequestResponseScreenState
           );
         } else {
           userProvider
-              .updateNotificationReadStatus(widget.accessRequest.id)
+              .updateNotificationReadStatus(_accessRequest.id)
               .then((onValue) {
             MethodHelper.parseNotifications(context);
           });
@@ -162,7 +190,7 @@ class _GuestRequestResponseScreenState
         Platform.isIOS ? (153.5) / 813 : (153.5 + 16) / 813;
     double height = MediaQuery.of(context).size.height * topClipperRatio;
 
-    String vesselCode = widget.accessRequest.seaPod.vessleCode;
+    String vesselCode = _accessRequest?.seaPod?.vessleCode ?? "";
 
     // String reqMsg = '${widget.accessRequest.user.name} has requested access to your SeaPod ${widget.accessRequest.seaPod.name}(${widget.accessRequest.seaPod.vessleCode}) for ';
 
@@ -185,7 +213,9 @@ class _GuestRequestResponseScreenState
           children: <Widget>[
             _mainContent(height, userProvider),
             _topBar(context),
-            _bottomButtons(userProvider)
+            _isLoading || _accessRequest == null
+                ? Container()
+                : _bottomButtons(userProvider)
             // OB24sP6
           ],
         ),
@@ -198,7 +228,9 @@ class _GuestRequestResponseScreenState
       shrinkWrap: true,
       slivers: <Widget>[
         _startSpace(height),
-        userProvider.isLoading ? ProgressIndicatorBoxAdapter() : _inputFields(),
+        userProvider.isLoading || _isLoading || _accessRequest == null
+            ? ProgressIndicatorBoxAdapter()
+            : _inputFields(),
         _endSpace(),
       ],
     );
@@ -256,7 +288,7 @@ class _GuestRequestResponseScreenState
                           0.0, //_util.setWidth(32),
                           32.h),
                       child: Text(
-                        widget.accessRequest.accesEventType,
+                        ScreenTitle.ACCESS_REQUEST,
                         style: TextStyle(
                             color: ColorConstants.WEATHER_MORE_ICON_COLOR,
                             fontSize: 64.sp,
@@ -303,27 +335,27 @@ class _GuestRequestResponseScreenState
   SliverList _inputFields() {
     return SliverList(
         delegate: SliverChildListDelegate([
-      _messageRow(widget.accessRequest.reqMessage),
+      _messageRow(_accessRequest.reqMessage),
       SpaceH64(),
-      _itemRow('Email Address', '${widget.accessRequest.user.email}'),
+      _itemRow('Email Address', '${_accessRequest.user.email}'),
       SpaceH64(),
-      _itemRow('Contact Number', '${widget.accessRequest.user.mobileNumber}'),
+      _itemRow('Contact Number', '${_accessRequest.user.mobileNumber}'),
       SpaceH64(),
       _itemRow('SEAPOD NAME /\nVESSEL CODE',
-          '${widget.accessRequest.seaPod.name} /\n ${widget.accessRequest.seaPod.vessleCode}'),
+          '${_accessRequest.seaPod.name} /\n ${_accessRequest.seaPod.vessleCode}'),
       SpaceH64(),
       _accessAsRow(),
-      SpaceH64(),
-      _accessForRow(
-          'Access From',
-          DateFormat('MM/dd/yyyy').format(DateTime.fromMicrosecondsSinceEpoch(
-              widget.accessRequest.checkIn)), //widget.accessRequest.checkIn,
-          ' Access For',
-          'accessForValue'),
       SpaceH64(),
       _permissionSetRow(),
       SpaceH32(),
       _customPermissionsRow(),
+      SpaceH64(),
+      _accessForRow(
+          'Access From',
+          DateFormat('MM/dd/yyyy').format(DateTime.fromMicrosecondsSinceEpoch(
+              _accessRequest.checkIn)), //widget.accessRequest.checkIn,
+          ' Access For',
+          'accessForValue'),
     ]));
   }
 
@@ -407,11 +439,11 @@ class _GuestRequestResponseScreenState
         children: <Widget>[
           !_isGuestSelected
               ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text('$accessFromTitle',
                         style: TextStyle(
-                            color: ColorConstants.COLOR_NOTIFICATION_ITEM,
+                            color: ColorConstants.COLOR_NOTIFICATION_SUB_ITEM,
                             fontWeight: FontWeight.w400,
                             fontSize: 42.sp)),
                     SizedBox(width: 32.w),
@@ -427,7 +459,7 @@ class _GuestRequestResponseScreenState
                   children: <Widget>[
                     Text('$accessFromTitle',
                         style: TextStyle(
-                            color: ColorConstants.COLOR_NOTIFICATION_ITEM,
+                            color: ColorConstants.COLOR_NOTIFICATION_SUB_ITEM,
                             fontWeight: FontWeight.w400,
                             fontSize: 42.sp)),
                     SizedBox(height: 32.h),
@@ -462,12 +494,11 @@ class _GuestRequestResponseScreenState
   _approvalButtons(UserProvider userProvider) {
     bool isOwner = userProvider.authenticatedUser == null ||
         userProvider.authenticatedUser.userID
-                .compareTo(widget.accessRequest.user.id) !=
+                .compareTo(_accessRequest.user.id) !=
             0;
 
     return isOwner &&
-            widget.accessRequest.status
-                .contains(NotificationConstants.initiated)
+            _accessRequest.status.contains(NotificationConstants.initiated)
         ? Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -517,12 +548,12 @@ class _GuestRequestResponseScreenState
   }
 
   _approveRequest(UserProvider userProvider) async {
-    String accessRequestId = widget.accessRequest.id;
-    String type = widget.accessRequest.type;
-    int period = widget.accessRequest.period;
+    String accessRequestId = _accessRequest.id;
+    String type = _accessRequest.type;
+    int period = _accessRequest.period;
 
     userProvider
-        .acceptAccessReqeust(accessRequestId, type, period)
+        .acceptAccessReqeust(accessRequestId, type, period, '')
         .then((status) {
       if (status.status == 200) {
         userProvider.autoLogin().then((onValue) {
@@ -536,7 +567,7 @@ class _GuestRequestResponseScreenState
   }
 
   _denyRequest(UserProvider userProvider) async {
-    String accessRequestId = widget.accessRequest.id;
+    String accessRequestId = _accessRequest.id;
     userProvider.rejectAccessReqeust(accessRequestId).then((status) {
       if (status.status == 200) {
         userProvider.autoLogin().then((onValue) {
@@ -601,4 +632,14 @@ class _GuestRequestResponseScreenState
       ),
     );
   }
+
+/*   _getPermissionIdByName() {
+    SeaPod _seaPod;
+    _userProvider.authenticatedUser.seaPods.map((f) {
+      if (f.obName.compareTo(_selectedObName) == 0) {
+        _seaPod = f;
+      }
+    }).toList();
+    _selectedPermissionSet = _seaPod.permissionSets;
+  } */
 }

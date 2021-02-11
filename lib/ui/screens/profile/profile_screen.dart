@@ -151,6 +151,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     GlobalContext.currentScreenContext = context;
     _userProvider = Provider.of<UserProvider>(context);
     _user = _userProvider.authenticatedUser;
+    if (_user == null) {
+      return Container();
+    }
     _firstNameController = TextEditingController(text: _user.firstName);
     _lastNameController = TextEditingController(text: _user.lastName);
     _emailController = TextEditingController(text: _user.email);
@@ -229,7 +232,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
         ),
-        _userProvider.isLoading ? Center(child: CircularProgressIndicator()) : Container(),
+        _userProvider.isLoading
+            ? Center(child: CircularProgressIndicator())
+            : Container(),
         _bottomBar()
       ],
     );
@@ -500,7 +505,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             isEmergencyContactNull = false;
             ProfileEditState.emergencyContactInfoChanged = false;
             _userProvider.autoLogin();
-            showInfoBar('Profile Updated', 'Profile information updated', context);
+            showInfoBar(
+                'Profile Updated', 'Profile information updated', context);
             // print(_userProvider.authenticatedUser.emergencyContact
             // .toJson()
             // .toString());

@@ -23,9 +23,8 @@ class InvitationResponseScreen extends StatefulWidget {
   static const String routeName = '/invitationResponse';
 
   AccessEvent accessInvitation;
-  String accessInvitationId;
 
-  InvitationResponseScreen({this.accessInvitation, this.accessInvitationId});
+  InvitationResponseScreen({this.accessInvitation});
 
   @override
   _InvitationResponseScreenState createState() =>

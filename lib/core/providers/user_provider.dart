@@ -1071,15 +1071,29 @@ class UserProvider extends BaseProvider {
 
   // ------------------------------------------------------- Accept Access Request ( PUT ) --------------------------------------------------------------------
 
-  Future<ResponseStatus> acceptAccessReqeust(
-      String accessRequestId, String type, int period) async {
+  Future<ResponseStatus> acceptAccessReqeust(String accessRequestId,
+      String type, int period, String permissionSetId) async {
     isLoading = true;
     notifyListeners();
     ResponseStatus responseStatus = ResponseStatus();
 
     await _headerManager.initalizeAuthenticatedUserHeaders();
 
-    Map<String, dynamic> reqMap = {'type': type, 'period': period};
+    /* 
+    {
+	"type":"OWNER",
+	"period":0,
+	"permissionSetId": "{{closeFriendPermissionId}}"
+}
+     */
+
+    Map<String, dynamic> reqMap = {
+      'type': type,
+      'period': period,
+      'permissionSetId': permissionSetId
+    };
+
+    print(reqMap.toString());
 
     try {
       final Response acceptAccessRequestResponse = await _apiBaseHelper.put(

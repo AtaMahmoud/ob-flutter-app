@@ -123,7 +123,10 @@ class _YourObsScreenState extends State<YourObsScreen> {
       padding: const EdgeInsets.all(64.0),
       child: Text(
           widget.fcmNotification == null
-              ? InfoTexts.YOUR_OB_INFO(pendigOceanBuilderList.length.toString())
+              ? InfoTexts.YOUR_OB_INFO(
+                  pendigOceanBuilderList.length.toString().compareTo('0') == 0
+                      ? 1
+                      : pendigOceanBuilderList.length.toString())
               : widget.fcmNotification.data.message,
           style: TextStyle(
               color: Colors.black,
@@ -151,10 +154,11 @@ class _YourObsScreenState extends State<YourObsScreen> {
   }
 
   goBack() {
-    if (isFromNotificationTray) {
-      Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
-    } else {
-      Navigator.of(context).pop();
-    }
+    Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+    // if (isFromNotificationTray) {
+    //   Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+    // } else {
+    //   Navigator.of(context).pop();
+    // }
   }
 }

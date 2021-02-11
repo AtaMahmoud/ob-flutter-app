@@ -534,6 +534,8 @@ class _ControlScreenState extends State<ControlScreen>
     double _sliderValue = _selectedSeaPod != null
         ? _selectedSeaPod.controlData.frostWindowsPercentage.toDouble()
         : 0.0;
+    print(
+        'Slider value in _sliderNativeFrostWindows ---------------------- $_sliderValue');
     return Stack(
       children: <Widget>[
         SliderTheme(

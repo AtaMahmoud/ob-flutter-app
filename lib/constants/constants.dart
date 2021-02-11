@@ -142,7 +142,7 @@ class InputTypes {
   static const NUMBER =
       TextInputType.numberWithOptions(decimal: false, signed: false);
   static const EMAIL = TextInputType.emailAddress;
-  
+
   static const PHONE = TextInputType.phone;
 }
 
@@ -230,6 +230,7 @@ class ScreenTitle {
   static const EMAIL_CONFIRMATION = 'Email Confirmation';
   static const GUEST_REQUEST = 'Guest Request';
   static const INVITATION_REQUEST = 'Access Invitation';
+  static const ACCESS_REQUEST = 'Access Request';
   static const YOUR_OBS = 'Your SeaPods';
   static const REQUEST_ACCESS = 'Request Access';
   static const OB_SELECTION = 'SeaPod Selection';
@@ -1250,10 +1251,11 @@ class AppStrings {
 
   static String checkYourInbox = 'Check your inbox';
 
-  static String confirmEmailText1 = 'We have sent you an email with a link that will allow you to finish your account setup.';
+  static String confirmEmailText1 =
+      'We have sent you an email with a link that will allow you to finish your account setup.';
 
-  static String confirmEmailText2 = 'Alternatively, you can enter the code provided in the email here';
-
+  static String confirmEmailText2 =
+      'Alternatively, you can enter the code provided in the email here';
 }
 
 class NotificationConstants {
