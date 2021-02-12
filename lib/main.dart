@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' as service;
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive/hive.dart';
 import 'package:ocean_builder/configs/config_reader.dart';
 import 'package:ocean_builder/core/notification/firebase_notification_handler.dart';
 import 'package:ocean_builder/core/providers/color_picker_data_provider.dart';
@@ -22,9 +23,11 @@ import 'package:ocean_builder/core/providers/storm_glass_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/core/providers/wow_data_provider.dart';
+import 'package:ocean_builder/core/services/initializer_service.dart';
 import 'package:ocean_builder/core/services/locator.dart';
 import 'package:ocean_builder/core/services/navigation_service.dart';
 import 'package:ocean_builder/router.dart' as obRoute;
+import 'package:ocean_builder/splash/splash_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/email_verification_screen.dart';
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
@@ -101,25 +104,6 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     initPlatformStateForUriDeepLinks();
-
-    GlobalListeners.listener =
-        DataConnectionChecker().onStatusChange.listen((status) {
-      switch (status) {
-        case DataConnectionStatus.connected:
-          // // print('Data connection is available.');
-          if (GlobalContext.internetStatus != null &&
-              !GlobalContext.internetStatus) {
-            displayInternetInfoBar(context, AppStrings.internetConnection);
-            GlobalContext.internetStatus = true;
-          }
-          break;
-        case DataConnectionStatus.disconnected:
-          // // print('You are disconnected from the internet.');
-          displayInternetInfoBar(context, AppStrings.noInternetConnection);
-          GlobalContext.internetStatus = false;
-          break;
-      }
-    });
   }
 
   @override
@@ -132,16 +116,16 @@ class _MyAppState extends State<MyApp> {
 
     UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START);
 
-    final queryParams = _latestUri?.queryParametersAll?.entries?.toList();
+    // final queryParams = _latestUri?.queryParametersAll?.entries?.toList();
 
-    queryParams?.map((item) {
-      // return new ListTile(
-      //   title: new Text('${item.key}'),
-      //   trailing: new Text('${item.value?.join(', ')}'),
-      // );
-      print('key ---- ${item.key}');
-      print('value ----- ${item.value?.join(', ')}');
-    })?.toList();
+    // queryParams?.map((item) {
+    //   // return new ListTile(
+    //   //   title: new Text('${item.key}'),
+    //   //   trailing: new Text('${item.value?.join(', ')}'),
+    //   // );
+    //   print('key ---- ${item.key}');
+    //   print('value ----- ${item.value?.join(', ')}');
+    // })?.toList();
 
     return MultiProvider(
       providers: [
@@ -193,8 +177,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (context) => LocalWeatherDataProvider(),
         ),
-        // Provider<FirebaseAnalytics>.value(value: analytics),
-        // Provider<FirebaseAnalyticsObserver>.value(value: observer),
+        ChangeNotifierProvider(
+          create: (context) => InitalizerService(),
+        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -215,6 +200,9 @@ class _MyAppState extends State<MyApp> {
     // _listener.cancel();
     GlobalListeners.listener.cancel();
     if (_sub != null) _sub.cancel();
+    // hive dispose
+    Hive.box('searchItems').compact();
+    Hive.close();
     super.dispose();
   }
 

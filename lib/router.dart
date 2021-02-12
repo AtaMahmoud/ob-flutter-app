@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:ocean_builder/core/models/notification.dart';
 import 'package:ocean_builder/core/models/ocean_builder_user.dart';
 import 'package:ocean_builder/core/models/permission.dart';
-import 'package:ocean_builder/custom_drawer/appSearchScreen.dart';
+import 'package:ocean_builder/search/appSearchScreen.dart';
 import 'package:ocean_builder/map/darksky_map.dart';
 import 'package:ocean_builder/splash/splash_screen.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/access_event_screen.dart';

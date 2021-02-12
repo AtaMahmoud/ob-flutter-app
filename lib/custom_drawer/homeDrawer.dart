@@ -8,7 +8,7 @@ import 'package:ocean_builder/core/providers/current_ob_id_provider.dart';
 import 'package:ocean_builder/core/providers/drawer_state_data_provider.dart';
 import 'package:ocean_builder/core/providers/local_noti_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
-import 'package:ocean_builder/custom_drawer/appSearchScreen.dart';
+import 'package:ocean_builder/search/appSearchScreen.dart';
 import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/access_management_screen.dart';
 import 'package:ocean_builder/ui/screens/controls/control_screen.dart';

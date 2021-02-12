@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/services/locator.dart';
 import 'package:ocean_builder/core/services/navigation_service.dart';
 import 'package:ocean_builder/custom_drawer/appTheme.dart';
+import 'package:ocean_builder/search/search_result_widget.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/access_event_screen.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/access_management_screen.dart';
@@ -95,107 +98,17 @@ class AppSearchScreen extends StatefulWidget {
 }
 
 class _AppSearchScreenState extends State<AppSearchScreen> {
-  List<SearchItem> _appItems = [
-    SearchItem(
-        name: 'Home',
-        routeName: HomeScreen.routeName,
-        shortDesc: 'Application Dashboard'),
-    SearchItem(
-        name: 'Control',
-        routeName: ControlScreen.routeName,
-        shortDesc:
-            'Lighting, camera, stair and tempertaure controls and other seapod device stats'),
-    SearchItem(
-        name: 'Weather',
-        routeName: WeatherScreen.routeName,
-        shortDesc: 'Check weather data, forcasts and history with graphs'),
-    SearchItem(
-        name: 'Marine',
-        routeName: MarineScreen.routeName,
-        shortDesc: 'Check weather data, forcasts and history with graphs'),
-    SearchItem(
-        name: 'Weather Details',
-        routeName: WeatherMoreWidget.routeName,
-        shortDesc: 'Check weather details for next 7 days'),
-    SearchItem(
-        name: 'Profile',
-        routeName: ProfileScreen.routeName,
-        shortDesc: 'Check or modifly profile information'),
-    SearchItem(
-        name: 'Settings',
-        routeName: SettingsWidget.routeName,
-        shortDesc: 'Check email, password and notification settings'),
-    SearchItem(
-        name: 'Change Email',
-        routeName: SettingsWidget.routeName,
-        shortDesc: 'Change current email address'),
-    SearchItem(
-        name: 'Change Password',
-        routeName: SettingsWidget.routeName,
-        shortDesc: 'Change current password'),
-    SearchItem(
-        name: 'Notification Settings',
-        routeName: SettingsWidget.routeName,
-        shortDesc:
-            'Check to enable or disable to get notification about access request, access inviation and urgent alarms'),
-    SearchItem(
-        name: 'Notifications',
-        routeName: NotificationHistoryScreenWidget.routeName,
-        shortDesc: 'Check to see all notifications'),
-    SearchItem(
-        name: 'Access Management',
-        routeName: AccessManagementScreen.routeName,
-        shortDesc:
-            'Check to see sent invitations, received invitaions, sent access requests, received access requests and options to manage permissions, reqeust or invite to seapod, check memebrs of seapod , remove memebr or cancel invitaions'),
-    SearchItem(
-        name: 'Request Access',
-        routeName: RequestAccessScreen.routeName,
-        shortDesc: 'Check to send request to access seapod'),
-    SearchItem(
-        name: 'Send Access Invitaion',
-        routeName: GrantAccessScreenWidget.routeName,
-        shortDesc: 'Check to send invitaion to grant seapod access'),
-    SearchItem(
-        name: 'Manage permission',
-        routeName: ManagePermissionScreen.routeName,
-        shortDesc: 'Check to create, manage permissions'),
-    SearchItem(
-        name: 'Sent Invitaion',
-        routeName: AccessEventScreen.routeName,
-        shortDesc: 'Check to ses sent invitaions and their details'),
-    SearchItem(
-        name: 'Received Invitaion',
-        routeName: AccessEventScreen.routeName,
-        shortDesc: 'Check to ses received invitaions and their details'),
-    SearchItem(
-        name: 'Sent Request',
-        routeName: AccessEventScreen.routeName,
-        shortDesc: 'Check to ses sent requests and their details'),
-    SearchItem(
-        name: 'Received Request',
-        routeName: AccessEventScreen.routeName,
-        shortDesc: 'Check to ses received requests and their details'),
-    SearchItem(
-        name: 'Lighting',
-        routeName: LightingScreen.routeName,
-        shortDesc: 'Check to create, manage lighting colors and light scenes'),
-    SearchItem(
-        name: 'Cameras',
-        routeName: CameraScreen.routeName,
-        shortDesc: 'Check to see cameras and movement detection sign'),
-    SearchItem(
-        name: 'New Permission',
-        routeName: CreatePermissionScreen.routeName,
-        shortDesc: 'Check to create new permission'),
-  ];
+  List<SearchItem> _appItems = [];
 
-  List<String> filteredSearchHistory;
+  List<String> _filteredSearchHistory;
 
   String selectedTerm;
 
   List<SearchItem> resutlItems = [];
 
   double paddingTop = 0;
+
+  Box _box_searchHistory;
 
   List<String> filterSearchTerms({
     @required String filter,
@@ -205,6 +118,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
           .where((term) => term.startsWith(filter))
           .toList();
     } else {
+      // _box_searchHistory.
       return searchHistory.reversed.toList();
     }
   }
@@ -220,12 +134,30 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
       searchHistory.removeRange(0, searchHistory.length - historyLength);
     }
 
-    filteredSearchHistory = filterSearchTerms(filter: null);
+    _box_searchHistory.add(term);
+    if (_box_searchHistory.length > historyLength) {
+      int activeLength = _box_searchHistory.length - historyLength;
+      for (var i = 0; i < activeLength; i++) {
+        _box_searchHistory.deleteAt(i);
+      }
+    }
+
+    print('${_box_searchHistory.length}');
+
+    _filteredSearchHistory = filterSearchTerms(filter: null);
   }
 
   void deleteSearchTerm(String term) {
     searchHistory.removeWhere((t) => t == term);
-    filteredSearchHistory = filterSearchTerms(filter: null);
+    _filteredSearchHistory = filterSearchTerms(filter: null);
+    int deletIndex = 0;
+    for (var i = 0; i < _box_searchHistory.length; i++) {
+      String s = _box_searchHistory.getAt(i);
+      if (s.compareTo(term) == 0) {
+        deletIndex = i;
+      }
+    }
+    _box_searchHistory.deleteAt(deletIndex);
   }
 
   void putSearchTermFirst(String term) {
@@ -243,14 +175,19 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
   void initState() {
     super.initState();
     _blocPadding.sink.add(10.0);
+    _appItems = GlobalContext.appItems;
+    Hive.openBox('searchHistory').then((box) {
+      _box_searchHistory = box;
+    });
     controller = FloatingSearchBarController();
-    filteredSearchHistory = filterSearchTerms(filter: null);
+    _filteredSearchHistory = filterSearchTerms(filter: null);
   }
 
   @override
   void dispose() {
     controller.dispose();
     _blocPadding.dispose();
+    _box_searchHistory.close();
     super.dispose();
   }
 
@@ -265,8 +202,8 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
     }
 
     if (_isSearchBarActive) {
-      if (filteredSearchHistory != null && filteredSearchHistory.length > 0) {
-        paddingTop = filteredSearchHistory.length * 64.0;
+      if (_filteredSearchHistory != null && _filteredSearchHistory.length > 0) {
+        paddingTop = _filteredSearchHistory.length * 64.0;
       } else {
         paddingTop = 64.0;
       }
@@ -275,11 +212,15 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
     }
 
     debugPrint(
-        'after processing search result --- length is ${resutlItems.length}  --------filteredSearch result ---- ${filteredSearchHistory.length} ---- padding top is ---$paddingTop');
+        'after processing search result --- length is ${resutlItems.length}  --------filteredSearch result ---- ${_filteredSearchHistory.length} ---- padding top is ---$paddingTop');
   }
 
   @override
   Widget build(BuildContext context) {
+    return _buildSearchScreenScaffold(context);
+  }
+
+  Scaffold _buildSearchScreenScaffold(BuildContext context) {
     _processSearchResult();
     return Scaffold(
       backgroundColor: Colors.white, //AppTheme.notWhite,
@@ -326,7 +267,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
         onQueryChanged: (query) {
           setState(() {
             selectedTerm = query;
-            filteredSearchHistory = filterSearchTerms(filter: query);
+            _filteredSearchHistory = filterSearchTerms(filter: query);
             // if (filteredSearchHistory != null &&
             //     filteredSearchHistory.length > 0) {
             //   paddingTop = filteredSearchHistory.length * 54.0;
@@ -357,7 +298,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
               elevation: 4,
               child: Builder(
                 builder: (context) {
-                  if (filteredSearchHistory.isEmpty &&
+                  if (_filteredSearchHistory.isEmpty &&
                       controller.query.isEmpty) {
                     return //Container(width: double.infinity);
                         Container(
@@ -372,7 +313,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
                             color: ColorConstants.COLOR_NOTIFICATION_DIVIDER),
                       ),
                     );
-                  } else if (filteredSearchHistory.isEmpty) {
+                  } else if (_filteredSearchHistory.isEmpty) {
                     return ListTile(
                       title: Text(
                         controller.query,
@@ -393,7 +334,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
                   } else {
                     return Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: filteredSearchHistory
+                      children: _filteredSearchHistory
                           .map(
                             (term) => ListTile(
                               title: Text(
@@ -436,182 +377,4 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
       ),
     );
   }
-}
-
-class SearchResultsListView extends StatelessWidget {
-  final String searchTerm;
-
-  // final List<SearchItem> appItems;
-
-  final List<SearchItem> suggestedItems;
-
-  final List<SearchItem> resutlItems;
-
-  final double paddingTop;
-
-  SearchResultsListView(
-      {Key key,
-      @required this.searchTerm,
-      // @required this.appItems,
-      this.suggestedItems,
-      this.resutlItems,
-      this.paddingTop})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final fsb = FloatingSearchBar.of(context);
-
-    // debugPrint('padding applied to reasult result ---------- {$paddingTop }');
-
-    // if (searchTerm == null) {
-    return Container(
-      margin:
-          EdgeInsets.only(top: fsb.height + fsb.margins.vertical + paddingTop),
-      child: Stack(
-        children: [
-          resutlItems.length < 2 ? _wdgt_startSearching(context) : Container(),
-          suggestedItems != null && suggestedItems.length > 0
-              ? SelectHistory(suggestedItems)
-              : Container(),
-          _searchResultList(fsb, context)
-        ],
-      ),
-    );
-  }
-
-  Center _wdgt_startSearching(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.search,
-            size: 64,
-            color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
-          ),
-          Text(
-            'Start searching',
-            style: Theme.of(context)
-                .textTheme
-                .headline5
-                .apply(color: ColorConstants.COLOR_NOTIFICATION_DIVIDER),
-          )
-        ],
-      ),
-    );
-  }
-
-  Container _searchResultList(
-      FloatingSearchBarState fsb, BuildContext context) {
-    double _top = 64.0 * (suggestedItems.length ~/ 3);
-
-    if (suggestedItems.length > 0 && suggestedItems.length < 3) {
-      _top = 72;
-    } else {
-      _top = 0.0;
-    }
-    return Container(
-      padding: EdgeInsets.only(top: _top),
-      child: ListView(
-        shrinkWrap: true,
-        //     EdgeInsets.only(top: fsb.height + fsb.margins.vertical + paddingTop),
-        children: List.generate(
-          resutlItems.length,
-          (index) {
-            return _resultWidget(context, index);
-          },
-        ),
-      ),
-    );
-  }
-
-  Card _resultWidget(BuildContext context, int index) {
-    return Card(
-      elevation: 8.0,
-      // shape: RoundedRectangleBorder(
-      //     borderRadius: BorderRadius.circular(64.w),
-      //     side:
-      //         BorderSide(color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER)),
-      child: Center(
-        child: ListTile(
-          onTap: () {
-            searchedItems.add(resutlItems[
-                index]); // write add suggested items, push to first and remove searched items methods
-            _navigateTo(context, resutlItems[index]);
-          },
-          title: Text('${resutlItems[index].name}'),
-          subtitle: Text('${resutlItems[index].shortDesc}'),
-        ),
-      ),
-    );
-  }
-}
-
-// class SelectHistory extends StatefulWidget {
-//   final List<SearchItem> items;
-//   SelectHistory(this.items);
-//   @override
-//   _SelectHistoryState createState() => _SelectHistoryState();
-// }
-
-class SelectHistory extends StatelessWidget {
-  SearchItem selectedChoice;
-
-  // ScreenUtil _util = ScreenUtil();
-  BuildContext _context;
-  final List<SearchItem> items;
-  SelectHistory(this.items);
-
-  _buildChoiceList() {
-    return List<Widget>.generate(
-      items.length,
-      (int index) {
-        return _buildChoiceChip(items[index], index);
-      },
-    ).toList();
-  }
-
-  _buildChoiceChip(SearchItem item, index) {
-    return Padding(
-      padding: EdgeInsets.only(left: 4, right: 4),
-      child: ActionChip(
-        label: Text(item.name),
-        labelStyle: TextStyle(
-            fontSize: AppTheme.subtitle.fontSize,
-            // fontWeight: FontWeight.w800,
-            // letterSpacing: util.setSp(2),
-            color: ColorConstants.COLOR_NOTIFICATION_DIVIDER),
-        autofocus: false,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(64.w),
-            side: BorderSide(
-                color: ColorConstants.COLOR_NOTIFICATION_DIVIDER, width: 1)),
-        elevation: 8.w,
-        backgroundColor: AppTheme.nearlyWhite,
-        onPressed: () {
-          _navigateTo(_context, item);
-        },
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _context = context;
-    return Center(
-      child: Column(
-        children: [
-          Wrap(
-            alignment: WrapAlignment.center,
-            children: _buildChoiceList(),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-void _navigateTo(BuildContext context, SearchItem item) {
-  Navigator.of(context).pop(item);
 }

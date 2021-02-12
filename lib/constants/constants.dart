@@ -1339,6 +1339,8 @@ class GlobalContext {
   static SwiperController swiperController = new SwiperController();
   static int currentScreenIndex = 0;
   static bool isDrawerOpen = false;
+
+  static List<SearchItem> appItems = [];
 }
 
 class NavigationContext {

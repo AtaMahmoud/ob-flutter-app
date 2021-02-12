@@ -97,6 +97,7 @@ dependencies:
   #     path: packages/google_maps_flutter/google_maps_flutter
   hive: ^1.4.4+1
   hive_flutter: ^0.3.1
+  hive_generator: ^0.8.2
 
 
 
