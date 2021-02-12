@@ -2,7 +2,6 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ocean_builder/constants/constants.dart';
-import 'package:provider/provider.dart';
 
 void displayInternetInfoBar(BuildContext context, String message) {
   if (GlobalContext.currentScreenContext == null) {
@@ -29,8 +28,7 @@ void displayInternetInfoBar(BuildContext context, String message) {
       duration: Duration(seconds: 3),
     )..show(GlobalContext.currentScreenContext);
   } else {
-    Flushbar flush;
-    flush = Flushbar<bool>(
+    Flushbar<bool>(
       messageText: Text(
         message,
         style: textStyle,
