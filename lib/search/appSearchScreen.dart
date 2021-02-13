@@ -80,13 +80,6 @@ import 'package:ocean_builder/bloc/generic_bloc.dart';
 const historyLength = 5;
 const selectHistoryLength = 5;
 
-List<String> searchHistory = [
-  'Home',
-  'Controll',
-  'Weather',
-  'Marine',
-];
-
 List<SearchItem> searchedItems = [];
 
 class AppSearchScreen extends StatefulWidget {
@@ -99,6 +92,8 @@ class AppSearchScreen extends StatefulWidget {
 
 class _AppSearchScreenState extends State<AppSearchScreen> {
   List<SearchItem> _appItems = [];
+
+  List<String> _searchHistory = [];
 
   List<String> _filteredSearchHistory;
 
@@ -114,24 +109,26 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
     @required String filter,
   }) {
     if (filter != null && filter.isNotEmpty) {
-      return searchHistory.reversed
-          .where((term) => term.startsWith(filter))
-          .toList();
+      return _searchHistory.reversed.where((term) {
+        return term.toLowerCase().startsWith(filter.toLowerCase());
+      }).toList();
     } else {
       // _box_searchHistory.
-      return searchHistory.reversed.toList();
+      return _searchHistory.reversed.toList();
     }
   }
 
   void addSearchTerm(String term) {
-    if (searchHistory.contains(term)) {
+    if (term != null && term.isEmpty) return;
+    if (_searchHistory.contains(term)) {
       putSearchTermFirst(term);
       return;
     }
 
-    searchHistory.add(term);
-    if (searchHistory.length > historyLength) {
-      searchHistory.removeRange(0, searchHistory.length - historyLength);
+    _searchHistory.add(term);
+
+    if (_searchHistory.length > historyLength) {
+      _searchHistory.removeRange(0, _searchHistory.length - historyLength);
     }
 
     _box_searchHistory.add(term);
@@ -148,7 +145,8 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
   }
 
   void deleteSearchTerm(String term) {
-    searchHistory.removeWhere((t) => t == term);
+    if (term != null && term.isEmpty) return;
+    _searchHistory.removeWhere((t) => t == term);
     _filteredSearchHistory = filterSearchTerms(filter: null);
     int deletIndex = 0;
     for (var i = 0; i < _box_searchHistory.length; i++) {
@@ -167,18 +165,23 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
 
   FloatingSearchBarController controller;
 
-  GenericBloc<double> _blocPadding = GenericBloc(null);
+  // GenericBloc<double> _blocPadding = GenericBloc(null);
 
   bool _isSearchBarActive = false;
+
+  var _futureSearchHistoryBox;
 
   @override
   void initState() {
     super.initState();
-    _blocPadding.sink.add(10.0);
+    // _blocPadding.sink.add(10.0);
+    // Hive.openBox('searchHistory').then((box) {
+    //   // box.clear();
+    //   _box_searchHistory = box;
+    // });
+    _futureSearchHistoryBox = Hive.openBox('searchHistory');
     _appItems = GlobalContext.appItems;
-    Hive.openBox('searchHistory').then((box) {
-      _box_searchHistory = box;
-    });
+    _searchHistory = GlobalContext.searchItems;
     controller = FloatingSearchBarController();
     _filteredSearchHistory = filterSearchTerms(filter: null);
   }
@@ -186,7 +189,10 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
   @override
   void dispose() {
     controller.dispose();
-    _blocPadding.dispose();
+    // _blocPadding.dispose();
+    print(
+        'search history length before disposing ------ ${_searchHistory.length}');
+    print('_box_searchHistory length --- ${_box_searchHistory.length}');
     _box_searchHistory.close();
     super.dispose();
   }
@@ -215,14 +221,33 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
         'after processing search result --- length is ${resutlItems.length}  --------filteredSearch result ---- ${_filteredSearchHistory.length} ---- padding top is ---$paddingTop');
   }
 
+  Key _keyScaffold2 = Key('scaffold2');
+
   @override
   Widget build(BuildContext context) {
-    return _buildSearchScreenScaffold(context);
+    return FutureBuilder(
+        future: Hive.openBox('searchHistory'),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              _box_searchHistory = snapshot.data;
+              _searchHistory.clear();
+              for (var i = 0; i < _box_searchHistory.length; i++) {
+                String s = _box_searchHistory.getAt(i);
+                _searchHistory.add(s);
+                // GlobalContext.searchItems.add(s);
+              }
+              return _buildSearchScreenScaffold(context, _keyScaffold2);
+            }
+          }
+          return _buildSearchScreenScaffold(context, _keyScaffold2);
+        });
   }
 
-  Scaffold _buildSearchScreenScaffold(BuildContext context) {
+  Scaffold _buildSearchScreenScaffold(BuildContext context, Key scaffoldKey) {
     _processSearchResult();
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: Colors.white, //AppTheme.notWhite,
       body: FloatingSearchBar(
         backdropColor: Colors.transparent,
@@ -279,7 +304,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
             // }
           });
         },
-        // clearQueryOnClose: false,
+        clearQueryOnClose: false,
         onSubmitted: (query) {
           setState(() {
             addSearchTerm(query);

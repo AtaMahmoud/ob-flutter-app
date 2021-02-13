@@ -120,22 +120,26 @@ class InitalizerService extends ChangeNotifier {
     Directory dir = await getExternalStorageDirectory();
     Hive.init(dir.path);
     Hive.registerAdapter(SearchItemAdapter());
-    var box = await Hive.openBox('searchItems');
+    var _box_serachItems = await Hive.openBox('searchItems');
+    var _box_serachHistory = await Hive.openBox('searchHistory');
     bool installStatus = await SharedPrefHelper.getFirstInstallStatus();
-    print('first install status is ------$installStatus ');
     if (installStatus) {
-      // add the serach items
-      print(
-          'inserting initial data to database ---------------------------------');
-      box.addAll(_appItems);
-      print(box.values.length);
+      _box_serachItems.addAll(_appItems);
+      print(_box_serachItems.values.length);
       GlobalContext.appItems.addAll(_appItems);
     } else {
-      for (var i = 0; i < box.length; i++) {
-        SearchItem s = box.getAt(i);
+      for (var i = 0; i < _box_serachItems.length; i++) {
+        SearchItem s = _box_serachItems.getAt(i);
         print(s.name);
         GlobalContext.appItems.add(s);
       }
+    }
+
+    GlobalContext.searchItems.clear();
+    for (var i = 0; i < _box_serachHistory.length; i++) {
+      String s = _box_serachHistory.getAt(i);
+      print(s);
+      GlobalContext.searchItems.add(s);
     }
   }
 

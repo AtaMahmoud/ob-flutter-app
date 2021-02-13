@@ -1341,6 +1341,7 @@ class GlobalContext {
   static bool isDrawerOpen = false;
 
   static List<SearchItem> appItems = [];
+  static List<String> searchItems = [];
 }
 
 class NavigationContext {

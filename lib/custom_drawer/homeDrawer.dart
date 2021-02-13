@@ -60,6 +60,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
   @override
   void initState() {
     super.initState();
+    
     setdDrawerListArray();
     // UIHelper.setStatusBarColor(color:ColorConstants.TOP_CLIPPER_START_DARK);
 
