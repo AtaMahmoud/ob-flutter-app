@@ -59,11 +59,13 @@ class MethodHelper {
   }
 
   static parseNotifications(BuildContext context) async {
-    final UserProvider userProvider =
-        Provider.of<UserProvider>(GlobalContext.currentScreenContext);
+    final UserProvider userProvider = Provider.of<UserProvider>(
+        GlobalContext.currentScreenContext,
+        listen: false);
 
     final LocalNotiDataProvider localNotiDataProvider =
-        Provider.of<LocalNotiDataProvider>(GlobalContext.currentScreenContext);
+        Provider.of<LocalNotiDataProvider>(GlobalContext.currentScreenContext,
+            listen: false);
 
     List<ServerNotification> notiList = [];
     List<ServerNotification> unreadRequestAccessNotiList = [];
@@ -132,10 +134,12 @@ class MethodHelper {
     print(
         '--------------------------------------  #_# selectOnlyOBasSelectedOB  ---------------------------------------------');
 
-    UserProvider userProvider =
-        Provider.of<UserProvider>(GlobalContext.currentScreenContext);
+    UserProvider userProvider = Provider.of<UserProvider>(
+        GlobalContext.currentScreenContext,
+        listen: false);
     SelectedOBIdProvider selectedOBIdProvider =
-        Provider.of<SelectedOBIdProvider>(GlobalContext.currentScreenContext);
+        Provider.of<SelectedOBIdProvider>(GlobalContext.currentScreenContext,
+            listen: false);
 
     // List<UserOceanBuilder> pendigOceanBuilderList = [];
     List<UserOceanBuilder> myOceanBuilderList = [];

@@ -120,8 +120,9 @@ class InitalizerService extends ChangeNotifier {
     Directory dir = await getExternalStorageDirectory();
     Hive.init(dir.path);
     Hive.registerAdapter(SearchItemAdapter());
-    var _box_serachItems = await Hive.openBox('searchItems');
-    var _box_serachHistory = await Hive.openBox('searchHistory');
+    var _box_serachItems = await Hive.openBox<SearchItem>('searchItems');
+    var _box_serachHistory = await Hive.openBox<String>('searchHistory');
+    // var _box_selectedHistory = await Hive.openBox('selectedHistory');
     bool installStatus = await SharedPrefHelper.getFirstInstallStatus();
     if (installStatus) {
       _box_serachItems.addAll(_appItems);
@@ -141,6 +142,13 @@ class InitalizerService extends ChangeNotifier {
       print(s);
       GlobalContext.searchItems.add(s);
     }
+
+    // GlobalContext.selectedItems.clear();
+    // for (var i = 0; i < _box_selectedHistory.length; i++) {
+    //   String s = _box_selectedHistory.getAt(i);
+    //   print(s);
+    //   GlobalContext.selectedItems.add(s);
+    // }
   }
 
   List<SearchItem> _appItems = [

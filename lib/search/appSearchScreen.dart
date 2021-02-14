@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:ocean_builder/constants/constants.dart';
+import 'package:ocean_builder/core/providers/selected_search_history_provider.dart';
 import 'package:ocean_builder/core/services/locator.dart';
 import 'package:ocean_builder/core/services/navigation_service.dart';
 import 'package:ocean_builder/custom_drawer/appTheme.dart';
@@ -76,11 +77,10 @@ import 'package:ocean_builder/ui/screens/weather/weather_screen.dart';
 import 'package:ocean_builder/core/models/search_item.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/grant_access_screen.dart';
 import 'package:ocean_builder/bloc/generic_bloc.dart';
+import 'package:provider/provider.dart';
 
 const historyLength = 5;
 const selectHistoryLength = 5;
-
-List<SearchItem> searchedItems = [];
 
 class AppSearchScreen extends StatefulWidget {
   static const String routeName = '/appSearch';
@@ -179,7 +179,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
     //   // box.clear();
     //   _box_searchHistory = box;
     // });
-    _futureSearchHistoryBox = Hive.openBox('searchHistory');
+    _futureSearchHistoryBox = Hive.openBox<String>('searchHistory');
     _appItems = GlobalContext.appItems;
     _searchHistory = GlobalContext.searchItems;
     controller = FloatingSearchBarController();
@@ -226,7 +226,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: Hive.openBox('searchHistory'),
+        future: Hive.openBox<String>('searchHistory'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasData) {
@@ -257,7 +257,6 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
           searchTerm: selectedTerm,
           // appItems: _appItems,
           resutlItems: resutlItems,
-          suggestedItems: searchedItems,
           paddingTop: paddingTop,
         ),
         backgroundColor: AppTheme.nearlyWhite,
@@ -293,15 +292,6 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
           setState(() {
             selectedTerm = query;
             _filteredSearchHistory = filterSearchTerms(filter: query);
-            // if (filteredSearchHistory != null &&
-            //     filteredSearchHistory.length > 0) {
-            //   paddingTop = filteredSearchHistory.length * 54.0;
-            // } else {
-            //   paddingTop = 54.0;
-            // }
-            // if(searchedItems != null){
-            //   paddingTop = paddingTop + searchedItems.length % 4 * 32.0;
-            // }
           });
         },
         clearQueryOnClose: false,

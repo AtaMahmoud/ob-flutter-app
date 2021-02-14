@@ -1342,6 +1342,8 @@ class GlobalContext {
 
   static List<SearchItem> appItems = [];
   static List<String> searchItems = [];
+
+  // static List<String> selectedItems = [];
 }
 
 class NavigationContext {

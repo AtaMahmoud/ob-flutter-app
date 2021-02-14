@@ -80,7 +80,7 @@ class _AccessManagementScreenState extends State<AccessManagementScreen> {
     UIHelper.setStatusBarColor(color: AppTheme.nearlyWhite);
     Future.delayed(Duration.zero).then((_) {
       _accessEventsFuture =
-          Provider.of<UserProvider>(context).getAccessEvents();
+          Provider.of<UserProvider>(context, listen: false).getAccessEvents();
       // _accessEventsFuture = userProvider.getAccessEvents();
     });
     super.initState();

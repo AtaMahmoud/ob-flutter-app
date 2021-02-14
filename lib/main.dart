@@ -22,6 +22,7 @@ import 'package:ocean_builder/core/providers/qr_code_data_provider.dart';
 import 'package:ocean_builder/core/providers/storm_glass_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
+import 'package:ocean_builder/core/providers/selected_search_history_provider.dart';
 import 'package:ocean_builder/core/providers/wow_data_provider.dart';
 import 'package:ocean_builder/core/services/initializer_service.dart';
 import 'package:ocean_builder/core/services/locator.dart';
@@ -179,6 +180,9 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider(
           create: (context) => InitalizerService(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SelectedAppItemProvider(),
         )
       ],
       child: MaterialApp(

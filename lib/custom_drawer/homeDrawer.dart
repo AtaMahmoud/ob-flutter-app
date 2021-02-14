@@ -7,6 +7,7 @@ import 'package:ocean_builder/core/models/user.dart';
 import 'package:ocean_builder/core/providers/current_ob_id_provider.dart';
 import 'package:ocean_builder/core/providers/drawer_state_data_provider.dart';
 import 'package:ocean_builder/core/providers/local_noti_data_provider.dart';
+import 'package:ocean_builder/core/providers/selected_search_history_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/search/appSearchScreen.dart';
 import 'package:ocean_builder/custom_drawer/appTheme.dart';
@@ -60,7 +61,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
   @override
   void initState() {
     super.initState();
-    
+
     setdDrawerListArray();
     // UIHelper.setStatusBarColor(color:ColorConstants.TOP_CLIPPER_START_DARK);
 
@@ -148,6 +149,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
     _selectedOBIdProvider = Provider.of<SelectedOBIdProvider>(context);
     _swiperDataProvider = Provider.of<SwiperDataProvider>(context);
     _user = _userProvider.authenticatedUser;
+
+    var _selectedAppItemDb =
+        Provider.of<SelectedAppItemProvider>(context, listen: false);
+    _selectedAppItemDb.getItem();
 
     return SizedBox(
       width: MediaQuery.of(context).size.width * .80,

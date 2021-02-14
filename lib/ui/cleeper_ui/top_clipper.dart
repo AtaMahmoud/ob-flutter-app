@@ -283,7 +283,8 @@ class _TopClipperState extends State<TopClipper> {
       return;
     }
 
-    UserProvider userProvider = Provider.of<UserProvider>(context);
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
 
     userProvider.logIn(email, password).then((status) async {
       if (status.status == 200) {

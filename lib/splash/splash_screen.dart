@@ -75,12 +75,13 @@ class _SplashScreenState extends State<SplashScreen> {
   Future initData() async {
     await Future.delayed(Duration(seconds: 3));
     // // debugPrint('context is --  ${context} ------------ global context --  ${GlobalContext.currentScreenContext}');
-    FakeDataProvider fakeDataProvider = Provider.of<FakeDataProvider>(context);
+    FakeDataProvider fakeDataProvider =
+        Provider.of<FakeDataProvider>(context, listen: false);
     fakeDataProvider.fetchFakeData();
-    userProvider = Provider.of<UserProvider>(context);
+    userProvider = Provider.of<UserProvider>(context, listen: false);
     userProvider.isAuthenticatedUser;
     SelectedOBIdProvider selectedOBIdProvider =
-        Provider.of<SelectedOBIdProvider>(context);
+        Provider.of<SelectedOBIdProvider>(context, listen: false);
     SharedPrefHelper.getCurrentOB().then((onValue) {
       if (onValue != null && onValue.length > 3)
         selectedOBIdProvider.selectedObId = onValue;

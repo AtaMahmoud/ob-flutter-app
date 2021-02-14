@@ -2,45 +2,54 @@ import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/search_item.dart';
+import 'package:ocean_builder/core/providers/selected_search_history_provider.dart';
 import 'package:ocean_builder/search/appSearchScreen.dart';
 import 'package:ocean_builder/search/search_utils.dart';
 import 'package:ocean_builder/search/selected_items.dart';
+import 'package:provider/provider.dart';
 
 class SearchResultsListView extends StatelessWidget {
   final String searchTerm;
 
   // final List<SearchItem> appItems;
 
-  final List<SearchItem> suggestedItems;
+  List<SearchItem> suggestedItems;
 
   final List<SearchItem> resutlItems;
 
   final double paddingTop;
 
+  SelectedAppItemProvider _selectedAppItemProvider;
+
+  // var selectedAppItemProvider;
+
   SearchResultsListView(
       {Key key,
       @required this.searchTerm,
       // @required this.appItems,
-      this.suggestedItems,
+      // this.suggestedItems,
       this.resutlItems,
       this.paddingTop})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    _selectedAppItemProvider =
+        Provider.of<SelectedAppItemProvider>(context, listen: false);
+    suggestedItems = _selectedAppItemProvider.selctedList;
+
     final fsb = FloatingSearchBar.of(context);
 
-    // debugPrint('padding applied to reasult result ---------- {$paddingTop }');
+    print('------suggestedItems---------------- ${suggestedItems.length}');
 
-    // if (searchTerm == null) {
     return Container(
       margin:
           EdgeInsets.only(top: fsb.height + fsb.margins.vertical + paddingTop),
       child: Stack(
         children: [
-          resutlItems.length < 2 ? _wdgt_startSearching(context) : Container(),
+          resutlItems.length == 0 ? _wdgtStartSearching(context) : Container(),
           suggestedItems != null && suggestedItems.length > 0
-              ? SelectHistory(suggestedItems)
+              ? SelectHistory()
               : Container(),
           _searchResultList(fsb, context)
         ],
@@ -48,7 +57,7 @@ class SearchResultsListView extends StatelessWidget {
     );
   }
 
-  Center _wdgt_startSearching(BuildContext context) {
+  Center _wdgtStartSearching(BuildContext context) {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -104,8 +113,10 @@ class SearchResultsListView extends StatelessWidget {
       child: Center(
         child: ListTile(
           onTap: () {
-            searchedItems.add(resutlItems[
-                index]); // write add suggested items, push to first and remove searched items methods
+            // searchedItems.add(resutlItems[
+            //     index]); // write add suggested items, push to first and remove searched items methods
+            _selectedAppItemProvider.addItem(resutlItems[index]);
+            _selectedAppItemProvider.getItem();
             navigateTo(context, resutlItems[index]);
           },
           title: Text('${resutlItems[index].name}'),
