@@ -6,7 +6,7 @@ import 'package:ocean_builder/core/models/search_item.dart';
 import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:ocean_builder/search/search_utils.dart';
 import 'package:provider/provider.dart' as provider;
-import 'package:ocean_builder/core/providers/selected_search_history_provider.dart';
+import 'package:ocean_builder/core/providers/selected_history_provider.dart';
 import 'package:provider/provider.dart';
 
 class SelectHistory extends StatelessWidget {
@@ -53,7 +53,7 @@ class SelectHistory extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var _selectedAppItemProvider =
-        Provider.of<SelectedAppItemProvider>(context, listen: false);
+        Provider.of<SelectedHistoryProvider>(context, listen: false);
     _context = context;
     List<SearchItem> _list = _selectedAppItemProvider.selctedList;
     print('---------------------- ${_list.length}');

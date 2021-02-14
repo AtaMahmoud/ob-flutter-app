@@ -2,24 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:ocean_builder/core/models/search_item.dart';
 
-class SelectedAppItemProvider with ChangeNotifier {
+class SelectedHistoryProvider with ChangeNotifier {
   String _selectedHistory = 'selectedHistory';
 
   List _selctedList = <SearchItem>[];
 
   List get selctedList => _selctedList;
 
-  addItem(SearchItem selectedItem) async {
+  addSelectedItem(SearchItem selectedItem) async {
     var box = await Hive.openBox<SearchItem>(_selectedHistory);
 
     box.add(selectedItem);
 
-    print('added');
+    print('selected item added');
 
     notifyListeners();
   }
 
-  getItem() async {
+  getSelectedItem() async {
     final box = await Hive.openBox<SearchItem>(_selectedHistory);
 
     _selctedList = box.values.toList();
@@ -27,7 +27,7 @@ class SelectedAppItemProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  updateItem(int index, SearchItem selectedItem) {
+  updateSelectedItem(int index, SearchItem selectedItem) {
     final box = Hive.box<SearchItem>(_selectedHistory);
 
     box.putAt(index, selectedItem);
@@ -35,12 +35,12 @@ class SelectedAppItemProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  deleteItem(int index) {
+  deleteSelectedItem(int index) {
     final box = Hive.box<SearchItem>(_selectedHistory);
 
     box.deleteAt(index);
 
-    getItem();
+    getSelectedItem();
 
     notifyListeners();
   }

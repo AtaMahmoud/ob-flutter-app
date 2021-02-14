@@ -4,7 +4,8 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:ocean_builder/constants/constants.dart';
-import 'package:ocean_builder/core/providers/selected_search_history_provider.dart';
+import 'package:ocean_builder/core/providers/search_history_provider.dart';
+import 'package:ocean_builder/core/providers/selected_history_provider.dart';
 import 'package:ocean_builder/core/services/locator.dart';
 import 'package:ocean_builder/core/services/navigation_service.dart';
 import 'package:ocean_builder/custom_drawer/appTheme.dart';
@@ -105,6 +106,8 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
 
   Box _box_searchHistory;
 
+  var k = 0;
+
   List<String> filterSearchTerms({
     @required String filter,
   }) {
@@ -181,7 +184,12 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
     // });
     _futureSearchHistoryBox = Hive.openBox<String>('searchHistory');
     _appItems = GlobalContext.appItems;
-    _searchHistory = GlobalContext.searchItems;
+    // _searchHistory = GlobalContext.searchItems;
+    var _searchHistoryProvider =
+        Provider.of<SearchHistoryProvider>(context, listen: false);
+    List<String> _list = _searchHistoryProvider.searchList;
+    // print('list SearchItem-----------------  ${_list.length}');
+    _searchHistory = _list;
     controller = FloatingSearchBarController();
     _filteredSearchHistory = filterSearchTerms(filter: null);
   }
@@ -217,31 +225,29 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
       paddingTop = 0.0;
     }
 
-    debugPrint(
-        'after processing search result --- length is ${resutlItems.length}  --------filteredSearch result ---- ${_filteredSearchHistory.length} ---- padding top is ---$paddingTop');
+    // debugPrint(
+    // 'after processing search result --- length is ${resutlItems.length}  --------filteredSearch result ---- ${_filteredSearchHistory.length} ---- padding top is ---$paddingTop');
   }
 
   Key _keyScaffold2 = Key('scaffold2');
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: Hive.openBox<String>('searchHistory'),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              _box_searchHistory = snapshot.data;
-              _searchHistory.clear();
-              for (var i = 0; i < _box_searchHistory.length; i++) {
-                String s = _box_searchHistory.getAt(i);
-                _searchHistory.add(s);
-                // GlobalContext.searchItems.add(s);
-              }
-              return _buildSearchScreenScaffold(context, _keyScaffold2);
-            }
-          }
-          return _buildSearchScreenScaffold(context, _keyScaffold2);
-        });
+    context.watch<SearchHistoryProvider>().getSearchItem();
+    return Consumer<SearchHistoryProvider>(builder: (context, model, widget) {
+      if (model.searchList != null) {
+        // _box_searchHistory = model.searchList;
+        _searchHistory.clear();
+        for (var i = 0; i < model.searchList.length; i++) {
+          String s = model.searchList[i];
+          _searchHistory.add(s);
+          // GlobalContext.searchItems.add(s);
+        }
+        print('search items added {$k++}');
+        return _buildSearchScreenScaffold(context, _keyScaffold2);
+      }
+      return _buildSearchScreenScaffold(context, _keyScaffold2);
+    });
   }
 
   Scaffold _buildSearchScreenScaffold(BuildContext context, Key scaffoldKey) {

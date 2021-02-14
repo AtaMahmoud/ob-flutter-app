@@ -49,10 +49,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
   void initState() {
     Future.delayed(Duration.zero).then((_) {
       _futureWeatherData =
-          Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
+          Provider.of<StormGlassDataProvider>(context, listen: false)
+              .fetchWeatherData();
 
-      _futuremissingData = Provider.of<LocalWeatherDataProvider>(context)
-          .fetchDeviceObservationData();
+      _futuremissingData =
+          Provider.of<LocalWeatherDataProvider>(context, listen: false)
+              .fetchDeviceObservationData();
 
       currentlySelectedSource = ListHelper.getSourceList()[0];
       _sourcePriorityBloc.topProprity.listen((event) {

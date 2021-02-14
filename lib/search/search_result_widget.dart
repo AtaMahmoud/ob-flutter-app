@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/search_item.dart';
-import 'package:ocean_builder/core/providers/selected_search_history_provider.dart';
+import 'package:ocean_builder/core/providers/selected_history_provider.dart';
 import 'package:ocean_builder/search/appSearchScreen.dart';
 import 'package:ocean_builder/search/search_utils.dart';
 import 'package:ocean_builder/search/selected_items.dart';
@@ -19,7 +19,7 @@ class SearchResultsListView extends StatelessWidget {
 
   final double paddingTop;
 
-  SelectedAppItemProvider _selectedAppItemProvider;
+  SelectedHistoryProvider _selectedAppItemProvider;
 
   // var selectedAppItemProvider;
 
@@ -35,7 +35,7 @@ class SearchResultsListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _selectedAppItemProvider =
-        Provider.of<SelectedAppItemProvider>(context, listen: false);
+        Provider.of<SelectedHistoryProvider>(context, listen: false);
     suggestedItems = _selectedAppItemProvider.selctedList;
 
     final fsb = FloatingSearchBar.of(context);
@@ -115,8 +115,8 @@ class SearchResultsListView extends StatelessWidget {
           onTap: () {
             // searchedItems.add(resutlItems[
             //     index]); // write add suggested items, push to first and remove searched items methods
-            _selectedAppItemProvider.addItem(resutlItems[index]);
-            _selectedAppItemProvider.getItem();
+            _selectedAppItemProvider.addSelectedItem(resutlItems[index]);
+            _selectedAppItemProvider.getSelectedItem();
             navigateTo(context, resutlItems[index]);
           },
           title: Text('${resutlItems[index].name}'),
