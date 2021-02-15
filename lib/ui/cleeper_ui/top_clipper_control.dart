@@ -67,8 +67,7 @@ class _TopClipperControlState extends State<TopClipperControl> {
     return Container(
       height: useMobileLayout
           ? MediaQuery.of(context).size.height * 0.45
-          : MediaQuery.of(context).size.height *
-              0.6,
+          : MediaQuery.of(context).size.height * 0.6,
       decoration: BoxDecoration(gradient: topGradientDark),
       child: Padding(
         padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 32.h),
@@ -84,7 +83,6 @@ class _TopClipperControlState extends State<TopClipperControl> {
                         InkWell(
                           onTap: () {
                             widget.scaffoldKey.currentState.openDrawer();
-                            
                           },
                           child: Padding(
                             padding:

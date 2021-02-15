@@ -81,18 +81,20 @@ class SearchResultsListView extends StatelessWidget {
 
   Container _searchResultList(
       FloatingSearchBarState fsb, BuildContext context) {
-    double _top = 64.0 * (suggestedItems.length ~/ 3);
+    // print(
+    // 'buidling search result list with multiple of padding 64 * ${suggestedItems.length ~/ 3}');
 
-    if (suggestedItems.length > 0 && suggestedItems.length < 3) {
-      _top = 72;
-    } else {
-      _top = 0.0;
-    }
+    double _top = 72.0;
+
+    // if (suggestedItems.length > 0 && suggestedItems.length <= 3) {
+    //   _top = 64;
+    // }
+    print('applying padding top of ------------ $_top ');
     return Container(
       padding: EdgeInsets.only(top: _top),
       child: ListView(
         shrinkWrap: true,
-        //     EdgeInsets.only(top: fsb.height + fsb.margins.vertical + paddingTop),
+        padding: EdgeInsets.only(top: 0),
         children: List.generate(
           resutlItems.length,
           (index) {

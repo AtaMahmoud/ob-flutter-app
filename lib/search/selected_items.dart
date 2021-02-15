@@ -50,23 +50,54 @@ class SelectHistory extends StatelessWidget {
     );
   }
 
+  ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     var _selectedAppItemProvider =
         Provider.of<SelectedHistoryProvider>(context, listen: false);
     _context = context;
     List<SearchItem> _list = _selectedAppItemProvider.selctedList;
-    print('---------------------- ${_list.length}');
-    return Center(
-      child: Column(
-        children: [
-          Wrap(
-            alignment: WrapAlignment.center,
-            children: _buildChoiceList(_list),
+    return Stack(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 2),
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  children: _buildChoiceList(_list),
+                ),
+              ],
+            ),
           ),
-        ],
-      ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InkWell(
+              child: Icon(Icons.arrow_left,
+                  size: 48, color: ColorConstants.TOP_CLIPPER_END_DARK),
+              onTap: () {
+                _scrollController.animateTo(-24,
+                    duration: Duration(microseconds: 3), curve: Curves.linear);
+              },
+            ),
+            InkWell(
+              child: Icon(Icons.arrow_right,
+                  size: 48, color: ColorConstants.TOP_CLIPPER_END_DARK),
+              onTap: () {
+                _scrollController.animateTo(24,
+                    duration: Duration(microseconds: 3), curve: Curves.linear);
+              },
+            ),
+          ],
+        )
+      ],
     );
-    ;
   }
 }
