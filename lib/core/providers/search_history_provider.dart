@@ -7,7 +7,7 @@ class SearchHistoryProvider with ChangeNotifier {
 
   List _searchList = <String>[];
 
-  List get searchList => _searchList.reversed.toList();
+  List get searchList => _searchList;
 
   addSearchItem(String searchItem) async {
     var box = await Hive.openBox<String>(_searchHistory);
@@ -16,8 +16,11 @@ class SearchHistoryProvider with ChangeNotifier {
 
     if (searchItem != null && searchItem.isEmpty) return;
     if (box.values.contains(searchItem)) {
+      print('adding duplciate searchItem history ${searchItem}');
       _putSearchItemFirst(searchItem);
       return;
+    } else {
+      print('no match for $searchItem');
     }
 
     box.add(searchItem);
@@ -27,7 +30,7 @@ class SearchHistoryProvider with ChangeNotifier {
     if (box.values.length > _maxSearchHistoryLength) {
       int activeLength = box.length - _maxSearchHistoryLength;
       for (var i = 0; i < activeLength; i++) {
-        deleteSearchItem(i);
+        box.deleteAt(i);
       }
     }
 
@@ -61,8 +64,8 @@ class SearchHistoryProvider with ChangeNotifier {
   }
 
   _putSearchItemFirst(String searchItem) {
+    print('push $searchItem first');
     final box = Hive.box<String>(_searchHistory);
-    addSearchItem(searchItem);
     int deletIndex = 0;
     for (var i = 0; i < box.length; i++) {
       String s = box.getAt(i);
@@ -71,5 +74,7 @@ class SearchHistoryProvider with ChangeNotifier {
       }
     }
     deleteSearchItem(deletIndex);
+    addSearchItem(searchItem);
+    // box.add(searchItem);
   }
 }

@@ -102,7 +102,7 @@ class SelectHistory extends StatelessWidget {
               //     size: 48, color: ColorConstants.TOP_CLIPPER_END_DARK),
               onTap: () {
                 _scrollController.animateTo(
-                    _scrollController.position.maxScrollExtent,
+                    _scrollController.position.minScrollExtent,
                     duration: Duration(milliseconds: 300),
                     curve: Curves.linear);
               },
@@ -143,7 +143,7 @@ class SelectHistory extends StatelessWidget {
               // size: 48, color: ColorConstants.TOP_CLIPPER_END_DARK),
               onTap: () {
                 _scrollController.animateTo(
-                    _scrollController.position.minScrollExtent,
+                    _scrollController.position.maxScrollExtent,
                     duration: Duration(milliseconds: 300),
                     curve: Curves.linear);
               },

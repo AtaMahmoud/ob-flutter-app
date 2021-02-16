@@ -716,7 +716,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
             SearchItem s = result;
             if (s != null) {
               if (s.routeName.compareTo(ControlScreen.routeName) == 0) {
-                Navigator.pop(context);
+                // Navigator.pop(context);
                 navigationtoScreen(DrawerIndex.CONTROLS);
                 // Navigator.of(context)
                 // .pushReplacementNamed(HomeScreen.routeName, arguments: 1);

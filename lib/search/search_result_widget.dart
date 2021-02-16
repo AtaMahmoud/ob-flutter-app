@@ -12,8 +12,6 @@ import 'package:provider/provider.dart';
 class SearchResultsListView extends StatelessWidget {
   final String searchTerm;
 
-  // final List<SearchItem> appItems;
-
   List<SearchItem> suggestedItems;
 
   final List<SearchItem> resutlItems;
@@ -22,15 +20,8 @@ class SearchResultsListView extends StatelessWidget {
 
   SelectedHistoryProvider _selectedAppItemProvider;
 
-  // var selectedAppItemProvider;
-
   SearchResultsListView(
-      {Key key,
-      @required this.searchTerm,
-      // @required this.appItems,
-      // this.suggestedItems,
-      this.resutlItems,
-      this.paddingTop})
+      {Key key, @required this.searchTerm, this.resutlItems, this.paddingTop})
       : super(key: key);
 
   @override
@@ -41,7 +32,7 @@ class SearchResultsListView extends StatelessWidget {
 
     final fsb = FloatingSearchBar.of(context);
 
-    print('------suggestedItems---------------- ${suggestedItems.length}');
+    // print('------suggestedItems---------------- ${suggestedItems.length}');
 
     return Container(
       margin:
@@ -58,39 +49,36 @@ class SearchResultsListView extends StatelessWidget {
     );
   }
 
-  Center _wdgtStartSearching(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.search,
-            size: 64,
-            color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
-          ),
-          Text(
-            'Start searching',
-            style: Theme.of(context)
-                .textTheme
-                .headline5
-                .apply(color: ColorConstants.COLOR_NOTIFICATION_DIVIDER),
-          )
-        ],
+  SingleChildScrollView _wdgtStartSearching(BuildContext context) {
+    return SingleChildScrollView(
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.search,
+              size: 64,
+              color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
+            ),
+            Text(
+              'Start searching',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline5
+                  .apply(color: ColorConstants.COLOR_NOTIFICATION_DIVIDER),
+            )
+          ],
+        ),
       ),
     );
   }
 
   Container _searchResultList(
       FloatingSearchBarState fsb, BuildContext context) {
-    // print(
-    // 'buidling search result list with multiple of padding 64 * ${suggestedItems.length ~/ 3}');
-
     double _top = 72.0;
-
-    // if (suggestedItems.length > 0 && suggestedItems.length <= 3) {
-    //   _top = 64;
-    // }
-    print('applying padding top of ------------ $_top ');
+    if (suggestedItems != null && suggestedItems.length == 0) {
+      _top = 0.0;
+    }
     return Container(
       padding: EdgeInsets.only(top: _top),
       child: ListView(

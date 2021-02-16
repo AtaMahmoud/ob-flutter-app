@@ -14,10 +14,33 @@ class SelectedHistoryProvider with ChangeNotifier {
     var box = await Hive.openBox<SearchItem>(_selectedHistory);
 
     if (selectedItem != null && selectedItem.routeName.isEmpty) return;
-    if (box.values.contains(selectedItem)) {
-      _putSelectedItemFirst(selectedItem);
-      return;
-    }
+    // box.values.map((selectItem) {
+    //   print(
+    //       '====================================${selectItem.routeName}-------- ${selectedItem.routeName}');
+    //   if (selectItem.routeName
+    //           .toLowerCase()
+    //           .compareTo(selectedItem.routeName.toLowerCase()) ==
+    //       0) {
+    //     print('adding duplciate select history ${selectedItem.routeName}');
+    //     _putSelectedItemFirst(selectedItem);
+    //     return;
+    //   } else {
+    //     print('no match');
+    //   }
+    // }).toList();
+
+    bool _pushedToFirst = box.values.any((selectItem) {
+      if (selectItem.routeName.compareTo(selectedItem.routeName) == 0) {
+        // print('adding duplciate select history ${selectedItem.routeName}');
+        _putSelectedItemFirst(selectedItem);
+        return true;
+      } else {
+        // print('no match');
+        return false;
+      }
+    });
+
+    if (_pushedToFirst) return;
 
     box.add(selectedItem);
 
@@ -26,7 +49,7 @@ class SelectedHistoryProvider with ChangeNotifier {
     if (box.values.length > _maxSelectedHistoryLength) {
       int activeLength = box.length - _maxSelectedHistoryLength;
       for (var i = 0; i < activeLength; i++) {
-        deleteSelectedItem(i);
+        box.deleteAt(i);
       }
     }
 
@@ -50,6 +73,7 @@ class SelectedHistoryProvider with ChangeNotifier {
   }
 
   deleteSelectedItem(int index) {
+    // print('delete selected item');
     final box = Hive.box<SearchItem>(_selectedHistory);
 
     box.deleteAt(index);
@@ -59,16 +83,20 @@ class SelectedHistoryProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  _putSelectedItemFirst(SearchItem searchItem) {
+  _putSelectedItemFirst(SearchItem selectedItem) {
+    // print('push selected item first');
     final box = Hive.box<SearchItem>(_selectedHistory);
-    addSelectedItem(searchItem);
+
     int deletIndex = 0;
     for (var i = 0; i < box.length; i++) {
       SearchItem s = box.getAt(i);
-      if (s.routeName.compareTo(searchItem.routeName) == 0) {
+      if (s.routeName.compareTo(selectedItem.routeName) == 0) {
         deletIndex = i;
       }
     }
+    // print('delete index ----- $deletIndex');
     deleteSelectedItem(deletIndex);
+    addSelectedItem(selectedItem);
+    // box.add(selectedItem);
   }
 }

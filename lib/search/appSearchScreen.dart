@@ -23,7 +23,7 @@ class AppSearchScreen extends StatefulWidget {
 class _AppSearchScreenState extends State<AppSearchScreen> {
   List<SearchItem> _appItems = [];
 
-  List<String> _searchHistory = [];
+  // List<String> _searchHistory = [];
 
   List<String> _filteredSearchHistory;
 
@@ -33,8 +33,6 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
 
   double paddingTop = 0;
 
-  // Box _boxSearchHistory;
-
   var k = 0;
 
   SearchHistoryProvider _searchHistoryProvider;
@@ -42,12 +40,12 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
   List<String> filterSearchTerms({
     @required String filter,
   }) {
+    List<String> _searchHistory = _searchHistoryProvider.searchList;
     if (filter != null && filter.isNotEmpty) {
       return _searchHistory.reversed.where((term) {
         return term.toLowerCase().startsWith(filter.toLowerCase());
       }).toList();
     } else {
-      // _box_searchHistory.
       return _searchHistory.reversed.toList();
     }
   }
@@ -55,35 +53,11 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
   void addSearchTerm(String term) {
     if (term != null && term.isEmpty) return;
     _searchHistoryProvider.addSearchItem(term);
-    if (_searchHistory.contains(term)) {
-      putSearchTermFirst(term);
-      return;
-    }
-
-    _searchHistory.add(term);
-
-    if (_searchHistory.length > historyLength) {
-      _searchHistory.removeRange(0, _searchHistory.length - historyLength);
-    }
-
-    // _box_searchHistory.add(term);
-    // if (_box_searchHistory.length > historyLength) {
-    //   int activeLength = _box_searchHistory.length - historyLength;
-    //   for (var i = 0; i < activeLength; i++) {
-    //     _box_searchHistory.deleteAt(i);
-    //   }
-    // }
-
-    // print('${_box_searchHistory.length}');
-
     _filteredSearchHistory = filterSearchTerms(filter: null);
   }
 
   void deleteSearchTerm(String term) {
     if (term != null && term.isEmpty) return;
-    _searchHistory.removeWhere((t) => t == term);
-    _filteredSearchHistory = filterSearchTerms(filter: null);
-
     int deletIndex = 0;
     for (var i = 0; i < _searchHistoryProvider.searchList.length; i++) {
       String s = _searchHistoryProvider.searchList[i];
@@ -92,6 +66,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
       }
     }
     _searchHistoryProvider.deleteSearchItem(deletIndex);
+    _filteredSearchHistory = filterSearchTerms(filter: null);
   }
 
   void putSearchTermFirst(String term) {
@@ -111,24 +86,14 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
   void initState() {
     super.initState();
     // _blocPadding.sink.add(10.0);
+    _appItems = GlobalContext.appItems;
+    _searchHistoryProvider =
+        Provider.of<SearchHistoryProvider>(context, listen: false);
     controller = FloatingSearchBarController();
   }
 
   @override
   void didChangeDependencies() {
-    // Hive.openBox<String>('searchHistory').then((box) {
-    //   // box.clear();
-    //   _boxSearchHistory = box;
-    // });
-    // _futureSearchHistoryBox = Hive.openBox<String>('searchHistory');
-
-    _appItems = GlobalContext.appItems;
-    // _searchHistory = GlobalContext.searchItems;
-    _searchHistoryProvider =
-        Provider.of<SearchHistoryProvider>(context, listen: false);
-    List<String> _list = _searchHistoryProvider.searchList;
-    // print('list SearchItem-----------------  ${_list.length}');
-    _searchHistory = _list;
     _filteredSearchHistory = filterSearchTerms(filter: null);
     super.didChangeDependencies();
   }
@@ -136,12 +101,6 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
   @override
   void dispose() {
     controller.dispose();
-    // _blocPadding.dispose();
-    print(
-        'search history length before disposing ------ ${_searchHistory.length}');
-    print(
-        '_box_searchHistory length --- ${_searchHistoryProvider.searchList.length}');
-    // _box_searchHistory.close();
     super.dispose();
   }
 
@@ -164,50 +123,19 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
     } else {
       paddingTop = 0.0;
     }
-
-    // debugPrint(
-    // 'after processing search result --- length is ${resutlItems.length}  --------filteredSearch result ---- ${_filteredSearchHistory.length} ---- padding top is ---$paddingTop');
   }
 
   Key _keyScaffold2 = Key('scaffold2');
 
   @override
   Widget build(BuildContext context) {
-    // return FutureBuilder(
-    //     future: Hive.openBox<String>('searchHistory'),
-    //     builder: (context, snapshot) {
-    //       if (snapshot.connectionState == ConnectionState.done) {
-    //         if (snapshot.hasData) {
-    //           _box_searchHistory = snapshot.data;
-    //           _searchHistory.clear();
-    //           for (var i = 0; i < _box_searchHistory.length; i++) {
-    //             String s = _box_searchHistory.getAt(i);
-    //             _searchHistory.add(s);
-    //             // GlobalContext.searchItems.add(s);
-    //           }
-    //           return _buildSearchScreenScaffold(context, _keyScaffold2);
-    //         }
-    //       }
-    //       return _buildSearchScreenScaffold(context, _keyScaffold2);
-    //     });
-
-    // context.watch<SearchHistoryProvider>().getSearchItem();
-    // return Consumer<SearchHistoryProvider>(builder: (context, model, widget) {
-    //   if (model.searchList != null) {
-    //     // _box_searchHistory = model.searchList;
-    //     _searchHistory.clear();
-    //     for (var i = 0; i < model.searchList.length; i++) {
-    //       String s = model.searchList[i];
-    //       _searchHistory.add(s);
-    //       // GlobalContext.searchItems.add(s);
-    //     }
-    //     print('search items added {$k++}');
-    //     return _buildSearchScreenScaffold(context, _keyScaffold2);
-    //   }
-    //   return _buildSearchScreenScaffold(context, _keyScaffold2);
-    // });
-
-    return _buildSearchScreenScaffold(context, _keyScaffold2);
+    context.watch<SearchHistoryProvider>().getSearchItem();
+    return Consumer<SearchHistoryProvider>(builder: (context, model, widget) {
+      if (model.searchList != null) {
+        return _buildSearchScreenScaffold(context, _keyScaffold2);
+      }
+      return _buildSearchScreenScaffold(context, _keyScaffold2);
+    });
   }
 
   Scaffold _buildSearchScreenScaffold(BuildContext context, Key scaffoldKey) {
@@ -262,7 +190,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
           FloatingSearchBarAction.searchToClear(),
         ],
         onFocusChanged: (status) {
-          print('on focus changed status-- $status');
+          // print('on focus changed status-- $status');
           setState(() {
             _isSearchBarActive = status;
           });
@@ -359,7 +287,8 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
                               ),
                               onTap: () {
                                 setState(() {
-                                  putSearchTermFirst(term);
+                                  // putSearchTermFirst(term);
+                                  addSearchTerm(term);
                                   selectedTerm = term;
                                 });
                                 controller.close();

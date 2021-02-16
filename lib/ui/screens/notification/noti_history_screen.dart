@@ -40,7 +40,8 @@ class _NotificationHistoryScreenWidgetState
   void initState() {
     UIHelper.setStatusBarColor(color: Colors.white);
     Future.delayed(Duration.zero).then((_) {
-      UserProvider userProvider = Provider.of<UserProvider>(context);
+      UserProvider userProvider =
+          Provider.of<UserProvider>(context, listen: false);
       userProvider.getNotifications();
     });
     super.initState();
@@ -89,268 +90,276 @@ class _NotificationHistoryScreenWidgetState
       parseNotificationsCallCout++;
     }
 
-    return Container(
-        decoration: BoxDecoration(
-            // gradient: profileGradient,
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8)),
-        child: Stack(
-          children: <Widget>[
-            CustomScrollView(
-              slivers: <Widget>[
-                _startSpace(),
-                len > 0
-                    ? SliverList(
-                        delegate: SliverChildBuilderDelegate((context, index) {
-                          ServerNotification fcmNotification =
-                              notificationList[index];
+    return Material(
+      child: Container(
+          decoration: BoxDecoration(
+              // gradient: profileGradient,
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8)),
+          child: Stack(
+            children: <Widget>[
+              CustomScrollView(
+                slivers: <Widget>[
+                  _startSpace(),
+                  len > 0
+                      ? SliverList(
+                          delegate:
+                              SliverChildBuilderDelegate((context, index) {
+                            ServerNotification fcmNotification =
+                                notificationList[index];
 
-                          String notiMsg = fcmNotification.title;
-                          String requestStatus = fcmNotification.data.status;
-                          String notificationType = fcmNotification.message;
+                            String notiMsg = fcmNotification.title;
+                            String requestStatus = fcmNotification.data.status;
+                            String notificationType = fcmNotification.message;
 
-                          String ownerID = fcmNotification.data.user.id;
+                            String ownerID = fcmNotification.data.user.id;
 
-                          String currentUserID =
-                              userProvider.authenticatedUser.userID;
+                            String currentUserID =
+                                userProvider.authenticatedUser.userID;
 
-                          String oceanBuilderId =
-                              fcmNotification.data.seaPod.id;
+                            String oceanBuilderId =
+                                fcmNotification.data.seaPod.id;
 
-                          String oceanBuilderName =
-                              fcmNotification.data.seaPod.name;
-                          List<UserOceanBuilder> uobList =
-                              new List<UserOceanBuilder>.from(userProvider
-                                  .authenticatedUser.userOceanBuilder);
-                          bool _isUobExists = false;
-                          if (oceanBuilderId != null) {
-                            uobList.retainWhere((uob) {
-                              return uob.oceanBuilderId
-                                  .contains(oceanBuilderId);
-                            });
-                            _isUobExists = uobList.length == 1 &&
-                                uobList[0]
-                                    .reqStatus
-                                    .contains(NotificationConstants.initiated);
-                          }
+                            String oceanBuilderName =
+                                fcmNotification.data.seaPod.name;
+                            List<UserOceanBuilder> uobList =
+                                new List<UserOceanBuilder>.from(userProvider
+                                    .authenticatedUser.userOceanBuilder);
+                            bool _isUobExists = false;
+                            if (oceanBuilderId != null) {
+                              uobList.retainWhere((uob) {
+                                return uob.oceanBuilderId
+                                    .contains(oceanBuilderId);
+                              });
+                              _isUobExists = uobList.length == 1 &&
+                                  uobList[0].reqStatus.contains(
+                                      NotificationConstants.initiated);
+                            }
 
-                          DateTime dateTime =
-                              new DateTime.fromMicrosecondsSinceEpoch(
-                                  fcmNotification.data.checkIn);
-                          String formatedDateTime =
-                              DateFormat('yyyy-MM-dd  HH:mm:ss a')
-                                  .format(dateTime);
+                            DateTime dateTime =
+                                new DateTime.fromMicrosecondsSinceEpoch(
+                                    fcmNotification.data.checkIn);
+                            String formatedDateTime =
+                                DateFormat('yyyy-MM-dd  HH:mm:ss a')
+                                    .format(dateTime);
 
-                          return InkWell(
-                            onTap: () async {
-                              //show cancel pop up if not responded yet
-                              if (_isUobExists &&
-                                  notificationType.contains(
-                                      NotificationConstants.request) &&
-                                  requestStatus.contains(
-                                      NotificationConstants.initiated) &&
-                                  !ownerID.contains(currentUserID)) {
-                                _showCancelAlert(userProvider, oceanBuilderId,
-                                    oceanBuilderName);
-                                fcmNotification.seen = true;
-                                await userProvider.updateNotificationReadStatus(
-                                    fcmNotification.id);
-                                // await userProvider.autoLogin();
-                                MethodHelper.parseNotifications(context);
-                              } else if (notificationType
-                                  .contains(NotificationConstants.request)) {
-                                fcmNotification.seen = true;
-                                debugPrint(
-                                    'reqeusting notification seen status --- ${fcmNotification.toJson().toString()}');
-                                await userProvider.updateNotificationReadStatus(
-                                    fcmNotification.id);
-                                // await userProvider.autoLogin();
-                                MethodHelper.parseNotifications(context);
+                            return InkWell(
+                              onTap: () async {
+                                //show cancel pop up if not responded yet
+                                if (_isUobExists &&
+                                    notificationType.contains(
+                                        NotificationConstants.request) &&
+                                    requestStatus.contains(
+                                        NotificationConstants.initiated) &&
+                                    !ownerID.contains(currentUserID)) {
+                                  _showCancelAlert(userProvider, oceanBuilderId,
+                                      oceanBuilderName);
+                                  fcmNotification.seen = true;
+                                  await userProvider
+                                      .updateNotificationReadStatus(
+                                          fcmNotification.id);
+                                  // await userProvider.autoLogin();
+                                  MethodHelper.parseNotifications(context);
+                                } else if (notificationType
+                                    .contains(NotificationConstants.request)) {
+                                  fcmNotification.seen = true;
+                                  debugPrint(
+                                      'reqeusting notification seen status --- ${fcmNotification.toJson().toString()}');
+                                  await userProvider
+                                      .updateNotificationReadStatus(
+                                          fcmNotification.id);
+                                  // await userProvider.autoLogin();
+                                  MethodHelper.parseNotifications(context);
 
-                                userProvider
-                                    .getAccessRequest(fcmNotification.data.id)
-                                    .then((accessRequest) {
-                                  if (accessRequest != null) {
-                                    accessRequest.reqMessage =
-                                        fcmNotification.title;
+                                  userProvider
+                                      .getAccessRequest(fcmNotification.data.id)
+                                      .then((accessRequest) {
+                                    if (accessRequest != null) {
+                                      accessRequest.reqMessage =
+                                          fcmNotification.title;
 
-                                    accessRequest.accesEventType =
-                                        'Access Request';
-                                    // debugPrint('access request fetched from server -==------------------------------------ ${accessRequest.id}');
+                                      accessRequest.accesEventType =
+                                          'Access Request';
+                                      // debugPrint('access request fetched from server -==------------------------------------ ${accessRequest.id}');
 
-                                    Navigator.of(
-                                            GlobalContext.currentScreenContext)
-                                        .pushNamed(
-                                            GuestRequestResponseScreen
-                                                .routeName,
-                                            arguments: accessRequest);
-                                  }
-                                });
-                              } else if (notificationType
-                                  .contains(NotificationConstants.invitation)) {
-                                fcmNotification.seen = true;
-                                await userProvider.updateNotificationReadStatus(
-                                    fcmNotification.id);
-                                // await userProvider.resetAuthenticatedUser(userProvider.authenticatedUser.userID);
-                                //  await userProvider.autoLogin();
-                                MethodHelper.parseNotifications(context);
+                                      Navigator.of(GlobalContext
+                                              .currentScreenContext)
+                                          .pushNamed(
+                                              GuestRequestResponseScreen
+                                                  .routeName,
+                                              arguments: accessRequest);
+                                    }
+                                  });
+                                } else if (notificationType.contains(
+                                    NotificationConstants.invitation)) {
+                                  fcmNotification.seen = true;
+                                  await userProvider
+                                      .updateNotificationReadStatus(
+                                          fcmNotification.id);
+                                  // await userProvider.resetAuthenticatedUser(userProvider.authenticatedUser.userID);
+                                  //  await userProvider.autoLogin();
+                                  MethodHelper.parseNotifications(context);
 
-                                userProvider
-                                    .getAccessRequest(fcmNotification.data.id)
-                                    .then((accessRequest) {
-                                  if (accessRequest != null) {
-                                    accessRequest.reqMessage =
-                                        fcmNotification.title;
+                                  userProvider
+                                      .getAccessRequest(fcmNotification.data.id)
+                                      .then((accessRequest) {
+                                    if (accessRequest != null) {
+                                      accessRequest.reqMessage =
+                                          fcmNotification.title;
 
-                                    accessRequest.accesEventType =
-                                        'Access Invitation';
+                                      accessRequest.accesEventType =
+                                          'Access Invitation';
 
-                                    // debugPrint('access request fetched from server -==------------------------------------ ${accessRequest.id}');
+                                      // debugPrint('access request fetched from server -==------------------------------------ ${accessRequest.id}');
 
-                                    Navigator.of(
-                                            GlobalContext.currentScreenContext)
-                                        .pushNamed(
-                                            InvitationResponseScreen.routeName,
-                                            arguments: accessRequest);
-                                  }
-                                });
+                                      Navigator.of(GlobalContext
+                                              .currentScreenContext)
+                                          .pushNamed(
+                                              InvitationResponseScreen
+                                                  .routeName,
+                                              arguments: accessRequest);
+                                    }
+                                  });
 
-                                // Navigator.of(context).pushNamed(
-                                //     InvitationResponseScreen.routeName,
-                                //     arguments: fcmNotification);
+                                  // Navigator.of(context).pushNamed(
+                                  //     InvitationResponseScreen.routeName,
+                                  //     arguments: fcmNotification);
 
-                              }
-                            },
-                            child: Container(
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: 8.0, vertical: 4.0),
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 8.0, horizontal: 8),
-                              // decoration: UIHelper.customDecoration(
-                              // 2, 12, ColorConstants.TOP_CLIPPER_END.withOpacity(.4),bkgColor: ColorConstants.TOP_CLIPPER_START),
-                              child: Column(
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Column(
-                                        children: <Widget>[_imageSeapod()],
-                                      ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 8, right: 8, bottom: 8),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.stretch,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: <Widget>[
-                                                  Expanded(
-                                                    child: _timeStamp(
-                                                        formatedDateTime),
-                                                  ),
-                                                  InkWell(
-                                                      onTap: () async {
-                                                        if (_updatingNotification)
-                                                          return;
-                                                        bool internetStatus =
-                                                            await DataConnectionChecker()
-                                                                .hasConnection;
-                                                        if (!internetStatus) {
-                                                          displayInternetInfoBar(
-                                                              context,
-                                                              AppStrings
-                                                                  .noInternetConnectionTryAgain);
-                                                          return;
-                                                        }
+                                }
+                              },
+                              child: Container(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 4.0),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 8.0, horizontal: 8),
+                                // decoration: UIHelper.customDecoration(
+                                // 2, 12, ColorConstants.TOP_CLIPPER_END.withOpacity(.4),bkgColor: ColorConstants.TOP_CLIPPER_START),
+                                child: Column(
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Column(
+                                          children: <Widget>[_imageSeapod()],
+                                        ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 8, right: 8, bottom: 8),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.stretch,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: <Widget>[
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: <Widget>[
+                                                    Expanded(
+                                                      child: _timeStamp(
+                                                          formatedDateTime),
+                                                    ),
+                                                    InkWell(
+                                                        onTap: () async {
+                                                          if (_updatingNotification)
+                                                            return;
+                                                          bool internetStatus =
+                                                              await DataConnectionChecker()
+                                                                  .hasConnection;
+                                                          if (!internetStatus) {
+                                                            displayInternetInfoBar(
+                                                                context,
+                                                                AppStrings
+                                                                    .noInternetConnectionTryAgain);
+                                                            return;
+                                                          }
 
-                                                        _updatingNotification =
-                                                            true;
-                                                        // debugPrint(
-                                                        // '_updatingNotification -- $_updatingNotification');
-                                                        // debugPrint(
-                                                        // 'read/unread');
-                                                        // await userProvider
-                                                        //     .autoLogin();
+                                                          _updatingNotification =
+                                                              true;
+                                                          // debugPrint(
+                                                          // '_updatingNotification -- $_updatingNotification');
+                                                          // debugPrint(
+                                                          // 'read/unread');
+                                                          // await userProvider
+                                                          //     .autoLogin();
 
-                                                        await userProvider
-                                                            .updateNotificationReadStatus(
-                                                                fcmNotification
-                                                                    .id);
+                                                          await userProvider
+                                                              .updateNotificationReadStatus(
+                                                                  fcmNotification
+                                                                      .id);
 
-                                                        MethodHelper
-                                                            .parseNotifications(
-                                                                context);
-                                                        if (mounted) {
-                                                          setState(() {
-                                                            _updatingNotification =
-                                                                false;
-                                                            // debugPrint(
-                                                            // '_updatingNotification -- $_updatingNotification');
-                                                            // debugPrint(
-                                                            // 'rebuild noti history widget');
-                                                          });
-                                                        }
-                                                      },
-                                                      child: ImageIcon(
-                                                        AssetImage(fcmNotification
-                                                                        .seen !=
-                                                                    null &&
-                                                                fcmNotification
-                                                                    .seen
-                                                            ? ImagePaths.icRead
-                                                            : ImagePaths
-                                                                .icUnread),
-                                                        color: _updatingNotification
-                                                            ? Colors.grey
-                                                            : ColorConstants
-                                                                .COLOR_NOTIFICATION_BUBBLE, //Color(0xFF064390),
-                                                        size: 15.0,
-                                                      )),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 8,
-                                              ),
-                                              _notiMesssage(notiMsg),
-                                              SizedBox(
-                                                height: 8,
-                                              ),
-                                              _notiType(notificationType),
-                                              // Text('Status: $requestStatus'),
-                                            ],
+                                                          MethodHelper
+                                                              .parseNotifications(
+                                                                  context);
+                                                          if (mounted) {
+                                                            setState(() {
+                                                              _updatingNotification =
+                                                                  false;
+                                                              // debugPrint(
+                                                              // '_updatingNotification -- $_updatingNotification');
+                                                              // debugPrint(
+                                                              // 'rebuild noti history widget');
+                                                            });
+                                                          }
+                                                        },
+                                                        child: ImageIcon(
+                                                          AssetImage(fcmNotification
+                                                                          .seen !=
+                                                                      null &&
+                                                                  fcmNotification
+                                                                      .seen
+                                                              ? ImagePaths
+                                                                  .icRead
+                                                              : ImagePaths
+                                                                  .icUnread),
+                                                          color: _updatingNotification
+                                                              ? Colors.grey
+                                                              : ColorConstants
+                                                                  .COLOR_NOTIFICATION_BUBBLE, //Color(0xFF064390),
+                                                          size: 15.0,
+                                                        )),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: 8,
+                                                ),
+                                                _notiMesssage(notiMsg),
+                                                SizedBox(
+                                                  height: 8,
+                                                ),
+                                                _notiType(notificationType),
+                                                // Text('Status: $requestStatus'),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  _dividerH4()
-                                ],
+                                      ],
+                                    ),
+                                    _dividerH4()
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        }, childCount: len),
-                      )
-                    : _textNoNotification(),
-                _endSpace(),
-              ],
-            ),
-            _topBar()
-          ],
-        )
-        // ),
-        );
+                            );
+                          }, childCount: len),
+                        )
+                      : _textNoNotification(),
+                  _endSpace(),
+                ],
+              ),
+              _topBar()
+            ],
+          )
+          // ),
+          ),
+    );
   }
 
   Positioned _topBar() {
