@@ -3,6 +3,7 @@ import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/search_item.dart';
 import 'package:ocean_builder/core/providers/selected_history_provider.dart';
+import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:ocean_builder/search/appSearchScreen.dart';
 import 'package:ocean_builder/search/search_utils.dart';
 import 'package:ocean_builder/search/selected_items.dart';
@@ -121,8 +122,16 @@ class SearchResultsListView extends StatelessWidget {
             _selectedAppItemProvider.getSelectedItem();
             navigateTo(context, resutlItems[index]);
           },
-          title: Text('${resutlItems[index].name}'),
-          subtitle: Text('${resutlItems[index].shortDesc}'),
+          title: Text(
+            '${resutlItems[index].name}',
+            style: AppTheme.title.apply(
+                color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
+                fontWeightDelta: 0),
+          ),
+          subtitle: Text('${resutlItems[index].shortDesc}',
+              style: AppTheme.subtitle.apply(
+                  color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
+                  fontWeightDelta: 0)),
         ),
       ),
     );

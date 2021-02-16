@@ -33,9 +33,11 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
 
   double paddingTop = 0;
 
-  Box _boxSearchHistory;
+  // Box _boxSearchHistory;
 
   var k = 0;
+
+  SearchHistoryProvider _searchHistoryProvider;
 
   List<String> filterSearchTerms({
     @required String filter,
@@ -52,7 +54,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
 
   void addSearchTerm(String term) {
     if (term != null && term.isEmpty) return;
-    _boxSearchHistory.add(term);
+    _searchHistoryProvider.addSearchItem(term);
     if (_searchHistory.contains(term)) {
       putSearchTermFirst(term);
       return;
@@ -82,14 +84,14 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
     _searchHistory.removeWhere((t) => t == term);
     _filteredSearchHistory = filterSearchTerms(filter: null);
 
-    // int deletIndex = 0;
-    // for (var i = 0; i < _box_searchHistory.length; i++) {
-    //   String s = _box_searchHistory.getAt(i);
-    //   if (s.compareTo(term) == 0) {
-    //     deletIndex = i;
-    //   }
-    // }
-    _boxSearchHistory.delete(term);
+    int deletIndex = 0;
+    for (var i = 0; i < _searchHistoryProvider.searchList.length; i++) {
+      String s = _searchHistoryProvider.searchList[i];
+      if (s.compareTo(term) == 0) {
+        deletIndex = i;
+      }
+    }
+    _searchHistoryProvider.deleteSearchItem(deletIndex);
   }
 
   void putSearchTermFirst(String term) {
@@ -114,15 +116,15 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
 
   @override
   void didChangeDependencies() {
-    Hive.openBox<String>('searchHistory').then((box) {
-      // box.clear();
-      _boxSearchHistory = box;
-    });
+    // Hive.openBox<String>('searchHistory').then((box) {
+    //   // box.clear();
+    //   _boxSearchHistory = box;
+    // });
     // _futureSearchHistoryBox = Hive.openBox<String>('searchHistory');
 
     _appItems = GlobalContext.appItems;
     // _searchHistory = GlobalContext.searchItems;
-    var _searchHistoryProvider =
+    _searchHistoryProvider =
         Provider.of<SearchHistoryProvider>(context, listen: false);
     List<String> _list = _searchHistoryProvider.searchList;
     // print('list SearchItem-----------------  ${_list.length}');
@@ -137,7 +139,8 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
     // _blocPadding.dispose();
     print(
         'search history length before disposing ------ ${_searchHistory.length}');
-    print('_box_searchHistory length --- ${_boxSearchHistory.length}');
+    print(
+        '_box_searchHistory length --- ${_searchHistoryProvider.searchList.length}');
     // _box_searchHistory.close();
     super.dispose();
   }
@@ -221,6 +224,9 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
             right: 8.w),
         // AppTheme.notWhite, // ColorConstants.COLOR_NOTIFICATION_DIVIDER,
         controller: controller,
+        height: 40,
+
+        insets: EdgeInsets.symmetric(horizontal: 4.0),
         body: SearchResultsListView(
           searchTerm: selectedTerm,
           // appItems: _appItems,
@@ -229,7 +235,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
         ),
         backgroundColor: AppTheme.nearlyWhite,
         iconColor: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
-        // borderRadius: BorderRadius.circular(64.w),
+        borderRadius: BorderRadius.circular(8),
         border: BorderSide(
             color: ColorConstants.COLOR_NOTIFICATION_DIVIDER, width: 1),
         transition: CircularFloatingSearchBarTransition(),
@@ -238,14 +244,19 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
         physics: BouncingScrollPhysics(),
         title: Text(
           selectedTerm ?? 'Search within app',
-          style: Theme.of(context).textTheme.headline6.apply(
-              color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
-              fontWeightDelta: 0),
+          style: Theme.of(context)
+              .textTheme
+              .bodyText1
+              .apply(color: ColorConstants.COLOR_NOTIFICATION_DIVIDER),
         ),
+        scrollPadding: EdgeInsets.all(0),
         hint: 'Search and find out...',
-        hintStyle: Theme.of(context).textTheme.headline6.apply(
-            color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
-            fontWeightDelta: 0),
+        hintStyle: Theme.of(context).textTheme.bodyText1.apply(
+              color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
+            ),
+        queryStyle: Theme.of(context).textTheme.bodyText1.apply(
+              color: ColorConstants.TOP_CLIPPER_END_DARK,
+            ),
         // height: 32,
         actions: [
           FloatingSearchBarAction.searchToClear(),
@@ -272,13 +283,15 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
         isScrollControlled: false,
         builder: (context, transition) {
           return ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(8),
+                bottomRight: Radius.circular(8)),
             child: Material(
               borderOnForeground: true,
               // borderRadius: BorderRadius.circular(8),
               shadowColor: ColorConstants.TOP_CLIPPER_END_DARK,
               color: ColorConstants.AVATAR_BKG,
-              elevation: 4,
+              // elevation: 4,
               child: Builder(
                 builder: (context) {
                   if (_filteredSearchHistory.isEmpty &&
@@ -305,7 +318,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
                             fontWeightDelta: 0),
                       ),
                       leading: const Icon(Icons.search,
-                          color: ColorConstants.TOP_CLIPPER_END_DARK),
+                          color: ColorConstants.COLOR_NOTIFICATION_DIVIDER),
                       onTap: () {
                         setState(() {
                           addSearchTerm(controller.query);
@@ -321,6 +334,7 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
                       children: _filteredSearchHistory
                           .map(
                             (term) => ListTile(
+                              contentPadding: EdgeInsets.only(left: 8),
                               title: Text(
                                 term,
                                 maxLines: 1,
@@ -331,10 +345,12 @@ class _AppSearchScreenState extends State<AppSearchScreen> {
                                     fontWeightDelta: 0),
                               ),
                               leading: const Icon(Icons.history,
-                                  color: ColorConstants.TOP_CLIPPER_END_DARK),
+                                  color: ColorConstants
+                                      .COLOR_NOTIFICATION_DIVIDER),
                               trailing: IconButton(
                                 icon: const Icon(Icons.clear,
-                                    color: ColorConstants.TOP_CLIPPER_END_DARK),
+                                    color: ColorConstants
+                                        .COLOR_NOTIFICATION_DIVIDER),
                                 onPressed: () {
                                   setState(() {
                                     deleteSearchTerm(term);

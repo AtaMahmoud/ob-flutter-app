@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/search_item.dart';
@@ -31,11 +32,15 @@ class SelectHistory extends StatelessWidget {
       padding: EdgeInsets.only(left: 4, right: 4),
       child: ActionChip(
         label: Text(item.name),
-        labelStyle: TextStyle(
-            fontSize: AppTheme.subtitle.fontSize,
-            // fontWeight: FontWeight.w800,
-            // letterSpacing: util.setSp(2),
-            color: ColorConstants.COLOR_NOTIFICATION_DIVIDER),
+        padding: EdgeInsets.all(0),
+        labelStyle: Theme.of(_context).textTheme.bodyText1.apply(
+              color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
+            ),
+        // TextStyle(
+        //     fontSize: 12,
+        //     // fontWeight: FontWeight.w800,
+        //     // letterSpacing: util.setSp(2),
+        //     color: ColorConstants.COLOR_NOTIFICATION_DIVIDER),
         autofocus: false,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(64.w),
@@ -54,45 +59,93 @@ class SelectHistory extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _context = context;
     var _selectedAppItemProvider =
         Provider.of<SelectedHistoryProvider>(context, listen: false);
     _context = context;
     List<SearchItem> _list = _selectedAppItemProvider.selctedList;
     return Stack(
       children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 2),
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  children: _buildChoiceList(_list),
-                ),
-              ],
-            ),
-          ),
-        ),
+        // Padding(
+        //   padding: EdgeInsets.symmetric(horizontal: 2),
+        //   child: SingleChildScrollView(
+        //     controller: _scrollController,
+        //     scrollDirection: Axis.horizontal,
+        //     child: Row(
+        //       children: [
+        //         Wrap(
+        //           alignment: WrapAlignment.center,
+        //           children: _buildChoiceList(_list),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             InkWell(
-              child: Icon(Icons.arrow_left,
-                  size: 48, color: ColorConstants.TOP_CLIPPER_END_DARK),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.elliptical(16, 16),
+                  bottomLeft: Radius.elliptical(16, 16)),
+              splashColor: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
+              highlightColor: Colors.transparent,
+              child: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: SvgPicture.asset(
+                  ImagePaths.svgBack,
+                  color: ColorConstants.TOP_CLIPPER_END_DARK,
+                ),
+              ),
+              // Icon(Icons.arrow_left,
+              //     size: 48, color: ColorConstants.TOP_CLIPPER_END_DARK),
               onTap: () {
-                _scrollController.animateTo(-24,
-                    duration: Duration(microseconds: 3), curve: Curves.linear);
+                _scrollController.animateTo(
+                    _scrollController.position.maxScrollExtent,
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.linear);
               },
             ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 2),
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        children: _buildChoiceList(_list),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
             InkWell(
-              child: Icon(Icons.arrow_right,
-                  size: 48, color: ColorConstants.TOP_CLIPPER_END_DARK),
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.elliptical(16, 16),
+                  bottomRight: Radius.elliptical(16, 16)),
+              splashColor: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
+              highlightColor: Colors.transparent,
+              child: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: SvgPicture.asset(
+                  ImagePaths.svgNext,
+                  color: ColorConstants.TOP_CLIPPER_END_DARK,
+                  // width: 24,
+                  // height: 24,
+                ),
+              ),
+              // Icon(Icons.arrow_right,
+              // size: 48, color: ColorConstants.TOP_CLIPPER_END_DARK),
               onTap: () {
-                _scrollController.animateTo(24,
-                    duration: Duration(microseconds: 3), curve: Curves.linear);
+                _scrollController.animateTo(
+                    _scrollController.position.minScrollExtent,
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.linear);
               },
             ),
           ],
