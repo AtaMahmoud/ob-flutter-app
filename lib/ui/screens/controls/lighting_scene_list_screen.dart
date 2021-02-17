@@ -749,7 +749,8 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
 
     if (_userSceneChanged) {
       _userProvider
-          .updateAllLightingScene(_userScenes, oceanBuilder.id, 'user')
+          .updateOrderLightingScene(
+              _userScenes.map((e) => e.id).toList(), oceanBuilder.id, 'user')
           .then((f) {
         if (f.status == 200) {
           _userProvider.autoLogin();
@@ -774,7 +775,8 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
 
     if (_seaPodSceneChanged) {
       _userProvider
-          .updateAllLightingScene(_seaPodScenes, oceanBuilder.id, 'seapod')
+          .updateOrderLightingScene(
+              _userScenes.map((e) => e.id).toList(), oceanBuilder.id, 'seapod')
           .then((f) {
         if (f.status == 200) {
           _userProvider.autoLogin();

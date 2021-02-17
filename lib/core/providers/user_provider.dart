@@ -1942,6 +1942,56 @@ class UserProvider extends BaseProvider {
     return responseStatus;
   }
 
+  // ------------------------------------------------------- Update Order of Lighting Scene ( PUT ) --------------------------------------------------------------------
+
+  Future<ResponseStatus> updateOrderLightingScene(
+      List<String> lighScenesId, String seaPodId, String source) async {
+    isLoading = true;
+    notifyListeners();
+    ResponseStatus responseStatus = ResponseStatus();
+    responseStatus.status = 200;
+
+    print('list        ${lighScenesId.toList()}');
+
+    await _headerManager.initalizeAuthenticatedUserHeaders();
+
+    try {
+      final Response lightingSceneUpdateResponse = await _apiBaseHelper.put(
+          url: APP_CONFIG.Config.ORDER_LIGHT_SCENE(seaPodId, source),
+          headers: _headerManager.authUserHeaders,
+          data: lighScenesId.toList());
+
+      if (lightingSceneUpdateResponse != null &&
+          lightingSceneUpdateResponse.statusCode == 200) {
+        // debugPrint('Update All Lighting Scenes data ----------- $lightingSceneUpdateResponse');
+        responseStatus.status = 200;
+      } else {
+        responseStatus.code = 'Update Lighting Scenes Order Failed';
+        responseStatus.message = lightingSceneUpdateResponse.statusMessage;
+        responseStatus.status = lightingSceneUpdateResponse.statusCode;
+        // debugPrint(
+        // 'Update All Lighting Scenes error ============================== $responseStatus');
+      }
+    } on FetchDataException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Update Lighting Scenes Order Failed';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+      // debugPrint(
+      // 'Update All Lighting Scenes error ============================== ${ea.message}');
+    } on BadRequestException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Update Lighting Scenes Order Failed';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+    }
+
+    isLoading = false;
+    notifyListeners();
+
+    return responseStatus;
+  }
+
   // ------------------------------------------------------- Delete Lighting Scene ( DELETE ) --------------------------------------------------------------------
 
   Future<ResponseStatus> deleteLightingScene(String lightingSceneId) async {
