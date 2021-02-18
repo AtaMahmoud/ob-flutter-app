@@ -82,13 +82,25 @@ import 'package:ocean_builder/ui/screens/sign_in_up/your_info_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/your_obs_screen.dart';
 
 class InitalizerService extends ChangeNotifier {
-  Future<void> init(Function onDoneInitializing) async {
-    //hive
-    _initializeHive();
+  static bool isInitialized = false;
+  _serviceSingleton({Function onDoneInitializing}) {
+    if (!isInitialized) {
+      _initializeHive();
+      _internetConncetionChecker();
+      onDoneInitializing();
+      isInitialized = true;
+    }
+  }
 
-    // internet conncetion checker
-    _internetConncetionChecker();
-    onDoneInitializing();
+  Future<void> init(Function onDoneInitializing) async {
+    // //hive
+    // _initializeHive();
+
+    // // internet conncetion checker
+    // _internetConncetionChecker();
+    // onDoneInitializing();
+
+    _serviceSingleton(onDoneInitializing: onDoneInitializing);
   }
 
   void _internetConncetionChecker() {

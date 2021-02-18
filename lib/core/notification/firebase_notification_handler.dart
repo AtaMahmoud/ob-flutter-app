@@ -145,7 +145,8 @@ class FirebaseNotifications {
         var messageData = message['data'];
         print('notification data ## -------------- ${messageData}');
 
-        locator<NavigationService>().navigateTo(SplashScreen.routeName);
+        // locator<NavigationService>().navigateTo(SplashScreen.routeName);
+        locator<NavigationService>().navigateToCurrentScreen();
 
         FcmNotification fcmNotificationData = FcmNotification.fromJson(message);
 
