@@ -18,8 +18,6 @@ class SourcePrioritySelectorModal extends StatefulWidget {
 
 class _SourcePrioritySelectorModalState
     extends State<SourcePrioritySelectorModal> {
-  bool _seaPodSceneChanged;
-
   List<String> _seaPodSceneRows = [];
 
   ScreenUtil _util = ScreenUtil();
@@ -135,7 +133,6 @@ class _SourcePrioritySelectorModalState
     setState(() {
       String row = _seaPodSceneRows.removeAt(oldIndex);
       _seaPodSceneRows.insert(newIndex, row);
-      _seaPodSceneChanged = true;
       if (_seaPodSceneRows[0].compareTo('LOCAL (WEATHERFLOW STATION)') == 0) {
         widget.sourcePriorityBloc.topProprityChanged('local');
         ApplicationStatics.selectedWeatherProvider = 'local';

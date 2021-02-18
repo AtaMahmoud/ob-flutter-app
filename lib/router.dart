@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:ocean_builder/core/models/notification.dart';
 import 'package:ocean_builder/core/models/ocean_builder_user.dart';
 import 'package:ocean_builder/core/models/permission.dart';
+import 'package:ocean_builder/search/appSearchScreen.dart';
 import 'package:ocean_builder/map/darksky_map.dart';
 import 'package:ocean_builder/splash/splash_screen.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/access_event_screen.dart';
@@ -81,6 +82,11 @@ class Router {
         // return CupertinoPageRoute(builder: (_) => SplashScreen());
         return PageTransition(
             type: PageTransitionType.fade, child: SplashScreen());
+      case AppSearchScreen.routeName:
+        return CupertinoPageRoute(
+            builder: (_) => AppSearchScreen(),
+            settings: RouteSettings(name: AppSearchScreen.routeName),
+            fullscreenDialog: true);
       case LandingScreen.routeName:
         return CupertinoPageRoute(
             builder: (_) => LandingScreen(),

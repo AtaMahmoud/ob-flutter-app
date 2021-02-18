@@ -9,6 +9,7 @@ import 'package:ocean_builder/core/models/ocean_builder_user.dart';
 import 'package:ocean_builder/core/models/permission.dart';
 import 'package:ocean_builder/core/models/permission.dart';
 import 'package:ocean_builder/core/models/permission.dart';
+import 'package:ocean_builder/core/models/search_item.dart';
 import 'package:ocean_builder/custom_drawer/homeDrawer.dart';
 
 class ColorConstants {
@@ -1250,10 +1251,11 @@ class AppStrings {
 
   static String checkYourInbox = 'Check your inbox';
 
-  static String confirmEmailText1 = 'We have sent you an email with a link that will allow you to finish your account setup.';
+  static String confirmEmailText1 =
+      'We have sent you an email with a link that will allow you to finish your account setup.';
 
-  static String confirmEmailText2 = 'Alternatively, you can enter the code provided in the email here';
-
+  static String confirmEmailText2 =
+      'Alternatively, you can enter the code provided in the email here';
 }
 
 class NotificationConstants {
@@ -1339,6 +1341,11 @@ class GlobalContext {
   static SwiperController swiperController = new SwiperController();
   static int currentScreenIndex = 0;
   static bool isDrawerOpen = false;
+
+  static List<SearchItem> appItems = [];
+  static List<String> searchItems = [];
+
+  // static List<String> selectedItems = [];
 }
 
 class NavigationContext {
@@ -1665,6 +1672,10 @@ List<String> WEATEHR_SOURCE_LIST = [
   'LOCAL (WEATHERFLOW STATION)',
   'EXTERNAL (STORMGLASS)'
 ];
+
+SearchItem SELECTED_SEARCH_ITEM;
+
+// List<App>
 
 /*
 

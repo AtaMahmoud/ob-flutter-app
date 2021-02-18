@@ -50,9 +50,11 @@ class _MarineScreenState extends State<MarineScreen> {
     UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
     Future.delayed(Duration.zero).then((_) {
       _futureWeatherData =
-          Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
+          Provider.of<StormGlassDataProvider>(context, listen: false)
+              .fetchWeatherData();
       _futureTideData =
-          Provider.of<StormGlassDataProvider>(context).fetchTideData();
+          Provider.of<StormGlassDataProvider>(context, listen: false)
+              .fetchTideData();
     });
     currentlySelectedSource = ListHelper.getSourceList()[0];
     _bloc.weatherSourceController.listen((onData) {});

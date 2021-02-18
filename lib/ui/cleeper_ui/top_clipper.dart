@@ -274,7 +274,7 @@ class _TopClipperState extends State<TopClipper> {
   }
 
   _skipLogin() async {
-    String email = 'skiplogin@oceanbuilders.com';
+    String email = 'abdullah@oceanbuilders.com';
     String password = "Asad@123";
 
     bool internetStatus = await DataConnectionChecker().hasConnection;
@@ -283,7 +283,8 @@ class _TopClipperState extends State<TopClipper> {
       return;
     }
 
-    UserProvider userProvider = Provider.of<UserProvider>(context);
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
 
     userProvider.logIn(email, password).then((status) async {
       if (status.status == 200) {
