@@ -748,9 +748,10 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
         await _oceanBuilderProvider.getSeaPod(seaPodId, _userProvider);
 
     if (_userSceneChanged) {
+      List<String> ids = _userScenes.map((e) => e.id).toList();
+      print('source:user ids are --------------- ${ids.length}');
       _userProvider
-          .updateOrderLightingScene(
-              _userScenes.map((e) => e.id).toList(), oceanBuilder.id, 'user')
+          .updateOrderLightingScene(ids, oceanBuilder.id, 'user')
           .then((f) {
         if (f.status == 200) {
           _userProvider.autoLogin();
@@ -774,9 +775,10 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
     }
 
     if (_seaPodSceneChanged) {
+      List<String> ids = _seaPodScenes.map((e) => e.id).toList();
+      print('source:seapod ids are --------------- ${ids.length}');
       _userProvider
-          .updateOrderLightingScene(
-              _userScenes.map((e) => e.id).toList(), oceanBuilder.id, 'seapod')
+          .updateOrderLightingScene(ids, oceanBuilder.id, 'seapod')
           .then((f) {
         if (f.status == 200) {
           _userProvider.autoLogin();
