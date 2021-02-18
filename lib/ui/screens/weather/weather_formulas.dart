@@ -1,4 +1,3 @@
-
 /*
 
 The Feels Like temperature is equal to the Heat Index if the temperature is at or 
@@ -28,32 +27,39 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-double getFeelsLikeTemperature(t,rh,v){
-
+double getFeelsLikeTemperature(t, rh, v) {
   double thi = 0.0;
   double twc = 0.0;
   double feelsLikeTemp = 0.0;
 
-  thi = -42.379 + 2.04901523 * t + 10.1433127 * rh - 0.22475541*t*rh - (6.83783*pow(10, -3)*t*t) - (5.481717 * pow(10, -2)*rh*rh)+(1.22874*pow(10, -3)*t*t*rh)+(8.5282*pow(10, -4)*t*rh*rh)-(1.99*pow(10, -6)*t*t*rh*rh);
-  twc = 35.74 + (0.6215 * t) - ( 35.75 * pow(v, .16)) + (0.4275*t* pow(v, 0.16));
+  thi = -42.379 +
+      2.04901523 * t +
+      10.1433127 * rh -
+      0.22475541 * t * rh -
+      (6.83783 * pow(10, -3) * t * t) -
+      (5.481717 * pow(10, -2) * rh * rh) +
+      (1.22874 * pow(10, -3) * t * t * rh) +
+      (8.5282 * pow(10, -4) * t * rh * rh) -
+      (1.99 * pow(10, -6) * t * t * rh * rh);
+  twc = 35.74 +
+      (0.6215 * t) -
+      (35.75 * pow(v, .16)) +
+      (0.4275 * t * pow(v, 0.16));
 
-  if(t>=80 && rh >=40){
+  if (t >= 80 && rh >= 40) {
     feelsLikeTemp = thi;
-  }else if(t<=50 && v>3){
+  } else if (t <= 50 && v > 3) {
     feelsLikeTemp = twc;
-  }else{
+  } else {
     feelsLikeTemp = t;
   }
 
   return feelsLikeTemp;
-
 }
 
-int getWeatherType(temperature, atmosphericPressure, wind, humidity, precipitation){
-  
-  debugPrint('detect weather type ---- temperature = $temperature\natmosphericPressure = $atmosphericPressure\nwind = $wind\nhumidity = $humidity\nprecipitation = $precipitation\n');
-  
+int getWeatherType(
+    temperature, atmosphericPressure, wind, humidity, precipitation) {
+  // debugPrint('detect weather type ---- temperature = $temperature\natmosphericPressure = $atmosphericPressure\nwind = $wind\nhumidity = $humidity\nprecipitation = $precipitation\n');
+
   return 113;
-
 }
-

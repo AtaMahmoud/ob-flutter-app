@@ -23,7 +23,7 @@ class LocalWeatherDataProvider extends ChangeNotifier {
       _localweatherData = weatherData;
       notifyListeners();
     } catch (e) {
-      print(e.toString());
+      // print(e.toString());
       notifyListeners();
     }
     return weatherData;
@@ -177,7 +177,7 @@ class LocalWeatherDataProvider extends ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
-      print(e.toString());
+      // print(e.toString());
       notifyListeners();
     }
     return stormGlassData;

@@ -3,7 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ocean_builder/bloc/source_priority_bloc.dart';
 import 'package:ocean_builder/constants/constants.dart';
+import 'package:ocean_builder/core/providers/user_provider.dart';
+import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
+import 'package:provider/provider.dart';
 import 'package:reorderables/reorderables.dart';
 
 class SourcePrioritySelectorModal extends StatefulWidget {
@@ -134,11 +137,31 @@ class _SourcePrioritySelectorModalState
       String row = _seaPodSceneRows.removeAt(oldIndex);
       _seaPodSceneRows.insert(newIndex, row);
       if (_seaPodSceneRows[0].compareTo('LOCAL (WEATHERFLOW STATION)') == 0) {
-        widget.sourcePriorityBloc.topProprityChanged('local');
-        ApplicationStatics.selectedWeatherProvider = 'local';
+        _invokeSetWeatherSouceApi(source: 'local').then((success) {
+          if (success) {
+            widget.sourcePriorityBloc.topProprityChanged('local');
+            ApplicationStatics.selectedWeatherProvider = 'local';
+            showInfoBar(
+                "Weather Source Priority Changed",
+                'Weather source is set to LOCAL (WEATHERFLOW STATION)',
+                context);
+          } else {
+            showInfoBar("Weather Source Priority",
+                'Weather source is not changed,try again later', context);
+          }
+        });
       } else {
-        widget.sourcePriorityBloc.topProprityChanged('external');
-        ApplicationStatics.selectedWeatherProvider = 'external';
+        _invokeSetWeatherSouceApi(source: 'external').then((success) {
+          if (success) {
+            widget.sourcePriorityBloc.topProprityChanged('external');
+            ApplicationStatics.selectedWeatherProvider = 'external';
+            showInfoBar("Weather Source Priority Changed",
+                'Weather source is set to EXTERNAL (STORM GLASS)', context);
+          } else {
+            showInfoBar("Weather Source Priority",
+                'Weather source is not changed,try again later', context);
+          }
+        });
       }
     });
   }
@@ -223,5 +246,17 @@ class _SourcePrioritySelectorModalState
         ),
       ],
     );
+  }
+
+  Future<bool> _invokeSetWeatherSouceApi({String source}) async {
+    ResponseStatus responseStatus =
+        await Provider.of<UserProvider>(context).setWeatherSource(source);
+    // .then((responseStat) {
+    if (responseStatus.status == 200) {
+      return true;
+    } else {
+      return false;
+    }
+    // });
   }
 }
