@@ -143,11 +143,15 @@ class _LightingScreenState extends State<LightingScreen> {
     _bloc.lightSceneController.listen((onData) {
       _renameTextController.text = onData;
       // isSeaPodSourceSelected
-      if(_selectedScene == null)
-      isSeaPodSourceSelected = false;
-      else
-      isSeaPodSourceSelected =
-          _selectedScene.source.compareTo('seapod') == 0 ?? false;
+      if (_selectedScene == null)
+        isSeaPodSourceSelected = false;
+      else {
+        debugPrint(
+            ' _selectedScene.source --------------- ${_selectedScene.source}');
+        isSeaPodSourceSelected = _selectedScene.source != null &&
+                _selectedScene.source.compareTo('seapod') == 0 ??
+            false;
+      }
     });
   }
 
@@ -1372,10 +1376,7 @@ class _LightingScreenState extends State<LightingScreen> {
     ];
 
     return new Scene(
-      id: 'idNewScene',
-      name: 'New Scene',
-      rooms: rooms,
-    );
+        id: 'idNewScene', name: 'New Scene', rooms: rooms, source: 'seapod');
   }
 }
 

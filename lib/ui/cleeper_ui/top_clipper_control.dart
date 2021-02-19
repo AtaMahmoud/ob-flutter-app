@@ -36,12 +36,65 @@ class TopClipperControl extends StatefulWidget {
 
 enum DayState { YESTERDAY, TODAY, TOMORROW }
 
-class _TopClipperControlState extends State<TopClipperControl> {
+class _TopClipperControlState extends State<TopClipperControl>
+    with WidgetsBindingObserver {
   var useMobileLayout;
   User _user;
   SelectedOBIdProvider _selectedOBIdProvider;
   OceanBuilderProvider _oceanBuilderProvider;
   UserProvider _userProvider;
+
+  double _top = 100.0;
+  double _bottom = 100.0;
+  double _left = 100.0;
+  double _right = 100.0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    Future.delayed(Duration(seconds: 1)).then((value) {
+      setState(() {
+        _top = _top == 100.0 ? 32.0 : 100.0;
+        _bottom = _bottom == 100.0 ? 32.0 : 100.0;
+        _left = _left == 100.0 ? 0.0 : 100.0;
+        _right = _right == 100.0 ? 0.0 : 100.0;
+      });
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // user returned to app
+      debugPrint('user returned to app');
+    } else if (state == AppLifecycleState.inactive) {
+      // app is inactive
+      debugPrint('app is inactive');
+    } else if (state == AppLifecycleState.paused) {
+      // user is about quit our app temporally
+      debugPrint('user is about quit our app temporally');
+    } else if (state == AppLifecycleState.detached) {
+      // app suspended/ ditachde ? (not used in iOS)
+      debugPrint('app is ditached / suspended');
+    } else if (state == AppLifecycleState.resumed) {
+      // app is resumed
+      debugPrint('app is resumed');
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,70 +117,88 @@ class _TopClipperControlState extends State<TopClipperControl> {
   }
 
   _customContainer() {
-    return Container(
-      height: useMobileLayout
-          ? MediaQuery.of(context).size.height * 0.45
-          : MediaQuery.of(context).size.height * 0.6,
-      decoration: BoxDecoration(gradient: topGradientDark),
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 32.h),
-        child: widget.scaffoldKey != null
-            ? Column(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(16.w, 0.0, 0.0, 32.h),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        InkWell(
-                          onTap: () {
-                            widget.scaffoldKey.currentState.openDrawer();
-                          },
-                          child: Padding(
-                            padding:
-                                EdgeInsets.fromLTRB(32.w, 32.h, 32.w, 32.h),
-                            child: ImageIcon(
-                              AssetImage(ImagePaths.icHamburger),
-                              color: Colors.white,
+    return Stack(
+      children: [
+        Container(
+          height: useMobileLayout
+              ? MediaQuery.of(context).size.height * 0.45
+              : MediaQuery.of(context).size.height * 0.6,
+          decoration: BoxDecoration(gradient: topGradientDark),
+          child: Stack(
+            children: [
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 82.h),
+                  child: widget.scaffoldKey != null
+                      ? Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: <Widget>[
+                            // _topBar(),
+
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                    padding: EdgeInsets.fromLTRB(
+                                      0,
+                                      0,
+                                      32.w,
+                                      0,
+                                    ),
+                                    child: _controlSummaryContainer()),
+                              ],
                             ),
-                          ),
+                          ],
+                        )
+                      : Text(
+                          widget.title.toUpperCase(),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 48.sp,
+                              fontWeight: FontWeight.w400),
                         ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(32.w, 32.h, 0.0, 32.h),
-                          child: Text(
-                            widget.title.toUpperCase(),
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 48.sp,
-                                fontWeight: FontWeight.w400),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Container(
-                          padding: EdgeInsets.fromLTRB(
-                            0,
-                            0,
-                            32.w,
-                            0,
-                          ),
-                          child: _controlSummaryContainer()),
-                    ],
-                  ),
-                ],
-              )
-            : Text(
-                widget.title.toUpperCase(),
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 48.sp,
-                    fontWeight: FontWeight.w400),
+                ),
               ),
+            ],
+          ),
+        ),
+        Positioned(top: 0, left: 0, child: _topBar()),
+      ],
+    );
+  }
+
+  Padding _topBar() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16.w, 0.0, 0.0, 32.h),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          InkWell(
+            onTap: () {
+              widget.scaffoldKey.currentState.openDrawer();
+            },
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(32.w, 32.h, 32.w, 32.h),
+              child: ImageIcon(
+                AssetImage(ImagePaths.icHamburger),
+                color: Colors.white,
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(32.w, 32.h, 0.0, 32.h),
+            child: Text(
+              widget.title.toUpperCase(),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 48.sp,
+                  fontWeight: FontWeight.w400),
+            ),
+          ),
+        ],
       ),
     );
   }

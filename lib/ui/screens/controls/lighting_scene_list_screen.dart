@@ -90,9 +90,11 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
     super.initState();
 
     Future.delayed(Duration.zero).then((_) {
-      _selectedOBIdProvider = Provider.of<SelectedOBIdProvider>(context);
-      _userProvider = Provider.of<UserProvider>(context);
-      _oceanBuilderProvider = Provider.of<OceanBuilderProvider>(context);
+      _selectedOBIdProvider =
+          Provider.of<SelectedOBIdProvider>(context, listen: false);
+      _userProvider = Provider.of<UserProvider>(context, listen: false);
+      _oceanBuilderProvider =
+          Provider.of<OceanBuilderProvider>(context, listen: false);
       _user = _userProvider.authenticatedUser;
 
       _selectedSeaPod = _oceanBuilderProvider.getSeaPod(
