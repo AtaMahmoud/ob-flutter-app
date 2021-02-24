@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -49,13 +50,42 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
 
   SourceListBloc _bloc = SourceListBloc();
 
+  final _controller = ScrollController();
+  bool _showHamburger = true;
+
   @override
   void initState() {
     super.initState();
+    _controller.addListener(() {
+      if (_controller.offset == _controller.position.maxScrollExtent) {
+        if (!_showHamburger) {
+          setState(() {
+            _showHamburger = true;
+          });
+        }
+      } else {
+        if (_showHamburger) {
+          setState(() {
+            _showHamburger = false;
+          });
+        }
+      }
+    });
     _bloc.weatherSourceController.listen((onData) {
       debugPrint(
           '------------- weather soruce change detected in top cliper weather ');
     });
+    // After 1 second, it takes you to the bottom of the ListView
+    Timer(
+      Duration.zero,
+      () => _controller.jumpTo(_controller.position.maxScrollExtent),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -69,169 +99,217 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
         children: <Widget>[
           ClipPath(
               clipper: WeatherTopShapeClipper(), child: _customContainer()),
-          Positioned(
-            left: 32.w,
-            bottom: constraints.maxHeight / 2 * 1 / 8,
-            child: InkWell(
-                onTap: () {
-                  Navigator.of(context).pushNamed(WeatherMoreWidget.routeName);
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.all(
-                        8.w,
-                      ),
-                      child: Text(
-                        'MORE',
-                        style: TextStyle(
-                          color: ColorConstants.SCALE_COLOR_LIGHT,
-                          fontSize: 36.sp,
+          _moreWidget(constraints, context),
+        ],
+      ),
+    );
+  }
+
+  Positioned _moreWidget(BoxConstraints constraints, BuildContext context) {
+    return Positioned(
+      left: 32.w,
+      bottom: constraints.maxHeight / 2 * 1 / 8,
+      child: InkWell(
+          onTap: () {
+            Navigator.of(context).pushNamed(WeatherMoreWidget.routeName);
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.all(
+                  8.w,
+                ),
+                child: Text(
+                  'MORE',
+                  style: TextStyle(
+                    color: ColorConstants.SCALE_COLOR_LIGHT,
+                    fontSize: 36.sp,
+                  ),
+                ),
+              ),
+              SvgPicture.asset(
+                ImagePaths.svgMoreIcon,
+                fit: BoxFit.cover,
+                width: 36.sp,
+                height: 24.sp,
+              ),
+            ],
+          )),
+    );
+  }
+
+  _customContainer() {
+    return Stack(
+      children: [
+        Container(
+          height: useMobileLayout
+              ? MediaQuery.of(context).size.height * 0.55
+              : MediaQuery.of(context).size.height * 0.7,
+          decoration: BoxDecoration(gradient: topGradientDark),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            controller: _controller,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 128.h),
+              child: widget.scaffoldKey != null
+                  ? Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        _topBar(),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            _daysWidget(),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                0.0,
+                                32.h,
+                                32.w,
+                                32.h,
+                              ),
+                              child: _weatherSummeryContainer(),
+                            )
+                          ],
                         ),
-                      ),
-                    ),
-                    SvgPicture.asset(
-                      ImagePaths.svgMoreIcon,
-                      fit: BoxFit.cover,
-                      width: 36.sp,
-                      height: 24.sp,
-                    ),
-                  ],
-                )),
+                      ],
+                    )
+                  : _title(),
+            ),
+          ),
+        ),
+        Positioned(
+            top: 0,
+            left: 0,
+            child: _showHamburger ? _hamburgerOnlyTopBar() : Container()),
+      ],
+    );
+  }
+
+  Text _title() {
+    return Text(
+      widget.title.toUpperCase(),
+      style: TextStyle(
+          color: Colors.white, fontSize: 48.sp, fontWeight: FontWeight.w400),
+    );
+  }
+
+  Padding _daysWidget() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 0.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          InkWell(
+            onTap: () {
+              setState(() {
+                _whichDay = DayState.TODAY;
+
+                _whichDate = DateTime.now();
+              });
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 32.w),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(48.w),
+                  color: _whichDay == DayState.TODAY
+                      ? ColorConstants.WEATHER_HUMIY_CIRCLE
+                      : ColorConstants.WEATHER_BKG_CIRCLE),
+              child: Text(
+                'TODAY'.toUpperCase(),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 48.sp,
+                    fontWeight: _whichDay == DayState.TODAY
+                        ? FontWeight.w900
+                        : FontWeight.w400),
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              setState(() {
+                _whichDay = DayState.TOMORROW;
+
+                _whichDate = DateTime.now().add(Duration(days: 1));
+              });
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 32.w),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(48.w),
+                  color: _whichDay == DayState.TOMORROW
+                      ? ColorConstants.WEATHER_HUMIY_CIRCLE
+                      : ColorConstants.WEATHER_BKG_CIRCLE),
+              child: Text(
+                'TOMORROW'.toUpperCase(),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 48.sp,
+                    fontWeight: _whichDay == DayState.TOMORROW
+                        ? FontWeight.w900
+                        : FontWeight.w400),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  _customContainer() {
-    return Container(
-      height: useMobileLayout
-          ? MediaQuery.of(context).size.height * 0.55
-          : MediaQuery.of(context).size.height * 0.7,
-      decoration: BoxDecoration(gradient: topGradientDark),
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 32.h),
-        child: widget.scaffoldKey != null
-            ? Column(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(16.w, 0.0, 0.0, 32.h),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        InkWell(
-                          onTap: () {
-                            widget.scaffoldKey.currentState.openDrawer();
-                          },
-                          child: Padding(
-                            padding:
-                                EdgeInsets.fromLTRB(32.w, 32.h, 32.w, 32.h),
-                            child: ImageIcon(
-                              AssetImage(ImagePaths.icHamburger),
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(32.w, 32.h, 0.0, 32.h),
-                          child: Text(
-                            widget.title.toUpperCase(),
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 48.sp,
-                                fontWeight: FontWeight.w400),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 0.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: <Widget>[
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  _whichDay = DayState.TODAY;
-                                  _whichDate = DateTime.now();
-                                });
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 16.h, horizontal: 32.w),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(48.w),
-                                    color: _whichDay == DayState.TODAY
-                                        ? ColorConstants.WEATHER_HUMIY_CIRCLE
-                                        : ColorConstants.WEATHER_BKG_CIRCLE),
-                                child: Text(
-                                  'TODAY'.toUpperCase(),
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 48.sp,
-                                      fontWeight: _whichDay == DayState.TODAY
-                                          ? FontWeight.w900
-                                          : FontWeight.w400),
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  _whichDay = DayState.TOMORROW;
-                                  _whichDate =
-                                      DateTime.now().add(Duration(days: 1));
-                                });
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 16.h, horizontal: 32.w),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(48.w),
-                                    color: _whichDay == DayState.TOMORROW
-                                        ? ColorConstants.WEATHER_HUMIY_CIRCLE
-                                        : ColorConstants.WEATHER_BKG_CIRCLE),
-                                child: Text(
-                                  'TOMORROW'.toUpperCase(),
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 48.sp,
-                                      fontWeight: _whichDay == DayState.TOMORROW
-                                          ? FontWeight.w900
-                                          : FontWeight.w400),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                          padding: EdgeInsets.fromLTRB(
-                            0.0,
-                            32.h,
-                            32.w,
-                            32.h,
-                          ),
-                          child: _weatherSummeryContainer()),
-                    ],
-                  ),
-                ],
-              )
-            : Text(
-                widget.title.toUpperCase(),
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 48.sp,
-                    fontWeight: FontWeight.w400),
+  Padding _topBar() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16.w, 0.0, 0.0, 32.h),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          InkWell(
+            onTap: () {
+              widget.scaffoldKey.currentState.openDrawer();
+            },
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(32.w, 32.h, 32.w, 32.h),
+              child: ImageIcon(
+                AssetImage(ImagePaths.icHamburger),
+                color: Colors.white,
               ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(32.w, 32.h, 0.0, 32.h),
+            child: Text(
+              widget.title.toUpperCase(),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 48.sp,
+                  fontWeight: FontWeight.w400),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _hamburgerOnlyTopBar() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16.w, 0.0, 0.0, 32.h),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          InkWell(
+            onTap: () {
+              widget.scaffoldKey.currentState.openDrawer();
+            },
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(32.w, 32.h, 32.w, 32.h),
+              child: ImageIcon(
+                AssetImage(ImagePaths.icHamburger),
+                color: Colors.white,
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -711,10 +789,5 @@ class _TopClipperWeatherState extends State<TopClipperWeather> {
             ),
           ],
         ));
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

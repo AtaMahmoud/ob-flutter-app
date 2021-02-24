@@ -33,8 +33,9 @@ class _WeatherMoreWidgetState extends State<WeatherMoreWidget> {
   void initState() {
     UIHelper.setStatusBarColor(color: Colors.white);
     Future.delayed(Duration.zero).then((_) {
-      _futureWOWWeatherData = Provider.of<StormGlassDataProvider>(context)
-          .fetchNext7DaysWeatherData();
+      _futureWOWWeatherData =
+          Provider.of<StormGlassDataProvider>(context, listen: false)
+              .fetchNext7DaysWeatherData();
     });
     super.initState();
   }
@@ -47,6 +48,10 @@ class _WeatherMoreWidgetState extends State<WeatherMoreWidget> {
   @override
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
+    // if (mounted)
+    _futureWOWWeatherData =
+        Provider.of<StormGlassDataProvider>(context, listen: false)
+            .fetchNext7DaysWeatherData();
     return _mainContent(); //customDrawer(_innerDrawerKey, _mainContent());
   }
 
@@ -178,7 +183,7 @@ class _WeatherMoreWidgetState extends State<WeatherMoreWidget> {
   }
 
   _startSpace() {
-    UIHelper.getTopEmptyContainerWithColor(
+    return UIHelper.getTopEmptyContainerWithColor(
         ScreenUtil.statusBarHeight * 4, Colors.white);
   }
 

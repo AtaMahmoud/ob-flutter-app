@@ -15,6 +15,7 @@ import 'package:ocean_builder/helper/method_helper.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper_2.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
 import 'package:ocean_builder/ui/screens/profile/profile_screen.dart';
+import 'package:ocean_builder/ui/screens/sign_in_up/email_verification_screen.dart';
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
@@ -224,14 +225,29 @@ class _PasswordScreenState extends State<PasswordScreen> {
       userDataProvider.user.password = _password;
     }
 
+    Navigator.of(context).pushNamed(EmailVerificationScreen.routeName,
+        arguments: EmailVerificationData(
+            verificationCode: 'Asad', isDeepLinkData: false));
+
     if (widget.isNewUser) {
       userProvider
           .registrationWithSeaPodCreation(
               userDataProvider.user, designDataProvider.oceanBuilder)
           .then((responseStatus) async {
         if (responseStatus.status == 200) {
-          await MethodHelper.selectOnlyOBasSelectedOB();
-          Navigator.of(context).pushNamed(HomeScreen.routeName);
+          // await MethodHelper.selectOnlyOBasSelectedOB();
+          // Navigator.of(context).pushNamed(HomeScreen.routeName);
+
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EmailVerificationScreen(emailVerificationData: EmailVerificationData(
+            verificationCode: 'Asad', isDeepLinkData: false)),
+                settings:
+                    RouteSettings(name: EmailVerificationScreen.routeName)),
+            (Route<dynamic> route) => false,
+          );
+
         } else {
           showInfoBar(parseErrorTitle(responseStatus.code),
               responseStatus.message, context);
@@ -244,21 +260,49 @@ class _PasswordScreenState extends State<PasswordScreen> {
           .sendAccessReqForNewuser(userDataProvider.user, oceanBuilderId)
           .then((responseStatus) async {
         if (responseStatus.status == 200) {
-          await MethodHelper.selectOnlyOBasSelectedOB();
 
-          if (!(_selectedOBIdProvider.selectedObId
-                  .compareTo(AppStrings.selectOceanBuilder) ==
-              0)) {
-            Navigator.of(context).pushNamed(HomeScreen.routeName);
-          } else {
+
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                  builder: (context) => ProfileScreen(),
-                  settings: RouteSettings(name: ProfileScreen.routeName)),
+                  builder: (context) => EmailVerificationScreen(emailVerificationData: EmailVerificationData(
+            verificationCode: 'Asad', isDeepLinkData: false),),
+                  settings:
+                      RouteSettings(name: EmailVerificationScreen.routeName)),
               (Route<dynamic> route) => false,
             );
-          }
+
+
+
+
+
+          // await MethodHelper.selectOnlyOBasSelectedOB();
+
+
+
+          // if (!(_selectedOBIdProvider.selectedObId
+          //         .compareTo(AppStrings.selectOceanBuilder) ==
+          //     0)) {
+          //   Navigator.of(context).pushNamed(HomeScreen.routeName);
+          // } else {
+          //   // Navigator.pushAndRemoveUntil(
+          //   //   context,
+          //   //   MaterialPageRoute(
+          //   //       builder: (context) => ProfileScreen(),
+          //   //       settings: RouteSettings(name: ProfileScreen.routeName)),
+          //   //   (Route<dynamic> route) => false,
+          //   // );
+
+          //   Navigator.pushAndRemoveUntil(
+          //     context,
+          //     MaterialPageRoute(
+          //         builder: (context) => EmailVerificationScreen(emailVerificationData: EmailVerificationData(
+          //   verificationCode: 'Asad', isDeepLinkData: false),),
+          //         settings:
+          //             RouteSettings(name: EmailVerificationScreen.routeName)),
+          //     (Route<dynamic> route) => false,
+          //   );
+          // }
         } else {
           showInfoBar(parseErrorTitle(responseStatus.code),
               responseStatus.message, context);

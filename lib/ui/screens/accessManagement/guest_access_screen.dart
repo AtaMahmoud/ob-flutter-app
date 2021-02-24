@@ -150,8 +150,11 @@ class _GuestAccessScreenState extends State<GuestAccessScreen> {
   }
 
   _accessFromRow() {
-    _accessRow('Access From', DateFormat('dd/MM/yyyy').format(DateTime.now()),
-        ' Access For', 'accessForValue');
+    return _accessRow(
+        'Access From',
+        DateFormat('dd/MM/yyyy').format(DateTime.now()),
+        ' Access For',
+        'accessForValue');
   }
 
   _nameWidget() {

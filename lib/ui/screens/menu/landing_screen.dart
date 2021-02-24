@@ -143,8 +143,6 @@ class _LandingScreenState extends State<LandingScreen> {
 
 
   _showAddOBDialog(UserProvider userProvider, BuildContext cntxt) {
-    UserDataProvider _userDataProvider = Provider.of<UserDataProvider>(context);
-
     Alert(
       context: cntxt,
       title: '',

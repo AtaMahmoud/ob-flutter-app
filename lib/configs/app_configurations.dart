@@ -1,4 +1,5 @@
 import 'package:ocean_builder/configs/config_reader.dart';
+import 'package:reorderables/generated/i18n.dart';
 
 class Config {
   static const int CONNECTION_TIME_OUT = 10000 * 5;
@@ -12,8 +13,9 @@ class Config {
 
   // openweather map url
 
-  static const String OPEN_WEATHER_MAP_URL = 'https://openweathermap.org/weathermap?basemap=map&cities=true&layer=temperature&lat=9.2589903&lon=-80.259267&zoom=5';
-      // 'https://openweathermap.org/weathermap?basemap=map&cities=true&layer=temperature&lat=30&lon=-20&zoom=5';
+  static const String OPEN_WEATHER_MAP_URL =
+      'https://openweathermap.org/weathermap?basemap=map&cities=true&layer=temperature&lat=9.2589903&lon=-80.259267&zoom=7';
+  // 'https://openweathermap.org/weathermap?basemap=map&cities=true&layer=temperature&lat=30&lon=-20&zoom=5';
   // API links
 
   static const GET_WEATHER_DATA = 'https://api.stormglass.io/v1/weather/point';
@@ -33,16 +35,30 @@ class Config {
 
   // heroku server APIs
   static const LOGIN = 'https://oceanbuilders.herokuapp.com/v1/api/auth';
+
   static const REG_WITH_SEAPOD_CREATION =
       'https://oceanbuilders.herokuapp.com/v1/api/auth';
+
+  static String EMAIL_CONFIRMATION(String token) =>
+      'https://oceanbuilders.herokuapp.com/v1/api/auth/confirmation/$token';
+
+  static const RESEND_CONFIRMATION_CODE =
+      'https://oceanbuilders.herokuapp.com/v1/api/auth/resend';
+
   static const AUTO_LOGIN =
       'https://oceanbuilders.herokuapp.com/v1/api/auth/me';
+
   static const CREATE_NEW_SEAPOD =
       'https://oceanbuilders.herokuapp.com/v1/api/seapods';
+
   static const UPDATE_USER_PROFILE =
       'https://oceanbuilders.herokuapp.com/v1/api/users';
+
   static const UPDATE_USER_PASSWORD =
-      'https://oceanbuilders.herokuapp.com/v1/api/users/password';
+      'https://oceanbuilders.herokuapp.com/v1/api/users/reset';
+
+  static const FORGET_USER_PASSWORD =
+      'https://oceanbuilders.herokuapp.com/v1/api/users/forget';
 
   static String UPDATE_SEAPOD_NAME(String seapodId) =>
       'https://oceanbuilders.herokuapp.com/v1/api/seapods/$seapodId/name';
@@ -72,6 +88,8 @@ class Config {
       'https://oceanbuilders.herokuapp.com/v1/api/access-requests/invitations/$accessReqId/approval';
   static String REJECT_ACCESS_INVITATION(String accessReqId) =>
       'https://oceanbuilders.herokuapp.com/v1/api/access-requests/invitations/$accessReqId/rejection';
+  static String ORDER_LIGHT_SCENE(String seapodId, String source) =>
+      'https://oceanbuilders.herokuapp.com/v1/api/lightining-scenes/order/$seapodId/$source';
   static String CREATE_UPDATE_LIGHT_SCENE(String seaPodId) =>
       'https://oceanbuilders.herokuapp.com/v1/api/lightining-scenes/$seaPodId';
   static String UPDATE_ALL_LIGHT_SCENES(String seaPodId, String source) =>
@@ -94,7 +112,7 @@ class Config {
   static String UPDATE_NOTIFICATION_SEEN_STATUS(String notificationId) =>
       'https://oceanbuilders.herokuapp.com/v1/api/users/notifications/$notificationId';
   static String REMOVE_MEMBER(String seaPodId, String userId) =>
-      ' https://oceanbuilders.herokuapp.com/v1/api/seapods/$seaPodId/users/$userId';
+      'https://oceanbuilders.herokuapp.com/v1/api/seapods/$seaPodId/users/$userId';
   static String CREATE_PERMISSION(String seaPodId) =>
       'https://oceanbuilders.herokuapp.com/v1/api/permissions/$seaPodId';
   static String DELETE_PERMISSION(String seaPodId, String permissionId) =>
@@ -117,6 +135,9 @@ class Config {
 
   static GET_WEATHER_FLOW_DEVICE_OBS_DATA(String deviceId) =>
       'https://swd.weatherflow.com/swd/rest/observations/device/$deviceId';
+
+  static SET_WEATHER_SOURCE(String source) =>
+      'https://oceanbuilders.herokuapp.com/v1/api/users/weatherSource/$source';
 
   // mqtt related
 

@@ -27,6 +27,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  UserProvider _userProvider;
   UserDataProvider _userDataProvider;
   TextEditingController _emailController, _passwordController;
 
@@ -66,7 +67,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
-    final UserProvider userProvider = Provider.of<UserProvider>(context);
+    _userProvider = Provider.of<UserProvider>(context);
     _connectionStatusProvider = Provider.of<ConnectionStatusProvider>(context);
     _userDataProvider = Provider.of<UserDataProvider>(context);
     _selectedOBIdProvider = Provider.of<SelectedOBIdProvider>(context);
@@ -92,14 +93,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               shrinkWrap: true,
               slivers: <Widget>[
                 _startSpace(height),
-                _mainContent(userProvider, context),
+                _mainContent(_userProvider, context),
                 _endSpace(),
               ],
             ),
           ),
         ),
         _topBar(),
-        _bottomBar(userProvider)
+        _bottomBar(_userProvider)
       ],
     ));
   }
@@ -107,33 +108,32 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   SliverList _mainContent(UserProvider userProvider, BuildContext context) {
     return SliverList(
         delegate: SliverChildListDelegate([
-      userProvider.isLoading
-          ? _progressIndicator()
-          : ListView(
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(
-                    top: 64.h,
-                    right: 64.w,
-                    left: 64.w,
-                    bottom: 64.h,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      _textTitle(),
-                      SpaceH48(),
-                      _textSubTitle()
-                    ],
-                  ),
+      Stack(
+        children: [
+          ListView(
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(
+                  top: 64.h,
+                  right: 64.w,
+                  left: 64.w,
+                  bottom: 64.h,
                 ),
-                _inputEmail(context),
-                SpaceH48(),
-                _buttonSendRecoveryMail(),
-              ],
-            )
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[_textTitle(), SpaceH48(), _textSubTitle()],
+                ),
+              ),
+              _inputEmail(context),
+              SpaceH48(),
+              _buttonSendRecoveryMail(),
+            ],
+          ),
+          userProvider.isLoading ? _progressIndicator() : Container()
+        ],
+      )
     ]));
   }
 
@@ -171,22 +171,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               builder: (context, snapshot) {
                 return InkWell(
                   onTap: () {
-                    if (snapshot.hasData && snapshot.data)
-                      showAlertWithOneButton(
-                          title: 'CHECK YOUR INBOX',
-                          desc:
-                              'We have sent an email to ${_emailController.text}, please check your email inbox.',
-                          buttonCallback: () {
-                            Navigator.of(context, rootNavigator: true).pop();
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => LandingScreen()),
-                              (Route<dynamic> route) => false,
-                            );
-                          },
-                          buttonText: 'Ok',
-                          context: GlobalContext.currentScreenContext);
+                    if (snapshot.hasData && snapshot.data) {
+                      _userProvider
+                          .sendPasswordRecoveryMail(_emailController.text)
+                          .then((status) {
+                        if (status.status == 200) {
+                          _showEmailSentMessage();
+                        } else {
+                          String title = parseErrorTitle(status.code);
+                          showInfoBar(title, status.message, context);
+                        }
+                      });
+                    }
                   },
                   child: Container(
                     // height: h,
@@ -274,5 +270,22 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   onBackPressed(UserProvider userProvider) {
     if (userProvider.isLoading) return;
     Navigator.pop(context);
+  }
+
+  _showEmailSentMessage() {
+    showAlertWithOneButton(
+        title: 'CHECK YOUR INBOX',
+        desc:
+            'An email has been sent to ${_emailController.text} with further instructions, please check your inbox.',
+        buttonCallback: () {
+          Navigator.of(context, rootNavigator: true).pop();
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => LandingScreen()),
+            (Route<dynamic> route) => false,
+          );
+        },
+        buttonText: 'Ok',
+        context: GlobalContext.currentScreenContext);
   }
 }

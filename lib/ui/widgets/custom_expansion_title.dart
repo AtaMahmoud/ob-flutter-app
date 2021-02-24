@@ -5,8 +5,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ocean_builder/constants/constants.dart';
-
 
 const Duration _kExpand = Duration(milliseconds: 200);
 
@@ -40,8 +38,8 @@ class CustomExpansionTile extends StatefulWidget {
     this.children = const <Widget>[],
     this.trailing,
     this.initiallyExpanded = false,
-  }) : assert(initiallyExpanded != null),
-       super(key: key);
+  })  : assert(initiallyExpanded != null),
+        super(key: key);
 
   /// A widget to display before the title.
   ///
@@ -73,7 +71,6 @@ class CustomExpansionTile extends StatefulWidget {
   /// The color to display behind the sublist when expanded.
   final Color backgroundColor;
 
-
   /// The color to set as header background
   final Color headerBackgroundColor;
 
@@ -87,10 +84,14 @@ class CustomExpansionTile extends StatefulWidget {
   _CustomExpansionTileState createState() => _CustomExpansionTileState();
 }
 
-class _CustomExpansionTileState extends State<CustomExpansionTile> with SingleTickerProviderStateMixin {
-  static final Animatable<double> _easeOutTween = CurveTween(curve: Curves.easeOut);
-  static final Animatable<double> _easeInTween = CurveTween(curve: Curves.easeIn);
-  static final Animatable<double> _halfTween = Tween<double>(begin: 0.0, end: 0.5);
+class _CustomExpansionTileState extends State<CustomExpansionTile>
+    with SingleTickerProviderStateMixin {
+  static final Animatable<double> _easeOutTween =
+      CurveTween(curve: Curves.easeOut);
+  static final Animatable<double> _easeInTween =
+      CurveTween(curve: Curves.easeIn);
+  static final Animatable<double> _halfTween =
+      Tween<double>(begin: 0.0, end: 0.5);
 
   final ColorTween _borderColorTween = ColorTween();
   final ColorTween _headerColorTween = ColorTween();
@@ -116,11 +117,12 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> with SingleTi
     _borderColor = _controller.drive(_borderColorTween.chain(_easeOutTween));
     _headerColor = _controller.drive(_headerColorTween.chain(_easeInTween));
     _iconColor = _controller.drive(_iconColorTween.chain(_easeInTween));
-    _backgroundColor = _controller.drive(_backgroundColorTween.chain(_easeOutTween));
+    _backgroundColor =
+        _controller.drive(_backgroundColorTween.chain(_easeOutTween));
 
-    _isExpanded = PageStorage.of(context)?.readState(context) ?? widget.initiallyExpanded;
-    if (_isExpanded)
-      _controller.value = 1.0;
+    _isExpanded =
+        PageStorage.of(context)?.readState(context) ?? widget.initiallyExpanded;
+    if (_isExpanded) _controller.value = 1.0;
   }
 
   @override
@@ -136,8 +138,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> with SingleTi
         _controller.forward();
       } else {
         _controller.reverse().then<void>((void value) {
-          if (!mounted)
-            return;
+          if (!mounted) return;
           setState(() {
             // Rebuild without widget.children.
           });
@@ -168,20 +169,19 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> with SingleTi
             textColor: _headerColor.value,
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: new BorderRadius.circular(
-                ScreenUtil().setWidth(16)
-                ),
-            color: widget.headerBackgroundColor 
-              ),
+                  borderRadius:
+                      new BorderRadius.circular(ScreenUtil().setWidth(16)),
+                  color: widget.headerBackgroundColor),
               child: ListTile(
                 onTap: _handleTap,
                 leading: widget.leading,
                 title: widget.title,
                 subtitle: widget.subtitle,
-                trailing: widget.trailing ?? RotationTransition(
-                  turns: _iconTurns,
-                  child: const Icon(Icons.expand_more),
-                ),
+                trailing: widget.trailing ??
+                    RotationTransition(
+                      turns: _iconTurns,
+                      child: const Icon(Icons.expand_more),
+                    ),
               ),
             ),
           ),
@@ -199,16 +199,14 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> with SingleTi
   @override
   void didChangeDependencies() {
     final ThemeData theme = Theme.of(context);
-    _borderColorTween
-      ..end = theme.dividerColor;
+    _borderColorTween..end = theme.dividerColor;
     _headerColorTween
-      ..begin = theme.textTheme.subhead.color
+      ..begin = theme.textTheme.subtitle1.color
       ..end = theme.accentColor;
     _iconColorTween
       ..begin = theme.unselectedWidgetColor
       ..end = theme.accentColor;
-    _backgroundColorTween
-      ..end = widget.backgroundColor;
+    _backgroundColorTween..end = widget.backgroundColor;
     super.didChangeDependencies();
   }
 
@@ -220,6 +218,5 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> with SingleTi
       builder: _buildChildren,
       child: closed ? null : Column(children: widget.children),
     );
-
   }
 }

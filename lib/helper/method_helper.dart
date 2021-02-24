@@ -59,11 +59,13 @@ class MethodHelper {
   }
 
   static parseNotifications(BuildContext context) async {
-    final UserProvider userProvider =
-        Provider.of<UserProvider>(GlobalContext.currentScreenContext);
+    final UserProvider userProvider = Provider.of<UserProvider>(
+        GlobalContext.currentScreenContext,
+        listen: false);
 
     final LocalNotiDataProvider localNotiDataProvider =
-        Provider.of<LocalNotiDataProvider>(GlobalContext.currentScreenContext);
+        Provider.of<LocalNotiDataProvider>(GlobalContext.currentScreenContext,
+            listen: false);
 
     List<ServerNotification> notiList = [];
     List<ServerNotification> unreadRequestAccessNotiList = [];
@@ -103,8 +105,11 @@ class MethodHelper {
         // // debugPrint('notification data -- ${item.data.toJson()}');
         // // debugPrint('notificationType ---- ${item.data.notificationType} -------------requestStatus ------------- ${item.data.requestStatus}' );
         return (item.seen == null || item.seen == false) &&
+            item.data.type != null &&
             item.data.type.compareTo(NotificationConstants.request) == 0 &&
+            item.data.status != null &&
             item.data.status.compareTo(NotificationConstants.initiated) == 0 &&
+            item.data.id != null &&
             item.data.id.compareTo(currentUserID) == 0;
       });
       unReadRequestAccessNotiNo = unreadRequestAccessNotiList.length;
@@ -129,10 +134,12 @@ class MethodHelper {
     print(
         '--------------------------------------  #_# selectOnlyOBasSelectedOB  ---------------------------------------------');
 
-    UserProvider userProvider =
-        Provider.of<UserProvider>(GlobalContext.currentScreenContext);
+    UserProvider userProvider = Provider.of<UserProvider>(
+        GlobalContext.currentScreenContext,
+        listen: false);
     SelectedOBIdProvider selectedOBIdProvider =
-        Provider.of<SelectedOBIdProvider>(GlobalContext.currentScreenContext);
+        Provider.of<SelectedOBIdProvider>(GlobalContext.currentScreenContext,
+            listen: false);
 
     // List<UserOceanBuilder> pendigOceanBuilderList = [];
     List<UserOceanBuilder> myOceanBuilderList = [];
