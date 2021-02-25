@@ -78,7 +78,7 @@ class SmartHomeDataProvider extends ChangeNotifier {
       setAppConnectionState(MQTTAppConnectionState.connecting);
       await _client.connect();
     } catch (e) {
-      print('-------Exception at connecting with : $e');
+      print('-------Exception at connecting to mqtt broker with : $e');
       _client.disconnect();
     }
 
@@ -111,7 +111,7 @@ class SmartHomeDataProvider extends ChangeNotifier {
 
       if (c[0].topic.compareTo("test/leds/status") == 0) {
         setLedStatus(payload);
-      }else if (c[0].topic.compareTo("test/message/status") == 0) {
+      } else if (c[0].topic.compareTo("test/message/status") == 0) {
         setLedStatus(payload);
       } else {
         var topics = c[0].topic.split("/");

@@ -990,8 +990,6 @@ class ImagePaths {
 
   static String svgAlarmLightingDetectedLast3hours =
       'images/lightnig detected last 3 hours.svg';
-
-  static String svgAlarmLightingDetectedLast3hours = 'images/lightnig detected last 3 hours.svg';
   static String svgCountLightingStrike = 'images/lightning strike count.svg';
   static String svgAlarmLightingDistanceDetected =
       'images/lightning distance detected.svg';
@@ -1256,7 +1254,8 @@ class AppStrings {
 
   static String smartHome_local_server = 'Smart Home(Server)';
 
-  static String smartHomeMessage = 'Get latest update\nand control your\nseapod devices';
+  static String smartHomeMessage =
+      'Get latest update\nand control your\nseapod devices';
 
   static String checkYourInbox = 'Check your inbox';
 
