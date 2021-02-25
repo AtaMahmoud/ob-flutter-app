@@ -1,9 +1,9 @@
 import 'dart:io';
-
 import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:ocean_builder/constants/constants.dart';
+import 'package:ocean_builder/core/models/mqtt_setting_item.dart';
 import 'package:ocean_builder/core/models/search_item.dart';
 import 'package:ocean_builder/core/services/locator.dart';
 import 'package:ocean_builder/core/services/navigation_service.dart';
@@ -132,9 +132,12 @@ class InitalizerService extends ChangeNotifier {
     Directory dir = await getExternalStorageDirectory();
     Hive.init(dir.path);
     Hive.registerAdapter(SearchItemAdapter());
+    Hive.registerAdapter(MqttSettingsItemAdapter());
+
     var _box_serachItems = await Hive.openBox<SearchItem>('searchItems');
     var _box_serachHistory = await Hive.openBox<String>('searchHistory');
     // var _box_selectedHistory = await Hive.openBox('selectedHistory');
+
     bool installStatus = await SharedPrefHelper.getFirstInstallStatus();
     if (installStatus) {
       _box_serachItems.addAll(_appItems);

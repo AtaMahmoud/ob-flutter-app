@@ -3,7 +3,6 @@ import 'package:ocean_builder/core/models/weather_flow_data.dart';
 import 'package:ocean_builder/core/models/weather_flow_device_observation.dart';
 import 'package:ocean_builder/helper/api_base_helper.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/intl.dart';
 
 class LocalWeatherDataRepository {
   ApiBaseHelper _apiBaseHelper = ApiBaseHelper();
@@ -14,8 +13,11 @@ class LocalWeatherDataRepository {
 
   final Map<String, dynamic> _deviceParams = {
     "api_key": Config.WEATHER_FLOW_API_KEY,
-    "time_start": (DateTime.now().subtract(Duration(days: 5)).millisecondsSinceEpoch/1000).toInt(),
-    "time_end": (DateTime.now().millisecondsSinceEpoch/1000).toInt(),
+    "time_start":
+        (DateTime.now().subtract(Duration(days: 5)).millisecondsSinceEpoch /
+                1000)
+            .toInt(),
+    "time_end": (DateTime.now().millisecondsSinceEpoch / 1000).toInt(),
   };
 
   Future<WeatherFlowData> getStationObservationData(
@@ -35,7 +37,8 @@ class LocalWeatherDataRepository {
       url: Config.GET_WEATHER_FLOW_DEVICE_OBS_DATA(deviceId),
       parameters: _deviceParams,
     );
-    WeatherFlowDeviceObservationData weatherFlowData = WeatherFlowDeviceObservationData.fromJson(response);
+    WeatherFlowDeviceObservationData weatherFlowData =
+        WeatherFlowDeviceObservationData.fromJson(response);
     return weatherFlowData;
   }
 }

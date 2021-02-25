@@ -6,15 +6,18 @@ part of 'notification.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-FcmNotification _$FcmNotificationFromJson(Map<String, dynamic> json) {
+FcmNotification _$FcmNotificationFromJson(Map json) {
   return FcmNotification(
     notification: json['notification'] == null
         ? null
-        : NotificationTitleData.fromJson(
-            json['notification'] as Map<String, dynamic>),
+        : NotificationTitleData.fromJson((json['notification'] as Map)?.map(
+            (k, e) => MapEntry(k as String, e),
+          )),
     data: json['data'] == null
         ? null
-        : NotificationData.fromJson(json['data'] as Map<String, dynamic>),
+        : NotificationData.fromJson((json['data'] as Map)?.map(
+            (k, e) => MapEntry(k as String, e),
+          )),
     isRead: json['isRead'] as bool,
   );
 }
@@ -26,8 +29,7 @@ Map<String, dynamic> _$FcmNotificationToJson(FcmNotification instance) =>
       'isRead': instance.isRead,
     };
 
-NotificationTitleData _$NotificationTitleDataFromJson(
-    Map<String, dynamic> json) {
+NotificationTitleData _$NotificationTitleDataFromJson(Map json) {
   return NotificationTitleData(
     title: json['title'] as String,
     body: json['body'] as String,
@@ -41,7 +43,7 @@ Map<String, dynamic> _$NotificationTitleDataToJson(
       'body': instance.body,
     };
 
-NotificationData _$NotificationDataFromJson(Map<String, dynamic> json) {
+NotificationData _$NotificationDataFromJson(Map json) {
   return NotificationData(
     clickAction: json['click_action'] as String,
     id: json['id'] as String,

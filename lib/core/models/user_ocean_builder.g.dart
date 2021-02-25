@@ -6,7 +6,7 @@ part of 'user_ocean_builder.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-UserOceanBuilder _$UserOceanBuilderFromJson(Map<String, dynamic> json) {
+UserOceanBuilder _$UserOceanBuilderFromJson(Map json) {
   return UserOceanBuilder(
     oceanBuilderId: json['oceanBuilderId'] as String,
     oceanBuilderName: json['oceanBuilderName'] as String,

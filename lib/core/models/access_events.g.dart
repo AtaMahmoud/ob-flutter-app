@@ -6,23 +6,35 @@ part of 'access_events.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-AccessEvents _$AccessEventsFromJson(Map<String, dynamic> json) {
+AccessEvents _$AccessEventsFromJson(Map json) {
   return AccessEvents(
     sentInvitations: (json['sentInvitations'] as List)
-        ?.map((e) =>
-            e == null ? null : AccessEvent.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : AccessEvent.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList(),
     receivedInvitations: (json['receivedInvitations'] as List)
-        ?.map((e) =>
-            e == null ? null : AccessEvent.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : AccessEvent.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList(),
     sentRequests: (json['sentRequests'] as List)
-        ?.map((e) =>
-            e == null ? null : AccessEvent.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : AccessEvent.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList(),
     receivedRequests: (json['receivedRequests'] as List)
-        ?.map((e) =>
-            e == null ? null : AccessEvent.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : AccessEvent.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList(),
   );
 }

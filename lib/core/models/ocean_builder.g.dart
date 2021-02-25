@@ -6,7 +6,7 @@ part of 'ocean_builder.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-OceanBuilder _$OceanBuilderFromJson(Map<String, dynamic> json) {
+OceanBuilder _$OceanBuilderFromJson(Map json) {
   return OceanBuilder(
     oceanBuilderId: json['oceanBuilderId'] as String ?? '',
     ownerId: json['ownerId'] as String,
@@ -44,11 +44,16 @@ OceanBuilder _$OceanBuilderFromJson(Map<String, dynamic> json) {
     users: (json['users'] as List)
         ?.map((e) => e == null
             ? null
-            : OceanBuilderUser.fromJson(e as Map<String, dynamic>))
+            : OceanBuilderUser.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList(),
     defaultScenes: (json['defaultScenes'] as List)
-        ?.map(
-            (e) => e == null ? null : Scene.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : Scene.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList(),
   );
 }

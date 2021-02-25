@@ -6,7 +6,7 @@ part of 'control_data.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ControlData _$ControlDataFromJson(Map<String, dynamic> json) {
+ControlData _$ControlDataFromJson(Map json) {
   return ControlData(
     insideTemperature: json['insideTemperature'] as int,
     drinkingWaterPercentage: json['drinkingWaterPercentage'] as int,

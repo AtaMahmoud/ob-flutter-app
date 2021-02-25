@@ -35,8 +35,9 @@ import 'package:ocean_builder/ui/screens/designSteps/livingroom_wall_color_scree
 import 'package:ocean_builder/ui/screens/designSteps/master_bedroom_floor_finishing_screen.dart';
 import 'package:ocean_builder/ui/screens/designSteps/master_bedroom_wall_color_screen.dart';
 import 'package:ocean_builder/ui/screens/designSteps/power_screen.dart';
-import 'package:ocean_builder/ui/screens/designSteps/smart_home_screen.dart';
-import 'package:ocean_builder/ui/screens/designSteps/smart_home_screen_node_js.dart';
+import 'package:ocean_builder/ui/screens/iot/smart_home_settings_screen.dart';
+import 'package:ocean_builder/ui/screens/iot/smart_home_screen.dart';
+import 'package:ocean_builder/ui/screens/iot/smart_home_screen_node_js.dart';
 import 'package:ocean_builder/ui/screens/designSteps/sound_system_screen.dart';
 import 'package:ocean_builder/ui/screens/designSteps/spar_design_screen.dart';
 import 'package:ocean_builder/ui/screens/designSteps/spar_finishing_screen.dart';
@@ -88,6 +89,10 @@ class Router {
         return CupertinoPageRoute(
             builder: (_) => SmartHomeScreen(),
             settings: RouteSettings(name: SmartHomeScreen.routeName));
+      case MqttSettingsScreen.routeName:
+        return CupertinoPageRoute(
+            builder: (_) => MqttSettingsScreen(),
+            settings: RouteSettings(name: MqttSettingsScreen.routeName));
       case SmartHomeScreenNodeServer.routeName:
         return CupertinoPageRoute(
             builder: (_) => SmartHomeScreenNodeServer(),

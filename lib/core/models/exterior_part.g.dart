@@ -6,7 +6,7 @@ part of 'exterior_part.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ExteriorPart _$ExteriorPartFromJson(Map<String, dynamic> json) {
+ExteriorPart _$ExteriorPartFromJson(Map json) {
   return ExteriorPart(
     exteriorFinish: json['exteriorFinish'] as String,
     exteriorColor: json['exteriorColor'] as String,

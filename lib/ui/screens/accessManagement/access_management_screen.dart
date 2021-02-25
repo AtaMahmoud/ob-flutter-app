@@ -290,6 +290,9 @@ class _AccessManagementScreenState extends State<AccessManagementScreen> {
           onTap: () {
             if (_user.userOceanBuilder.length > 0) {
               showGrantAccessPopup(context, GrantAccessScreenWidget(), " ");
+
+              // Navigator.of(context)
+              //     .pushNamed(GrantAccessScreenWidget.routeName);
             }
           },
           child: Container(

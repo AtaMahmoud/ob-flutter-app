@@ -6,7 +6,7 @@ part of 'user.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-User _$UserFromJson(Map<String, dynamic> json) {
+User _$UserFromJson(Map json) {
   return User(
     userID: json['_id'] as String,
     email: json['email'] as String,
@@ -19,30 +19,43 @@ User _$UserFromJson(Map<String, dynamic> json) {
     userOceanBuilder: (json['userOceanBuilder'] as List)
         ?.map((e) => e == null
             ? null
-            : UserOceanBuilder.fromJson(e as Map<String, dynamic>))
+            : UserOceanBuilder.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList(),
     password: json['password'] as String,
     requestAccessTime: json['requestAccessTime'] as String,
     token: json['token'] == null
         ? null
-        : FcmToken.fromJson(json['token'] as Map<String, dynamic>),
+        : FcmToken.fromJson((json['token'] as Map)?.map(
+            (k, e) => MapEntry(k as String, e),
+          )),
     lightiningScenes: (json['lightiningScenes'] as List)
-        ?.map(
-            (e) => e == null ? null : Scene.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : Scene.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList(),
     notifications: (json['notifications'] as List)
         ?.map((e) => e == null
             ? null
-            : ServerNotification.fromJson(e as Map<String, dynamic>))
+            : ServerNotification.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList(),
     checkInDate: User._dateTimeFromEpochUs(json['checkInDate'] as int),
     emergencyContact: json['emergencyContact'] == null
         ? null
-        : EmergencyContact.fromJson(
-            json['emergencyContact'] as Map<String, dynamic>),
+        : EmergencyContact.fromJson((json['emergencyContact'] as Map)?.map(
+            (k, e) => MapEntry(k as String, e),
+          )),
     seaPods: (json['seaPods'] as List)
-        ?.map((e) =>
-            e == null ? null : SeaPod.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : SeaPod.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList(),
     version: json['__v'] as int,
   )
@@ -51,15 +64,23 @@ User _$UserFromJson(Map<String, dynamic> json) {
     ..emergencyContacts = (json['emergencyContacts'] as List)
         ?.map((e) => e == null
             ? null
-            : EmergencyContact.fromJson(e as Map<String, dynamic>))
+            : EmergencyContact.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList()
     ..accessRequests = (json['accessRequests'] as List)
-        ?.map((e) =>
-            e == null ? null : AccessEvent.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : AccessEvent.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList()
     ..accessInvitations = (json['accessInvitation'] as List)
-        ?.map((e) =>
-            e == null ? null : AccessEvent.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : AccessEvent.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList();
 }
 

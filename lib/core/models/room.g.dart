@@ -6,7 +6,7 @@ part of 'room.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Room _$RoomFromJson(Map<String, dynamic> json) {
+Room _$RoomFromJson(Map json) {
   return Room(
     floorFinishing: json['floorFinishing'] as String,
     interiorWallColor: json['interiorWallColor'] as String,

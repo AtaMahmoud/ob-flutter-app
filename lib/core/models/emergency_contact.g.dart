@@ -6,7 +6,7 @@ part of 'emergency_contact.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-EmergencyContact _$EmergencyContactFromJson(Map<String, dynamic> json) {
+EmergencyContact _$EmergencyContactFromJson(Map json) {
   return EmergencyContact(
     id: json['_id'] as String,
     firstName: json['firstName'] as String,

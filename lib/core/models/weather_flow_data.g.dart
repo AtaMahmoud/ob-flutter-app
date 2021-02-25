@@ -6,12 +6,13 @@ part of 'weather_flow_data.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-WeatherFlowData _$WeatherFlowDataFromJson(Map<String, dynamic> json) {
+WeatherFlowData _$WeatherFlowDataFromJson(Map json) {
   return WeatherFlowData(
     obs: json['obs'] == null
         ? null
-        : StationObservationValues.fromJson(
-            json['obs'] as Map<String, dynamic>),
+        : StationObservationValues.fromJson((json['obs'] as Map)?.map(
+            (k, e) => MapEntry(k as String, e),
+          )),
   );
 }
 
@@ -20,8 +21,7 @@ Map<String, dynamic> _$WeatherFlowDataToJson(WeatherFlowData instance) =>
       'obs': instance.obs,
     };
 
-StationObservationValues _$StationObservationValuesFromJson(
-    Map<String, dynamic> json) {
+StationObservationValues _$StationObservationValuesFromJson(Map json) {
   return StationObservationValues(
     airDensity: json['air_density'] as int,
     airDensityIndoor: json['air_density_indoor;'] as int,

@@ -161,8 +161,8 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
     }).toList());
     _user = _userProvider.authenticatedUser;
     return Container(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding: EdgeInsets.only(
+            top: 8, bottom: MediaQuery.of(context).viewInsets.bottom),
         decoration: BoxDecoration(
             // gradient: profileGradient,
             color: Colors.white,

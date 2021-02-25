@@ -123,6 +123,7 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
             Appbar(
               ScreenTitle.SMART_HOME,
               isDesignScreen: true,
+              enableSettings: true,
             ),
             Positioned(
                 bottom: 0,

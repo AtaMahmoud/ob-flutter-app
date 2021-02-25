@@ -19,6 +19,7 @@ import 'package:ocean_builder/core/providers/earth_station_data_provider.dart';
 import 'package:ocean_builder/core/providers/fake_data_provider.dart';
 import 'package:ocean_builder/core/providers/local_noti_data_provider.dart';
 import 'package:ocean_builder/core/providers/local_weather_flow_data_provider.dart';
+import 'package:ocean_builder/core/providers/mqtt_settings_provider.dart';
 import 'package:ocean_builder/core/providers/ocean_builder_provider.dart';
 import 'package:ocean_builder/core/providers/qr_code_data_provider.dart';
 import 'package:ocean_builder/core/providers/search_history_provider.dart';
@@ -41,7 +42,6 @@ import 'package:provider/provider.dart';
 import 'constants/constants.dart';
 import 'core/providers/device_type_provider.dart';
 import 'package:uni_links/uni_links.dart';
-
 
 // Future<void> main() async {
 //   await mainCommon();
@@ -89,6 +89,7 @@ Future<void> main() async {
     ),
   );
 }
+
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -112,7 +113,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context,allowFontScaling: true);
+    ScreenUtil.init(context, allowFontScaling: true);
     service.SystemChrome.setPreferredOrientations([
       service.DeviceOrientation.portraitUp,
       service.DeviceOrientation.portraitDown,
@@ -181,6 +182,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (context) => SmartHomeDataProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => MqttSettingsProvider(),
+        )
         // Provider<FirebaseAnalytics>.value(value: analytics),
         // Provider<FirebaseAnalyticsObserver>.value(value: observer),
       ],
@@ -200,10 +204,9 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
-    // _listener.cancel();
     GlobalListeners.listener.cancel();
     if (_sub != null) _sub.cancel();
-    // hive dispose
+    Hive.box('mqttSettings').compact();
     Hive.box('searchItems').compact();
     Hive.close();
     super.dispose();
@@ -216,14 +219,6 @@ class _MyAppState extends State<MyApp> {
       print(
           'got uri in first listener : ${uri?.path} ${uri?.queryParametersAll}');
       _latestUri = uri;
-      // setState(() {
-      //   _latestUri = uri;
-      //   _latestLink = uri?.toString() ?? 'Unknown';
-      // });
-
-      // setState(() {
-      //   _parseDeepLinkingUri(uri);
-      // });
       _parseDeepLinkingUri(uri);
     }, onError: (Object err) {
       if (!mounted) return;
@@ -232,13 +227,6 @@ class _MyAppState extends State<MyApp> {
         _latestLink = 'Failed to get latest link: $err.';
       });
     });
-
-    // // Attach a second listener to the stream
-    // getUriLinksStream().listen((Uri uri) {
-    //   print('got uri: ${uri?.path} ${uri?.queryParametersAll}');
-    // }, onError: (Object err) {
-    //   print('got err: $err');
-    // });
 
     // Get the latest Uri
     // Platform messages may fail, so we use a try/catch PlatformException.

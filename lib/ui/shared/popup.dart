@@ -57,7 +57,8 @@ class PopupLayout extends ModalRoute {
       },
       child: Material(
         type: MaterialType.transparency,
-        child: SafeArea(
+        child: // _buildOverlayContent(context)
+            SafeArea(
           bottom: true,
           child: _buildOverlayContent(context),
         ),
@@ -72,9 +73,8 @@ class PopupLayout extends ModalRoute {
           left: this.left,
           right: this.right,
           top: this.top),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      // padding: EdgeInsets.all(24),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
       child: child,
     );
   }

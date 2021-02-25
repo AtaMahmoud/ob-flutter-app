@@ -137,6 +137,8 @@ class TextFieldHints {
   static String YOUR_SEAPOD_NAME = 'Your SeaPod Name';
 
   static String NAME_YOUR_SEAPOD = 'NAME YOUR SEAPOD';
+
+  static String MQTT_SERVER = 'Mqtt Server';
 }
 
 class InputTypes {
@@ -145,6 +147,8 @@ class InputTypes {
   static const EMAIL = TextInputType.emailAddress;
 
   static const PHONE = TextInputType.phone;
+
+  static const TEXT = TextInputType.text;
 }
 
 class InfoTexts {
@@ -253,6 +257,8 @@ class ScreenTitle {
   static String CREATE_PERMISSION = 'Create New';
   static String EDIT_PERMISSION = 'Edit Permissions';
   static String CUSTOMIZE_PERMISSION = 'Customize Permissions';
+
+  static String SMART_HOME_SETTINGS = 'Smart Home Settings';
 }
 
 class ListHelper {

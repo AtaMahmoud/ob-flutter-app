@@ -6,7 +6,7 @@ part of 'permission.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-PermissionSet _$PermissionSetFromJson(Map<String, dynamic> json) {
+PermissionSet _$PermissionSetFromJson(Map json) {
   return PermissionSet(
     id: json['_id'] as String,
     isDefault: json['isDefault'] as bool,
@@ -14,7 +14,9 @@ PermissionSet _$PermissionSetFromJson(Map<String, dynamic> json) {
     permissionGroups: (json['Sets'] as List)
         ?.map((e) => e == null
             ? null
-            : PermissionGroup.fromJson(e as Map<String, dynamic>))
+            : PermissionGroup.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList(),
   );
 }
@@ -27,13 +29,16 @@ Map<String, dynamic> _$PermissionSetToJson(PermissionSet instance) =>
       'Sets': instance.permissionGroups,
     };
 
-PermissionGroup _$PermissionGroupFromJson(Map<String, dynamic> json) {
+PermissionGroup _$PermissionGroupFromJson(Map json) {
   return PermissionGroup(
     id: json['_id'] as String,
     name: json['Name'] as String,
     permissions: (json['Permissions'] as List)
-        ?.map((e) =>
-            e == null ? null : Permission.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : Permission.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList(),
   );
 }
@@ -45,7 +50,7 @@ Map<String, dynamic> _$PermissionGroupToJson(PermissionGroup instance) =>
       'Permissions': instance.permissions,
     };
 
-Permission _$PermissionFromJson(Map<String, dynamic> json) {
+Permission _$PermissionFromJson(Map json) {
   return Permission(
     id: json['_id'] as String,
     name: json['Name'] as String,
