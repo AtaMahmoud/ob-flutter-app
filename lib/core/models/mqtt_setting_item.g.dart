@@ -54,3 +54,11 @@ class MqttSettingsItemAdapter extends TypeAdapter<MqttSettingsItem> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+// **************************************************************************
+// ToStringGenerator
+// **************************************************************************
+
+String _$MqttSettingsItemToString(MqttSettingsItem o) {
+  return """MqttSettingsItem{mqttServer: ${o.mqttServer}, mqttPort: ${o.mqttPort}, mqttIdentifier: ${o.mqttIdentifier}, mqttUserName: ${o.mqttUserName}, mqttPassword: ${o.mqttPassword}, mqttTopics: ${o.mqttTopics}}""";
+}

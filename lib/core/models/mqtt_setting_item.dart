@@ -1,23 +1,39 @@
 import 'package:hive/hive.dart';
+import 'package:to_string/to_string.dart';
 
 part 'mqtt_setting_item.g.dart';
 
+@ToString()
 @HiveType(typeId: 1)
 class MqttSettingsItem {
   @HiveField(0)
-  final String mqttServer;
+  String mqttServer;
   @HiveField(1)
-  final String mqttPort;
+  String mqttPort;
   @HiveField(2)
-  final String mqttIdentifier;
+  String mqttIdentifier;
   @HiveField(3)
-  final String mqttUserName;
+  String mqttUserName;
   @HiveField(4)
-  final String mqttPassword;
+  String mqttPassword;
   @HiveField(5)
-  final List<String> mqttTopics;
+  List<String> mqttTopics = [];
   MqttSettingsItem(this.mqttServer, this.mqttPort, this.mqttIdentifier,
       this.mqttUserName, this.mqttPassword, this.mqttTopics);
+  MqttSettingsItem.private();
+
+  validate() {
+    return mqttServer != null &&
+        mqttPort != null &&
+        mqttIdentifier != null &&
+        mqttPassword != null &&
+        mqttTopics.length >= 0;
+  }
+
+  @override
+  String toString() {
+    return _$MqttSettingsItemToString(this);
+  }
 }
 
 /*     

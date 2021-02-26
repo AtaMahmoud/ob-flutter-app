@@ -12,7 +12,7 @@ class MqttSettingsProvider with ChangeNotifier {
   addMqttSettingsItem(MqttSettingsItem mqttSettingsItem) async {
     var box = await Hive.openBox<MqttSettingsItem>(_mqttSettings);
 
-    if (mqttSettingsItem != null) return;
+    if (mqttSettingsItem == null) return;
 
     box.add(mqttSettingsItem);
 
@@ -22,7 +22,7 @@ class MqttSettingsProvider with ChangeNotifier {
   }
 
   getMqttSettings() async {
-    final box = await Hive.openBox<String>(_mqttSettings);
+    final box = await Hive.openBox<MqttSettingsItem>(_mqttSettings);
 
     _mqttSettingsList = box.values.toList();
 

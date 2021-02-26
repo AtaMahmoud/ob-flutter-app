@@ -138,7 +138,17 @@ class TextFieldHints {
 
   static String NAME_YOUR_SEAPOD = 'NAME YOUR SEAPOD';
 
-  static String MQTT_SERVER = 'Mqtt Server';
+  static String MQTT_SERVER = 'Server';
+
+  static String MQTT_PORT = 'Port';
+
+  static String MQTT_IDENTIFIER = 'Identifier';
+
+  static String MQTT_USER = 'User';
+
+  static String MQTT_PASSWORD = 'Password';
+
+  static String MQTT_TOPIC = 'Topic';
 }
 
 class InputTypes {
