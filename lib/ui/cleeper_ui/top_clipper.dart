@@ -100,10 +100,10 @@ class _TopClipperState extends State<TopClipper> {
                       },
                       child: Padding(
                         padding: EdgeInsets.only(
-                          left: 32.w,
-                          right: 32.w,
-                          top: 32.h,
-                          bottom: 32.h,
+                          left: 48.w,
+                          right: 48.w,
+                          top: 48.h,
+                          bottom: 48.h,
                         ),
                         child: Icon(
                           Icons.sort,

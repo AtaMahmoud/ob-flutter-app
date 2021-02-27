@@ -7,13 +7,14 @@ import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/mqtt_setting_item.dart';
 import 'package:ocean_builder/core/providers/mqtt_settings_provider.dart';
 import 'package:ocean_builder/custom_drawer/appTheme.dart';
+import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 class AddMqttConfig extends StatefulWidget {
-  MqttSettingsItem mqttSettingsItem;
+  final MqttSettingsItem mqttSettingsItem;
   AddMqttConfig({Key key, this.mqttSettingsItem}) : super(key: key);
 
   @override
@@ -300,11 +301,7 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () {
-                          print(_mqttSettingsItem.toString());
-
                           _clearFields();
-
-                          print(_mqttSettingsItem.toString());
                         },
                       ),
                     ),
@@ -383,7 +380,17 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
             ),
             SpaceW16(),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                if (_topic != null && _topic.isNotEmpty) {
+                  _topicList.add(_topic);
+                  // _topic = null;
+                  _mqttTopicController.clear();
+                  setState(() {
+                    _showAddNewTopicField = false;
+                    _topicBLoc.sink.add(_topic);
+                  });
+                }
+              },
               child: Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -406,13 +413,45 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
   }
 
   void _clearFields() {
-    _mqttSettingsItem = new MqttSettingsItem.private();
-    _mqttServerController.clear();
-    _mqttPortController.clear();
-    _mqttIdentifierController.clear();
-    _mqttUserController.clear();
-    _mqttPasswordController.clear();
-    _mqttTopicController.clear();
+    if (widget.mqttSettingsItem != null) {
+      MqttSettingsItem m = widget.mqttSettingsItem;
+      _mqttServerController.text = m.mqttServer;
+      _mqttPortController.text = m.mqttPort;
+      _mqttIdentifierController.text = m.mqttIdentifier;
+      _mqttUserController.text = m.mqttUserName;
+
+      _mqttSettingsItem.mqttServer = m.mqttServer;
+      _mqttSettingsItem.mqttPort = m.mqttPort;
+      _mqttSettingsItem.mqttIdentifier = m.mqttIdentifier;
+      _mqttSettingsItem.mqttUserName = m.mqttUserName;
+      _mqttSettingsItem.mqttPassword = m.mqttPassword;
+      _mqttSettingsItem.mqttTopics = m.mqttTopics;
+
+      setState(() {
+        _topicList = [];
+        _topicList.add('Add New Topic');
+        if (m.mqttTopics != null && m.mqttTopics.length > 0) {
+          _topicList.addAll(m.mqttTopics);
+          _topicBLoc.sink.add(m.mqttTopics[0]);
+        } else {
+          _topicBLoc.sink.add('Add New Topic');
+        }
+      });
+    } else {
+      _mqttSettingsItem = new MqttSettingsItem.private();
+      _mqttServerController.clear();
+      _mqttPortController.clear();
+      _mqttIdentifierController.clear();
+      _mqttUserController.clear();
+      _mqttPasswordController.clear();
+      _mqttTopicController.clear();
+
+      setState(() {
+        _topicList = [];
+        _topicList.add('Add New Topic');
+        _topicBLoc.sink.add('Add New Topic');
+      });
+    }
   }
 
   _topLabel() {
@@ -430,13 +469,18 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
 
   void _saveToDb() {
     print(_mqttSettingsItem.toString());
-    _mqttSettingsItem.mqttTopics.add(_topic);
+    _mqttSettingsItem.mqttTopics = _topicList.skipWhile((topic) {
+      return topic == 'Add New Topic';
+    }).toList();
     if (_mqttSettingsItem.validate()) {
       print('valideated -------- ${_mqttSettingsItem.toString()}');
       _mqttSettingsProvider.addMqttSettingsItem(_mqttSettingsItem);
+      _mqttSettingsProvider.getMqttSettings();
       _clearFields();
+      showInfoBar('Successful', 'New MQTT configuration is Added', context);
     } else {
       print('Invalid settings item');
+      showInfoBar('Failed', 'Invalid MQTT configuration', context);
     }
   }
 
@@ -502,14 +546,7 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
                     ),
                     onChanged: changed.add,
                     items: list.map((data) {
-                      return DropdownMenuItem(
-                          value: data,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              Text(data),
-                            ],
-                          ));
+                      return DropdownMenuItem(value: data, child: Text(data));
                     }).toList(),
                   ),
                 ),

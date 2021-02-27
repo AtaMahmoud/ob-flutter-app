@@ -69,6 +69,13 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
     });
   }
 
+  @override
+    void didChangeDependencies() {
+      // TODO: implement didChangeDependencies
+      super.didChangeDependencies();
+      
+    }
+
   void _setFields(MqttSettingsItem event) {
     _portController.text = event.mqttPort;
     _indentifierController.text = event.mqttIdentifier;
@@ -136,7 +143,7 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
               width: 1,
               style: BorderStyle.solid),
           borderRadius: BorderRadius.circular(8)),
-      margin: EdgeInsets.only(top: 48.h, left: 8.w, right: 8.w),
+      margin: EdgeInsets.only(top: 48.h, left: 16.w, right: 16.w),
       child: Center(
         child: Theme(
           child: ExpansionTile(
@@ -188,7 +195,7 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
 
   Consumer _mainContent() {
     return Consumer<MqttSettingsProvider>(builder: (context, model, widget) {
-      // print('mqttsettings item ------------ ${model.mqttSettingsList.length}');
+      print('Consumed ---- mqttsettings item ------------ ${model.mqttSettingsList.length}');
       if (model.mqttSettingsList != null) {
         List<MqttSettingsItem> _listITems = //[]; // ['1', '2'];
 
@@ -204,10 +211,10 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
             children: [
               /*           _buildConnectionStatusWidget(
                       _smartHomeDataProvider.getAppConnectionState), */
-              SpaceH128(),
+              SpaceH32(),
               model.mqttSettingsList != null &&
                       model.mqttSettingsList.length > 0
-                  ? _getTopicsDropdown(
+                  ? _getServerDropdown(
                       // model.mqttSettingsList.map((e) {
                       //   MqttSettingsItem m = e;
                       //   return m.mqttServer;
@@ -217,7 +224,7 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
                       _iotServerBloc.sink,
                       false,
                       label: 'Server Address')
-                  : _buttonAddNewConfig(context, 'ADD NEW MQTT CONFIGURATION',
+                  : _customButton(context, 'ADD NEW MQTT CONFIGURATION',
                       _newConfigurationPopUp), //Container(),
               // _buildScrollableTextWith(_smartHomeDataProvider.getHistoryText),
               /* _buildSensorDataTableHeader(),
@@ -235,9 +242,13 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
               ..._selectedServer != null ? _getServerDetails() : [Container()],
               _selectedServer != null ? _editSettingsRow() : Container(),
               SpaceH48(),
-              _buttonAddNewConfig(context, 'ADD NEW MQTT CONFIGURATION',
-                  _newConfigurationPopUp),
-              SpaceH48()
+             _selectedServer != null ? _customButton(context, 'SET AS ACTIVE CONFIGURATION', () {
+                    print('set active configuration');
+                  })
+              : Container(),
+              SpaceH48(),
+              _customButton(context, 'ADD NEW MQTT CONFIGURATION',
+                      _newConfigurationPopUp),
             ],
           ),
         );
@@ -330,22 +341,20 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
                   bottom: 16.h,
                   left: 48.w,
                 ),
-                child: Row(
-                  children: [
-                    Wrap(
-                      runAlignment: WrapAlignment.start,
-                      direction: Axis.horizontal,
-                      children: _selectedServer != null &&
-                              _selectedServer.mqttTopics.isNotEmpty
-                          ? _selectedServer.mqttTopics.map((topic) {
-                              return Chip(
-                                  label: Text(
-                                topic ?? 'No Topic',
-                              ));
-                            }).toList()
-                          : [Container()],
-                    ),
-                  ],
+                child: SingleChildScrollView(
+                  child: Wrap(
+                    runAlignment: WrapAlignment.start,
+                    direction: Axis.horizontal,
+                    children: _selectedServer != null &&
+                            _selectedServer.mqttTopics.isNotEmpty
+                        ? _selectedServer.mqttTopics.map((topic) {
+                            return Chip(
+                                label: Text(
+                              topic ?? 'No Topic',
+                            ));
+                          }).toList()
+                        : [Container()],
+                  ),
                 ),
               ),
             ],
@@ -353,7 +362,7 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
         : Container();
   }
 
-  Widget _getTopicsDropdown(List<MqttSettingsItem> list,
+  Widget _getServerDropdown(List<MqttSettingsItem> list,
       Observable<MqttSettingsItem> stream, changed, bool addPadding,
       {String label = 'Label'}) {
     print('get topic list --- ${list.toString()}');
@@ -432,8 +441,7 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
         });
   }
 
-  Widget _buttonAddNewConfig(
-      BuildContext context, String label, Function onTap) {
+  Widget _customButton(BuildContext context, String label, Function onTap) {
     return ConstrainedBox(
       constraints: const BoxConstraints(minWidth: double.infinity),
       child: InkWell(
@@ -444,14 +452,16 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
           padding: EdgeInsets.all(32.w),
           decoration: BoxDecoration(
               borderRadius: new BorderRadius.circular(48.w),
-              color: ColorConstants.TOP_CLIPPER_END_DARK),
+              border: Border.all(color: ColorConstants.TOP_CLIPPER_END_DARK),
+              // color: ColorConstants.TOP_CLIPPER_END_DARK
+              ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                'ADD NEW MQTT CONFIGURATION',
+                label,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white, fontSize: 36.sp),
+                style: TextStyle(color: ColorConstants.TOP_CLIPPER_END_DARK, fontSize: 36.sp),
               ),
             ],
           ),
