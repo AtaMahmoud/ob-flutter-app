@@ -31,23 +31,32 @@ class _DesignScreenState extends State<DesignScreen> {
     GlobalContext.currentScreenContext = context;
     return Scaffold(
       body: Stack(
-        children: [_mainContent(), _bottomBar()],
+        children: [_mainContent(), _bottomBar(), _topBar()],
       ),
     );
   }
 
-  Container _mainContent() {
-    return Container(
-      decoration: BoxDecoration(gradient: ColorConstants.BKG_GRADIENT),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          _topBar(),
-          _designMessage(),
-          SpaceH32(),
-          _deckImage(),
-          SpaceH32(),
-        ],
+  _mainContent() {
+    return Center(
+      child: Container(
+        decoration: BoxDecoration(gradient: ColorConstants.BKG_GRADIENT),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              // _topBar(),
+              SizedBox(
+                height: 400.h,
+              ),
+              _designMessage(),
+              SpaceH32(),
+              _deckImage(),
+              SizedBox(
+                height: 42,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -83,10 +92,15 @@ class _DesignScreenState extends State<DesignScreen> {
     );
   }
 
-  Appbar _topBar() {
-    return Appbar(
-      ScreenTitle.DESIGN,
-      isDesignScreen: true,
+  Widget _topBar() {
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      child: Appbar(
+        ScreenTitle.DESIGN,
+        isDesignScreen: true,
+      ),
     );
   }
 

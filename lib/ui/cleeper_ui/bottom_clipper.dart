@@ -41,9 +41,9 @@ class _BottomClipperState extends State<BottomClipper> {
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
                     0.0,
-                    ((screenSize.height * bottomClipperRatio) - 15) / 2,
+                    120.h, //((screenSize.height * bottomClipperRatio) - 15) / 2,
                     0.0,
-                    48.h),
+                    24.h),
                 // padding: EdgeInsets.symmetric(vertical: 72.h),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -51,16 +51,21 @@ class _BottomClipperState extends State<BottomClipper> {
                   children: <Widget>[
                     InkWell(
                       onTap: widget.callbackBack,
-                      child: UIHelper.getBackLayout(widget.leftText),
+                      child: Padding(
+                        padding: EdgeInsets.all(16.w),
+                        child: UIHelper.getBackLayout(widget.leftText),
+                      ),
                     ),
                     widget.rightText.length > 1
                         ? InkWell(
                             onTap: widget.isNextEnabled
                                 ? widget.callbackNext
                                 : null,
-                            child: UIHelper.getNextLayout(widget.rightText,
-                                partiallyTransparent: !widget.isNextEnabled),
-                          )
+                            child: Padding(
+                              padding: EdgeInsets.all(16.w),
+                              child: UIHelper.getNextLayout(widget.rightText,
+                                  partiallyTransparent: !widget.isNextEnabled),
+                            ))
                         : Spacer()
                   ],
                 ),

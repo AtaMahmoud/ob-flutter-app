@@ -6,7 +6,7 @@ class CustomTopShapeClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     final Path path = Path();
 
-    path.lineTo(0, size.height*.9);
+    path.lineTo(0, size.height * .9);
 
     var firstEndPoint = Offset(size.width / 2, size.height - (size.height / 3));
     var firstControlPoint =
@@ -37,7 +37,7 @@ class CustomTopShapeClipperHome extends CustomClipper<Path> {
   Path getClip(Size size) {
     final Path path = Path();
 
-    path.lineTo(0, size.height*.95);
+    path.lineTo(0, size.height * .95);
 
     var firstEndPoint = Offset(size.width / 2, size.height - (size.height / 3));
     var firstControlPoint =
@@ -68,11 +68,11 @@ class DrawerTopShapeClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     final Path path = Path();
 
-    path.lineTo(0, size.height*.98);
+    path.lineTo(0, size.height * .98);
 
-    var firstEndPoint = Offset(size.width * 1/ 2, size.height - (size.height / 5));
-    var firstControlPoint =
-        Offset(size.width / 4, size.height );
+    var firstEndPoint =
+        Offset(size.width * 1 / 2, size.height - (size.height / 5));
+    var firstControlPoint = Offset(size.width / 4, size.height);
 
     path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy,
         firstEndPoint.dx, firstEndPoint.dy);
@@ -99,7 +99,7 @@ class WeatherTopShapeClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     final Path path = Path();
 
-    path.lineTo(0, size.height*.95);
+    path.lineTo(0, size.height * .95);
 
     var firstEndPoint = Offset(size.width / 2, size.height - (size.height / 8));
     var firstControlPoint =
@@ -129,7 +129,7 @@ class CustomBottomShapeClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final Path path = Path();
-    path.lineTo(0, 30);
+    path.lineTo(0, 40);
 
     var firstEndPoint = Offset(size.width / 2, 20);
     var firstControlPoint = Offset(size.width / 4, 10);
@@ -160,19 +160,17 @@ class TitleBottomShapeClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final Path path = Path();
-    path.lineTo(0, size.height/2);
+    path.lineTo(0, size.height / 2);
 
-    var firstEndPoint = Offset(size.width, size.height/2);
+    var firstEndPoint = Offset(size.width, size.height / 2);
     var firstControlPoint = Offset(size.width / 2, 0);
 
     path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy,
         firstEndPoint.dx, firstEndPoint.dy);
 
-
     path.lineTo(size.width, size.height);
 
     path.lineTo(0.0, size.height);
-
 
     path.close();
 
@@ -258,28 +256,29 @@ class CustomProfileDropdownClipper extends CustomClipper<Path> {
         firstEndPoint.dx, firstEndPoint.dy);
 
     var secondEndPoint = Offset(size.width, 0);
-    var secondControlPoint = Offset(size.width/1.25, _util.setHeight(110));
+    var secondControlPoint = Offset(size.width / 1.25, _util.setHeight(110));
 
     path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy,
         secondEndPoint.dx, secondEndPoint.dy);
 
     path.lineTo(size.width, size.height - _util.setHeight(170));
 
-
     // path.lineTo(0.0, size.height);
 
-    var thirdEndPoint = Offset(size.width / 1.75, size.height - _util.setHeight(55));
-    var thirdControlPoint = Offset(size.width * 3 / 4, size.height - _util.setHeight(57.5));
+    var thirdEndPoint =
+        Offset(size.width / 1.75, size.height - _util.setHeight(55));
+    var thirdControlPoint =
+        Offset(size.width * 3 / 4, size.height - _util.setHeight(57.5));
 
     path.quadraticBezierTo(thirdControlPoint.dx, thirdControlPoint.dy,
         thirdEndPoint.dx, thirdEndPoint.dy);
 
     var fourthEndPoint = Offset(0, size.height);
-    var fourthControlPoint = Offset(size.width / 4, size.height - _util.setHeight(55));
+    var fourthControlPoint =
+        Offset(size.width / 4, size.height - _util.setHeight(55));
 
     path.quadraticBezierTo(fourthControlPoint.dx, fourthControlPoint.dy,
         fourthEndPoint.dx, fourthEndPoint.dy);
-
 
     path.close();
     return path;
@@ -292,7 +291,6 @@ class CustomProfileDropdownClipper extends CustomClipper<Path> {
 class CustomBottomProfileShapeClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-
     ScreenUtil _util = ScreenUtil();
 
     final Path path = Path();
@@ -305,7 +303,7 @@ class CustomBottomProfileShapeClipper extends CustomClipper<Path> {
         firstEndPoint.dx, firstEndPoint.dy);
 
     var secondEndPoint = Offset(size.width, 0);
-    var secondControlPoint = Offset(size.width/1.25, _util.setHeight(110));
+    var secondControlPoint = Offset(size.width / 1.25, _util.setHeight(110));
 
     path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy,
         secondEndPoint.dx, secondEndPoint.dy);

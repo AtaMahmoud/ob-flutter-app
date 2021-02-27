@@ -49,6 +49,8 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
 
   bool _showAddNewTopicField = false;
 
+  bool _hasFocus = false;
+
   @override
   void initState() {
     super.initState();
@@ -147,194 +149,201 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
       if (event != null && event.compareTo('Add New Topic') == 0) {
         setState(() {
           _showAddNewTopicField = true;
+          _mqttTopicNode.requestFocus();
         });
       }
+    });
+
+    _mqttTopicNode.addListener(() {
+      setState(() {
+        _hasFocus = !_hasFocus;
+      });
+      print('has focus ------------- $_hasFocus');
     });
   }
 
   @override
   Widget build(BuildContext context) {
     _mqttSettingsProvider = Provider.of<MqttSettingsProvider>(context);
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: true,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            controller: _scrollController,
+            child: Container(
+              padding: EdgeInsets.only(
+                  top: 80.h,
+                  left: 48.w,
+                  right: 48.w,
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: AppTheme.nearlyWhite,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  _topLabel(),
+                  SpaceH48(),
+                  UIHelper.getBorderedTextField(
+                      context,
+                      _blocSmartHomeConfig.mqttServer,
+                      _blocSmartHomeConfig.mqttServerChanged,
+                      TextFieldHints.MQTT_SERVER,
+                      _mqttServerController,
+                      InputTypes.TEXT,
+                      null,
+                      false,
+                      TextInputAction.next,
+                      _mqttServerNode,
+                      null),
+                  SpaceH48(),
+                  UIHelper.getBorderedTextField(
+                      context,
+                      _blocSmartHomeConfig.mqttPort,
+                      _blocSmartHomeConfig.mqttPortChanged,
+                      TextFieldHints.MQTT_PORT,
+                      _mqttPortController,
+                      InputTypes.NUMBER,
+                      null,
+                      false,
+                      TextInputAction.next,
+                      _mqttPortNode,
+                      null),
+                  SpaceH48(),
+                  UIHelper.getBorderedTextField(
+                      context,
+                      _blocSmartHomeConfig.mqttIdentifier,
+                      _blocSmartHomeConfig.mqttIdentifierChanged,
+                      TextFieldHints.MQTT_IDENTIFIER,
+                      _mqttIdentifierController,
+                      InputTypes.TEXT,
+                      null,
+                      false,
+                      TextInputAction.next,
+                      _mqttIdentifierNode,
+                      null),
+                  SpaceH48(),
+                  UIHelper.getBorderedTextField(
+                      context,
+                      _blocSmartHomeConfig.mqttUser,
+                      _blocSmartHomeConfig.mqttUserChanged,
+                      TextFieldHints.MQTT_USER,
+                      _mqttUserController,
+                      InputTypes.TEXT,
+                      null,
+                      false,
+                      TextInputAction.next,
+                      _mqttUserNode,
+                      null),
+                  SpaceH48(),
+                  UIHelper.getBorderedTextField(
+                      context,
+                      _blocSmartHomeConfig.mqttPassword,
+                      _blocSmartHomeConfig.mqttPasswordChanged,
+                      TextFieldHints.MQTT_PASSWORD,
+                      _mqttPasswordController,
+                      TextInputType.visiblePassword,
+                      null,
+                      false,
+                      TextInputAction.next,
+                      _mqttPasswordNode,
+                      null
 
-    if (_mqttTopicNode.hasFocus) {
-      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-          duration: Duration(milliseconds: 100), curve: Curves.easeInOut);
-    }
-    return Stack(
-      children: [
-        SingleChildScrollView(
-          controller: _scrollController,
-          child: Container(
-            padding: EdgeInsets.only(
-                top: 80.h,
-                left: 48.w,
-                right: 48.w,
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: AppTheme.nearlyWhite,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                _topLabel(),
-                SpaceH48(),
-                UIHelper.getBorderedTextField(
-                    context,
-                    _blocSmartHomeConfig.mqttServer,
-                    _blocSmartHomeConfig.mqttServerChanged,
-                    TextFieldHints.MQTT_SERVER,
-                    _mqttServerController,
-                    InputTypes.TEXT,
-                    null,
-                    false,
-                    TextInputAction.next,
-                    _mqttServerNode,
-                    null),
-                SpaceH48(),
-                UIHelper.getBorderedTextField(
-                    context,
-                    _blocSmartHomeConfig.mqttPort,
-                    _blocSmartHomeConfig.mqttPortChanged,
-                    TextFieldHints.MQTT_PORT,
-                    _mqttPortController,
-                    InputTypes.NUMBER,
-                    null,
-                    false,
-                    TextInputAction.next,
-                    _mqttPortNode,
-                    null),
-                SpaceH48(),
-                UIHelper.getBorderedTextField(
-                    context,
-                    _blocSmartHomeConfig.mqttIdentifier,
-                    _blocSmartHomeConfig.mqttIdentifierChanged,
-                    TextFieldHints.MQTT_IDENTIFIER,
-                    _mqttIdentifierController,
-                    InputTypes.TEXT,
-                    null,
-                    false,
-                    TextInputAction.next,
-                    _mqttIdentifierNode,
-                    null),
-                SpaceH48(),
-                UIHelper.getBorderedTextField(
-                    context,
-                    _blocSmartHomeConfig.mqttUser,
-                    _blocSmartHomeConfig.mqttUserChanged,
-                    TextFieldHints.MQTT_USER,
-                    _mqttUserController,
-                    InputTypes.TEXT,
-                    null,
-                    false,
-                    TextInputAction.next,
-                    _mqttUserNode,
-                    null),
-                SpaceH48(),
-                UIHelper.getBorderedTextField(
-                    context,
-                    _blocSmartHomeConfig.mqttPassword,
-                    _blocSmartHomeConfig.mqttPasswordChanged,
-                    TextFieldHints.MQTT_PASSWORD,
-                    _mqttPasswordController,
-                    TextInputType.visiblePassword,
-                    null,
-                    false,
-                    TextInputAction.next,
-                    _mqttPasswordNode,
-                    null
+                      //      () {
 
-                    //      () {
+                      //   _scrollController.animateTo(
 
-                    //   _scrollController.animateTo(
+                      //       _scrollController.position.maxScrollExtent,
 
-                    //       _scrollController.position.maxScrollExtent,
+                      //       duration: Duration(milliseconds: 100),
 
-                    //       duration: Duration(milliseconds: 100),
+                      //       curve: Curves.easeInOut);
 
-                    //       curve: Curves.easeInOut);
+                      // }
 
-                    // }
-
-                    ),
-                SpaceH48(),
-                _showAddNewTopicField ? _addTopic(context) : Container(),
-                _topicList != null &&
-                        _topicList.isNotEmpty &&
-                        !_showAddNewTopicField
-                    ? _getTopicsDropdown(
-                        // model.mqttSettingsList.map((e) {
-                        //   MqttSettingsItem m = e;
-                        //   return m.mqttServer;
-                        // }).toList(),
-                        _topicList,
-                        _topicBLoc.stream,
-                        _topicBLoc.sink,
-                        false,
-                        label: 'Topics')
-                    : Container(),
-                SpaceH64(),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: MaterialButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)),
-                        color: ColorConstants.TOP_CLIPPER_END_DARK,
-                        child: Text(
-                          "Save",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () {
-                          _saveToDb();
-                        },
                       ),
-                    ),
-                    SizedBox(width: 20),
-                    Expanded(
-                      child: MaterialButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)),
-                        color: ColorConstants.TOP_CLIPPER_END_DARK,
-                        child: Text(
-                          "Reset",
-                          style: TextStyle(color: Colors.white),
+                  SpaceH48(),
+                  _showAddNewTopicField ? _addTopic(context) : Container(),
+                  _topicList != null &&
+                          _topicList.isNotEmpty &&
+                          !_showAddNewTopicField
+                      ? _getTopicsDropdown(
+                          // model.mqttSettingsList.map((e) {
+                          //   MqttSettingsItem m = e;
+                          //   return m.mqttServer;
+                          // }).toList(),
+                          _topicList,
+                          _topicBLoc.stream,
+                          _topicBLoc.sink,
+                          false,
+                          label: 'Topics')
+                      : Container(),
+                  SpaceH64(),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: MaterialButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16)),
+                          color: ColorConstants.TOP_CLIPPER_END_DARK,
+                          child: Text(
+                            "Save",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () {
+                            _saveToDb();
+                          },
                         ),
-                        onPressed: () {
-                          _clearFields();
-                        },
                       ),
-                    ),
-                  ],
-                ),
-                SpaceH32()
-              ],
+                      SizedBox(width: 20),
+                      Expanded(
+                        child: MaterialButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16)),
+                          color: ColorConstants.TOP_CLIPPER_END_DARK,
+                          child: Text(
+                            "Reset",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () {
+                            _clearFields();
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  SpaceH32()
+                ],
+              ),
             ),
           ),
-        ),
-        Positioned(
-            top: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 32.h, right: 48.w),
-                    child: Image.asset(
-                      ImagePaths.cross,
-                      color: ColorConstants.TOP_CLIPPER_END_DARK,
-                      width: 32.h,
-                      height: 32.h,
+          Positioned(
+              top: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 32.h, right: 48.w),
+                      child: Image.asset(
+                        ImagePaths.cross,
+                        color: ColorConstants.TOP_CLIPPER_END_DARK,
+                        width: 32.h,
+                        height: 32.h,
+                      ),
                     ),
-                  ),
-                )
-              ],
-            ))
-      ],
+                  )
+                ],
+              ))
+        ],
+      ),
     );
   }
 

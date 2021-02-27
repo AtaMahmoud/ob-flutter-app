@@ -69,13 +69,6 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
     });
   }
 
-  @override
-    void didChangeDependencies() {
-      // TODO: implement didChangeDependencies
-      super.didChangeDependencies();
-      
-    }
-
   void _setFields(MqttSettingsItem event) {
     _portController.text = event.mqttPort;
     _indentifierController.text = event.mqttIdentifier;
@@ -97,9 +90,7 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
           children: [
             CustomScrollView(
               slivers: <Widget>[
-                UIHelper.getTopEmptyContainer(
-                    MediaQuery.of(context).size.height / 5, true),
-
+                UIHelper.getTopEmptyContainer(416.h, true),
                 SliverToBoxAdapter(
                   child: _mqttConfigExapnder(),
                 ),
@@ -195,7 +186,8 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
 
   Consumer _mainContent() {
     return Consumer<MqttSettingsProvider>(builder: (context, model, widget) {
-      print('Consumed ---- mqttsettings item ------------ ${model.mqttSettingsList.length}');
+      print(
+          'Consumed ---- mqttsettings item ------------ ${model.mqttSettingsList.length}');
       if (model.mqttSettingsList != null) {
         List<MqttSettingsItem> _listITems = //[]; // ['1', '2'];
 
@@ -211,7 +203,7 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
             children: [
               /*           _buildConnectionStatusWidget(
                       _smartHomeDataProvider.getAppConnectionState), */
-              SpaceH32(),
+              // SpaceH32(),
               model.mqttSettingsList != null &&
                       model.mqttSettingsList.length > 0
                   ? _getServerDropdown(
@@ -224,8 +216,9 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
                       _iotServerBloc.sink,
                       false,
                       label: 'Server Address')
-                  : _customButton(context, 'ADD NEW MQTT CONFIGURATION',
-                      _newConfigurationPopUp), //Container(),
+                  : Container(),
+              // _customButton(context, 'ADD NEW MQTT CONFIGURATION',
+              //_newConfigurationPopUp), //Container(),
               // _buildScrollableTextWith(_smartHomeDataProvider.getHistoryText),
               /* _buildSensorDataTableHeader(),
                   _buildSensorDataTable(_smartHomeDataProvider.sensorDataList), */
@@ -242,13 +235,14 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
               ..._selectedServer != null ? _getServerDetails() : [Container()],
               _selectedServer != null ? _editSettingsRow() : Container(),
               SpaceH48(),
-             _selectedServer != null ? _customButton(context, 'SET AS ACTIVE CONFIGURATION', () {
-                    print('set active configuration');
-                  })
-              : Container(),
+              _selectedServer != null
+                  ? _customButton(context, 'SET AS ACTIVE CONFIGURATION', () {
+                      print('set active configuration');
+                    })
+                  : Container(),
               SpaceH48(),
               _customButton(context, 'ADD NEW MQTT CONFIGURATION',
-                      _newConfigurationPopUp),
+                  _newConfigurationPopUp),
             ],
           ),
         );
@@ -451,17 +445,19 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
           // width: MediaQuery.of(context).size.width - 72.w,
           padding: EdgeInsets.all(32.w),
           decoration: BoxDecoration(
-              borderRadius: new BorderRadius.circular(48.w),
-              border: Border.all(color: ColorConstants.TOP_CLIPPER_END_DARK),
-              // color: ColorConstants.TOP_CLIPPER_END_DARK
-              ),
+            borderRadius: new BorderRadius.circular(48.w),
+            border: Border.all(color: ColorConstants.TOP_CLIPPER_END_DARK),
+            // color: ColorConstants.TOP_CLIPPER_END_DARK
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
                 label,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: ColorConstants.TOP_CLIPPER_END_DARK, fontSize: 36.sp),
+                style: TextStyle(
+                    color: ColorConstants.TOP_CLIPPER_END_DARK,
+                    fontSize: 36.sp),
               ),
             ],
           ),

@@ -60,12 +60,13 @@ class _TopClipperControlState extends State<TopClipperControl>
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     Future.delayed(Duration(seconds: 1)).then((value) {
-      setState(() {
-        _top = _top == 100.0 ? 32.0 : 100.0;
-        _bottom = _bottom == 100.0 ? 32.0 : 100.0;
-        _left = _left == 100.0 ? 0.0 : 100.0;
-        _right = _right == 100.0 ? 0.0 : 100.0;
-      });
+      if (mounted)
+        setState(() {
+          _top = _top == 100.0 ? 32.0 : 100.0;
+          _bottom = _bottom == 100.0 ? 32.0 : 100.0;
+          _left = _left == 100.0 ? 0.0 : 100.0;
+          _right = _right == 100.0 ? 0.0 : 100.0;
+        });
     });
   }
 
