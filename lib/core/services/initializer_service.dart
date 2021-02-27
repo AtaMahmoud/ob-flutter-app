@@ -129,8 +129,13 @@ class InitalizerService extends ChangeNotifier {
   }
 
   Future<void> _initializeHive() async {
-    Directory dir = await getExternalStorageDirectory();
-    Hive.init(dir.path);
+    if (Platform.isAndroid) {
+      Directory dir = await getExternalStorageDirectory();
+      Hive.init(dir.path);
+    }else if(Platform.isIOS){
+      Directory dir = await getLibraryDirectory();
+      Hive.init(dir.path);
+    }
     Hive.registerAdapter(SearchItemAdapter());
     Hive.registerAdapter(MqttSettingsItemAdapter());
 
