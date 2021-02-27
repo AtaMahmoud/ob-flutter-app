@@ -16,7 +16,7 @@ import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper_2.dart';
 import 'package:ocean_builder/ui/screens/designSteps/exterior_finish_screen.dart';
-import 'package:ocean_builder/ui/screens/designSteps/smart_home_screen.dart';
+import 'package:ocean_builder/ui/screens/iot/smart_home_screen.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
 import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';

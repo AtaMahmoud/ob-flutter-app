@@ -33,8 +33,6 @@ class _CreatePermissionScreenState extends State<CreatePermissionScreen> {
 
   String permissionSet;
 
-  ScreenUtil _util;
-
   OceanBuilderProvider _oceanBuilderProvider;
   SelectedOBIdProvider _selectedOBIdProvider;
 
@@ -102,8 +100,8 @@ class _CreatePermissionScreenState extends State<CreatePermissionScreen> {
     return SliverToBoxAdapter(
         child: Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: _util.setWidth(32),
-        vertical: _util.setHeight(32),
+        horizontal: 32.w,
+        vertical: 32.h,
       ),
       child: _userProvider.isLoading || _oceanBuilderProvider.isLoading
           ? Center(child: CircularProgressIndicator())
@@ -173,15 +171,13 @@ class _CreatePermissionScreenState extends State<CreatePermissionScreen> {
         ),
         labelText: 'Permission Set Name',
         labelStyle: TextStyle(
-            color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
-            fontSize: _util.setSp(48)),
+            color: ColorConstants.ACCESS_MANAGEMENT_TITLE, fontSize: 48.sp),
         hintText: 'PLEASE NAME YOUR PERMISSION SET',
         hintStyle: TextStyle(
-            color: ColorConstants.ACCESS_MANAGEMENT_SUBTITLE,
-            fontSize: _util.setSp(40)),
+            color: ColorConstants.ACCESS_MANAGEMENT_SUBTITLE, fontSize: 40.sp),
       ),
       style: TextStyle(
-        fontSize: _util.setSp(48),
+        fontSize: 48.sp,
         fontWeight: FontWeight.w400,
         color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
       ),
@@ -218,8 +214,8 @@ class _CreatePermissionScreenState extends State<CreatePermissionScreen> {
         // height: h,
         // width: MediaQuery.of(context).size.width * .4,
         padding: EdgeInsets.symmetric(
-          horizontal: _util.setWidth(32),
-          vertical: _util.setHeight(32),
+          horizontal: 32.w,
+          vertical: 32.h,
         ),
         decoration: BoxDecoration(
             borderRadius: new BorderRadius.circular(ScreenUtil().setWidth(72)),

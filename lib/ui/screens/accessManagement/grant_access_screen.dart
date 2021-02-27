@@ -66,8 +66,8 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
 
   @override
   void initState() {
-    UIHelper.setStatusBarColor();
     super.initState();
+    UIHelper.setStatusBarColor();
     _firstNameController = TextEditingController(text: '');
     _emailController = TextEditingController(text: '');
     _messageController = TextEditingController(text: '');
@@ -81,9 +81,7 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
     _firstNameController.dispose();
     _emailController.dispose();
     _messageController.dispose();
-
-    // _bloc.dispose();
-
+    _bloc.dispose();
     super.dispose();
   }
 
@@ -98,20 +96,27 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
 
     //-----
     _bloc.requestAccessAsController.listen((onData) {
-      if (onData.compareTo(ListHelper.getAccessAsList()[1]) == 0) {
+      print('acces type --- $onData');
+      if (onData.compareTo(ListHelper.getGrantAccessAsList()[3]) == 0) {
         _reciever.userType = ListHelper.getAccessAsList()[1];
-        // // debugPrint(_user.userType.toString());
-        _bloc.permissionChanged(ListHelper.getPermissionList()[4]);
+        _setPermissionsDropdownValue(_reciever.userType);
 
         if (!_isMemberSelected)
           setState(() {
             _isMemberSelected = true;
             _reciever.requestAccessTime = ListHelper.getAccessTimeList()[9];
           });
-      } else if (onData.compareTo(ListHelper.getAccessAsList()[2]) == 0) {
+      } else if (onData.compareTo(ListHelper.getGrantAccessAsList()[2]) == 0) {
         _reciever.userType = ListHelper.getAccessAsList()[2];
-        // // debugPrint(_user.userType.toString());
-        _bloc.permissionChanged(ListHelper.getPermissionList()[3]);
+        _setPermissionsDropdownValue(_reciever.userType);
+        if (_isMemberSelected)
+          setState(() {
+            _isMemberSelected = false;
+            _reciever.requestAccessTime = ListHelper.getAccessTimeList()[1];
+          });
+      } else if (onData.compareTo(ListHelper.getGrantAccessAsList()[1]) == 0) {
+        _reciever.userType = ListHelper.getAccessAsList()[3];
+        _setPermissionsDropdownValue(_reciever.userType);
         if (_isMemberSelected)
           setState(() {
             _isMemberSelected = false;
@@ -129,14 +134,20 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
     _bloc.requestAccessTimeController.listen((onData) {
       _reciever.requestAccessTime = onData;
     });
-
-    // _bloc.permissionChanged(ListHelper.getPermissionList()[1]);
-    // permissionSet = ListHelper.getPermissionList()[0];
     _bloc.permissionController.listen((onData) {
       permissionSet = onData;
     });
 
     //-----
+  }
+
+  void _setPermissionsDropdownValue(String onData) {
+    String permissionSetName = _findPermissionSetName(onData);
+    if (permissionSetName.length > 1) {
+      _bloc.permissionChanged(permissionSetName);
+    } else {
+      _bloc.permissionChanged('Grant permissions');
+    }
   }
 
   @override
@@ -145,10 +156,13 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
 
     _selectedPermissionSet =
         _userProvider.authenticatedUser.seaPods[0].permissionSets;
+    print(_selectedPermissionSet.map((permission) {
+      return permission.permissionSetName;
+    }).toList());
     _user = _userProvider.authenticatedUser;
     return Container(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding: EdgeInsets.only(
+            top: 8, bottom: MediaQuery.of(context).viewInsets.bottom),
         decoration: BoxDecoration(
             // gradient: profileGradient,
             color: Colors.white,
@@ -168,11 +182,10 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
                 delegate: SliverChildListDelegate(
                   [
                     _headerTitle(),
-                    _firstNameField(context),
-                    SpaceH32(),
+                    // _firstNameField(context),
+                    SpaceH64(),
                     _emailField(context),
-                    // SizedBox(height: util.setHeight(175)),
-                    SpaceH32(),
+                    SpaceH64(),
                     _seaPodDropdown(),
                     SpaceH32(),
                     _accessTypeDropdown(),
@@ -608,7 +621,7 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
       if (responseStatus.status == 200) {
         showInfoBar(
             'Invitation sent',
-            'Access invitation has been sent to " ${_reciever.firstName} ${_reciever.lastName}."',
+            'Access invitation has been sent to "${_reciever.email}"',
             GlobalContext.currentScreenContext);
       } else {
         showInfoBar(parseErrorTitle(responseStatus.code),
@@ -676,6 +689,11 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
   }
 
   _permissionSetRow() {
+    List<String> list = [];
+    list.add('Grant permissions');
+    list.addAll(_selectedPermissionSet.map((permission) {
+      return permission.permissionSetName;
+    }).toList());
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 48.w),
       child: Row(
@@ -685,12 +703,7 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
         children: <Widget>[
           Expanded(
             child: getDropdown(
-                _selectedPermissionSet.map((permission) {
-                  return permission.permissionSetName;
-                }).toList(),
-                _bloc.permission,
-                _bloc.permissionChanged,
-                false,
+                list, _bloc.permission, _bloc.permissionChanged, false,
                 label: 'Permissions'),
           )
         ],
@@ -706,5 +719,18 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
       }
     }).toList();
     return _id;
+  }
+
+  String _findPermissionSetName(String onData) {
+    String defaultPermissionName = '';
+    for (var i = 0; i < _selectedPermissionSet.length; i++) {
+      PermissionSet ps = _selectedPermissionSet[i];
+      if (ps.permissionSetName.contains(onData) &&
+          ps.permissionSetName.contains('Default')) {
+        defaultPermissionName = ps.permissionSetName;
+      }
+    }
+    print(defaultPermissionName);
+    return defaultPermissionName;
   }
 }

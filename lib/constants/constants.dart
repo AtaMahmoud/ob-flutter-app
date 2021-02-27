@@ -9,6 +9,7 @@ import 'package:ocean_builder/core/models/ocean_builder_user.dart';
 import 'package:ocean_builder/core/models/permission.dart';
 import 'package:ocean_builder/core/models/permission.dart';
 import 'package:ocean_builder/core/models/permission.dart';
+import 'package:ocean_builder/core/models/search_item.dart';
 import 'package:ocean_builder/custom_drawer/homeDrawer.dart';
 
 class ColorConstants {
@@ -136,12 +137,28 @@ class TextFieldHints {
   static String YOUR_SEAPOD_NAME = 'Your SeaPod Name';
 
   static String NAME_YOUR_SEAPOD = 'NAME YOUR SEAPOD';
+
+  static String MQTT_SERVER = 'Server';
+
+  static String MQTT_PORT = 'Port';
+
+  static String MQTT_IDENTIFIER = 'Identifier';
+
+  static String MQTT_USER = 'User';
+
+  static String MQTT_PASSWORD = 'Password';
+
+  static String MQTT_TOPIC = 'Topic';
 }
 
 class InputTypes {
   static const NUMBER =
       TextInputType.numberWithOptions(decimal: false, signed: false);
   static const EMAIL = TextInputType.emailAddress;
+
+  static const PHONE = TextInputType.phone;
+
+  static const TEXT = TextInputType.text;
 }
 
 class InfoTexts {
@@ -226,6 +243,7 @@ class ScreenTitle {
   static const DECK_FLOOR_FINISH_MATERIALS = 'Deck Floor Finish Materials';
   static const MAKE_A_DEPOSIT = 'Make a deposit';
   static const YOUR_INFO = 'Your info';
+  static const EMAIL_CONFIRMATION = 'Email Confirmation';
   static const GUEST_REQUEST = 'Guest Request';
   static const INVITATION_REQUEST = 'Access Invitation';
   static const YOUR_OBS = 'Your SeaPods';
@@ -249,6 +267,8 @@ class ScreenTitle {
   static String CREATE_PERMISSION = 'Create New';
   static String EDIT_PERMISSION = 'Edit Permissions';
   static String CUSTOMIZE_PERMISSION = 'Customize Permissions';
+
+  static String SMART_HOME_SETTINGS = 'Smart Home Settings';
 }
 
 class ListHelper {
@@ -510,12 +530,15 @@ class ListHelper {
         'Zimbabwe'
       ];
 
+  //  [Default GUEST Permissions, Default MEMBER Permissions, Default VISITOR Permissions, Default ADMIN Permissions, Default OWNER Permissions]
+
   static List<String> getPermissionList() => [
-        'Full Admin Access',
-        'Default Visitor Permissions',
-        'Restricted Bedroom & Kitchen',
-        'Default Guest Permissions',
-        'Default Member Permissions'
+        'Default ADMIN Permissions',
+        'Default OWNER Permissions',
+        'Default VISITOR Permissions',
+        'Default GUEST Permissions',
+        'Default MEMBER Permissions',
+        'Restricted Bedroom & Kitchen'
       ];
 
   static List<String> getAccessAsList() =>
@@ -981,9 +1004,11 @@ class ImagePaths {
   static String svgRainAccumulation = 'images/rain accumulation.svg';
   static String svgRainIntensity = 'images/rain intensity.svg';
 
-  static String svgAlarmLightingDetectedLast3hours = 'images/lightnig detected last 3 hours.svg';
+  static String svgAlarmLightingDetectedLast3hours =
+      'images/lightnig detected last 3 hours.svg';
   static String svgCountLightingStrike = 'images/lightning strike count.svg';
-  static String svgAlarmLightingDistanceDetected = 'images/lightning distance detected.svg';
+  static String svgAlarmLightingDistanceDetected =
+      'images/lightning distance detected.svg';
   static String svgLighitngLastDetected = 'images/lightning last detected.svg';
 
   static String svgHumidity = 'images/humidity.svg';
@@ -1245,7 +1270,16 @@ class AppStrings {
 
   static String smartHome_local_server = 'Smart Home(Server)';
 
-  static String smartHomeMessage = 'Get latest update\nand control your\nseapod devices';
+  static String smartHomeMessage =
+      'Get latest update\nand control your\nseapod devices';
+
+  static String checkYourInbox = 'Check your inbox';
+
+  static String confirmEmailText1 =
+      'We have sent you an email with a link that will allow you to finish your account setup.';
+
+  static String confirmEmailText2 =
+      'Alternatively, you can enter the code provided in the email here';
 }
 
 class NotificationConstants {
@@ -1306,6 +1340,7 @@ class SharedPreferanceKeys {
   static String KEY_SELECTED_OB_ID = 'selected_ob_id';
   static String KEY_X_AUTH_TOKEN = 'x-auth-token';
   static String KEY_X_AUTH_TOKEN_EARTH_STATION = 'x-auth-token-es';
+  static String KEY_EMAIL = 'key_email';
 }
 
 class ApplicationStatics {
@@ -1330,6 +1365,11 @@ class GlobalContext {
   static SwiperController swiperController = new SwiperController();
   static int currentScreenIndex = 0;
   static bool isDrawerOpen = false;
+
+  static List<SearchItem> appItems = [];
+  static List<String> searchItems = [];
+
+  // static List<String> selectedItems = [];
 }
 
 class NavigationContext {
@@ -1350,7 +1390,6 @@ class WeatherDescMap {
     '116': {'Partly cloudy', ImagePaths.svgWeatherTypePartlyCloudy},
     '119': {'Cloudy', ImagePaths.svgWeatherTypeCloudy},
     '122': {'Overcast', ImagePaths.svgWeatherTypeOvercast},
-
     '143': {'Mist', ImagePaths.weatherTypeMist},
     '176': {'Patchy rain possible', ImagePaths.weatherTypePatchyRainPossible},
     '179': {'Patchy snow possible', ImagePaths.weatherTypePatchySnowPossible},
@@ -1382,7 +1421,6 @@ class WeatherDescMap {
     '308': {'Heavy rain', ImagePaths.weatherTypeHeavyRain},
     '311': {'Light freezing rain', ImagePaths.weatherTypeLightRain},
     '314': {'Moderate or Heavy freezing rain', ImagePaths.weatherTypeHeavyRain},
-
     '317': {'Light sleet', ImagePaths.weatherTypePatchySleetPossible},
     '320': {'Moderate or heavy sleet', ImagePaths.svgCloudRain},
     '323': {'Patchy light snow', ImagePaths.svgWindGusts},
@@ -1658,6 +1696,10 @@ List<String> WEATEHR_SOURCE_LIST = [
   'LOCAL (WEATHERFLOW STATION)',
   'EXTERNAL (STORMGLASS)'
 ];
+
+SearchItem SELECTED_SEARCH_ITEM;
+
+// List<App>
 
 /*
 

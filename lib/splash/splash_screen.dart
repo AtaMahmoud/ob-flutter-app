@@ -4,6 +4,7 @@ import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/providers/current_ob_id_provider.dart';
 import 'package:ocean_builder/core/providers/fake_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
+import 'package:ocean_builder/core/services/initializer_service.dart';
 import 'package:ocean_builder/core/singletons/headers_manager.dart';
 import 'package:ocean_builder/helper/method_helper.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
@@ -31,6 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
     UIHelper.setStatusBarColor(color: ColorConstants.SPLASH_BKG);
     super.initState();
     _headerManager = HeadersManager.getInstance();
+
     if (!AppLaunchState.LAUNCH_FROM_NOTIFICATION_TRAY) {
       Future.delayed(Duration.zero).then((_) {
         initData().then((value) {
@@ -42,6 +44,12 @@ class _SplashScreenState extends State<SplashScreen> {
       // // debugPrint('Navigating to other screen --------');
       initData();
     }
+
+    // deal with hive
+
+    Provider.of<InitalizerService>(context, listen: false).init(() {
+      print('hive initializing done');
+    });
   }
 
   @override
@@ -67,12 +75,13 @@ class _SplashScreenState extends State<SplashScreen> {
   Future initData() async {
     await Future.delayed(Duration(seconds: 3));
     // // debugPrint('context is --  ${context} ------------ global context --  ${GlobalContext.currentScreenContext}');
-    FakeDataProvider fakeDataProvider = Provider.of<FakeDataProvider>(context);
+    FakeDataProvider fakeDataProvider =
+        Provider.of<FakeDataProvider>(context, listen: false);
     fakeDataProvider.fetchFakeData();
-    userProvider = Provider.of<UserProvider>(context);
+    userProvider = Provider.of<UserProvider>(context, listen: false);
     userProvider.isAuthenticatedUser;
     SelectedOBIdProvider selectedOBIdProvider =
-        Provider.of<SelectedOBIdProvider>(context);
+        Provider.of<SelectedOBIdProvider>(context, listen: false);
     SharedPrefHelper.getCurrentOB().then((onValue) {
       if (onValue != null && onValue.length > 3)
         selectedOBIdProvider.selectedObId = onValue;

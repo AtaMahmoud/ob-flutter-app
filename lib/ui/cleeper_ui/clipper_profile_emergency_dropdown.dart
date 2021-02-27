@@ -41,6 +41,7 @@ class _ClipperProfileEmergencyDropdownState
   @override
   void initState() {
     super.initState();
+    widget.editBloc.emergencyInfoChanged(false);
 
     if (widget.user.emergencyContact == null) {
       widget.user.emergencyContact = EmergencyContact();
@@ -115,11 +116,7 @@ class _ClipperProfileEmergencyDropdownState
     });
 
     widget.editBloc.emergencyInfoController.listen((isChanged) {
-      if (isChanged) {
-        ProfileEditState.emergencyContactInfoChanged = true;
-      } else {
-        ProfileEditState.emergencyContactInfoChanged = false;
-      }
+      ProfileEditState.emergencyContactInfoChanged = isChanged;
     });
   }
 
@@ -158,9 +155,7 @@ class _ClipperProfileEmergencyDropdownState
           child: Container(
             color: widget.backgroundColor,
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                  vertical: 164.h,
-                  horizontal: 16.w),
+              padding: EdgeInsets.symmetric(vertical: 164.h, horizontal: 16.w),
               child: Center(
                 child: Theme(
                   child: ExpansionTile(
@@ -227,7 +222,7 @@ class _ClipperProfileEmergencyDropdownState
                             _bloc.phone,
                             _bloc.phoneChanged,
                             _phoneController,
-                            InputTypes.NUMBER,
+                            InputTypes.PHONE,
                             true,
                             _phoneNode,
                             _emailNode),

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -72,9 +71,10 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
               _mqttServerClient.subscribe(
                   _topicLedControlStatus, MqttQos.exactlyOnce);
 
-                final builder1 = MqttClientPayloadBuilder();   
-                 builder1.addString('requset_status');
-              _mqttServerClient.publishMessage(_topicLedControl, MqttQos.exactlyOnce, builder1.payload);    
+              final builder1 = MqttClientPayloadBuilder();
+              builder1.addString('requset_status');
+              _mqttServerClient.publishMessage(
+                  _topicLedControl, MqttQos.exactlyOnce, builder1.payload);
             }
 
             showInfoBar('Connected', 'Connected with MQTT broker', context);
@@ -123,6 +123,7 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
             Appbar(
               ScreenTitle.SMART_HOME,
               isDesignScreen: true,
+              enableSettings: true,
             ),
             Positioned(
                 bottom: 0,
@@ -329,7 +330,6 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
                     retain: true);
                 _mqttServerClient.subscribe(
                     "test/message/status", MqttQos.exactlyOnce);
-   
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -385,16 +385,13 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
                 // builder1.addInt(1);
                 if (!ledStatus) {
                   builder1.addString(onMessage);
-                                    debugPrint(
-                      'Messge payload $onMessage');
+                  debugPrint('Messge payload $onMessage');
                 } else {
                   builder1.addString(offMessage);
-                  debugPrint(
-                      'Messge payload $offMessage');
+                  debugPrint('Messge payload $offMessage');
                 }
                 if (_smartHomeDataProvider.getAppConnectionState ==
                     MQTTAppConnectionState.connected) {
-
                   _mqttServerClient.publishMessage(
                       _topicLedControl, MqttQos.exactlyOnce, builder1.payload,
                       retain: false);

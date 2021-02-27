@@ -49,22 +49,26 @@ class _WeatherScreenState extends State<WeatherScreen> {
   void initState() {
     Future.delayed(Duration.zero).then((_) {
       _futureWeatherData =
-          Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
+          Provider.of<StormGlassDataProvider>(context, listen: false)
+              .fetchWeatherData();
 
-      _futuremissingData = Provider.of<LocalWeatherDataProvider>(context)
-          .fetchDeviceObservationData();
+      _futuremissingData =
+          Provider.of<LocalWeatherDataProvider>(context, listen: false)
+              .fetchDeviceObservationData();
 
       currentlySelectedSource = ListHelper.getSourceList()[0];
       _sourcePriorityBloc.topProprity.listen((event) {
         if (event.compareTo('local') == 0) {
-          _futureWeatherData = Provider.of<LocalWeatherDataProvider>(context)
-              .fetchDeviceObservationData();
+          _futureWeatherData =
+              Provider.of<LocalWeatherDataProvider>(context, listen: false)
+                  .fetchDeviceObservationData();
           currentlySelectedSource = ListHelper.getSourceList()[1];
         } else if (event.compareTo('external') == 0) {
           _futureWeatherData =
               Provider.of<StormGlassDataProvider>(context).fetchWeatherData();
-          _futuremissingData = Provider.of<LocalWeatherDataProvider>(context)
-              .fetchDeviceObservationData();
+          _futuremissingData =
+              Provider.of<LocalWeatherDataProvider>(context, listen: false)
+                  .fetchDeviceObservationData();
           currentlySelectedSource = ListHelper.getSourceList()[0];
         }
       });
@@ -465,7 +469,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 future: _futureUvIndexData,
                 // initialData: stormGlassDataProvider.weatherDataToday,
                 builder: (context, snapshot) {
-                  debugPrint('----------------${snapshot.connectionState}');
+                  // debugPrint('----------------${snapshot.connectionState}');
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.connectionState == ConnectionState.done) {

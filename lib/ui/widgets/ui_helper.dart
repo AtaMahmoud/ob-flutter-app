@@ -1,4 +1,3 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,7 +8,6 @@ import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:ocean_builder/ui/shared/popup.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'dropdown_with_filter.dart';
 
@@ -114,6 +112,125 @@ class UIHelper {
         ),
       ],
     );
+  }
+
+  static getDisabledTextField(String label, TextEditingController controller) {
+    return TextField(
+      autofocus: false,
+      controller: controller,
+      enabled: false,
+      scrollPadding: EdgeInsets.only(bottom: 241.3.h),
+      textDirection: TextDirection.ltr,
+      keyboardAppearance: Brightness.light,
+      style: TextStyle(
+          fontSize: 43.69.sp,
+          fontWeight: FontWeight.w400,
+          color: ColorConstants.TOP_CLIPPER_START),
+      decoration: InputDecoration(
+          // hintText: label,
+          errorMaxLines: 4,
+          contentPadding: EdgeInsets.only(
+            top: 16.h,
+            bottom: 16.h,
+            left: 48.w,
+            // right: 32.w
+          ),
+          // enabledBorder: new UnderlineInputBorder(
+          //     borderSide: new BorderSide(
+          //         color: ColorConstants.TOP_CLIPPER_START)),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.w),
+            borderSide: BorderSide(
+                color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER, width: 1),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.w),
+            borderSide: BorderSide(
+                color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER, width: 1),
+          ),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          labelText: label,
+          labelStyle: TextStyle(
+              fontSize: 43.69.sp,
+              fontWeight: FontWeight.w400,
+              color: ColorConstants.TOP_CLIPPER_START),
+          hintStyle: TextStyle(
+              fontSize: 43.69.sp,
+              fontWeight: FontWeight.w400,
+              color: ColorConstants.TOP_CLIPPER_START)),
+    );
+  }
+
+  static Widget getBorderedTextField(
+      BuildContext context,
+      Observable<String> stream,
+      changed,
+      String label,
+      TextEditingController controller,
+      TextInputType inputType,
+      int maxLength,
+      bool addPadding,
+      TextInputAction action,
+      FocusNode focusNode,
+      VoidCallback callback) {
+    return StreamBuilder<String>(
+        stream: stream,
+        builder: (context, snapshot) {
+          return Padding(
+            padding: addPadding
+                ? EdgeInsets.symmetric(horizontal: 65.535.w)
+                : EdgeInsets.symmetric(horizontal: 0),
+            child: TextField(
+              focusNode: focusNode,
+              autofocus: false,
+              maxLength: maxLength,
+              controller: controller,
+              onChanged: changed,
+              keyboardType: inputType,
+              scrollPadding: EdgeInsets.only(bottom: 241.3.h),
+              onEditingComplete:
+                  action != TextInputAction.done ? callback : null,
+              textInputAction: action,
+              textDirection: TextDirection.ltr,
+              keyboardAppearance: Brightness.light,
+              style: TextStyle(
+                  fontSize: 43.69.sp,
+                  fontWeight: FontWeight.w400,
+                  color: ColorConstants.TOP_CLIPPER_START),
+              decoration: InputDecoration(
+                  hintText: label,
+                  errorMaxLines: 4,
+                  errorText: snapshot.error,
+                  helperText: snapshot.error,
+                  contentPadding: EdgeInsets.only(
+                    top: 16.h,
+                    bottom: 16.h,
+                    left: 48.w,
+                    // right: 32.w
+                  ),
+                  // enabledBorder: new UnderlineInputBorder(
+                  //     borderSide: new BorderSide(
+                  //         color: ColorConstants.TOP_CLIPPER_START)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.w),
+                    borderSide: BorderSide(
+                        color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
+                        width: 1),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.w),
+                    borderSide: BorderSide(
+                        color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
+                        width: 1),
+                  ),
+                  labelText: label,
+                  hintStyle: TextStyle(
+                      fontSize: 43.69.sp,
+                      fontWeight: FontWeight.w400,
+                      color: ColorConstants.INVALID_TEXTFIELD)),
+            ),
+          );
+        });
   }
 
   static Widget getRegistrationTextField(

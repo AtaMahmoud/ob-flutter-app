@@ -8,6 +8,7 @@ import 'package:ocean_builder/core/providers/design_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper_2.dart';
+import 'package:ocean_builder/ui/screens/sign_in_up/email_verification_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/login_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/set_password_screen.dart';
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
@@ -198,7 +199,7 @@ class _YourInfoScreenState extends State<YourInfoScreen> {
         _bloc.phoneChanged,
         TextFieldHints.PHONE,
         _phoneController,
-        InputTypes.NUMBER,
+        InputTypes.PHONE,
         null,
         true,
         TextInputAction.done,

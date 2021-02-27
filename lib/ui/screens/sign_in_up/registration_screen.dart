@@ -173,7 +173,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         _bloc.phoneChanged,
         TextFieldHints.PHONE,
         _phoneController,
-        InputTypes.NUMBER,
+        InputTypes.PHONE,
         null,
         true,
         TextInputAction.done,

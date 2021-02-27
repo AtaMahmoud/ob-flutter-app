@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/user.dart';
 import 'package:ocean_builder/core/providers/current_ob_id_provider.dart';
 import 'package:ocean_builder/core/providers/drawer_state_data_provider.dart';
 import 'package:ocean_builder/core/providers/local_noti_data_provider.dart';
+import 'package:ocean_builder/core/providers/search_history_provider.dart';
+import 'package:ocean_builder/core/providers/selected_history_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
+import 'package:ocean_builder/search/appSearchScreen.dart';
 import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/access_management_screen.dart';
-import 'package:ocean_builder/ui/screens/designSteps/smart_home_screen.dart';
-import 'package:ocean_builder/ui/screens/designSteps/smart_home_screen_node_js.dart';
+import 'package:ocean_builder/ui/screens/controls/control_screen.dart';
+import 'package:ocean_builder/ui/screens/iot/smart_home_screen.dart';
+import 'package:ocean_builder/ui/screens/iot/smart_home_screen_node_js.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
+import 'package:ocean_builder/ui/screens/marine/marine_screen.dart';
 import 'package:ocean_builder/ui/screens/menu/landing_screen.dart';
 import 'package:ocean_builder/ui/screens/notification/noti_history_screen_with_drawer.dart';
 import 'package:ocean_builder/ui/screens/profile/profile_screen.dart';
 import 'package:ocean_builder/ui/screens/settings/settings_screen.dart';
+import 'package:ocean_builder/ui/screens/weather/weather_screen.dart';
 import 'package:ocean_builder/ui/shared/popup.dart';
 import 'package:ocean_builder/ui/widgets/drawer_topbar.dart';
 import 'package:provider/provider.dart';
+import 'package:ocean_builder/core/models/search_item.dart';
 
 class HomeDrawer extends StatefulWidget {
   final AnimationController iconAnimationController;
@@ -51,15 +59,25 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
   bool _expandAccessManagement = false;
 
+  // ---------------------------
+
   @override
   void initState() {
-    setdDrawerListArray();
-
-    // UIHelper.setStatusBarColor(color:ColorConstants.TOP_CLIPPER_START_DARK);
     super.initState();
+
+    setdDrawerListArray();
+    // UIHelper.setStatusBarColor(color:ColorConstants.TOP_CLIPPER_START_DARK);
+
     // currentlySelectedDrawerIndex = widget.screenIndex;
     // debugPrint('current drawer index --------------------------------------------------------------------- ${ApplicationStatics.selectedScreenIndex}');
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  //----------------------------
 
   void setdDrawerListArray() {
     drawerList = [
@@ -147,85 +165,96 @@ class _HomeDrawerState extends State<HomeDrawer> {
     _swiperDataProvider = Provider.of<SwiperDataProvider>(context);
     _user = _userProvider.authenticatedUser;
 
+    var _selectedAppItemDb =
+        Provider.of<SelectedHistoryProvider>(context, listen: false);
+    _selectedAppItemDb.getSelectedItem();
+    var _searchHistoryProvider =
+        Provider.of<SearchHistoryProvider>(context, listen: false);
+    _searchHistoryProvider.getSearchItem();
+
     return SizedBox(
       width: MediaQuery.of(context).size.width * .80,
       child: Scaffold(
         key: _scaffoldKey,
-        backgroundColor: AppTheme.notWhite, //.withOpacity(0.85),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              width: double.infinity,
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Drawerbar(
-                      scaffoldKey: _scaffoldKey,
-                      hasAvator: true,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+        backgroundColor: AppTheme.notWhite,
+        resizeToAvoidBottomInset: false, //.withOpacity(0.85),
+        body: _drawerContent(),
+      ),
+    );
+  }
+
+  Column _drawerContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          width: double.infinity,
+          child: Container(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: ScreenUtil().setHeight(8),
-                    right: ScreenUtil().setWidth(32),
-                  ),
-                  child: Text(
-                    _user != null
-                        ? '${_user.firstName} ${_user.lastName}'
-                        : ' ',
-                    style: TextStyle(
-                      color: Color(0xFF0C48A4),
-                      fontSize: ScreenUtil().setSp(48), //20.0,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    textAlign: TextAlign.start,
-                  ),
+                Drawerbar(
+                  scaffoldKey: _scaffoldKey,
+                  hasAvator: true,
                 ),
               ],
             ),
-            Expanded(
-              child: ListView.builder(
-                physics: BouncingScrollPhysics(),
-                padding: EdgeInsets.all(0.0),
-                itemCount: drawerList.length,
-                itemBuilder: (context, index) {
-                  if (index == 4) {
-                    return Column(
-                      children: <Widget>[
-                        inkwell(index),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            left: ScreenUtil().setWidth(48),
-                            right: ScreenUtil().setWidth(48),
-                            // top:ScreenUtil().setHeight(72),
-                            // bottom:ScreenUtil().setHeight(72)
-                          ),
-                          child: Container(
-                            height: ScreenUtil().setHeight(4),
-                            color: AppTheme.divider,
-                          ),
-                        )
-                      ],
-                    );
-                  }
-                  return inkwell(index);
-                },
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(
+                // top: ScreenUtil().setHeight(8),
+                right: ScreenUtil().setWidth(48),
+              ),
+              child: Text(
+                _user != null ? '${_user.firstName} ${_user.lastName}' : ' ',
+                style: TextStyle(
+                  color: Color(0xFF0C48A4),
+                  fontSize: ScreenUtil().setSp(48), //20.0,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.start,
               ),
             ),
           ],
         ),
-      ),
+        _searchButton(),
+        Expanded(
+          child: ListView.builder(
+            physics: BouncingScrollPhysics(),
+            padding: EdgeInsets.only(top: 16.h),
+            itemCount: drawerList.length,
+            itemBuilder: (context, index) {
+              if (index == 4) {
+                return Column(
+                  children: <Widget>[
+                    inkwell(index),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: ScreenUtil().setWidth(48),
+                        right: ScreenUtil().setWidth(48),
+                        // top:ScreenUtil().setHeight(72),
+                        // bottom:ScreenUtil().setHeight(72)
+                      ),
+                      child: Container(
+                        height: ScreenUtil().setHeight(4),
+                        color: AppTheme.divider,
+                      ),
+                    )
+                  ],
+                );
+              }
+              return inkwell(index);
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -689,6 +718,72 @@ class _HomeDrawerState extends State<HomeDrawer> {
         child: widget,
       ),
     );
+  }
+
+  _searchButton() {
+    return Container(
+        margin: EdgeInsets.symmetric(horizontal: 48.w, vertical: 24.h),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(64.w),
+            border:
+                Border.all(color: ColorConstants.COLOR_NOTIFICATION_DIVIDER),
+            color: AppTheme.notWhite),
+        child: InkWell(
+          onTap: () async {
+            // Navigator.of(context).pop();
+            var result =
+                await Navigator.pushNamed(context, AppSearchScreen.routeName);
+            print('result ---------- $result');
+            SearchItem s = result;
+            if (s != null) {
+              if (s.routeName.compareTo(ControlScreen.routeName) == 0) {
+                // Navigator.pop(context);
+                navigationtoScreen(DrawerIndex.CONTROLS);
+                // Navigator.of(context)
+                // .pushReplacementNamed(HomeScreen.routeName, arguments: 1);
+              } else if (s.routeName.compareTo(WeatherScreen.routeName) == 0) {
+                navigationtoScreen(DrawerIndex.WEATHER);
+
+                // Navigator.of(context)
+                //     .pushReplacementNamed(HomeScreen.routeName, arguments: 2);
+              } else if (s.routeName.compareTo(MarineScreen.routeName) == 0) {
+                navigationtoScreen(DrawerIndex.MARINE);
+                // Navigator.of(context)
+                // .pushReplacementNamed(HomeScreen.routeName, arguments: 3);
+              } else
+                Navigator.pushNamed(context, s.routeName);
+            }
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 36.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Search",
+                    style: Theme.of(context).textTheme.button.apply(
+                          color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
+                        )),
+                Icon(
+                  Icons.search,
+                  color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
+                ),
+              ],
+            ),
+          ),
+        )
+        // ListTile(
+        //   dense: true,
+        //   title: Text("Search",
+        //       style: Theme.of(context).textTheme.button.apply(
+        //             color: ColorConstants.TOP_CLIPPER_END_DARK,
+        //           )),
+        //   trailing: const Icon(Icons.search),
+        //   onTap: () {
+        //     // Navigator.of(context).pop();
+        //     Navigator.pushNamed(context, AppSearchScreen.routeName);
+        //   },
+        // ),
+        );
   }
 }
 

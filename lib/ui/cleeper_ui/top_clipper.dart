@@ -10,6 +10,7 @@ import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/custom_clipper/custom_clipper.dart';
 import 'package:ocean_builder/helper/method_helper.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
+import 'package:ocean_builder/ui/screens/iot/smart_home_settings_screen.dart';
 import 'package:ocean_builder/ui/screens/profile/profile_screen.dart';
 import 'package:ocean_builder/ui/shared/app_colors.dart';
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
@@ -23,6 +24,7 @@ class TopClipper extends StatefulWidget {
   final bool hasAvator;
   final bool isMarine;
   final bool enableSkipLogin;
+  final bool enableSettings;
   final bool isDesignScreen;
 
   const TopClipper(this.title,
@@ -31,6 +33,7 @@ class TopClipper extends StatefulWidget {
       this.hasAvator,
       this.isMarine,
       this.enableSkipLogin,
+      this.enableSettings,
       this.isDesignScreen});
 
   @override
@@ -131,6 +134,25 @@ class _TopClipperState extends State<TopClipper> {
                                 fontWeight: FontWeight.w400),
                           ),
                         ),
+                        widget.enableSettings
+                            ? InkWell(
+                                onTap: () {
+                                  if (!_userProvider.isLoading) _goToSettnigs();
+                                },
+                                child: Padding(
+                                    padding: EdgeInsets.only(right: 32.w),
+                                    child:
+                                        SvgPicture.asset(ImagePaths.svgSettings)
+/*                                   Text(
+                                    "Settings",
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 48.sp,
+                                        fontWeight: FontWeight.w400),
+                                  ), */
+                                    ),
+                              )
+                            : Container(),
                         InkWell(
                           onTap: () {
                             // _skipLogin();
@@ -274,7 +296,7 @@ class _TopClipperState extends State<TopClipper> {
   }
 
   _skipLogin() async {
-    String email = 'skiplogin@oceanbuilders.com';
+    String email = 'abdullah@oceanbuilders.com';
     String password = "Asad@123";
 
     bool internetStatus = await DataConnectionChecker().hasConnection;
@@ -283,7 +305,8 @@ class _TopClipperState extends State<TopClipper> {
       return;
     }
 
-    UserProvider userProvider = Provider.of<UserProvider>(context);
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
 
     userProvider.logIn(email, password).then((status) async {
       if (status.status == 200) {
@@ -302,5 +325,9 @@ class _TopClipperState extends State<TopClipper> {
         showInfoBar(title, status.message, context);
       }
     });
+  }
+
+  void _goToSettnigs() {
+    Navigator.of(context).pushNamed(MqttSettingsScreen.routeName);
   }
 }

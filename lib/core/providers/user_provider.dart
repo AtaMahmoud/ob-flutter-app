@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/access_events.dart';
@@ -65,7 +64,7 @@ class UserProvider extends BaseProvider {
 
       // User userData;
 
-      // // debugPrint('loginResponse ~~~~~~~~~~~~~~~~~~~~~~~ -- ${loginResponse}');
+      // debugPrint('loginResponse ~~~~~~~~~~~~~~~~~~~~~~~ -- ${loginResponse}');
 
       if (loginResponse != null && loginResponse.statusCode == 200) {
         User userData = User.fromJson(loginResponse.data);
@@ -80,12 +79,16 @@ class UserProvider extends BaseProvider {
             userOceanBuilder.oceanBuilderName = f.obName;
             userOceanBuilder.oceanBuilderId = f.id;
             userOceanBuilder.userType = seapodUser.userType;
+            // debugPrint('Ob name  ${userOceanBuilder.oceanBuilderName}  --usr type ---${userOceanBuilder.userType}');
             userOceanBuilder.accessTime =
                 seapodUser.accessTime; //Duration(hours: 48);
             userOceanBuilder.checkInDate = seapodUser.checkInDate;
             userOceanBuilder.reqStatus = 'NA';
             userOceanBuilder.vessleCode = f.vessleCode;
-            userOceanBuilderList.add(userOceanBuilder);
+            // print('printing user oceanbuilder info ------================');
+            // print(userOceanBuilder);
+            if (seapodUser.userId.compareTo(userData.userID) == 0)
+              userOceanBuilderList.add(userOceanBuilder);
           }).toList();
         }).toList();
 /*
@@ -167,6 +170,93 @@ class UserProvider extends BaseProvider {
     return responseStatus;
   }
 
+  // ------------------------------------------------------- Confirm Email ( GET ) --------------------------------------------------------------------
+
+  Future<ResponseStatus> confirmEmail(String token) async {
+    isLoading = true;
+    notifyListeners();
+    ResponseStatus responseStatus = ResponseStatus();
+
+    try {
+      final Response _response = await _apiBaseHelper.getForResponse(
+          url: APP_CONFIG.Config.EMAIL_CONFIRMATION(token),
+          headers: _headerManager.headers);
+
+      debugPrint(
+          'email confirmation _response ~~~~~~~~~~~~~~~~~~~~~~~ -- ${_response}');
+
+      if (_response != null && _response.statusCode == 200) {
+        responseStatus.status = 200;
+      } else {
+        // debugPrint('error code ');
+        responseStatus.code = 'Invalid Token';
+        responseStatus.message = _response.statusMessage;
+        responseStatus.status = _response.statusCode;
+      }
+    } on FetchDataException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Invalid Token';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+      // debugPrint('logIn  error ============================== ${ea.message}');
+    } on BadRequestException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Invalid Token';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+    }
+
+    isLoading = false;
+    notifyListeners();
+    return responseStatus;
+  }
+
+  // ------------------------------------------------------- Resend Email Code ( GET ) --------------------------------------------------------------------
+
+  Future<ResponseStatus> resendCode(String email) async {
+    isLoading = true;
+    notifyListeners();
+    ResponseStatus responseStatus = ResponseStatus();
+
+    Map<String, dynamic> reqBody = {
+      "email": email,
+    };
+    debugPrint('resending code -- $email');
+    try {
+      final Response _response = await _apiBaseHelper.postForResponse(
+          url: APP_CONFIG.Config.RESEND_CONFIRMATION_CODE,
+          headers: _headerManager.headers,
+          data: reqBody);
+
+      debugPrint(
+          'email resend _response ~~~~~~~~~~~~~~~~~~~~~~~----- ${_response.statusCode}');
+
+      if (_response != null && _response.statusCode == 200) {
+        responseStatus.status = 200;
+      } else {
+        debugPrint('error code ' + _response.statusCode.toString());
+        responseStatus.code = 'Couldn\'t send token';
+        responseStatus.message = _response.statusMessage;
+        responseStatus.status = _response.statusCode;
+      }
+    } on FetchDataException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Couldn\'t send token';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+      debugPrint('logIn  error ============================== ${ea.message}');
+    } on BadRequestException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Couldn\'t send token';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+    }
+
+    isLoading = false;
+    notifyListeners();
+    return responseStatus;
+  }
+
   // ------------------------------------------------------- Auto Login ( GET ) --------------------------------------------------------------------
 
   Future<void> autoLogin() async {
@@ -195,15 +285,32 @@ class UserProvider extends BaseProvider {
 
       List<UserOceanBuilder> userOceanBuilderList = [];
       userData.seaPods.map((f) {
-        UserOceanBuilder userOceanBuilder = UserOceanBuilder();
-        userOceanBuilder.oceanBuilderName = f.obName;
-        userOceanBuilder.oceanBuilderId = f.id;
-        userOceanBuilder.userType = f.users[0].userType;
-        userOceanBuilder.accessTime = Duration(hours: 48);
-        userOceanBuilder.reqStatus = 'NA';
-        userOceanBuilder.vessleCode = f.vessleCode;
-        userOceanBuilder.checkInDate = null;
-        userOceanBuilderList.add(userOceanBuilder);
+        // UserOceanBuilder userOceanBuilder = UserOceanBuilder();
+        // userOceanBuilder.oceanBuilderName = f.obName;
+        // userOceanBuilder.oceanBuilderId = f.id;
+        // userOceanBuilder.userType = f.users[0].userType;
+        // userOceanBuilder.accessTime = Duration(hours: 48);
+        // userOceanBuilder.reqStatus = 'NA';
+        // userOceanBuilder.vessleCode = f.vessleCode;
+        // userOceanBuilder.checkInDate = null;
+
+        // userOceanBuilderList.add(userOceanBuilder);
+        f.users.map((seapodUser) {
+          UserOceanBuilder userOceanBuilder = UserOceanBuilder();
+          userOceanBuilder.oceanBuilderName = f.obName;
+          userOceanBuilder.oceanBuilderId = f.id;
+          userOceanBuilder.userType = seapodUser.userType;
+          // debugPrint('Ob name  ${userOceanBuilder.oceanBuilderName}  --usr type ---${userOceanBuilder.userType}');
+          userOceanBuilder.accessTime =
+              seapodUser.accessTime; //Duration(hours: 48);
+          userOceanBuilder.checkInDate = seapodUser.checkInDate;
+          userOceanBuilder.reqStatus = 'NA';
+          userOceanBuilder.vessleCode = f.vessleCode;
+          // print('printing user oceanbuilder info ------================');
+          // print(userOceanBuilder);
+          if (seapodUser.userId.compareTo(userData.userID) == 0)
+            userOceanBuilderList.add(userOceanBuilder);
+        }).toList();
       }).toList();
 
       userData.accessRequests.map((f) {
@@ -328,69 +435,11 @@ class UserProvider extends BaseProvider {
           data: regWithSeaPod.toJson(),
           headers: _headerManager.headers);
 
-      User userData;
-
       if (loginResponse != null && loginResponse.statusCode == 200) {
-        User userData = User.fromJson(loginResponse.data);
-
-        List<UserOceanBuilder> userOceanBuilderList = [];
-        userData.seaPods.map((f) {
-          UserOceanBuilder userOceanBuilder = UserOceanBuilder();
-          userOceanBuilder.oceanBuilderName = f.obName;
-          userOceanBuilder.oceanBuilderId = f.id;
-          userOceanBuilder.userType = f.users[0].userType;
-          userOceanBuilder.accessTime = Duration(hours: 48);
-          userOceanBuilder.checkInDate = null;
-          userOceanBuilder.reqStatus = 'NA';
-          userOceanBuilder.vessleCode = f.vessleCode;
-          userOceanBuilderList.add(userOceanBuilder);
-        }).toList();
-
-        userData.accessRequests.map((f) {
-          // debugPrint('accessRequests --------  ${f.seaPod.name}');
-          UserOceanBuilder userOceanBuilder = UserOceanBuilder();
-          userOceanBuilder.accessRequestID = f.id;
-          userOceanBuilder.oceanBuilderName = f.seaPod.name;
-          userOceanBuilder.vessleCode = f.seaPod.vessleCode;
-          userOceanBuilder.oceanBuilderId = f.seaPod.id;
-          userOceanBuilder.userType = f.type;
-          userOceanBuilder.accessTime = Duration(milliseconds: f.period);
-          userOceanBuilder.checkInDate =
-              DateTime.fromMicrosecondsSinceEpoch(f.checkIn);
-          userOceanBuilder.reqStatus = f.status;
-          if (userOceanBuilder.reqStatus
-                  .compareTo(NotificationConstants.pending) ==
-              0) userOceanBuilderList.add(userOceanBuilder);
-        }).toList();
-
-        userOceanBuilderList.map((f) {
-          // debugPrint('userOceanBuilder --------  ${f.oceanBuilderName}');
-        }).toList();
-
-        userData.userOceanBuilder = userOceanBuilderList;
-
-        if (userData.emergencyContacts != null &&
-            userData.emergencyContacts.length > 0) {
-          userData.emergencyContact = userData.emergencyContacts[0];
-        }
-
-        if (loginResponse.headers.value("X-Auth-Token") != null) {
-          userData.xAuthToken = loginResponse.headers.value("X-Auth-Token");
-
-          authenticatedUser = userData;
-          _isUserAuthenticated = true;
-
-          SharedPrefHelper.setAuthKey(
-              loginResponse.headers.value("X-Auth-Token"));
-
-          // debugPrint(
-          // 'loginResponse ~~~~~~~~~~~~~~~~~~~~~~~ -- ${authenticatedUser.toJson()}');
-        } else {
-          // debugPrint('error code ');
-          responseStatus.code = 'Login Failed';
-          responseStatus.message = loginResponse.statusMessage;
-          responseStatus.status = loginResponse.statusCode;
-        }
+        debugPrint(
+            '-----------------registration response ----- ${loginResponse.data.toString()}');
+        responseStatus.status = 200;
+        SharedPrefHelper.setEmail(regWithSeaPod.user.email);
       } else {
         // debugPrint('error code ');
         responseStatus.code = 'Registration Failed';
@@ -419,10 +468,6 @@ class UserProvider extends BaseProvider {
       responseStatus.code = 'Registration Failed';
       responseStatus.message = ea.message;
       responseStatus.status = ea.statusCode;
-    }
-
-    if (authenticatedUser != null) {
-      responseStatus.status = 200;
     }
 
     isLoading = false;
@@ -686,6 +731,59 @@ class UserProvider extends BaseProvider {
     return responseStatus;
   }
 
+  // ------------------------------------------------------- Forget User Password ( PUT ) --------------------------------------------------------------------
+
+  Future<ResponseStatus> sendPasswordRecoveryMail(String email) async {
+    isLoading = true;
+    notifyListeners();
+    ResponseStatus responseStatus = ResponseStatus();
+
+    Map<String, dynamic> updatePassword = {
+      "email": email,
+    };
+
+    try {
+      final Response userPasswordUpdateResponse = await _apiBaseHelper.put(
+          url: APP_CONFIG.Config.FORGET_USER_PASSWORD,
+          headers: _headerManager.headers,
+          data: updatePassword);
+      // debugPrint(
+      // 'update password response ============================== $userPasswordUpdateResponse');
+
+      if (userPasswordUpdateResponse != null &&
+          userPasswordUpdateResponse.statusCode == 200) {
+        String message = userPasswordUpdateResponse.data['message'];
+        print(message);
+        // debugPrint(
+        // 'updated user password ----------- $userPasswordUpdateResponse');
+        responseStatus.status = 200;
+      } else {
+        responseStatus.code = 'Sending Password Recovery Email Failed';
+        responseStatus.message = userPasswordUpdateResponse.statusMessage;
+        responseStatus.status = userPasswordUpdateResponse.statusCode;
+        // debugPrint(
+        // 'updateUserPassword error ============================== $userPasswordUpdateResponse');
+      }
+    } on FetchDataException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Sending Password Recovery Email Failed';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+      // debugPrint(
+      // 'updateUserPassword error ============================== ${ea.message}');
+    } on BadRequestException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Sending Password Recovery Email Failed';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+    }
+
+    isLoading = false;
+    notifyListeners();
+
+    return responseStatus;
+  }
+
   // ------------------------------------------------------- Update SeaPod Name ( PUT ) --------------------------------------------------------------------
 
   Future<ResponseStatus> updateSeapodName(
@@ -865,10 +963,10 @@ class UserProvider extends BaseProvider {
         SharedPrefHelper.setAuthKey(
             sendRequestResponse.headers.value("X-Auth-Token"));
 
-        await autoLogin();
+        // await autoLogin();
 // S1D07EDS1D
         // debugPrint(
-        // 'autoLogin response in sendAccessReqNew ~~~~~~~~~~~~~~~~~~~~~~~ -- ${authenticatedUser.toJson()}');
+        //     'autoLogin response in sendAccessReqNew ~~~~~~~~~~~~~~~~~~~~~~~ -- ${authenticatedUser.toJson()}');
       } else {
         // debugPrint('error code ');
         responseStatus.code = 'Registration Failed';
@@ -880,7 +978,7 @@ class UserProvider extends BaseProvider {
         responseStatus.status = sendRequestResponse.statusCode;
       }
 
-      if (authenticatedUser.userID != null) {
+      if (sendRequestResponse.statusCode == 200) {
         responseStatus.status = 200;
       } else {
         responseStatus.code = 'Access Request Sending Failed';
@@ -976,6 +1074,8 @@ class UserProvider extends BaseProvider {
       String accessRequestId, String type, int period) async {
     isLoading = true;
     notifyListeners();
+    print(
+        'accept access request 0-------------type -----$type--------period ------$period');
     ResponseStatus responseStatus = ResponseStatus();
 
     await _headerManager.initalizeAuthenticatedUserHeaders();
@@ -1139,6 +1239,7 @@ class UserProvider extends BaseProvider {
 
     Map<String, dynamic> userDataMap = {
       'email': user.email,
+      'type': user.userType,
       'permissionSetId': permissionSetId
     };
 
@@ -1359,7 +1460,7 @@ class UserProvider extends BaseProvider {
       );
 
       if (removeUserResponse != null && removeUserResponse.statusCode == 200) {
-        // debugPrint('Remove Member data ----------- $removeUserResponse');
+        debugPrint('Remove Member data ----------- $removeUserResponse');
 
         responseStatus.status = 200;
       } else {
@@ -1842,6 +1943,56 @@ class UserProvider extends BaseProvider {
     return responseStatus;
   }
 
+  // ------------------------------------------------------- Update Order of Lighting Scene ( PUT ) --------------------------------------------------------------------
+
+  Future<ResponseStatus> updateOrderLightingScene(
+      List<String> lighScenesId, String seaPodId, String source) async {
+    isLoading = true;
+    notifyListeners();
+    ResponseStatus responseStatus = ResponseStatus();
+    responseStatus.status = 200;
+
+    print('list        ${lighScenesId.toList()}');
+
+    await _headerManager.initalizeAuthenticatedUserHeaders();
+
+    try {
+      final Response lightingSceneUpdateResponse = await _apiBaseHelper.put(
+          url: APP_CONFIG.Config.ORDER_LIGHT_SCENE(seaPodId, source),
+          headers: _headerManager.authUserHeaders,
+          data: lighScenesId.toList());
+
+      if (lightingSceneUpdateResponse != null &&
+          lightingSceneUpdateResponse.statusCode == 200) {
+        // debugPrint('Update All Lighting Scenes data ----------- $lightingSceneUpdateResponse');
+        responseStatus.status = 200;
+      } else {
+        responseStatus.code = 'Update Lighting Scenes Order Failed';
+        responseStatus.message = lightingSceneUpdateResponse.statusMessage;
+        responseStatus.status = lightingSceneUpdateResponse.statusCode;
+        // debugPrint(
+        // 'Update All Lighting Scenes error ============================== $responseStatus');
+      }
+    } on FetchDataException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Update Lighting Scenes Order Failed';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+      // debugPrint(
+      // 'Update All Lighting Scenes error ============================== ${ea.message}');
+    } on BadRequestException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Update Lighting Scenes Order Failed';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+    }
+
+    isLoading = false;
+    notifyListeners();
+
+    return responseStatus;
+  }
+
   // ------------------------------------------------------- Delete Lighting Scene ( DELETE ) --------------------------------------------------------------------
 
   Future<ResponseStatus> deleteLightingScene(String lightingSceneId) async {
@@ -2041,6 +2192,54 @@ class UserProvider extends BaseProvider {
       responseStatus.status = 200;
       _isUserAuthenticated = true;
     }
+  }
+
+// ------------------------------------------------------------ Set weather srouce (PUT) -------------------------------------------------------------
+
+  // ------------------------------------------------------- Save weather source ( PUT ) --------------------------------------------------------------------
+
+  Future<ResponseStatus> setWeatherSource(String weatherSource) async {
+    isLoading = true;
+    notifyListeners();
+    ResponseStatus responseStatus = ResponseStatus();
+    responseStatus.status = 200;
+
+    await _headerManager.initalizeAuthenticatedUserHeaders();
+
+    try {
+      final Response response = await _apiBaseHelper.put(
+        url: APP_CONFIG.Config.SET_WEATHER_SOURCE(weatherSource),
+        headers: _headerManager.authUserHeaders,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        // debugPrint('Set Weather Source  data ----------- $lightingSceneUpdateResponse');
+        responseStatus.status = 200;
+      } else {
+        responseStatus.code = 'Set Weather Source Failed';
+        responseStatus.message = response.statusMessage;
+        responseStatus.status = response.statusCode;
+        // debugPrint(
+        // 'Set Weather Source  error ============================== $responseStatus');
+      }
+    } on FetchDataException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Set Weather Source ';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+      // debugPrint(
+      // 'Set Weather Source error ============================== ${ea.message}');
+    } on BadRequestException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Set Weather Source ';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+    }
+
+    isLoading = false;
+    notifyListeners();
+
+    return responseStatus;
   }
 
 //######################################################################################################################################################

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/notification.dart';
 import 'package:ocean_builder/core/services/locator.dart';
@@ -10,34 +11,90 @@ import 'package:ocean_builder/ui/screens/notification/guest_request_response_scr
 import 'package:ocean_builder/ui/screens/notification/invitation_response_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/your_obs_screen.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
+import 'package:ocean_builder/splash/splash_screen.dart';
 
 class FirebaseNotifications {
   FirebaseMessaging _firebaseMessaging;
-
+  int counter = 0;
   void setUpFirebase() {
+    print('setup firebase message caleed $counter++');
     _firebaseMessaging = FirebaseMessaging();
     _firebaseCloudMessagingListeners();
+  }
+
+  static Future<dynamic> myBackgroundMessageHandler(
+      Map<String, dynamic> message) {
+    print("triggerd");
+
+    if (message.containsKey('data')) {
+      // Handle data message
+      final dynamic data = message['data'];
+    }
+
+    if (message.containsKey('notification')) {
+      // Handle notification message
+      final dynamic notification = message['notification'];
+    }
+
+    // return null;
+    // Or do other work.
+
+    {
+      print(
+          'on backgroundMessage--------------------------------------------  $message');
+
+      print(
+          'message_notificationData  -------- ${message['notification'].toString()}');
+      var messageData = message['data'];
+      print('notification data ## -------------- ${messageData}');
+
+      locator<NavigationService>().navigateTo(SplashScreen.routeName);
+
+      FcmNotification fcmNotificationData = FcmNotification.fromJson(message);
+
+      if (Platform.isIOS) {
+        NotificationData notificationData = NotificationData.fromJson(message);
+        fcmNotificationData.data = notificationData;
+      }
+
+      debugPrint(
+          'notification data -----' + fcmNotificationData.toJson().toString());
+    }
   }
 
   void _firebaseCloudMessagingListeners() {
     if (Platform.isIOS) _iOSPermission();
 
     _firebaseMessaging.getToken().then((token) {
-      // // print('fcm token----------------------------------');
-      // // print(token);
-      // // print('fcm token----------------------------------');
+      print('fcm token----------------------------------');
+      print(token);
     });
 
     _firebaseMessaging.configure(
+      onBackgroundMessage: myBackgroundMessageHandler,
+
       // ----------------------------------------------- onMessage -----------------------------------------------------
+
+/* {
+    notification: {
+      title: notification, body: Hi iys Ola
+      }, 
+    data: {
+      type: , 
+      click_action: FLUTTER_NOTIFICATION_CLICK, 
+      notificationData: "Hi iys Ola"
+      }
+  } */
+
       onMessage: (Map<String, dynamic> message) async {
         print(
             'on message--------------------------------------------  $message');
+        print(
+            'message_notificationData  -------- ${message['notification'].toString()}');
+        var messageData = message['data'];
+        print('notification data ## -------------- ${messageData}');
 
-        Map<String, dynamic> message_notificationData =
-            message['data']['notificationData'];
-        print('message_notificationData   -------- $message_notificationData');
-        // print('notification data ## -------------- ${message_notificationData['_id']}');
+        locator<NavigationService>().navigateTo(SplashScreen.routeName);
 
         FcmNotification fcmNotificationData = FcmNotification.fromJson(message);
 
@@ -47,8 +104,8 @@ class FirebaseNotifications {
           fcmNotificationData.data = notificationData;
         }
 
-        // debugPrint('notification data -----' +
-        // fcmNotificationData.toJson().toString());
+        debugPrint('notification data -----' +
+            fcmNotificationData.toJson().toString());
 
         if (fcmNotificationData.data.notificationType
                 .toUpperCase()
@@ -82,6 +139,14 @@ class FirebaseNotifications {
       onResume: (Map<String, dynamic> message) async {
         print(
             'on resume--------------------------------------------- $message');
+
+        print(
+            'message_notificationData  -------- ${message['notification'].toString()}');
+        var messageData = message['data'];
+        print('notification data ## -------------- ${messageData}');
+
+        // locator<NavigationService>().navigateTo(SplashScreen.routeName);
+        locator<NavigationService>().navigateToCurrentScreen();
 
         FcmNotification fcmNotificationData = FcmNotification.fromJson(message);
 
@@ -133,6 +198,14 @@ class FirebaseNotifications {
            notification: {}
            }
         */
+
+        print(
+            'message_notificationData  -------- ${message['notification'].toString()}');
+        var messageData = message['data'];
+        print('notification data ## -------------- ${messageData}');
+
+        locator<NavigationService>().navigateTo(SplashScreen.routeName);
+
         FcmNotification fcmNotificationData = FcmNotification.fromJson(message);
 
         if (Platform.isIOS) {

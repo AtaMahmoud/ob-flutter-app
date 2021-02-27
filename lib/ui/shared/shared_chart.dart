@@ -7,9 +7,7 @@ import 'package:ocean_builder/core/models/storm_glass_data.dart' as sgd;
 import 'package:ocean_builder/core/models/w_weather_o_data.dart';
 import 'package:ocean_builder/ui/shared/drop_downs.dart';
 import 'package:ocean_builder/ui/shared/popup.dart';
-import 'package:intl/intl.dart';
 import 'package:ocean_builder/ui/widgets/space_widgets.dart';
-import 'package:rxdart/rxdart.dart';
 
 class SharedChart {
   static Widget beizerChartWeather(
@@ -263,9 +261,9 @@ class _BeizerChartPopupState extends State<BeizerChartPopup> {
     double selectedValue = 0.0;
 
     String indicatorValueUnit = ''; // = '${SymbolConstant.DEGREE}C';
-    int counter = 0;
+    // int counter = 0;
     List<DataPoint<DateTime>> dataPointList = data.hours.map((f) {
-      counter++;
+      // counter++;
       // 2019-09-16T00:00:00+00:00
       var date1 = DateTime.parse(f.time);
       // double xAxisValue = date1.hour.toDouble();
