@@ -9,6 +9,7 @@ import 'package:ocean_builder/core/providers/smart_home_data_provider.dart';
 import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper.dart';
 import 'package:ocean_builder/ui/screens/iot/add_new_config_widget.dart';
+import 'package:ocean_builder/ui/screens/iot/widget_utils.dart';
 import 'package:ocean_builder/ui/shared/popup.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
 import 'package:ocean_builder/ui/widgets/space_widgets.dart';
@@ -206,7 +207,7 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
               // SpaceH32(),
               model.mqttSettingsList != null &&
                       model.mqttSettingsList.length > 0
-                  ? _getServerDropdown(
+                  ? getServerDropdown(
                       // model.mqttSettingsList.map((e) {
                       //   MqttSettingsItem m = e;
                       //   return m.mqttServer;
@@ -241,8 +242,8 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
                     })
                   : Container(),
               SpaceH48(),
-              _customButton(context, 'ADD NEW MQTT CONFIGURATION',
-                  _newConfigurationPopUp),
+              _customButton(
+                  context, 'ADD NEW MQTT CONFIGURATION', newConfigurationPopUp),
             ],
           ),
         );
@@ -324,6 +325,7 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
                 ],
               ),
               Container(
+                width: double.infinity,
                 decoration: BoxDecoration(
                     border: Border.all(
                         color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
@@ -336,16 +338,20 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
                   left: 48.w,
                 ),
                 child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
                   child: Wrap(
                     runAlignment: WrapAlignment.start,
                     direction: Axis.horizontal,
                     children: _selectedServer != null &&
                             _selectedServer.mqttTopics.isNotEmpty
                         ? _selectedServer.mqttTopics.map((topic) {
-                            return Chip(
-                                label: Text(
-                              topic ?? 'No Topic',
-                            ));
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Chip(
+                                  label: Text(
+                                topic ?? 'No Topic',
+                              )),
+                            );
                           }).toList()
                         : [Container()],
                   ),
@@ -354,85 +360,6 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
             ],
           )
         : Container();
-  }
-
-  Widget _getServerDropdown(List<MqttSettingsItem> list,
-      Observable<MqttSettingsItem> stream, changed, bool addPadding,
-      {String label = 'Label'}) {
-    print('get topic list --- ${list.toString()}');
-    return StreamBuilder<MqttSettingsItem>(
-        stream: stream,
-        builder: (context, snapshot) {
-          print('snapshot data ----------------- ${snapshot.data.toString()}');
-          return Padding(
-            padding: addPadding
-                ? EdgeInsets.symmetric(horizontal: 48.w)
-                : EdgeInsets.symmetric(horizontal: 0),
-            child: InputDecorator(
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16.w),
-                  borderSide: BorderSide(
-                      color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
-                      width: 1),
-                ),
-                contentPadding: EdgeInsets.only(
-                  top: 16.h,
-                  bottom: 16.h,
-                  left: 48.w,
-                  // right: 32.w
-                ),
-                // alignLabelWithHint: true,
-                labelText: label.toUpperCase(),
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                // hintStyle: TextStyle(color: Colors.red),
-                labelStyle: TextStyle(
-                    fontSize: 43.69.sp,
-                    fontWeight: FontWeight.w400,
-                    color: ColorConstants.TOP_CLIPPER_START),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: ButtonTheme(
-                  alignedDropdown: true,
-                  child: DropdownButton<MqttSettingsItem>(
-                    icon: Icon(Icons.arrow_drop_down,
-                        size: 96.w,
-                        color: snapshot.hasData
-                            ? ColorConstants.ACCESS_MANAGEMENT_TITLE
-                            : ColorConstants
-                                .ACCESS_MANAGEMENT_SUBTITLE //ColorConstants.INVALID_TEXTFIELD,
-                        ),
-                    value:
-                        snapshot.hasData ? snapshot.data : list.reversed.first,
-                    isExpanded: true,
-                    underline: Container(),
-                    style: TextStyle(
-                      color: snapshot.hasData
-                          ? ColorConstants.ACCESS_MANAGEMENT_TITLE
-                          : ColorConstants
-                              .ACCESS_MANAGEMENT_SUBTITLE, //ColorConstants.INVALID_TEXTFIELD,
-                      fontSize: 40.sp,
-                      fontWeight: FontWeight.w400,
-                      // letterSpacing: 1.2,
-                      // wordSpacing: 4
-                    ),
-                    onChanged: changed.add,
-                    items: list.map((data) {
-                      return DropdownMenuItem(
-                          value: data,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              Text(data.mqttServer),
-                            ],
-                          ));
-                    }).toList(),
-                  ),
-                ),
-              ),
-            ),
-          );
-        });
   }
 
   Widget _customButton(BuildContext context, String label, Function onTap) {
@@ -462,19 +389,6 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  _newConfigurationPopUp() {
-    return Navigator.push(
-      context,
-      PopupLayout(
-        top: 128.h,
-        left: 48.w,
-        right: 48.w,
-        bottom: 32.h,
-        child: AddMqttConfig(),
       ),
     );
   }

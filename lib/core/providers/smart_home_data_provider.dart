@@ -2,9 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:ocean_builder/configs/app_configurations.dart';
+import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/iot_event_data.dart';
 import 'package:ocean_builder/core/repositories/smart_home_node_repository.dart';
 import 'package:ocean_builder/ui/screens/iot/smart_home_screen.dart';
+import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 
 enum MQTTAppConnectionState { connected, disconnected, connecting }
 
@@ -48,8 +50,15 @@ class SmartHomeDataProvider extends ChangeNotifier {
 
   MQTTAppConnectionState get getAppConnectionState => _appConnectionState;
 
-  Future<MqttServerClient> connect() async {
-    _client = new MqttServerClient(Config.MQTT_SERVER, "");
+  Future<MqttServerClient> connect({
+    mqttServer,
+    mqttIdentifier,
+    mqttUser,
+    mqttPassword,
+  }) async {
+    _client = new MqttServerClient(
+        mqttServer == null ? Config.MQTT_SERVER : mqttServer,
+        mqttIdentifier == null ? Config.MQTT_IDENTIFIER : mqttIdentifier);
     _client.setProtocolV311();
     _client.logging(on: false);
     _client.onConnected = onConnected;
@@ -64,8 +73,11 @@ class SmartHomeDataProvider extends ChangeNotifier {
     /// client identifier, any supplied username/password, the default keepalive interval(60s)
     /// and clean session, an example of a specific one below.
     final connMess = MqttConnectMessage()
-        .withClientIdentifier('Mqtt_MyClientUniqueId')
-        .authenticateAs(Config.MQTT_USER, Config.MQTT_PASSWORD)
+        // .withClientIdentifier('Mqtt_MyClientUniqueId')
+        .authenticateAs(
+            // Config.MQTT_USER, Config.MQTT_PASSWORD
+            mqttUser == null ? Config.MQTT_USER : mqttUser,
+            mqttPassword == null ? Config.MQTT_PASSWORD : mqttPassword)
         .keepAliveFor(20) // Must agree with the keep alive set above or not set
         .withWillTopic(
             'willtopic') // If you set this you must set a will message
@@ -141,6 +153,8 @@ class SmartHomeDataProvider extends ChangeNotifier {
 // subscribe to topic succeeded
   void onSubscribed(String topic) {
     print('Subscribed topic: $topic');
+    // showInfoBar('MQTT Subscribtion', 'Subscribed to $topic',
+    //     GlobalContext.currentScreenContext);
   }
 
 // subscribe to topic failed

@@ -49,8 +49,6 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
 
   bool _showAddNewTopicField = false;
 
-  bool _hasFocus = false;
-
   @override
   void initState() {
     super.initState();
@@ -148,17 +146,12 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
     _topicBLoc.controller.listen((event) {
       if (event != null && event.compareTo('Add New Topic') == 0) {
         setState(() {
-          _showAddNewTopicField = true;
-          _mqttTopicNode.requestFocus();
+          if (!_showAddNewTopicField) {
+            _showAddNewTopicField = true;
+            _mqttTopicNode.requestFocus();
+          }
         });
       }
-    });
-
-    _mqttTopicNode.addListener(() {
-      setState(() {
-        _hasFocus = !_hasFocus;
-      });
-      print('has focus ------------- $_hasFocus');
     });
   }
 
@@ -331,12 +324,12 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
                       Navigator.of(context).pop();
                     },
                     child: Padding(
-                      padding: EdgeInsets.only(top: 32.h, right: 48.w),
+                      padding: EdgeInsets.only(top: 48.h, right: 12.w),
                       child: Image.asset(
                         ImagePaths.cross,
                         color: ColorConstants.TOP_CLIPPER_END_DARK,
-                        width: 32.h,
-                        height: 32.h,
+                        width: 48.h,
+                        height: 48.h,
                       ),
                     ),
                   )
@@ -368,6 +361,8 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
           children: [
             InkWell(
               onTap: () {
+                FocusScope.of(context).requestFocus(_mqttServerNode);
+                FocusScope.of(context).unfocus();
                 setState(() {
                   _showAddNewTopicField = false;
                 });
@@ -390,12 +385,14 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
             SpaceW16(),
             InkWell(
               onTap: () {
+                // FocusScope.of(context).requestFocus(_mqttServerNode);
+                // FocusScope.of(context).unfocus();
                 if (_topic != null && _topic.isNotEmpty) {
-                  _topicList.add(_topic);
+                  if (!_topicList.contains(_topic)) _topicList.add(_topic);
                   // _topic = null;
                   _mqttTopicController.clear();
                   setState(() {
-                    _showAddNewTopicField = false;
+                    // _showAddNewTopicField = false;
                     _topicBLoc.sink.add(_topic);
                   });
                 }
@@ -458,9 +455,10 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
       setState(() {
         _topicList = [];
         _topicList.add('Add New Topic');
-        _topicBLoc.sink.add('Add New Topic');
+        // _topicBLoc.sink.add('Add New Topic');
       });
     }
+    // FocusScope.of(context).requestFocus(_mqttServerNode);
   }
 
   _topLabel() {
@@ -477,6 +475,8 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
   }
 
   void _saveToDb() {
+    // hide keyboard
+    // FocusScope.of(context).requestFocus(FocusNode());
     print(_mqttSettingsItem.toString());
     _mqttSettingsItem.mqttTopics = _topicList.skipWhile((topic) {
       return topic == 'Add New Topic';
@@ -485,8 +485,9 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
       print('valideated -------- ${_mqttSettingsItem.toString()}');
       _mqttSettingsProvider.addMqttSettingsItem(_mqttSettingsItem);
       _mqttSettingsProvider.getMqttSettings();
-      _clearFields();
-      showInfoBar('Successful', 'New MQTT configuration is Added', context);
+      // _clearFields();
+      _mqttSettingsItem =
+          showInfoBar('Successful', 'New MQTT configuration is Added', context);
     } else {
       print('Invalid settings item');
       showInfoBar('Failed', 'Invalid MQTT configuration', context);
@@ -496,11 +497,11 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
   Widget _getTopicsDropdown(
       List<String> list, Observable<String> stream, changed, bool addPadding,
       {String label = 'Label'}) {
-    print('get topic list --- ${list.toString()}');
+    // print('get topic list --- ${list.toString()}');
     return StreamBuilder<String>(
         stream: stream,
         builder: (context, snapshot) {
-          print('snapshot data ----------------- ${snapshot.data.toString()}');
+          // print('snapshot data ----------------- ${snapshot.data.toString()}');
           return Padding(
             padding: addPadding
                 ? EdgeInsets.symmetric(horizontal: 48.w)
@@ -555,7 +556,36 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
                     ),
                     onChanged: changed.add,
                     items: list.map((data) {
-                      return DropdownMenuItem(value: data, child: Text(data));
+                      return DropdownMenuItem(
+                          value: data,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  data,
+                                  style: AppTheme.body1.apply(
+                                      color: ColorConstants
+                                          .COLOR_NOTIFICATION_DIVIDER,
+                                      fontWeightDelta: 0),
+                                ),
+                              ),
+                              data.compareTo('Add New Topic') != 0 &&
+                                      data.compareTo(snapshot.data ?? '') != 0
+                                  ? InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          _topicList.remove(data);
+                                          _topicBLoc.sink.add('Add New Topic');
+                                        });
+                                      },
+                                      child: const Icon(Icons.delete,
+                                          color: ColorConstants
+                                              .COLOR_NOTIFICATION_DIVIDER),
+                                    )
+                                  : Container(),
+                            ],
+                          ));
                     }).toList(),
                   ),
                 ),

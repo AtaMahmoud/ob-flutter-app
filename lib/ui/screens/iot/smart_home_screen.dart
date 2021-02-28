@@ -4,19 +4,24 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
+import 'package:ocean_builder/bloc/generic_bloc.dart';
 import 'package:ocean_builder/bloc/iot_topic_bloc.dart';
 import 'package:ocean_builder/configs/app_configurations.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/iot_event_data.dart';
+import 'package:ocean_builder/core/models/mqtt_setting_item.dart';
 import 'package:ocean_builder/core/models/ocean_builder.dart';
 import 'package:ocean_builder/core/providers/design_data_provider.dart';
+import 'package:ocean_builder/core/providers/mqtt_settings_provider.dart';
 import 'package:ocean_builder/core/providers/smart_home_data_provider.dart';
 import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper_2.dart';
 import 'package:ocean_builder/ui/screens/designSteps/exterior_finish_screen.dart';
+import 'package:ocean_builder/ui/screens/iot/widget_utils.dart';
 import 'package:ocean_builder/ui/shared/drop_downs.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
+import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
@@ -33,6 +38,7 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
   Future<MqttServerClient> _mqttServerClientFuture;
   MqttServerClient _mqttServerClient;
   SmartHomeDataProvider _smartHomeDataProvider;
+  bool _isConnected = false;
   bool _isConnecting = false;
   IotTopicBloc _iotTopicBloc;
   List<IotTopic> _topicList;
@@ -51,13 +57,30 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
   String _topicLedControl = 'test/leds';
   String _topicLedControlStatus = 'test/leds/status';
 
+  GenericBloc<MqttSettingsItem> _iotServerBloc;
+  List<MqttSettingsItem> _settingsList = [];
+
+  MqttSettingsItem _selectedServer;
+
+  MqttSettingsProvider _mqttSettingsProvider;
+
+  final MqttSettingsItem _selectToConnect =
+      MqttSettingsItem('Select One To Connect', ' ', ' ', ' ', ' ', []);
+  final MqttSettingsItem _selectToAddNewMqttConfig =
+      MqttSettingsItem('Add New MQTT Configuration', ' ', ' ', ' ', ' ', []);
+
   @override
   void initState() {
     super.initState();
     _iotTopicBloc = IotTopicBloc();
     UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
+    _iotServerBloc = GenericBloc<MqttSettingsItem>(null);
+
     Future.delayed(Duration.zero).then((_) {
-      _smartHomeDataProvider.fetchAllTopicsData().then((topicList) {
+      _mqttSettingsProvider.getMqttSettings();
+      // _mqttSettingsProvider.mqttSettingsList;
+      // _isConnecting = true;
+/*       _smartHomeDataProvider.fetchAllTopicsData().then((topicList) {
         _mqttServerClientFuture = _smartHomeDataProvider.connect();
         _topicList = topicList;
         _mqttServerClientFuture.then((client) {
@@ -84,7 +107,7 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
             _isConnecting = false;
           }
         });
-      });
+      }); */
     });
 
     _iotTopicBloc.topicController.listen((event) {
@@ -94,18 +117,88 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
         _currentlySubscribedTopic = event;
       }
     });
+
+    _iotServerBloc.controller.listen((event) {
+      if (event != null &&
+          event.mqttServer.compareTo('Add New MQTT Configuration') == 0) {
+        _selectedServer = null;
+        newConfigurationPopUp();
+      } else if (event != null &&
+          event.mqttServer.compareTo('Select One To Connect') == 0) {
+        setState(() {
+          _selectedServer = null;
+        });
+      } else if (event != null) {
+        _selectedServer = event;
+        if (_selectedServer.mqttTopics != null &&
+            _selectedServer.mqttTopics.length > 0) {
+          _topicList = _selectedServer.mqttTopics.map((topic) {
+            return new IotTopic(topic: topic);
+          }).toList();
+        }
+        _connectWithMqttBroker(_selectedServer);
+      } else {
+        setState(() {
+          _selectedServer = null;
+        });
+      }
+    });
+  }
+
+  _connectWithMqttBroker(MqttSettingsItem config) {
+    _mqttServerClientFuture = _smartHomeDataProvider.connect(
+        mqttServer: config.mqttServer,
+        mqttIdentifier: config.mqttIdentifier,
+        mqttUser: config.mqttUserName,
+        mqttPassword: config.mqttPassword);
+    _mqttServerClientFuture.then((client) {
+      if (client.connectionStatus.returnCode ==
+          MqttConnectReturnCode.connectionAccepted) {
+        _mqttServerClient = client;
+        _isConnected = true;
+        if (config.mqttTopics != null && config.mqttTopics.length > 0) {
+          _mqttServerClient.subscribe(
+              config.mqttTopics[0], MqttQos.exactlyOnce);
+          _currentlySubscribedTopic = config.mqttTopics[0];
+
+          // subscribe to get the actuator [led] status
+
+          _mqttServerClient.subscribe(
+              _topicLedControlStatus, MqttQos.exactlyOnce);
+
+          // publish 'request status' message to ask the broker to start broadcast (once) the status
+
+          final builder1 = MqttClientPayloadBuilder();
+          builder1.addString('requset_status');
+          _mqttServerClient.publishMessage(
+              _topicLedControl, MqttQos.exactlyOnce, builder1.payload);
+        }
+
+        showInfoBar('Connected', 'Connected with MQTT broker', context);
+      } else {
+        _isConnected = false;
+        showInfoBar(
+          'Not Connected',
+          'Could not connect with MQTT broker',
+          context,
+        );
+      }
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
     _iotTopicBloc.dispose();
+    _iotServerBloc.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
     _smartHomeDataProvider = Provider.of<SmartHomeDataProvider>(context);
+    _mqttSettingsProvider =
+        Provider.of<MqttSettingsProvider>(context, listen: false);
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(gradient: ColorConstants.BKG_GRADIENT),
@@ -113,9 +206,10 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
           children: [
             CustomScrollView(
               slivers: <Widget>[
-                UIHelper.getTopEmptyContainer(
-                    MediaQuery.of(context).size.height / 6, true),
-                SliverToBoxAdapter(child: _mainContent()),
+                UIHelper.getTopEmptyContainer(416.h, true),
+                SliverToBoxAdapter(
+                  child: _mqttSettingsConsumer(), // _mainContent()
+                ),
                 UIHelper.getTopEmptyContainer(
                     MediaQuery.of(context).size.height / 4, false),
               ],
@@ -132,33 +226,69 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    _controllContainer(),
+                    _selectedServer != null && _isConnected
+                        ? _controllContainer()
+                        : Container(),
                     BottomClipper(ButtonText.BACK, '', goBack, () {},
                         isNextEnabled: false),
                   ],
                 )),
-            _isConnecting
+            _isConnected
                 ? Container()
-                : Center(
-                    child: CircularProgressIndicator(),
-                  )
+                : _smartHomeDataProvider.getAppConnectionState ==
+                        MQTTAppConnectionState.connecting
+                    ? Center(child: CircularProgressIndicator())
+                    : Container(),
           ],
         ),
       ),
     );
   }
 
-  Container _mainContent() {
+  _mqttSettingsConsumer() {
+    return Consumer<MqttSettingsProvider>(
+      builder: (context, providerModel, child) {
+        if (providerModel.mqttSettingsList != null &&
+            providerModel.mqttSettingsList.isNotEmpty) {
+          _settingsList = _mqttSettingsProvider.mqttSettingsList
+              .map((e) => e as MqttSettingsItem)
+              .toList();
+          _settingsList.add(_selectToConnect);
+          if (_settingsList.length == 1)
+            _iotServerBloc.sink.add(_selectToConnect);
+          return _mainContent();
+        } else {
+          return _addNewMqttSetting();
+          // Container();
+        }
+      },
+      // child: _addNewMqttSetting(),
+    );
+  }
+
+  _addNewMqttSetting() {
+    _settingsList = [];
+    _settingsList.add(_selectToAddNewMqttConfig);
+    // _iotServerBloc.sink.add(_selectToAddNewMqttConfig);
+    return _mainContent();
+  }
+
+  _mainContent() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 32.h),
       child: Column(
         children: [
-          _buildConnectionStatusWidget(
-              _smartHomeDataProvider.getAppConnectionState),
-          SizedBox(
-            height: 32.h,
-          ),
-          _topicList != null && _topicList.length > 0
+          _selectedServer != null
+              ? _buildConnectionStatusWidget(
+                  _smartHomeDataProvider.getAppConnectionState)
+              : Container(),
+          SpaceH32(),
+          _buildServerDropDown(),
+          SpaceH48(),
+          _topicList != null &&
+                  _topicList.length > 0 &&
+                  _selectedServer != null &&
+                  _isConnected
               ? _getTopicsDropdown(
                   _topicList.map((e) => e.topic).toList(),
                   _iotTopicBloc.topicController,
@@ -167,14 +297,29 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
                   label: 'Topic')
               : Container(),
           // _buildScrollableTextWith(_smartHomeDataProvider.getHistoryText),
-          _buildSensorDataTableHeader(),
-          _buildSensorDataTable(_smartHomeDataProvider.sensorDataList),
-          SizedBox(
-            height: 32.h,
-          ),
+          _selectedServer != null && _isConnected
+              ? _buildSensorDataTableHeader()
+              : Container(),
+          _selectedServer != null && _isConnected
+              ? _buildSensorDataTable(_smartHomeDataProvider.sensorDataList)
+              : Container(),
+          SpaceH32()
         ],
       ),
     );
+  }
+
+  _buildServerDropDown() {
+    return getServerDropdown(
+        // model.mqttSettingsList.map((e) {
+        //   MqttSettingsItem m = e;
+        //   return m.mqttServer;
+        // }).toList(),
+        _settingsList,
+        _iotServerBloc.stream,
+        _iotServerBloc.sink,
+        false,
+        label: 'MQTT Server Address');
   }
 
   Widget _buildConnectionStatusWidget(
@@ -436,8 +581,12 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
 
   _buildSensorDataTable(List<SensorData> sensorDataList) {
     return Container(
-      // margin: EdgeInsets.all(32.w),
       // height: 600.h,
+
+      decoration: BoxDecoration(
+          color: AppTheme.notWhite,
+          border: Border.all(color: ColorConstants.ACCESS_MANAGEMENT_DIVIDER),
+          borderRadius: BorderRadius.circular(12.w)),
       child: Table(
         border: TableBorder.all(),
         children: [
