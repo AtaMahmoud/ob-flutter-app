@@ -15,6 +15,7 @@ import 'package:ocean_builder/ui/widgets/appbar.dart';
 import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
+import 'package:ocean_builder/ui/screens/iot/smart_home_screen.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MqttSettingsScreen extends StatefulWidget {
@@ -36,7 +37,7 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
   TextEditingController _topicController;
 
   final MqttSettingsItem _selectForDetails =
-      MqttSettingsItem('Select One For Details', '-', '-', '-', '_', []);
+      MqttSettingsItem('', 'Select One For Details', '-', '-', '-', '_', []);
 
   MqttSettingsItem _selectedServer;
 
@@ -193,9 +194,6 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
         List<MqttSettingsItem> _listITems = //[]; // ['1', '2'];
 
             model.mqttSettingsList.map((e) => e as MqttSettingsItem).toList();
-        // MqttSettingsItem m = new MqttSettingsItem.private();
-        // m.mqttServer = 'Select One For Details';
-        // _listITems.add(m);
         _listITems.add(_selectForDetails);
         print('_list items are ${_listITems.toString()}');
         return Container(
@@ -238,7 +236,12 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
               SpaceH48(),
               _selectedServer != null
                   ? _customButton(context, 'SET AS ACTIVE CONFIGURATION', () {
-                      print('set active configuration');
+                      // print('set active configuration');
+                      _mqttSettingsProvider.selectedMqttSettings =
+                          _selectedServer;
+
+                      Navigator.of(context)
+                          .pushReplacementNamed(SmartHomeScreen.routeName);
                     })
                   : Container(),
               SpaceH48(),
@@ -263,6 +266,7 @@ class _MqttSettingsScreenState extends State<MqttSettingsScreen> {
           InkWell(
             onTap: () {
               if (_selectedServer != null) {
+                _iotServerBloc.sink.add(null);
                 _editConfigurationPopUp(_selectedServer);
               }
             },

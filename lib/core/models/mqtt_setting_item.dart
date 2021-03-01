@@ -7,19 +7,27 @@ part 'mqtt_setting_item.g.dart';
 @HiveType(typeId: 1)
 class MqttSettingsItem {
   @HiveField(0)
-  String mqttServer;
+  String key;
   @HiveField(1)
-  String mqttPort;
+  String mqttServer;
   @HiveField(2)
-  String mqttIdentifier;
+  String mqttPort;
   @HiveField(3)
-  String mqttUserName;
+  String mqttIdentifier;
   @HiveField(4)
-  String mqttPassword;
+  String mqttUserName;
   @HiveField(5)
+  String mqttPassword;
+  @HiveField(6)
   List<String> mqttTopics = [];
-  MqttSettingsItem(this.mqttServer, this.mqttPort, this.mqttIdentifier,
-      this.mqttUserName, this.mqttPassword, this.mqttTopics);
+  MqttSettingsItem(
+      this.key,
+      this.mqttServer,
+      this.mqttPort,
+      this.mqttIdentifier,
+      this.mqttUserName,
+      this.mqttPassword,
+      this.mqttTopics);
   MqttSettingsItem.private();
 
   validate() {

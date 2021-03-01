@@ -7,6 +7,15 @@ class MqttSettingsProvider with ChangeNotifier {
 
   List _mqttSettingsList = <String>[];
 
+  MqttSettingsItem _selectedMqttSettings;
+
+  MqttSettingsItem get selectedMqttSettings => _selectedMqttSettings;
+
+  set selectedMqttSettings(MqttSettingsItem val) {
+    _selectedMqttSettings = val;
+    notifyListeners();
+  }
+
   List get mqttSettingsList => _mqttSettingsList;
 
   addMqttSettingsItem(MqttSettingsItem mqttSettingsItem) async {
@@ -14,7 +23,9 @@ class MqttSettingsProvider with ChangeNotifier {
 
     if (mqttSettingsItem == null) return;
 
-    box.add(mqttSettingsItem);
+    mqttSettingsItem.key = DateTime.now().millisecondsSinceEpoch.toString();
+
+    box.put(mqttSettingsItem.key, mqttSettingsItem);
 
     print('mqtt settings item added');
 
@@ -29,7 +40,7 @@ class MqttSettingsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  updateMqttSettingsItem(int index, MqttSettingsItem mqttSettingsItem) {
+  updateMqttSettingsItemByIndex(int index, MqttSettingsItem mqttSettingsItem) {
     final box = Hive.box<MqttSettingsItem>(_mqttSettings);
 
     box.putAt(index, mqttSettingsItem);
@@ -37,10 +48,28 @@ class MqttSettingsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  deleteMqttSettingsItem(int index) {
+  updateMqttSettingsItem(MqttSettingsItem mqttSettingsItem) {
+    final box = Hive.box<MqttSettingsItem>(_mqttSettings);
+
+    box.put(mqttSettingsItem.key, mqttSettingsItem);
+
+    notifyListeners();
+  }
+
+  deleteMqttSettingsItemByIndex(int index) {
     final box = Hive.box<String>(_mqttSettings);
 
     box.deleteAt(index);
+
+    getMqttSettings();
+
+    notifyListeners();
+  }
+
+  deleteMqttSettingsItem(MqttSettingsItem mqttSettingsItem) {
+    final box = Hive.box<String>(_mqttSettings);
+
+    box.delete(mqttSettingsItem.key);
 
     getMqttSettings();
 

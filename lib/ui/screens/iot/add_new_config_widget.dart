@@ -81,6 +81,7 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
       _mqttIdentifierController.text = m.mqttIdentifier;
       _mqttUserController.text = m.mqttUserName;
 
+      _mqttSettingsItem.key = m.key;
       _mqttSettingsItem.mqttServer = m.mqttServer;
       _mqttSettingsItem.mqttPort = m.mqttPort;
       _mqttSettingsItem.mqttIdentifier = m.mqttIdentifier;
@@ -283,11 +284,15 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
                               borderRadius: BorderRadius.circular(16)),
                           color: ColorConstants.TOP_CLIPPER_END_DARK,
                           child: Text(
-                            "Save",
+                            widget.mqttSettingsItem == null ? "Save" : "Update",
                             style: TextStyle(color: Colors.white),
                           ),
                           onPressed: () {
-                            _saveToDb();
+                            if (widget.mqttSettingsItem == null) {
+                              _createMqttSettings();
+                            } else {
+                              _updateMqttSettings();
+                            }
                           },
                         ),
                       ),
@@ -426,6 +431,7 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
       _mqttIdentifierController.text = m.mqttIdentifier;
       _mqttUserController.text = m.mqttUserName;
 
+      _mqttSettingsItem.key = m.key;
       _mqttSettingsItem.mqttServer = m.mqttServer;
       _mqttSettingsItem.mqttPort = m.mqttPort;
       _mqttSettingsItem.mqttIdentifier = m.mqttIdentifier;
@@ -474,7 +480,7 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
     );
   }
 
-  void _saveToDb() {
+  void _createMqttSettings() {
     // hide keyboard
     // FocusScope.of(context).requestFocus(FocusNode());
     print(_mqttSettingsItem.toString());
@@ -483,11 +489,36 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
     }).toList();
     if (_mqttSettingsItem.validate()) {
       print('valideated -------- ${_mqttSettingsItem.toString()}');
+      Provider.of<MqttSettingsProvider>(context, listen: false)
+          .selectedMqttSettings = _mqttSettingsItem;
       _mqttSettingsProvider.addMqttSettingsItem(_mqttSettingsItem);
       _mqttSettingsProvider.getMqttSettings();
       // _clearFields();
-      _mqttSettingsItem =
-          showInfoBar('Successful', 'New MQTT configuration is Added', context);
+      // Navigator.of(context).pop();
+      showInfoBar('Successful', 'New MQTT configuration is Added', context);
+    } else {
+      print('Invalid settings item');
+      showInfoBar('Failed', 'Invalid MQTT configuration', context);
+    }
+  }
+
+  void _updateMqttSettings() {
+    // hide keyboard
+    // FocusScope.of(context).requestFocus(FocusNode());
+    print(_mqttSettingsItem.toString());
+    _mqttSettingsItem.mqttTopics = _topicList.skipWhile((topic) {
+      return topic == 'Add New Topic';
+    }).toList();
+    if (_mqttSettingsItem.validate()) {
+      print('valideated -------- ${_mqttSettingsItem.toString()}');
+      Provider.of<MqttSettingsProvider>(context, listen: false)
+          .selectedMqttSettings = _mqttSettingsItem;
+
+      _mqttSettingsProvider.updateMqttSettingsItem(_mqttSettingsItem);
+      _mqttSettingsProvider.getMqttSettings();
+      // _clearFields();
+      // Navigator.of(context).pop();
+      showInfoBar('Successful', 'MQTT configuration is Updated', context);
     } else {
       print('Invalid settings item');
       showInfoBar('Failed', 'Invalid MQTT configuration', context);
@@ -540,8 +571,7 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
                             : ColorConstants
                                 .ACCESS_MANAGEMENT_SUBTITLE //ColorConstants.INVALID_TEXTFIELD,
                         ),
-                    value:
-                        snapshot.hasData ? snapshot.data : list.reversed.first,
+                    value: snapshot.hasData ? snapshot.data : list.first,
                     isExpanded: true,
                     underline: Container(),
                     style: TextStyle(

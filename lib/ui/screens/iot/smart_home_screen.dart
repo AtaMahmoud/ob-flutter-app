@@ -65,9 +65,9 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
   MqttSettingsProvider _mqttSettingsProvider;
 
   final MqttSettingsItem _selectToConnect =
-      MqttSettingsItem('Select One To Connect', ' ', ' ', ' ', ' ', []);
-  final MqttSettingsItem _selectToAddNewMqttConfig =
-      MqttSettingsItem('Add New MQTT Configuration', ' ', ' ', ' ', ' ', []);
+      MqttSettingsItem('', 'Select One To Connect', ' ', ' ', ' ', ' ', []);
+  final MqttSettingsItem _selectToAddNewMqttConfig = MqttSettingsItem(
+      '', 'Add New MQTT Configuration', ' ', ' ', ' ', ' ', []);
 
   @override
   void initState() {
@@ -78,6 +78,10 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
 
     Future.delayed(Duration.zero).then((_) {
       _mqttSettingsProvider.getMqttSettings();
+      if (_mqttSettingsProvider.selectedMqttSettings != null) {
+        _iotServerBloc.sink.add(_mqttSettingsProvider.selectedMqttSettings);
+        _selectedServer = _mqttSettingsProvider.selectedMqttSettings;
+      }
       // _mqttSettingsProvider.mqttSettingsList;
       // _isConnecting = true;
 /*       _smartHomeDataProvider.fetchAllTopicsData().then((topicList) {
@@ -121,7 +125,10 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
     _iotServerBloc.controller.listen((event) {
       if (event != null &&
           event.mqttServer.compareTo('Add New MQTT Configuration') == 0) {
-        _selectedServer = null;
+        setState(() {
+          _selectedServer = null;
+        });
+        _iotServerBloc.sink.add(null);
         newConfigurationPopUp();
       } else if (event != null &&
           event.mqttServer.compareTo('Select One To Connect') == 0) {
@@ -138,9 +145,9 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
         }
         _connectWithMqttBroker(_selectedServer);
       } else {
-        setState(() {
-          _selectedServer = null;
-        });
+        // setState(() {
+        //   _selectedServer = null;
+        // });
       }
     });
   }
@@ -254,8 +261,11 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
               .map((e) => e as MqttSettingsItem)
               .toList();
           _settingsList.add(_selectToConnect);
-          if (_settingsList.length == 1)
-            _iotServerBloc.sink.add(_selectToConnect);
+          if (_mqttSettingsProvider.selectedMqttSettings != null) {
+            _iotServerBloc.sink.add(null);
+          }
+
+          if (_settingsList.length == 1) _iotServerBloc.sink.add(null);
           return _mainContent();
         } else {
           return _addNewMqttSetting();

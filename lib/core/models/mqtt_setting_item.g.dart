@@ -22,25 +22,28 @@ class MqttSettingsItemAdapter extends TypeAdapter<MqttSettingsItem> {
       fields[2] as String,
       fields[3] as String,
       fields[4] as String,
-      (fields[5] as List)?.cast<String>(),
+      fields[5] as String,
+      (fields[6] as List)?.cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, MqttSettingsItem obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
-      ..write(obj.mqttServer)
+      ..write(obj.key)
       ..writeByte(1)
-      ..write(obj.mqttPort)
+      ..write(obj.mqttServer)
       ..writeByte(2)
-      ..write(obj.mqttIdentifier)
+      ..write(obj.mqttPort)
       ..writeByte(3)
-      ..write(obj.mqttUserName)
+      ..write(obj.mqttIdentifier)
       ..writeByte(4)
-      ..write(obj.mqttPassword)
+      ..write(obj.mqttUserName)
       ..writeByte(5)
+      ..write(obj.mqttPassword)
+      ..writeByte(6)
       ..write(obj.mqttTopics);
   }
 
@@ -60,5 +63,5 @@ class MqttSettingsItemAdapter extends TypeAdapter<MqttSettingsItem> {
 // **************************************************************************
 
 String _$MqttSettingsItemToString(MqttSettingsItem o) {
-  return """MqttSettingsItem{mqttServer: ${o.mqttServer}, mqttPort: ${o.mqttPort}, mqttIdentifier: ${o.mqttIdentifier}, mqttUserName: ${o.mqttUserName}, mqttPassword: ${o.mqttPassword}, mqttTopics: ${o.mqttTopics}}""";
+  return """MqttSettingsItem{key: ${o.key}, mqttServer: ${o.mqttServer}, mqttPort: ${o.mqttPort}, mqttIdentifier: ${o.mqttIdentifier}, mqttUserName: ${o.mqttUserName}, mqttPassword: ${o.mqttPassword}, mqttTopics: ${o.mqttTopics}}""";
 }

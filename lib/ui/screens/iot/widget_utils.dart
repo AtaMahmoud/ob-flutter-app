@@ -11,11 +11,9 @@ import 'package:rxdart/rxdart.dart';
 Widget getServerDropdown(List<MqttSettingsItem> list,
     Observable<MqttSettingsItem> stream, changed, bool addPadding,
     {String label = 'Label'}) {
-  print('get topic list --- ${list.toString()}');
   return StreamBuilder<MqttSettingsItem>(
       stream: stream,
       builder: (context, snapshot) {
-        print('snapshot data ----------------- ${snapshot.data.toString()}');
         return Padding(
           padding: addPadding
               ? EdgeInsets.symmetric(horizontal: 48.w)

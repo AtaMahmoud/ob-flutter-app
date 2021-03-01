@@ -16,6 +16,7 @@ import 'package:ocean_builder/ui/shared/app_colors.dart';
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:provider/provider.dart';
+import 'package:ocean_builder/core/providers/mqtt_settings_provider.dart';
 
 class TopClipper extends StatefulWidget {
   final String title;
