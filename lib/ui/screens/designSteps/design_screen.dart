@@ -96,7 +96,7 @@ class _DesignScreenState extends State<DesignScreen> {
 
   goToNext() {
     final DesignDataProvider designDataProvider =
-        Provider.of<DesignDataProvider>(context);
+        Provider.of<DesignDataProvider>(context, listen: false);
     designDataProvider.oceanBuilder = new OceanBuilder();
     Navigator.of(context).pushNamed(ExteriorFinishScreen.routeName);
   }
