@@ -22,9 +22,9 @@ import 'package:provider/provider.dart';
 class InvitationResponseScreen extends StatefulWidget {
   static const String routeName = '/invitationResponse';
 
-  final AccessEvent accessInvitation;
+  AccessEvent accessInvitation;
 
-  const InvitationResponseScreen({this.accessInvitation});
+  InvitationResponseScreen({this.accessInvitation});
 
   @override
   _InvitationResponseScreenState createState() =>
@@ -37,14 +37,43 @@ class _InvitationResponseScreenState extends State<InvitationResponseScreen> {
 
   String requestAccessTime;
 
-  OceanBuilderProvider _oceanBuilderProvider;
+  // OceanBuilderProvider _oceanBuilderProvider;
 
   bool isFromNotificationTray = false;
+
+  AccessEvent _accessInvitation;
+
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    Duration d = Duration(milliseconds: widget.accessInvitation.period);
+
+    Future.delayed(Duration.zero).then((value) {
+      Provider.of<UserProvider>(context)
+          .getAccessRequest(widget.accessInvitation.id)
+          .then((acceessEvent) {
+        if (acceessEvent != null) {
+          _accessInvitation = acceessEvent;
+          _accessInvitation.accesEventType = 'Access Invitation';
+          _accessInvitation.reqMessage = widget.accessInvitation.reqMessage;
+          print('---------------------printing access invitation------------');
+          print(_accessInvitation.toJson().toString());
+          _convertAccessDuration();
+        }
+        setState(() {
+          _isLoading = false;
+        });
+        Provider.of<UserProvider>(context)
+            .updateNotificationReadStatus(
+                widget.accessInvitation.notificationId)
+            .then((value) => MethodHelper.parseNotifications(context));
+      });
+    });
+  }
+
+  void _convertAccessDuration() {
+    Duration d = Duration(milliseconds: _accessInvitation.period);
     // debugPrint('acces invitation time in days-- ' + d.inDays.toString());
     String accessFor;
     if (d.inDays <= 15) {
@@ -63,6 +92,7 @@ class _InvitationResponseScreenState extends State<InvitationResponseScreen> {
     } else if (d.inDays == 1800 || d.inDays == 0) {
       accessFor = 'PERMANENT ACCESS';
     }
+
     if (accessFor.compareTo('0 DAYS') == 0) accessFor = 'PERMANENT ACCESS';
 
     int index = ListHelper.getAccessTimeList().indexOf(accessFor);
@@ -108,14 +138,15 @@ class _InvitationResponseScreenState extends State<InvitationResponseScreen> {
       });
     }
 
-    userProvider.autoLogin();
+    // userProvider.autoLogin();
 
-    _oceanBuilderProvider = Provider.of<OceanBuilderProvider>(context);
+    // _oceanBuilderProvider = Provider.of<OceanBuilderProvider>(context);
+
     double topClipperRatio =
         Platform.isIOS ? (153.5) / 813 : (153.5 + 16) / 813;
     double height = MediaQuery.of(context).size.height * topClipperRatio;
 
-    String vesselCode = widget.accessInvitation.seaPod.vessleCode;
+    String vesselCode = _accessInvitation?.seaPod?.vessleCode ?? "";
 
     if (!mounted)
       MethodHelper.parseNotifications(GlobalContext.currentScreenContext);
@@ -136,7 +167,9 @@ class _InvitationResponseScreenState extends State<InvitationResponseScreen> {
           children: <Widget>[
             _mainContent(height, userProvider, vesselCode),
             _topBar(context),
-            _bottomButtons(userProvider)
+            _isLoading || _accessInvitation == null
+                ? Container()
+                : _bottomButtons(userProvider)
             // OB24sP6
           ],
         ),
@@ -243,7 +276,7 @@ class _InvitationResponseScreenState extends State<InvitationResponseScreen> {
       shrinkWrap: true,
       slivers: <Widget>[
         _startSpace(height),
-        userProvider.isLoading
+        userProvider.isLoading || _isLoading || _accessInvitation == null
             ? ProgressIndicatorBoxAdapter()
             : _inputFieldList(vesselCode),
         _endSpace(),
@@ -259,17 +292,17 @@ class _InvitationResponseScreenState extends State<InvitationResponseScreen> {
   SliverList _inputFieldList(String vesselCode) {
     return SliverList(
         delegate: SliverChildListDelegate([
-      _messageRow(widget.accessInvitation.reqMessage),
+      _messageRow(_accessInvitation.reqMessage),
       SpaceH128(),
-      _itemRow('Email Address', widget.accessInvitation.user.email),
+      _itemRow('Email Address', _accessInvitation.user.email),
       SpaceH128(),
-      _itemRow('Contact Number', widget.accessInvitation.user.mobileNumber),
+      _itemRow('Contact Number', _accessInvitation.user.mobileNumber),
       SpaceH128(),
       _itemRow('SEAPOD NAME /\nVESSEL CODE',
-          '${widget.accessInvitation.seaPod.name} /\n $vesselCode'),
+          '${_accessInvitation.seaPod.name} /\n $vesselCode'),
       SpaceH128(),
-      _accessRow('Access As', widget.accessInvitation.type, ' Access For',
-          'accessForValue'),
+      _accessRow(
+          'Access As', _accessInvitation.type, ' Access For', 'accessForValue'),
       SpaceH128(),
     ]));
   }
@@ -350,7 +383,7 @@ class _InvitationResponseScreenState extends State<InvitationResponseScreen> {
           Expanded(
             child: getDropdown(ListHelper.getAccessTimeList(),
                 _bloc.requestAccessTime, _bloc.requestAccessTimeChanged, false,
-                label: 'Access for'),
+                label: 'Access for', isEnabled: false),
           )
 /*           Text('Access for',
               style: TextStyle(
@@ -365,8 +398,7 @@ class _InvitationResponseScreenState extends State<InvitationResponseScreen> {
     // bool isOwner = userProvider.authenticatedUser == null ||
     //     userProvider.authenticatedUser.userID
     //         .contains(widget.accessInvitation.user.id);
-    return widget.accessInvitation.status
-            .contains(NotificationConstants.initiated)
+    return _accessInvitation.status.contains(NotificationConstants.initiated)
         ? Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -414,7 +446,7 @@ class _InvitationResponseScreenState extends State<InvitationResponseScreen> {
   }
 
   _acceptRequest(UserProvider userProvider) async {
-    userProvider.acceptAccessnvitation(widget.accessInvitation).then((status) {
+    userProvider.acceptAccessnvitation(_accessInvitation).then((status) {
       if (status.status == 200) {
         userProvider.autoLogin().then((onValue) {
           Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
@@ -427,7 +459,7 @@ class _InvitationResponseScreenState extends State<InvitationResponseScreen> {
   }
 
   _denyRequest(UserProvider userProvider) async {
-    userProvider.rejectAccessnvitation(widget.accessInvitation).then((status) {
+    userProvider.rejectAccessnvitation(_accessInvitation).then((status) {
       if (status.status == 200) {
         userProvider.autoLogin().then((onValue) {
           Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);

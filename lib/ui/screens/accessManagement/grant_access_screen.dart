@@ -61,6 +61,7 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
   User _reciever;
 
   String permissionSet;
+  String _message;
 
   List<PermissionSet> _selectedPermissionSet;
 
@@ -134,8 +135,13 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
     _bloc.requestAccessTimeController.listen((onData) {
       _reciever.requestAccessTime = onData;
     });
+
     _bloc.permissionController.listen((onData) {
       permissionSet = onData;
+    });
+
+    _bloc.messageController.listen((msg) {
+      _message = msg;
     });
 
     //-----
@@ -160,57 +166,96 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
       return permission.permissionSetName;
     }).toList());
     _user = _userProvider.authenticatedUser;
-    return Container(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        decoration: BoxDecoration(
-            // gradient: profileGradient,
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8)),
-        child: CustomScrollView(
-          slivers: <Widget>[
-            // UIHelper.getTopEmptyContainer(
-            //     MediaQuery.of(context).size.height / 16, false),
-            UIHelper.defaultSliverAppbar(null, goBack,
-                screnTitle: 'Grant new access', isDrawer: false),
-            SliverPadding(
-              padding: EdgeInsets.only(
-                  top: 8.h,
-                  // bottom: _util.setHeight(128),
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    _headerTitle(),
-                    // _firstNameField(context),
-                    SpaceH64(),
-                    _emailField(context),
-                    SpaceH64(),
-                    _seaPodDropdown(),
-                    SpaceH32(),
-                    _accessTypeDropdown(),
-                    SpaceH32(),
-                    _permissionSetRow(),
-                    SpaceH32(),
-                    _customPermissionsRow(),
-                    SpaceH32(),
-                    checkInDatePicker(),
-                    _isMemberSelected ? Container() : SpaceH32(),
-                    _isMemberSelected ? Container() : _accessTimeDropdown(),
-                    SpaceH32(),
-                    _messageContainer(),
-                    SpaceH32(),
-                    _sendInvitationButton(context),
-                    SpaceH32(),
-                  ],
+    return Stack(
+      children: [
+        Container(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            decoration: BoxDecoration(
+
+                // gradient: profileGradient,
+
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8)),
+            child: CustomScrollView(
+              slivers: <Widget>[
+                // UIHelper.getTopEmptyContainer(
+
+                //     MediaQuery.of(context).size.height / 16, false),
+
+                UIHelper.defaultSliverAppbar(null, goBack,
+                    screnTitle: 'Grant new access', isDrawer: false),
+
+                SliverPadding(
+                  padding: EdgeInsets.only(
+                      top: 8.h,
+
+                      // bottom: _util.setHeight(128),
+
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate(
+                      [
+                        _headerTitle(),
+
+                        _firstNameField(context),
+
+                        SpaceH64(),
+
+                        _emailField(context),
+
+                        SpaceH64(),
+
+                        _seaPodDropdown(),
+
+                        SpaceH32(),
+
+                        _accessTypeDropdown(),
+
+                        SpaceH32(),
+
+                        _permissionSetRow(),
+
+                        SpaceH32(),
+
+                        _customPermissionsRow(),
+
+                        SpaceH32(),
+
+                        checkInDatePicker(),
+
+                        // _isMemberSelected ? Container() : SpaceH32(),
+
+                        // _isMemberSelected ? Container() : _accessTimeDropdown(),
+
+                        SpaceH32(),
+
+                        _messageContainer(),
+
+                        SpaceH32(),
+
+                        _sendInvitationButton(context),
+
+                        SpaceH32(),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+
+                UIHelper.getTopEmptyContainer(90, false),
+              ],
+            )
+
+            // ),
+
             ),
-            UIHelper.getTopEmptyContainer(90, false),
-          ],
-        )
-        // ),
-        );
+        _userProvider.isLoading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Container()
+      ],
+    );
   }
 
   Container _sendInvitationButton(BuildContext context) {
@@ -224,7 +269,11 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
         ),
         onPressed: () {
           // Navigator.of(context).pop();
-          if (permissionSet != null && _reciever.email != null)
+          if (permissionSet != null &&
+              _reciever.email != null &&
+              _reciever.firstName != null &&
+              _reciever.userType != null &&
+              _reciever.checkInDate != null)
             _showConfirmGrantAccessDialog();
           else
             showInfoBar('Fill all the fields',
@@ -269,7 +318,7 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
       null,
       true,
       _emailNode,
-      _messageNode,
+      null,
       maxLength: 30,
     );
   }
@@ -616,14 +665,17 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
     _sender = _userProvider.authenticatedUser;
     String permissionSetId = _getPermissionSetId(permissionSet);
     _userProvider
-        .sendInvitation(_reciever, _selectedObInfo.documentId, permissionSetId)
+        .sendInvitation(
+            _reciever, _selectedObInfo.documentId, permissionSetId, _message)
         .then((responseStatus) {
       if (responseStatus.status == 200) {
+        Navigator.of(context).pop();
         showInfoBar(
             'Invitation sent',
             'Access invitation has been sent to "${_reciever.email}"',
             GlobalContext.currentScreenContext);
       } else {
+        // Navigator.of(context).pop();
         showInfoBar(parseErrorTitle(responseStatus.code),
             responseStatus.message, context);
       }

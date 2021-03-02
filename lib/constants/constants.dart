@@ -235,6 +235,7 @@ class ScreenTitle {
   static const EMAIL_CONFIRMATION = 'Email Confirmation';
   static const GUEST_REQUEST = 'Guest Request';
   static const INVITATION_REQUEST = 'Access Invitation';
+  static const ACCESS_REQUEST = 'Access Request';
   static const YOUR_OBS = 'Your SeaPods';
   static const REQUEST_ACCESS = 'Request Access';
   static const OB_SELECTION = 'SeaPod Selection';

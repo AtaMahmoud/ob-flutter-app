@@ -284,7 +284,7 @@ class Router {
             builder: (_) => EmailVerificationScreen(
                   emailVerificationData: data,
                 ),
-            fullscreenDialog: true,
+            // fullscreenDialog: true,
             settings: RouteSettings(name: EmailVerificationScreen.routeName));
       case RecoverPasswordVerificationScreen.routeName:
         final EmailVerificationData data = settings.arguments;

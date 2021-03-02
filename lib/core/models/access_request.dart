@@ -25,6 +25,9 @@ class AccessEvent {
   @JsonKey(ignore: true)
   String accesEventType;
 
+  @JsonKey(ignore: true)
+  String notificationId;
+
   AccessEvent(
       {this.id,
       this.type,

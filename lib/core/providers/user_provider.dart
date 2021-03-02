@@ -1114,8 +1114,8 @@ class UserProvider extends BaseProvider {
 
   // ------------------------------------------------------- Accept Access Request ( PUT ) --------------------------------------------------------------------
 
-  Future<ResponseStatus> acceptAccessReqeust(
-      String accessRequestId, String type, int period) async {
+  Future<ResponseStatus> acceptAccessReqeust(String accessRequestId,
+      String type, int period, String permissionSetId) async {
     isLoading = true;
     notifyListeners();
     print(
@@ -1124,7 +1124,21 @@ class UserProvider extends BaseProvider {
 
     await _headerManager.initalizeAuthenticatedUserHeaders();
 
-    Map<String, dynamic> reqMap = {'type': type, 'period': period};
+    /* 
+    {
+	"type":"OWNER",
+	"period":0,
+	"permissionSetId": "{{closeFriendPermissionId}}"
+}
+     */
+
+    Map<String, dynamic> reqMap = {
+      'type': type,
+      'period': period,
+      'permissionSetId': permissionSetId
+    };
+
+    print(reqMap.toString());
 
     try {
       final Response acceptAccessRequestResponse = await _apiBaseHelper.put(
@@ -1263,27 +1277,33 @@ class UserProvider extends BaseProvider {
     return accessRequest;
   }
 
-  // ------------------------------------------------------- Send Invitation ( POST ) --------------------------------------------------------------------
+  // ------------------------------------------------------- Send Access Invitation / Grant Access ( POST ) --------------------------------------------------------------------
 
-  Future<ResponseStatus> sendInvitation(
-      User user, String seapodId, String permissionSetId) async {
+  Future<ResponseStatus> sendInvitation(User user, String seapodId,
+      String permissionSetId, String message) async {
     isLoading = true;
     notifyListeners();
     ResponseStatus responseStatus = ResponseStatus();
     responseStatus.status = 200;
-/*     Map<String, String> _authUserHeaders = {};
-
-    String authToken = await SharedPrefHelper.getAuthKey();
-    _authUserHeaders.addAll({
-      "X-Auth-Token": authToken,
-    });
+/*    
+{
+    "name": "John",
+    "message": "Come join me?",
+    "email": "JohDoe222@gmail.com",
+    "type": "MEMBER",
+    "checkIn": 1594131437830,
+    "permissionSetId": "5ffc1932d2c2c6067a0abff0"
+}
  */
 
     await _headerManager.initalizeAuthenticatedUserHeaders();
 
     Map<String, dynamic> userDataMap = {
+      'name': user.firstName,
+      'message': message,
       'email': user.email,
       'type': user.userType,
+      'checkIn': user.checkInDate.millisecondsSinceEpoch.toString(),
       'permissionSetId': permissionSetId
     };
 

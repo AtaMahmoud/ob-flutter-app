@@ -16,6 +16,7 @@ import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
+import 'package:ocean_builder/ui/widgets/progress_indicator.dart';
 
 class NotificationHistoryScreenWidget extends StatefulWidget {
   static const String routeName = '/notificationhistorywidget';
@@ -34,332 +35,275 @@ class NotificationHistoryScreenWidget extends StatefulWidget {
 class _NotificationHistoryScreenWidgetState
     extends State<NotificationHistoryScreenWidget> {
   bool _updatingNotification = false;
-  int parseNotificationsCallCout = 0;
+  // int parseNotificationsCallCout = 0;
+
+  UserProvider _userProvider;
+  List<ServerNotification> _notificationList = [];
+  int _listLength = 0;
+
+  bool _isLoading = true;
 
   @override
   void initState() {
     UIHelper.setStatusBarColor(color: Colors.white);
     Future.delayed(Duration.zero).then((_) {
-      UserProvider userProvider =
-          Provider.of<UserProvider>(context, listen: false);
-      userProvider.getNotifications();
+      _userProvider = Provider.of<UserProvider>(context);
+      _syncNotifications();
     });
     super.initState();
   }
 
+  void _syncNotifications() {
+    _userProvider.getNotifications().then((value) {
+      _listLength =
+          _userProvider?.authenticatedUser?.notifications?.length ?? 0;
+
+      if (_listLength > 0) {
+        // notificationList =  userProvider.authenticatedUser.notifications.reversed.toList();
+
+        _notificationList = new List<ServerNotification>.from(
+            _userProvider.authenticatedUser.notifications);
+
+        if (widget.showOnlyAccessRequests) {
+          _notificationList.retainWhere((noti) {
+            String currentUserID = _userProvider.authenticatedUser.userID;
+            return noti.message.compareTo(NotificationConstants.request) == 0 &&
+                noti.data.status.compareTo(NotificationConstants.initiated) ==
+                    0 &&
+                noti.data.user.id.contains(currentUserID);
+          });
+          _listLength = _notificationList.length;
+        } else if (widget.showOnlyUnreadNotifications) {
+          _notificationList.retainWhere((noti) {
+            return noti.seen == null || noti.seen == false;
+          });
+          _listLength = _notificationList.length;
+        }
+
+        // notificationList = notificationList.reversed.toList();
+      }
+      MethodHelper.parseNotifications(context);
+      setState(() {
+        _isLoading = false;
+        _updatingNotification = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // GlobalContext.currentScreenContext = context;
-    final UserProvider userProvider = Provider.of<UserProvider>(context);
+    return Container(
+        decoration: BoxDecoration(
+            // gradient: profileGradient,
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8)),
+        child: Stack(
+          children: <Widget>[
+            CustomScrollView(
+              slivers: <Widget>[
+                _startSpace(),
+                _listLength > 0
+                    ? SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          ServerNotification fcmNotification =
+                              _notificationList[index];
 
-    //         if (userProvider.authenticatedUser != null) {
-    // userProvider.resetAuthenticatedUser(userProvider.authenticatedUser.userID);
-    //     }
+                          String notiMsg = fcmNotification.title;
+                          String requestStatus = fcmNotification.data.status;
+                          String notificationType = fcmNotification.message;
 
-    int len = userProvider?.authenticatedUser?.notifications?.length ?? 0;
-    List<ServerNotification> notificationList = [];
+                          String ownerID = fcmNotification.data.user.id;
 
-    if (len > 0) {
-      // notificationList =  userProvider.authenticatedUser.notifications.reversed.toList();
+                          String currentUserID =
+                              _userProvider.authenticatedUser.userID;
 
-      notificationList = new List<ServerNotification>.from(
-          userProvider.authenticatedUser.notifications);
+                          String oceanBuilderId =
+                              fcmNotification.data.seaPod.id;
 
-      if (widget.showOnlyAccessRequests) {
-        notificationList.retainWhere((noti) {
-          String currentUserID = userProvider.authenticatedUser.userID;
-          return noti.message.compareTo(NotificationConstants.request) == 0 &&
-              noti.data.status.compareTo(NotificationConstants.initiated) ==
-                  0 &&
-              noti.data.user.id.contains(currentUserID);
-        });
-        len = notificationList.length;
-      } else if (widget.showOnlyUnreadNotifications) {
-        notificationList.retainWhere((noti) {
-          return noti.seen == null || noti.seen == false;
-        });
-        len = notificationList.length;
-      }
+                          String oceanBuilderName =
+                              fcmNotification.data.seaPod.name;
+                          List<UserOceanBuilder> uobList =
+                              new List<UserOceanBuilder>.from(_userProvider
+                                  .authenticatedUser.userOceanBuilder);
+                          bool _isUobExists = false;
+                          if (oceanBuilderId != null) {
+                            uobList.retainWhere((uob) {
+                              return uob.oceanBuilderId
+                                  .contains(oceanBuilderId);
+                            });
+                            _isUobExists = uobList.length == 1 &&
+                                uobList[0]
+                                    .reqStatus
+                                    .contains(NotificationConstants.initiated);
+                          }
 
-      // notificationList = notificationList.reversed.toList();
-    }
+                          DateTime dateTime =
+                              new DateTime.fromMicrosecondsSinceEpoch(
+                                  fcmNotification.data.checkIn);
+                          String formatedDateTime =
+                              DateFormat('yyyy-MM-dd  HH:mm:ss a')
+                                  .format(dateTime);
 
-    // debugPrint('parseNotificationsCallCout $parseNotificationsCallCout');
-    if (parseNotificationsCallCout == 0) {
-      MethodHelper.parseNotifications(context);
-      parseNotificationsCallCout++;
-    }
+                          return InkWell(
+                            onTap: () async {
+                              //show cancel pop up if not responded yet
+                              if (_isUobExists &&
+                                  notificationType.contains(
+                                      NotificationConstants.request) &&
+                                  requestStatus.contains(
+                                      NotificationConstants.initiated) &&
+                                  !ownerID.contains(currentUserID)) {
+                                _showCancelAlert(_userProvider, oceanBuilderId,
+                                    oceanBuilderName);
+                                fcmNotification.seen = true;
+                                await _userProvider
+                                    .updateNotificationReadStatus(
+                                        fcmNotification.id);
+                                // await userProvider.autoLogin();
+                                MethodHelper.parseNotifications(context);
+                              } else if (notificationType
+                                  .contains(NotificationConstants.request)) {
+                                AccessEvent _accessEvent = new AccessEvent();
+                                _accessEvent.notificationId =
+                                    fcmNotification.id;
+                                _accessEvent.id = fcmNotification.data.id;
+                                _accessEvent.reqMessage = fcmNotification.title;
 
-    return Material(
-      child: Container(
-          decoration: BoxDecoration(
-              // gradient: profileGradient,
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8)),
-          child: Stack(
+                                Navigator.of(GlobalContext.currentScreenContext)
+                                    .pushNamed(
+                                        GuestRequestResponseScreen.routeName,
+                                        arguments: _accessEvent);
+                              } else if (notificationType
+                                  .contains(NotificationConstants.invitation)) {
+                                AccessEvent _accessEvent = new AccessEvent();
+                                _accessEvent.notificationId =
+                                    fcmNotification.id;
+                                _accessEvent.id = fcmNotification.data.id;
+                                _accessEvent.reqMessage = fcmNotification.title;
+
+                                Navigator.of(GlobalContext.currentScreenContext)
+                                    .pushNamed(
+                                        InvitationResponseScreen.routeName,
+                                        arguments: _accessEvent);
+                              }
+                            },
+                            child: _notifiactionItemCard(
+                                formatedDateTime,
+                                context,
+                                fcmNotification,
+                                notiMsg,
+                                notificationType),
+                          );
+                        }, childCount: _listLength),
+                      )
+                    : _isLoading
+                        ? ProgressIndicatorBoxAdapter()
+                        : _textNoNotification(),
+                _endSpace(),
+              ],
+            ),
+            _topBar()
+          ],
+        )
+        // ),
+        );
+  }
+
+  Container _notifiactionItemCard(
+      String formatedDateTime,
+      BuildContext context,
+      ServerNotification fcmNotification,
+      String notiMsg,
+      String notificationType) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
+      // decoration: UIHelper.customDecoration(
+      // 2, 12, ColorConstants.TOP_CLIPPER_END.withOpacity(.4),bkgColor: ColorConstants.TOP_CLIPPER_START),
+      child: Column(
+        children: <Widget>[
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              CustomScrollView(
-                slivers: <Widget>[
-                  _startSpace(),
-                  len > 0
-                      ? SliverList(
-                          delegate:
-                              SliverChildBuilderDelegate((context, index) {
-                            ServerNotification fcmNotification =
-                                notificationList[index];
-
-                            String notiMsg = fcmNotification.title;
-                            String requestStatus = fcmNotification.data.status;
-                            String notificationType = fcmNotification.message;
-
-                            String ownerID = fcmNotification.data.user.id;
-
-                            String currentUserID =
-                                userProvider.authenticatedUser.userID;
-
-                            String oceanBuilderId =
-                                fcmNotification.data.seaPod.id;
-
-                            String oceanBuilderName =
-                                fcmNotification.data.seaPod.name;
-                            List<UserOceanBuilder> uobList =
-                                new List<UserOceanBuilder>.from(userProvider
-                                    .authenticatedUser.userOceanBuilder);
-                            bool _isUobExists = false;
-                            if (oceanBuilderId != null) {
-                              uobList.retainWhere((uob) {
-                                return uob.oceanBuilderId
-                                    .contains(oceanBuilderId);
-                              });
-                              _isUobExists = uobList.length == 1 &&
-                                  uobList[0].reqStatus.contains(
-                                      NotificationConstants.initiated);
-                            }
-
-                            DateTime dateTime =
-                                new DateTime.fromMicrosecondsSinceEpoch(
-                                    fcmNotification.data.checkIn);
-                            String formatedDateTime =
-                                DateFormat('yyyy-MM-dd  HH:mm:ss a')
-                                    .format(dateTime);
-
-                            return InkWell(
-                              onTap: () async {
-                                //show cancel pop up if not responded yet
-                                if (_isUobExists &&
-                                    notificationType.contains(
-                                        NotificationConstants.request) &&
-                                    requestStatus.contains(
-                                        NotificationConstants.initiated) &&
-                                    !ownerID.contains(currentUserID)) {
-                                  _showCancelAlert(userProvider, oceanBuilderId,
-                                      oceanBuilderName);
-                                  fcmNotification.seen = true;
-                                  await userProvider
-                                      .updateNotificationReadStatus(
-                                          fcmNotification.id);
-                                  // await userProvider.autoLogin();
-                                  MethodHelper.parseNotifications(context);
-                                } else if (notificationType
-                                    .contains(NotificationConstants.request)) {
-                                  fcmNotification.seen = true;
-                                  debugPrint(
-                                      'reqeusting notification seen status --- ${fcmNotification.toJson().toString()}');
-                                  await userProvider
-                                      .updateNotificationReadStatus(
-                                          fcmNotification.id);
-                                  // await userProvider.autoLogin();
-                                  MethodHelper.parseNotifications(context);
-
-                                  userProvider
-                                      .getAccessRequest(fcmNotification.data.id)
-                                      .then((accessRequest) {
-                                    if (accessRequest != null) {
-                                      accessRequest.reqMessage =
-                                          fcmNotification.title;
-
-                                      accessRequest.accesEventType =
-                                          'Access Request';
-                                      // debugPrint('access request fetched from server -==------------------------------------ ${accessRequest.id}');
-
-                                      Navigator.of(GlobalContext
-                                              .currentScreenContext)
-                                          .pushNamed(
-                                              GuestRequestResponseScreen
-                                                  .routeName,
-                                              arguments: accessRequest);
-                                    }
-                                  });
-                                } else if (notificationType.contains(
-                                    NotificationConstants.invitation)) {
-                                  fcmNotification.seen = true;
-                                  await userProvider
-                                      .updateNotificationReadStatus(
-                                          fcmNotification.id);
-                                  // await userProvider.resetAuthenticatedUser(userProvider.authenticatedUser.userID);
-                                  //  await userProvider.autoLogin();
-                                  MethodHelper.parseNotifications(context);
-
-                                  userProvider
-                                      .getAccessRequest(fcmNotification.data.id)
-                                      .then((accessRequest) {
-                                    if (accessRequest != null) {
-                                      accessRequest.reqMessage =
-                                          fcmNotification.title;
-
-                                      accessRequest.accesEventType =
-                                          'Access Invitation';
-
-                                      // debugPrint('access request fetched from server -==------------------------------------ ${accessRequest.id}');
-
-                                      Navigator.of(GlobalContext
-                                              .currentScreenContext)
-                                          .pushNamed(
-                                              InvitationResponseScreen
-                                                  .routeName,
-                                              arguments: accessRequest);
-                                    }
-                                  });
-
-                                  // Navigator.of(context).pushNamed(
-                                  //     InvitationResponseScreen.routeName,
-                                  //     arguments: fcmNotification);
-
-                                }
-                              },
-                              child: Container(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 8.0, vertical: 4.0),
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 8.0, horizontal: 8),
-                                // decoration: UIHelper.customDecoration(
-                                // 2, 12, ColorConstants.TOP_CLIPPER_END.withOpacity(.4),bkgColor: ColorConstants.TOP_CLIPPER_START),
-                                child: Column(
-                                  children: <Widget>[
-                                    Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Column(
-                                          children: <Widget>[_imageSeapod()],
-                                        ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 8, right: 8, bottom: 8),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.stretch,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: <Widget>[
-                                                    Expanded(
-                                                      child: _timeStamp(
-                                                          formatedDateTime),
-                                                    ),
-                                                    InkWell(
-                                                        onTap: () async {
-                                                          if (_updatingNotification)
-                                                            return;
-                                                          bool internetStatus =
-                                                              await DataConnectionChecker()
-                                                                  .hasConnection;
-                                                          if (!internetStatus) {
-                                                            displayInternetInfoBar(
-                                                                context,
-                                                                AppStrings
-                                                                    .noInternetConnectionTryAgain);
-                                                            return;
-                                                          }
-
-                                                          _updatingNotification =
-                                                              true;
-                                                          // debugPrint(
-                                                          // '_updatingNotification -- $_updatingNotification');
-                                                          // debugPrint(
-                                                          // 'read/unread');
-                                                          // await userProvider
-                                                          //     .autoLogin();
-
-                                                          await userProvider
-                                                              .updateNotificationReadStatus(
-                                                                  fcmNotification
-                                                                      .id);
-
-                                                          MethodHelper
-                                                              .parseNotifications(
-                                                                  context);
-                                                          if (mounted) {
-                                                            setState(() {
-                                                              _updatingNotification =
-                                                                  false;
-                                                              // debugPrint(
-                                                              // '_updatingNotification -- $_updatingNotification');
-                                                              // debugPrint(
-                                                              // 'rebuild noti history widget');
-                                                            });
-                                                          }
-                                                        },
-                                                        child: ImageIcon(
-                                                          AssetImage(fcmNotification
-                                                                          .seen !=
-                                                                      null &&
-                                                                  fcmNotification
-                                                                      .seen
-                                                              ? ImagePaths
-                                                                  .icRead
-                                                              : ImagePaths
-                                                                  .icUnread),
-                                                          color: _updatingNotification
-                                                              ? Colors.grey
-                                                              : ColorConstants
-                                                                  .COLOR_NOTIFICATION_BUBBLE, //Color(0xFF064390),
-                                                          size: 15.0,
-                                                        )),
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: 8,
-                                                ),
-                                                _notiMesssage(notiMsg),
-                                                SizedBox(
-                                                  height: 8,
-                                                ),
-                                                _notiType(notificationType),
-                                                // Text('Status: $requestStatus'),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    _dividerH4()
-                                  ],
-                                ),
-                              ),
-                            );
-                          }, childCount: len),
-                        )
-                      : _textNoNotification(),
-                  _endSpace(),
-                ],
+              Column(
+                children: <Widget>[_imageSeapod()],
               ),
-              _topBar()
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Expanded(
+                            child: _timeStamp(formatedDateTime),
+                          ),
+                          _changeReadStatusBubble(context, fcmNotification),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      _notiMesssage(notiMsg),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      _notiType(notificationType),
+                      // Text('Status: $requestStatus'),
+                    ],
+                  ),
+                ),
+              ),
             ],
-          )
-          // ),
           ),
+          _dividerH4()
+        ],
+      ),
     );
+  }
+
+  InkWell _changeReadStatusBubble(
+      BuildContext context, ServerNotification fcmNotification) {
+    return InkWell(
+        onTap: () {
+          if (_updatingNotification) return;
+          DataConnectionChecker().hasConnection.then((internetStatus) {
+            if (!internetStatus) {
+              displayInternetInfoBar(
+                  context, AppStrings.noInternetConnectionTryAgain);
+              return;
+            }
+            _updatingNotification = true;
+            _userProvider
+                .updateNotificationReadStatus(fcmNotification.id)
+                .then((value) {
+              _syncNotifications();
+            });
+          });
+        },
+        child: _userProvider.isLoading
+            ? Center(
+                child: SizedBox(
+                    width: 16.0,
+                    height: 16.0,
+                    child: CircularProgressIndicator()),
+              )
+            : ImageIcon(
+                AssetImage(fcmNotification.seen != null && fcmNotification.seen
+                    ? ImagePaths.icRead
+                    : ImagePaths.icUnread),
+                color: fcmNotification.seen != null &&
+                        fcmNotification.seen // _updatingNotification
+                    ? Colors.grey
+                    : ColorConstants.TOP_CLIPPER_END_DARK, //Color(0xFF064390),
+                size: 16.0,
+              ));
   }
 
   Positioned _topBar() {
@@ -435,7 +379,7 @@ class _NotificationHistoryScreenWidgetState
   }
 
   Text _notiType(String notificationType) {
-    return Text('SEAPOD ACCESS ${notificationType.toUpperCase()}',
+    return Text('${notificationType.toUpperCase()}',
         style: TextStyle(color: ColorConstants.COLOR_NOTIFICATION_SUB_ITEM));
   }
 
@@ -483,11 +427,8 @@ class _NotificationHistoryScreenWidgetState
 // show cancel alert
   _showCancelAlert(UserProvider userProvider, String oceanBuilderId,
       String oceanBuilderName) {
-    // Navigator.of(context).pushReplacementNamed(PendingOBScreen.routeName,arguments: userOceanBuilder);
-    // _showCancelAlert(userOceanBuilder);
     _cancelUserProvider = userProvider;
     _cancelUserOceanBuilderId = oceanBuilderId;
-
     String vesselCode = MethodHelper.getVesselCode(oceanBuilderId);
     showAlertWithOneButton(
         title: "CANCEL ACCESS REQUEST",
@@ -521,36 +462,5 @@ class _NotificationHistoryScreenWidgetState
         break;
       }
     }
-    // debugPrint('noti to cancel ' + fcmNotification.data.id);
-    // User requestedBy =
-    //     await userProvider.getAuthUserProfile(fcmNotification.data.user.id);
-
-    // User owner =
-    //     await userProvider.getAuthUserProfile(fcmNotification.data.user.id);
-
-    // String notificationId = fcmNotification.data.id;
-
-    // userProvider
-    //     .updateNotificationStatus(
-    //         notificationId, NotificationConstants.canceled, owner.userID)
-    //     .then((onValue) {
-    //   userProvider
-    //       .deleteOceanBuilderFromUser(
-    //           userId: requestedBy.userID,
-    //           oceanBuilderId: fcmNotification.data.seaPod.id)
-    //       .then((onValue) {
-    //     // Navigator.of(context).pushReplacementNamed(OBEventScreen.routeName);
-    //     userProvider.autoLogin().then((onValue) {
-    //       setState(() {
-    //         cancelling = false;
-    //         alertButtonText = 'Cancel';
-    //        Navigator.of(context, rootNavigator: true).pop();
-    //         showInfoBar('Cancel Request', 'Access request canceled', context);
-    //       });
-    //     });
-    //   }
-    //   );
-
-    // });
   }
 }
