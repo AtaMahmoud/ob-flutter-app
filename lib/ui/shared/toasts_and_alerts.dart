@@ -117,7 +117,7 @@ showInfoBarWithDissmissCallback(
     margin: EdgeInsets.all(8),
     borderRadius: 8,
     isDismissible: true,
-    duration: Duration(seconds: 3),
+    duration: Duration(seconds: 5),
     icon: Icon(
       Icons.info_outline,
       color: Colors.white,

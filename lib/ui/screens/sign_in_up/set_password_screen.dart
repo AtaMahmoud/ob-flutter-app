@@ -16,6 +16,7 @@ import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper_2.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
 import 'package:ocean_builder/ui/screens/profile/profile_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/email_verification_screen.dart';
+import 'package:ocean_builder/ui/screens/sign_in_up/login_screen.dart';
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
@@ -27,8 +28,11 @@ import 'package:provider/provider.dart';
 class PasswordScreen extends StatefulWidget {
   static const String routeName = '/password';
   final bool isNewUser;
+  final bool isRecoverPassword;
+  final bool isAccessRequest;
+  final bool isAccessInvitaion;
 
-  const PasswordScreen({Key key, this.isNewUser}) : super(key: key);
+  PasswordScreen({Key key, this.isNewUser = false,this.isRecoverPassword = false, this.isAccessRequest = false, this.isAccessInvitaion = false}) : super(key: key);
 
   @override
   _PasswordScreenState createState() => _PasswordScreenState();
@@ -48,6 +52,9 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
   SelectedOBIdProvider _selectedOBIdProvider;
 
+  String _title ;
+  String _nextButtonText;
+
   @override
   void initState() {
     super.initState();
@@ -56,7 +63,24 @@ class _PasswordScreenState extends State<PasswordScreen> {
     _bloc.showPasswordChanged(false);
     _bloc.showConfirmPasswordChanged(false);
     _setUserDataListener();
+    _setTitleandNext();
   }
+
+    void _setTitleandNext() {
+      if(widget.isNewUser){
+        _title = ScreenTitle.SET_PASSWORD;
+        _nextButtonText = 'Submit Order';
+      }else if(widget.isRecoverPassword){
+        _title = ScreenTitle.RECOVER_PASSWORD;
+        _nextButtonText = ButtonText.RESET_PASSWORD;
+      }else if(widget.isAccessRequest){
+                _title = ScreenTitle.SET_PASSWORD;
+        _nextButtonText = ButtonText.REQUEST_ACCESS;
+      }else if(widget.isAccessInvitaion){
+                _title = ScreenTitle.SET_PASSWORD;
+        _nextButtonText = ButtonText.ACCEPT_INVITATION;
+      }
+    }
 
   _setUserDataListener() {
     _bloc.password.listen((onData) {
@@ -145,7 +169,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
   Positioned _topBar() {
     return Positioned(
-        top: 0, left: 0, right: 0, child: Appbar(ScreenTitle.CREATE_ACCOUNT));
+        top: 0, left: 0, right: 0, child: Appbar(_title));
   }
 
   _endSpace() => UIHelper.getTopEmptyContainer(90, false);
@@ -197,7 +221,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
       builder: (context, snapshot) {
         return BottomClipper2(
             ButtonText.BACK,
-            ButtonText.SUBMIT_ORDER,
+            _nextButtonText,
             !snapshot.hasData || !snapshot.data,
             () => goBack(),
             () => goNext(userDataProvider, designDataProvider, userProvider,
@@ -225,9 +249,9 @@ class _PasswordScreenState extends State<PasswordScreen> {
       userDataProvider.user.password = _password;
     }
 
-    Navigator.of(context).pushNamed(EmailVerificationScreen.routeName,
-        arguments: EmailVerificationData(
-            verificationCode: 'Asad', isDeepLinkData: false));
+    // Navigator.of(context).pushNamed(EmailVerificationScreen.routeName,
+    //     arguments: EmailVerificationData(
+    //         verificationCode: 'Asad', isDeepLinkData: false));
 
     if (widget.isNewUser) {
       userProvider
@@ -253,7 +277,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
               responseStatus.message, context);
         }
       });
-    } else {
+    } else if(widget.isAccessRequest) {
       String oceanBuilderId =
           qrCodeDataProvider.qrCodeData; //'-LhmsP9Mc-E_VREoTYfV';
       userProvider
@@ -302,6 +326,16 @@ class _PasswordScreenState extends State<PasswordScreen> {
               responseStatus.message, context);
         }
       });
+    } else if(widget.isAccessInvitaion) {
+      // call create new user with access invitation and on success navigate to login screen
+    }else if(widget.isRecoverPassword){
+      // call recover password api and on success navigate to login screen
+                showInfoBarWithDissmissCallback('Reset Password',
+              'Your password is reseted now, sign in to continue', context, () {
+            Navigator.of(context).pushReplacementNamed(LoginScreen.routeName,arguments: ScreenTitle.YOUR_INFO);
+          });
     }
   }
+
+
 }

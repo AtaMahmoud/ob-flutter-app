@@ -203,6 +203,9 @@ class _AcceptInvitationScreenState extends State<AcceptInvitationScreen> {
       return;
     }
 
+        Navigator.of(context).pushNamed(PasswordScreen.routeName,
+        arguments: [false,false,false,true]);
+
     // String vesselCode = _qrCodeDataProvider.qrCodeData;
     // bool isVesselcCodeValid = await _userProvider.isVesselCodeValid(vesselCode);
 

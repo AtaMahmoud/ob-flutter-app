@@ -293,7 +293,7 @@ class _YourInfoScreenState extends State<YourInfoScreen> {
     } else {
       userDataProvider.user = _user;
       Navigator.of(context)
-          .pushNamed(PasswordScreen.routeName, arguments: true);
+          .pushNamed(PasswordScreen.routeName, arguments: [true,false,false,false]);
     }
   }
 }

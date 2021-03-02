@@ -183,6 +183,10 @@ class ButtonText {
   static const SEND_INVITATION = 'SEND INVITATION';
   static const SAVE_SCENE = 'SAVE SCENE';
   static const RENAME_DELETE_SCENE = 'RENAME / DELETE SCENE';
+
+  static String RESET_PASSWORD = 'RESET PASSWORD';
+
+  static String ACCEPT_INVITATION = 'ACCEPT INVITAION';
 }
 
 class ScreenTitle {
@@ -252,6 +256,10 @@ class ScreenTitle {
   static String CREATE_PERMISSION = 'Create New';
   static String EDIT_PERMISSION = 'Edit Permissions';
   static String CUSTOMIZE_PERMISSION = 'Customize Permissions';
+
+  static String PASSWORD_RECOVERY_CONFIRMATION = 'Recover Password Confirmation';
+
+  static String RECOVER_PASSWORD = 'Recover Passsword';
 }
 
 class ListHelper {
@@ -1256,6 +1264,12 @@ class AppStrings {
 
   static String confirmEmailText2 =
       'Alternatively, you can enter the code provided in the email here';
+  static String confirmEmailText2 = 'Alternatively, you can enter the code provided in the email here';
+
+  static String confirmRecoverPassText1 = 'We have sent you an email with a link that will allow you to recover your account password.';
+
+  static String confirmRecoverPassText2 = 'Alternatively, you can enter the code provided in the email here';
+
 }
 
 class NotificationConstants {
