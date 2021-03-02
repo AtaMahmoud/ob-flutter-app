@@ -7,17 +7,24 @@ import 'package:ocean_builder/core/models/user.dart';
 import 'package:ocean_builder/core/providers/current_ob_id_provider.dart';
 import 'package:ocean_builder/core/providers/drawer_state_data_provider.dart';
 import 'package:ocean_builder/core/providers/local_noti_data_provider.dart';
+import 'package:ocean_builder/core/providers/search_history_provider.dart';
+import 'package:ocean_builder/core/providers/selected_history_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
+import 'package:ocean_builder/search/appSearchScreen.dart';
 import 'package:ocean_builder/custom_drawer/appTheme.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/access_management_screen.dart';
+import 'package:ocean_builder/ui/screens/controls/control_screen.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
+import 'package:ocean_builder/ui/screens/marine/marine_screen.dart';
 import 'package:ocean_builder/ui/screens/menu/landing_screen.dart';
 import 'package:ocean_builder/ui/screens/notification/noti_history_screen_with_drawer.dart';
 import 'package:ocean_builder/ui/screens/profile/profile_screen.dart';
 import 'package:ocean_builder/ui/screens/settings/settings_screen.dart';
+import 'package:ocean_builder/ui/screens/weather/weather_screen.dart';
 import 'package:ocean_builder/ui/shared/popup.dart';
 import 'package:ocean_builder/ui/widgets/drawer_topbar.dart';
 import 'package:provider/provider.dart';
+import 'package:ocean_builder/core/models/search_item.dart';
 
 class HomeDrawer extends StatefulWidget {
   final AnimationController iconAnimationController;
@@ -55,6 +62,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
   @override
   void initState() {
     super.initState();
+
     setdDrawerListArray();
     // UIHelper.setStatusBarColor(color:ColorConstants.TOP_CLIPPER_START_DARK);
 
@@ -143,6 +151,13 @@ class _HomeDrawerState extends State<HomeDrawer> {
     _swiperDataProvider = Provider.of<SwiperDataProvider>(context);
     _user = _userProvider.authenticatedUser;
 
+    var _selectedAppItemDb =
+        Provider.of<SelectedHistoryProvider>(context, listen: false);
+    _selectedAppItemDb.getSelectedItem();
+    var _searchHistoryProvider =
+        Provider.of<SearchHistoryProvider>(context, listen: false);
+    _searchHistoryProvider.getSearchItem();
+
     return SizedBox(
       width: MediaQuery.of(context).size.width * .80,
       child: Scaffold(
@@ -181,7 +196,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
             Padding(
               padding: EdgeInsets.only(
                 // top: ScreenUtil().setHeight(8),
-                right: ScreenUtil().setWidth(32),
+                right: ScreenUtil().setWidth(48),
               ),
               child: Text(
                 _user != null ? '${_user.firstName} ${_user.lastName}' : ' ',
@@ -195,10 +210,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
             ),
           ],
         ),
+        _searchButton(),
         Expanded(
           child: ListView.builder(
             physics: BouncingScrollPhysics(),
-            padding: EdgeInsets.only(top: 32.h),
+            padding: EdgeInsets.only(top: 16.h),
             itemCount: drawerList.length,
             itemBuilder: (context, index) {
               if (index == 4) {
@@ -681,6 +697,72 @@ class _HomeDrawerState extends State<HomeDrawer> {
         child: widget,
       ),
     );
+  }
+
+  _searchButton() {
+    return Container(
+        margin: EdgeInsets.symmetric(horizontal: 48.w, vertical: 24.h),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(64.w),
+            border:
+                Border.all(color: ColorConstants.COLOR_NOTIFICATION_DIVIDER),
+            color: AppTheme.notWhite),
+        child: InkWell(
+          onTap: () async {
+            // Navigator.of(context).pop();
+            var result =
+                await Navigator.pushNamed(context, AppSearchScreen.routeName);
+            print('result ---------- $result');
+            SearchItem s = result;
+            if (s != null) {
+              if (s.routeName.compareTo(ControlScreen.routeName) == 0) {
+                // Navigator.pop(context);
+                navigationtoScreen(DrawerIndex.CONTROLS);
+                // Navigator.of(context)
+                // .pushReplacementNamed(HomeScreen.routeName, arguments: 1);
+              } else if (s.routeName.compareTo(WeatherScreen.routeName) == 0) {
+                navigationtoScreen(DrawerIndex.WEATHER);
+
+                // Navigator.of(context)
+                //     .pushReplacementNamed(HomeScreen.routeName, arguments: 2);
+              } else if (s.routeName.compareTo(MarineScreen.routeName) == 0) {
+                navigationtoScreen(DrawerIndex.MARINE);
+                // Navigator.of(context)
+                // .pushReplacementNamed(HomeScreen.routeName, arguments: 3);
+              } else
+                Navigator.pushNamed(context, s.routeName);
+            }
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 36.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Search",
+                    style: Theme.of(context).textTheme.button.apply(
+                          color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
+                        )),
+                Icon(
+                  Icons.search,
+                  color: ColorConstants.COLOR_NOTIFICATION_DIVIDER,
+                ),
+              ],
+            ),
+          ),
+        )
+        // ListTile(
+        //   dense: true,
+        //   title: Text("Search",
+        //       style: Theme.of(context).textTheme.button.apply(
+        //             color: ColorConstants.TOP_CLIPPER_END_DARK,
+        //           )),
+        //   trailing: const Icon(Icons.search),
+        //   onTap: () {
+        //     // Navigator.of(context).pop();
+        //     Navigator.pushNamed(context, AppSearchScreen.routeName);
+        //   },
+        // ),
+        );
   }
 }
 

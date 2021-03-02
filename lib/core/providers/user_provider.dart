@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/access_events.dart';
@@ -86,8 +85,8 @@ class UserProvider extends BaseProvider {
             userOceanBuilder.checkInDate = seapodUser.checkInDate;
             userOceanBuilder.reqStatus = 'NA';
             userOceanBuilder.vessleCode = f.vessleCode;
-            print('printing user oceanbuilder info ------================');
-            print(userOceanBuilder);
+            // print('printing user oceanbuilder info ------================');
+            // print(userOceanBuilder);
             if (seapodUser.userId.compareTo(userData.userID) == 0)
               userOceanBuilderList.add(userOceanBuilder);
           }).toList();
@@ -307,8 +306,8 @@ class UserProvider extends BaseProvider {
           userOceanBuilder.checkInDate = seapodUser.checkInDate;
           userOceanBuilder.reqStatus = 'NA';
           userOceanBuilder.vessleCode = f.vessleCode;
-          print('printing user oceanbuilder info ------================');
-          print(userOceanBuilder);
+          // print('printing user oceanbuilder info ------================');
+          // print(userOceanBuilder);
           if (seapodUser.userId.compareTo(userData.userID) == 0)
             userOceanBuilderList.add(userOceanBuilder);
         }).toList();
@@ -964,10 +963,10 @@ class UserProvider extends BaseProvider {
         SharedPrefHelper.setAuthKey(
             sendRequestResponse.headers.value("X-Auth-Token"));
 
-        await autoLogin();
+        // await autoLogin();
 // S1D07EDS1D
         // debugPrint(
-        // 'autoLogin response in sendAccessReqNew ~~~~~~~~~~~~~~~~~~~~~~~ -- ${authenticatedUser.toJson()}');
+        //     'autoLogin response in sendAccessReqNew ~~~~~~~~~~~~~~~~~~~~~~~ -- ${authenticatedUser.toJson()}');
       } else {
         // debugPrint('error code ');
         responseStatus.code = 'Registration Failed';
@@ -979,7 +978,7 @@ class UserProvider extends BaseProvider {
         responseStatus.status = sendRequestResponse.statusCode;
       }
 
-      if (authenticatedUser != null && authenticatedUser.userID != null) {
+      if (sendRequestResponse.statusCode == 200) {
         responseStatus.status = 200;
       } else {
         responseStatus.code = 'Access Request Sending Failed';
@@ -1075,6 +1074,8 @@ class UserProvider extends BaseProvider {
       String accessRequestId, String type, int period) async {
     isLoading = true;
     notifyListeners();
+    print(
+        'accept access request 0-------------type -----$type--------period ------$period');
     ResponseStatus responseStatus = ResponseStatus();
 
     await _headerManager.initalizeAuthenticatedUserHeaders();
@@ -1466,16 +1467,16 @@ class UserProvider extends BaseProvider {
         responseStatus.code = 'Remove Member Failed';
         responseStatus.message = removeUserResponse.statusMessage;
         responseStatus.status = removeUserResponse.statusCode;
-        debugPrint(
-            'Remove Member error ============================== $responseStatus');
+        // debugPrint(
+        // 'Remove Member error ============================== $responseStatus');
       }
     } on FetchDataException catch (e) {
       AppException ea = e;
       responseStatus.code = 'Remove Member Failed';
       responseStatus.message = ea.message;
       responseStatus.status = ea.statusCode;
-      debugPrint(
-          'Remove Member error FetchDataException============================== ${ea.message}');
+      // debugPrint(
+      // 'Remove Member error ============================== ${ea.message}');
     } on BadRequestException catch (e) {
       AppException ea = e;
       responseStatus.code = 'Remove Member Failed';
@@ -1942,6 +1943,56 @@ class UserProvider extends BaseProvider {
     return responseStatus;
   }
 
+  // ------------------------------------------------------- Update Order of Lighting Scene ( PUT ) --------------------------------------------------------------------
+
+  Future<ResponseStatus> updateOrderLightingScene(
+      List<String> lighScenesId, String seaPodId, String source) async {
+    isLoading = true;
+    notifyListeners();
+    ResponseStatus responseStatus = ResponseStatus();
+    responseStatus.status = 200;
+
+    print('list        ${lighScenesId.toList()}');
+
+    await _headerManager.initalizeAuthenticatedUserHeaders();
+
+    try {
+      final Response lightingSceneUpdateResponse = await _apiBaseHelper.put(
+          url: APP_CONFIG.Config.ORDER_LIGHT_SCENE(seaPodId, source),
+          headers: _headerManager.authUserHeaders,
+          data: lighScenesId.toList());
+
+      if (lightingSceneUpdateResponse != null &&
+          lightingSceneUpdateResponse.statusCode == 200) {
+        // debugPrint('Update All Lighting Scenes data ----------- $lightingSceneUpdateResponse');
+        responseStatus.status = 200;
+      } else {
+        responseStatus.code = 'Update Lighting Scenes Order Failed';
+        responseStatus.message = lightingSceneUpdateResponse.statusMessage;
+        responseStatus.status = lightingSceneUpdateResponse.statusCode;
+        // debugPrint(
+        // 'Update All Lighting Scenes error ============================== $responseStatus');
+      }
+    } on FetchDataException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Update Lighting Scenes Order Failed';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+      // debugPrint(
+      // 'Update All Lighting Scenes error ============================== ${ea.message}');
+    } on BadRequestException catch (e) {
+      AppException ea = e;
+      responseStatus.code = 'Update Lighting Scenes Order Failed';
+      responseStatus.message = ea.message;
+      responseStatus.status = ea.statusCode;
+    }
+
+    isLoading = false;
+    notifyListeners();
+
+    return responseStatus;
+  }
+
   // ------------------------------------------------------- Delete Lighting Scene ( DELETE ) --------------------------------------------------------------------
 
   Future<ResponseStatus> deleteLightingScene(String lightingSceneId) async {
@@ -2145,7 +2196,7 @@ class UserProvider extends BaseProvider {
 
 // ------------------------------------------------------------ Set weather srouce (PUT) -------------------------------------------------------------
 
-  // ------------------------------------------------------- Update All Lighting Scene ( PUT ) --------------------------------------------------------------------
+  // ------------------------------------------------------- Save weather source ( PUT ) --------------------------------------------------------------------
 
   Future<ResponseStatus> setWeatherSource(String weatherSource) async {
     isLoading = true;

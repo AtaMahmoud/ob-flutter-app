@@ -74,9 +74,11 @@ class _HomeScreenState extends State<HomeScreen>
       // ###########################################################################
 
       _futureWOWWeatherDataMarine =
-          Provider.of<StormGlassDataProvider>(context).fetchTodayWeatherData();
+          Provider.of<StormGlassDataProvider>(context, listen: false)
+              .fetchTodayWeatherData();
       _futureWOWWeatherDataWeather =
-          Provider.of<StormGlassDataProvider>(context).fetchTodayWeatherData();
+          Provider.of<StormGlassDataProvider>(context, listen: false)
+              .fetchTodayWeatherData();
     });
     UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
     _controller = GlobalContext.swiperController;
@@ -119,14 +121,15 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   void dispose() {
-    super.dispose();
+    _animationController.dispose();
     GlobalContext.dashBoardBuildCount = 0;
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     if (GlobalContext.dashBoardBuildCount == 0) {
-      MethodHelper.parseNotifications(context);
+      if (mounted) MethodHelper.parseNotifications(context);
       // MethodHelper.selectOnlyOBasSelectedOB();
       UIHelper.setStatusBarColor(color: ColorConstants.TOP_CLIPPER_START_DARK);
       GlobalContext.dashBoardBuildCount++;

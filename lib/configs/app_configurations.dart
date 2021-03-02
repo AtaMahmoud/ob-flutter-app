@@ -1,4 +1,5 @@
 import 'package:ocean_builder/configs/config_reader.dart';
+import 'package:reorderables/generated/i18n.dart';
 
 class Config {
   static const int CONNECTION_TIME_OUT = 10000 * 5;
@@ -87,6 +88,8 @@ class Config {
       'https://oceanbuilders.herokuapp.com/v1/api/access-requests/invitations/$accessReqId/approval';
   static String REJECT_ACCESS_INVITATION(String accessReqId) =>
       'https://oceanbuilders.herokuapp.com/v1/api/access-requests/invitations/$accessReqId/rejection';
+  static String ORDER_LIGHT_SCENE(String seapodId, String source) =>
+      'https://oceanbuilders.herokuapp.com/v1/api/lightining-scenes/order/$seapodId/$source';
   static String CREATE_UPDATE_LIGHT_SCENE(String seaPodId) =>
       'https://oceanbuilders.herokuapp.com/v1/api/lightining-scenes/$seaPodId';
   static String UPDATE_ALL_LIGHT_SCENES(String seaPodId, String source) =>
