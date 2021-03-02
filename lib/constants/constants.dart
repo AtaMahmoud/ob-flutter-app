@@ -143,7 +143,7 @@ class InputTypes {
   static const NUMBER =
       TextInputType.numberWithOptions(decimal: false, signed: false);
   static const EMAIL = TextInputType.emailAddress;
-  
+
   static const PHONE = TextInputType.phone;
 }
 
@@ -257,7 +257,8 @@ class ScreenTitle {
   static String EDIT_PERMISSION = 'Edit Permissions';
   static String CUSTOMIZE_PERMISSION = 'Customize Permissions';
 
-  static String PASSWORD_RECOVERY_CONFIRMATION = 'Recover Password Confirmation';
+  static String PASSWORD_RECOVERY_CONFIRMATION =
+      'Recover Password Confirmation';
 
   static String RECOVER_PASSWORD = 'Recover Passsword';
 }
@@ -1264,12 +1265,11 @@ class AppStrings {
 
   static String confirmEmailText2 =
       'Alternatively, you can enter the code provided in the email here';
-  static String confirmEmailText2 = 'Alternatively, you can enter the code provided in the email here';
+  static String confirmRecoverPassText1 =
+      'We have sent you an email with a link that will allow you to recover your account password.';
 
-  static String confirmRecoverPassText1 = 'We have sent you an email with a link that will allow you to recover your account password.';
-
-  static String confirmRecoverPassText2 = 'Alternatively, you can enter the code provided in the email here';
-
+  static String confirmRecoverPassText2 =
+      'Alternatively, you can enter the code provided in the email here';
 }
 
 class NotificationConstants {

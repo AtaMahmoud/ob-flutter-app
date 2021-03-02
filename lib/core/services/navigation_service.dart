@@ -58,13 +58,14 @@ class NavigationService {
         .pushNamed(EmailVerificationScreen.routeName, arguments: data);
   }
 
-    Future<dynamic> dpNavigateToRecoverPassScreen(EmailVerificationData data) async {
-      await Future.delayed(Duration(seconds: 3));
+  Future<dynamic> dpNavigateToRecoverPassScreen(
+      EmailVerificationData data) async {
+    await Future.delayed(Duration(seconds: 3));
     navigatorKey.currentState
         .popUntil((Route<dynamic> route) => route is PageRoute);
 
-    return navigatorKey.currentState
-        .pushNamed(RecoverPasswordVerificationScreen.routeName, arguments: data);
-  }
+    return navigatorKey.currentState.pushNamed(
+        RecoverPasswordVerificationScreen.routeName,
+        arguments: data);
   }
 }
