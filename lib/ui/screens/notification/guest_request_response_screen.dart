@@ -58,7 +58,7 @@ class _GuestRequestResponseScreenState
     super.initState();
 
     Future.delayed(Duration.zero).then((value) {
-      Provider.of<UserProvider>(context)
+      Provider.of<UserProvider>(context, listen: false)
           .getAccessRequest(widget.accessRequest.id)
           .then((acceessEvent) {
         if (acceessEvent != null) {
@@ -72,7 +72,7 @@ class _GuestRequestResponseScreenState
         setState(() {
           _isLoading = false;
         });
-        Provider.of<UserProvider>(context)
+        Provider.of<UserProvider>(context, listen: false)
             .updateNotificationReadStatus(widget.accessRequest.notificationId)
             .then((value) => MethodHelper.parseNotifications(context));
       });

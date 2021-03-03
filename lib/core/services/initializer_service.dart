@@ -24,7 +24,6 @@ import 'package:ocean_builder/ui/screens/accessManagement/admin_access_screen.da
 import 'package:ocean_builder/ui/screens/accessManagement/guest_access_screen.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/ob_access_req_events_screen.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/ob_events_screen.dart';
-import 'package:ocean_builder/ui/screens/accessManagement/visitor_access_screen.dart';
 import 'package:ocean_builder/core/models/access_request.dart';
 import 'package:ocean_builder/ui/screens/controls/camera_screen.dart';
 import 'package:ocean_builder/ui/screens/controls/control_screen.dart';
