@@ -50,7 +50,7 @@ class _InvitationResponseScreenState extends State<InvitationResponseScreen> {
     super.initState();
 
     Future.delayed(Duration.zero).then((value) {
-      Provider.of<UserProvider>(context)
+      Provider.of<UserProvider>(context, listen: false)
           .getAccessRequest(widget.accessInvitation.id)
           .then((acceessEvent) {
         if (acceessEvent != null) {
@@ -64,7 +64,7 @@ class _InvitationResponseScreenState extends State<InvitationResponseScreen> {
         setState(() {
           _isLoading = false;
         });
-        Provider.of<UserProvider>(context)
+        Provider.of<UserProvider>(context, listen: false)
             .updateNotificationReadStatus(
                 widget.accessInvitation.notificationId)
             .then((value) => MethodHelper.parseNotifications(context));

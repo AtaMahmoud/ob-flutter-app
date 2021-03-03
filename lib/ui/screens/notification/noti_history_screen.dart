@@ -47,7 +47,7 @@ class _NotificationHistoryScreenWidgetState
   void initState() {
     UIHelper.setStatusBarColor(color: Colors.white);
     Future.delayed(Duration.zero).then((_) {
-      _userProvider = Provider.of<UserProvider>(context);
+      _userProvider = Provider.of<UserProvider>(context, listen: false);
       _syncNotifications();
     });
     super.initState();
@@ -83,10 +83,12 @@ class _NotificationHistoryScreenWidgetState
         // notificationList = notificationList.reversed.toList();
       }
       MethodHelper.parseNotifications(context);
-      setState(() {
-        _isLoading = false;
-        _updatingNotification = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _updatingNotification = false;
+        });
+      }
     });
   }
 
