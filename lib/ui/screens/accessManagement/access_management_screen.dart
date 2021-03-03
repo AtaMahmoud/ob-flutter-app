@@ -21,7 +21,7 @@ import 'package:ocean_builder/ui/screens/accessManagement/access_event_screen.da
 import 'package:ocean_builder/ui/screens/accessManagement/admin_access_screen.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/grant_access_screen.dart';
 import 'package:ocean_builder/ui/screens/accessManagement/guest_access_screen.dart';
-import 'package:ocean_builder/ui/screens/accessManagement/visitor_access_screen.dart';
+import 'package:ocean_builder/ui/screens/accessManagement/owner_access_screen.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
 import 'package:ocean_builder/ui/screens/permission/manage_permission_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/request_access_screen.dart';
@@ -697,7 +697,7 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
               onTap: () {
                 if (obUser.userType.toLowerCase().compareTo('guest') == 0) {
                   Navigator.of(context).pushNamed(GuestAccessScreen.routeName,
-                      arguments: obUser);
+                      arguments: [obUser, ob]);
                 } else if (obUser.userType
                         .toLowerCase()
                         .compareTo('administration') ==
@@ -705,7 +705,7 @@ class _ObAccessorListWidgetState extends State<ObAccessorListWidget> {
                   Navigator.of(context).pushNamed(AdminAccessScreen.routeName,
                       arguments: obUser);
                 } else {
-                  Navigator.of(context).pushNamed(VisitorAccessScreen.routeName,
+                  Navigator.of(context).pushNamed(OwnerAccessScreen.routeName,
                       arguments: obUser);
                 }
               },
