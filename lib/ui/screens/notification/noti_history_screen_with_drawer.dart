@@ -5,7 +5,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/access_request.dart';
-import 'package:ocean_builder/core/models/user.dart';
 import 'package:ocean_builder/core/models/user_ocean_builder.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/custom_drawer/appTheme.dart';
@@ -17,6 +16,7 @@ import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
+import 'package:ocean_builder/ui/widgets/progress_indicator.dart';
 
 class NotificationHistoryScreen extends StatefulWidget {
   static const String routeName = '/notificationhistory';
@@ -171,28 +171,6 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
                                     MethodHelper.parseNotifications(context);
                                   } else if (notificationType.contains(
                                       NotificationConstants.request)) {
-                                    // await _userProvider
-                                    //     .updateNotificationReadStatus(
-                                    //         fcmNotification.id);
-                                    // // await userProvider.resetAuthenticatedUser(userProvider.authenticatedUser.userID);
-                                    // MethodHelper.parseNotifications(context);
-
-                                    // _userProvider
-                                    //     .getAccessRequest(
-                                    //         fcmNotification.data.id)
-                                    //     .then((accessRequest) {
-                                    //   if (accessRequest != null) {
-                                    //     accessRequest.reqMessage =
-                                    //         fcmNotification.title;
-                                    //     accessRequest.accesEventType =
-                                    //         'Access Request';
-                                    //     // debugPrint('access request fetched from server -==------------------------------------ ${accessRequest.id}');
-                                    //     Navigator.of(context).pushNamed(
-                                    //         GuestRequestResponseScreen
-                                    //             .routeName,
-                                    //         arguments: accessRequest);
-                                    //   }
-                                    // });
                                     AccessEvent _accessEvent =
                                         new AccessEvent();
                                     _accessEvent.notificationId =
@@ -209,31 +187,6 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
                                             arguments: _accessEvent);
                                   } else if (notificationType.contains(
                                       NotificationConstants.invitation)) {
-                                    // await _userProvider
-                                    //     .updateNotificationReadStatus(
-                                    //         fcmNotification.id);
-                                    // // await userProvider.resetAuthenticatedUser(userProvider.authenticatedUser.userID);
-                                    // MethodHelper.parseNotifications(context);
-
-                                    // _userProvider
-                                    //     .getAccessRequest(
-                                    //         fcmNotification.data.id)
-                                    //     .then((accessRequest) {
-                                    //   if (accessRequest != null) {
-                                    //     accessRequest.reqMessage =
-                                    //         fcmNotification.title;
-
-                                    //     accessRequest.accesEventType =
-                                    //         'Access Invitation';
-
-                                    //     // debugPrint('access request fetched from server -==------------------------------------ ${accessRequest.id}');
-
-                                    //     Navigator.of(context).pushNamed(
-                                    //         InvitationResponseScreen.routeName,
-                                    //         arguments: accessRequest);
-                                    //   }
-                                    // });
-
                                     AccessEvent _accessEvent =
                                         new AccessEvent();
                                     _accessEvent.notificationId =
@@ -258,7 +211,9 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
                               );
                             }, childCount: _listLength),
                           )
-                        : _textNoNotification(),
+                        : _isLoading
+                            ? ProgressIndicatorBoxAdapter()
+                            : _textNoNotification(),
                     _endSpace(),
                   ],
                 ),
@@ -280,8 +235,6 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
-      // decoration: UIHelper.customDecoration(
-      // 2, 12, ColorConstants.TOP_CLIPPER_END.withOpacity(.4),bkgColor: ColorConstants.TOP_CLIPPER_START),
       child: Column(
         children: <Widget>[
           Row(
@@ -313,7 +266,6 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
                         height: 8,
                       ),
                       _notificationType(notificationType),
-                      // Text('Status: $requestStatus'),
                     ],
                   ),
                 ),
@@ -347,14 +299,12 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
               : ImagePaths.icUnread),
           color: _updatingNotification
               ? Colors.grey
-              : ColorConstants.COLOR_NOTIFICATION_BUBBLE, //Color(0xFF064390),
+              : ColorConstants.COLOR_NOTIFICATION_BUBBLE,
           size: 15.0,
         ));
   }
 
-  _startSpace() => UIHelper.getTopEmptyContainer(
-      _util.setHeight(256), //ScreenUtil.statusBarHeight * 3,
-      false);
+  _startSpace() => UIHelper.getTopEmptyContainer(_util.setHeight(256), false);
 
   Text _notificationType(String notificationType) {
     return Text('${notificationType.toUpperCase()}',
@@ -398,7 +348,6 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
       right: 0,
       child: Container(
         color: Colors.white,
-        // padding: EdgeInsets.only(top: 8.0, right: 12.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
