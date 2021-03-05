@@ -192,6 +192,10 @@ class _AccessManagementScreenState extends State<AccessManagementScreen> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             _accessEvents = snapshot.data;
+            debugPrint(
+                'Get accessEvents count  in future builder----------- ${_accessEvents?.receivedInvitations?.length} ${_accessEvents?.receivedRequests?.length}  ${_accessEvents?.sentRequests?.length}  ${_accessEvents?.sentInvitations?.length}');
+          } else {
+            print('----------------no data');
           }
 
           return SliverToBoxAdapter(

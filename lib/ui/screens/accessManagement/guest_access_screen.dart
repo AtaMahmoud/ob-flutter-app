@@ -114,7 +114,7 @@ class _GuestAccessScreenState extends State<GuestAccessScreen> {
       onWillPop: () async => false,
       child: Scaffold(
         key: _scaffoldKey,
-        resizeToAvoidBottomPadding: true,
+        resizeToAvoidBottomInset: true,
         drawer: HomeDrawer(
           isSecondLevel: true,
           screenIndex: DrawerIndex.NOTIFICATIONS,

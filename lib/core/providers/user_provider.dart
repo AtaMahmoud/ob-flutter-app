@@ -213,7 +213,6 @@ class UserProvider extends BaseProvider {
     return responseStatus;
   }
 
-
   // ------------------------------------------------------- Confirm Email ( GET ) --------------------------------------------------------------------
 
   Future<ResponseStatus> confirmEmail(String token) async {
@@ -1622,8 +1621,8 @@ class UserProvider extends BaseProvider {
       // notificationResponse
 
       accessEvents = AccessEvents.fromJson(accessEventsResponse);
-      // debugPrint('Get Notifications count  ----------- ${notificationList.notifications?.length}');
-
+      debugPrint(
+          'Get accessEvents count  ----------- ${accessEvents?.receivedInvitations?.length} ${accessEvents?.receivedRequests?.length}  ${accessEvents?.sentRequests?.length}  ${accessEvents?.sentInvitations?.length}');
     } on FetchDataException catch (e) {
       AppException ea = e;
       responseStatus.code = 'Get Access Events Failed';
@@ -1637,7 +1636,7 @@ class UserProvider extends BaseProvider {
       responseStatus.message = ea.message;
       responseStatus.status = ea.statusCode;
     }
-
+    notifyListeners();
     return accessEvents;
   }
 

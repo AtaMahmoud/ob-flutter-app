@@ -317,7 +317,9 @@ class _AccessEventScreenState extends State<AccessEventScreen> {
   }
 
   void _parseAccessEvents(BuildContext context) {
-    if (widget.accessType == AccessType.RECEIVED_INVITATION) {
+    if (widget.accessType == AccessType.RECEIVED_INVITATION &&
+        _accessEvents != null &&
+        _accessEvents.receivedInvitations != null) {
       _accessEventList =
           new List<AccessEvent>.from(_accessEvents.receivedInvitations);
 
@@ -332,7 +334,9 @@ class _AccessEventScreenState extends State<AccessEventScreen> {
       });
       len = _accessEventList.length;
       debugPrint('RECEIVED_INVITATION count -- $len');
-    } else if (widget.accessType == AccessType.SENT_INVITATION) {
+    } else if (widget.accessType == AccessType.SENT_INVITATION &&
+        _accessEvents != null &&
+        _accessEvents.sentInvitations != null) {
       _accessEventList =
           new List<AccessEvent>.from(_accessEvents.sentInvitations);
 
@@ -347,7 +351,9 @@ class _AccessEventScreenState extends State<AccessEventScreen> {
       });
       len = _accessEventList.length;
       debugPrint('SENT_INVITATION count -- $len');
-    } else if (widget.accessType == AccessType.RECEIVED_REQUEST) {
+    } else if (widget.accessType == AccessType.RECEIVED_REQUEST &&
+        _accessEvents != null &&
+        _accessEvents.receivedRequests != null) {
       _accessEventList =
           new List<AccessEvent>.from(_accessEvents.receivedRequests);
 
@@ -363,7 +369,9 @@ class _AccessEventScreenState extends State<AccessEventScreen> {
       });
       len = _accessEventList.length;
       debugPrint('RECEIVED_REQUEST count -- $len');
-    } else if (widget.accessType == AccessType.SENT_REQUEST) {
+    } else if (widget.accessType == AccessType.SENT_REQUEST &&
+        _accessEvents != null &&
+        _accessEvents.sentRequests != null) {
       _accessEventList = new List<AccessEvent>.from(_accessEvents.sentRequests);
 
       len = _accessEvents.sentRequests?.length ?? 0;
