@@ -192,21 +192,23 @@ showAlertWithOneButton(
     type: AlertType.none,
     title: title.toUpperCase(),
     desc: desc,
-    buttons: [
-      DialogButton(
-        child: Text(
-          buttonText.toUpperCase(),
-          style: TextStyle(color: Colors.white, fontSize: 20),
-        ),
-        onPressed: buttonCallback,
-        // color: Color.fromRGBO(0, 179, 134, 1.0),
-        gradient: LinearGradient(colors: [
-          ColorConstants.BOTTOM_CLIPPER_START,
-          ColorConstants.BOTTOM_CLIPPER_END
-        ], begin: Alignment.topRight, end: Alignment.bottomLeft),
-        radius: BorderRadius.circular(4.0),
-      ),
-    ],
+    buttons: buttonText != null
+        ? [
+            DialogButton(
+              child: Text(
+                buttonText.toUpperCase(),
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+              onPressed: buttonCallback,
+              // color: Color.fromRGBO(0, 179, 134, 1.0),
+              gradient: LinearGradient(colors: [
+                ColorConstants.BOTTOM_CLIPPER_START,
+                ColorConstants.BOTTOM_CLIPPER_END
+              ], begin: Alignment.topRight, end: Alignment.bottomLeft),
+              radius: BorderRadius.circular(4.0),
+            ),
+          ]
+        : null,
   ).show();
 }
 

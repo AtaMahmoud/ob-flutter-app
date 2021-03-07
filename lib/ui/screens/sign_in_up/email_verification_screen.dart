@@ -334,7 +334,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   _verifyEmailCode(String token) async {
     textEditingController.clear();
     print(token);
-    UserProvider userProvider = Provider.of<UserProvider>(context);
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
 
     if (userProvider.isLoading) return;
     bool internetStatus = await DataConnectionChecker().hasConnection;
@@ -387,7 +388,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   void _resendCode() async {
-    UserProvider userProvider = Provider.of<UserProvider>(context);
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
 
     if (userProvider.isLoading) return;
     bool internetStatus = await DataConnectionChecker().hasConnection;

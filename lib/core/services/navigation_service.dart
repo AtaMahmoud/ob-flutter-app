@@ -48,6 +48,30 @@ class NavigationService {
     return navigatorKey.currentState.maybePop();
   }
 
+  Future<dynamic> showInAppNotification(
+      {String title = 'NOTIFICATION TITLE',
+      String message = 'In app notification message'}) {
+    // String routeName = ModalRoute.of(navigatorKey.currentContext).settings.name;
+    // print(
+    //     'Current root is -------------------------------------------------------- $routeName');
+    // if (routeName == null) {
+    //   return navigatorKey.currentState.pushNamed(LandingScreen.routeName);
+    // }
+    // return navigatorKey.currentState.pushNamed(routeName);
+    // navigatorKey.currentState.setState(() {});
+    showAlertWithOneButton(
+        context: navigatorKey.currentState.context,
+        buttonText: "OK",
+        desc: "You have one ontification",
+        title: "In App Notification",
+        buttonCallback: () {
+          // print('Button tapped');
+          Navigator.of(navigatorKey.currentState.context, rootNavigator: true)
+              .pop();
+        });
+    return navigatorKey.currentState.maybePop();
+  }
+
   Future<dynamic> dpNavigateToEmailVeriScreen(
       EmailVerificationData data) async {
     await Future.delayed(Duration(seconds: 3));

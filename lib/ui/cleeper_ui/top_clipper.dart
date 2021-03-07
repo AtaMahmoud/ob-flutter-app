@@ -7,6 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
+import 'package:ocean_builder/core/services/locator.dart';
+import 'package:ocean_builder/core/services/navigation_service.dart';
 import 'package:ocean_builder/custom_clipper/custom_clipper.dart';
 import 'package:ocean_builder/helper/method_helper.dart';
 import 'package:ocean_builder/ui/screens/home/home_screen.dart';
@@ -155,7 +157,9 @@ class _TopClipperState extends State<TopClipper> {
                         widget.enableSkipLogin
                             ? InkWell(
                                 onTap: () {
-                                  if (!_userProvider.isLoading) _skipLogin();
+                                  locator<NavigationService>()
+                                      .showInAppNotification();
+                                  // if (!_userProvider.isLoading) _skipLogin();
                                 },
                                 child: Padding(
                                   padding: EdgeInsets.only(right: 32.w),
