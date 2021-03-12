@@ -213,7 +213,8 @@ showAlertWithOneButton(
 }
 
 showAddOBDialog(UserProvider userProvider, BuildContext context) {
-  UserDataProvider _userDataProvider = Provider.of<UserDataProvider>(context);
+  UserDataProvider _userDataProvider =
+      Provider.of<UserDataProvider>(context, listen: false);
 
   Alert(
     context: context,
