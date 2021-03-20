@@ -229,7 +229,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
         ),
-        _userProvider.isLoading ? Center(child: CircularProgressIndicator()) : Container(),
+        _userProvider.isLoading
+            ? Center(child: CircularProgressIndicator())
+            : Container(),
         _bottomBar()
       ],
     );
@@ -500,7 +502,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             isEmergencyContactNull = false;
             ProfileEditState.emergencyContactInfoChanged = false;
             _userProvider.autoLogin();
-            showInfoBar('Profile Updated', 'Profile information updated', context);
+            showInfoBar(
+                'Profile Updated', 'Profile information updated', context);
             // print(_userProvider.authenticatedUser.emergencyContact
             // .toJson()
             // .toString());
@@ -536,7 +539,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   _pickProfilePicture() async {
     double radius = 512.w;
     // Step 1: Retrieve image from picker
-    final File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    PickedFile image =
+        await ImagePicker().getImage(source: ImageSource.gallery);
 // Step 2: Check for valid file
     if (image == null) return;
     ImageProperties properties =

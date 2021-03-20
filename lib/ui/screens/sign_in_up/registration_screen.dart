@@ -77,7 +77,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     _userProvider = Provider.of<UserProvider>(context);
 
     return Scaffold(
-      resizeToAvoidBottomPadding: true,
+      resizeToAvoidBottomInset: true,
       body: Stack(
         fit: StackFit.expand,
         alignment: Alignment.center,

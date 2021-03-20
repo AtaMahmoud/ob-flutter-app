@@ -157,7 +157,7 @@ class ApiBaseHelper {
     return responseMap;
   }
 
-    Future<dynamic> getForResponse(
+  Future<dynamic> getForResponse(
       {String url,
       Map<String, dynamic> headers,
       Map<String, dynamic> parameters = const {},
@@ -170,7 +170,7 @@ class ApiBaseHelper {
         queryParameters: parameters,
         options: Options(headers: headers),
       );
-      responseMap = response;//_returnResponse(response);
+      responseMap = response; //_returnResponse(response);
     } on SocketException {
       throw FetchDataException("No Internet connection");
     } on DioError catch (error) {
@@ -184,7 +184,6 @@ class ApiBaseHelper {
 
     return responseMap;
   }
-
 
   Future<dynamic> del(
       {String url,
@@ -237,23 +236,23 @@ class ApiBaseHelper {
     String errorDescription = "";
     if (error is DioError) {
       switch (error.type) {
-        case DioErrorType.CANCEL:
+        case DioErrorType.cancel:
           errorDescription = "Request to API server was cancelled";
           break;
-        case DioErrorType.SEND_TIMEOUT:
+        case DioErrorType.sendTimeout:
           errorDescription = "Send time out";
           break;
-        case DioErrorType.CONNECT_TIMEOUT:
+        case DioErrorType.connectTimeout:
           errorDescription = "Connection timeout with API server";
           break;
-        case DioErrorType.DEFAULT:
+        case DioErrorType.other:
           errorDescription =
               "Connection to API server failed due to internet connection";
           break;
-        case DioErrorType.RECEIVE_TIMEOUT:
+        case DioErrorType.receiveTimeout:
           errorDescription = "Receive timeout in connection with API server";
           break;
-        case DioErrorType.RESPONSE:
+        case DioErrorType.response:
           try {
             errorDescription = '${error.response.data['message']}';
           } catch (e) {}

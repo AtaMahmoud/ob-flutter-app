@@ -12,7 +12,7 @@ class HeadersManager {
       HeadersManager._internal();
   HeadersManager._internal();
 
-  final FirebaseMessaging _fcm = FirebaseMessaging();
+  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
 
   static HeadersManager getInstance() => _headersManagerSingleton;
 

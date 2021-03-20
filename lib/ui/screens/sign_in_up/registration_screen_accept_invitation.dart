@@ -82,7 +82,7 @@ class _RegistrationScreenAcceptInvitationState
     // double sizedBoxHeight = 30;
 
     return Scaffold(
-      resizeToAvoidBottomPadding: true,
+      resizeToAvoidBottomInset: true,
       body: Stack(
         fit: StackFit.expand,
         alignment: Alignment.center,

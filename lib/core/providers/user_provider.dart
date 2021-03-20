@@ -27,7 +27,7 @@ const String FCM_API = "https://fcm.googleapis.com/fcm/send";
 final String contentType = "application/json";
 
 class UserProvider extends BaseProvider {
-  final FirebaseMessaging _fcm = FirebaseMessaging();
+  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
   // final FirebaseAuth _auth = FirebaseAuth.instance;
   ApiBaseHelper _apiBaseHelper = ApiBaseHelper();
 
