@@ -79,7 +79,7 @@ final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
 final BehaviorSubject<String> selectNotificationSubject =
     BehaviorSubject<String>();
 
-const MethodChannel platform = MethodChannel('ob.dev/ocean_builder');
+// const MethodChannel platform = MethodChannel('ob.dev/ocean_builder');
 
 class ReceivedNotification {
   ReceivedNotification({
@@ -155,7 +155,7 @@ Future<void> main() async {
   }
 
   const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('app_icon');
+      AndroidInitializationSettings('ic_launcher');
 
   final IOSInitializationSettings initializationSettingsIOS =
       IOSInitializationSettings(
@@ -183,6 +183,8 @@ Future<void> main() async {
 
 // flutterLocalNotificationsPlugin.initialize(initializationSettings,
   // onSelectNotification: onSelectNotification)
+
+  print('running app--------------');
 
   runApp(
     MaterialApp(
@@ -219,6 +221,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    print('initializing 00000');
     _requestPermissions();
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
@@ -230,14 +233,6 @@ class _MyAppState extends State<MyApp> {
     flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            MacOSFlutterLocalNotificationsPlugin>()
         ?.requestPermissions(
           alert: true,
           badge: true,
@@ -262,7 +257,7 @@ class _MyAppState extends State<MyApp> {
               isDefaultAction: true,
               onPressed: () async {
                 Navigator.of(context, rootNavigator: true).pop();
-                Navigator.of(context).pushNamed(LandingScreen.routeName);
+                // Navigator.of(context).pushNamed(LandingScreen.routeName);
                 /* await Navigator.push(
                   context,
                   MaterialPageRoute<void>(
@@ -281,6 +276,7 @@ class _MyAppState extends State<MyApp> {
 
   void _configureSelectNotificationSubject() {
     selectNotificationSubject.stream.listen((String payload) async {
+      print('got to desing screen');
       await Navigator.pushNamed(context, DesignScreen.routeName);
     });
   }
@@ -517,9 +513,9 @@ class _MyAppState extends State<MyApp> {
 //--- local notification helper methods are here
 Future<void> _configureLocalTimeZone() async {
   tz.initializeTimeZones();
-  final String timeZoneName =
-      await platform.invokeMethod<String>('getTimeZoneName');
-  tz.setLocalLocation(tz.getLocation(timeZoneName));
+  final String timeZoneName = 'GMT';
+  // await platform.invokeMethod<String>('getTimeZoneName');
+  // tz.setLocalLocation(tz.getLocation(timeZoneName));
 }
 
 /*
