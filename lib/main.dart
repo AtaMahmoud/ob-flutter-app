@@ -46,6 +46,15 @@ import 'constants/constants.dart';
 import 'core/providers/device_type_provider.dart';
 import 'package:uni_links/uni_links.dart';
 
+/* 
+
+alias countFiles='ls -la | wc -l'
+alias listAvds='cd c:/Users/asad/AppData/Local/Android/Sdk/tools && ./emulator -list-avds'
+alias runPixel='cd c:/Users/asad/AppData/Local/Android/Sdk/tools && ./emulator - avd Pixel_XL_API_30'
+
+
+ */
+
 /// Define a top-level named handler which background/terminated messages will
 /// call.
 ///
@@ -111,6 +120,7 @@ Future<void> main() async {
     sound: true,
   );
   setupLocator();
+  await ConfigReader.initialize();
 
   // Crashlytics.instance.enableInDevMode = false;
   // FlutterError.onError = Crashlytics.instance.recordFlutterError;
@@ -140,22 +150,22 @@ Future<void> main() async {
   //   ),
   // );
 
-  await _configureLocalTimeZone();
+  // await _configureLocalTimeZone();
 
   final NotificationAppLaunchDetails notificationAppLaunchDetails =
       await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
-  String initialRoute = '';
+  // String initialRoute = '';
 
   if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
     selectedNotificationPayload = notificationAppLaunchDetails.payload;
-    initialRoute = 'SecondPage.routeName';
+    // initialRoute = 'SecondPage.routeName';
     print(
         'didNotificationLaunchApp----------------------${selectedNotificationPayload}');
   }
 
   const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('ic_launcher');
+      AndroidInitializationSettings('ic_notification');
 
   final IOSInitializationSettings initializationSettingsIOS =
       IOSInitializationSettings(
@@ -221,7 +231,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    print('initializing 00000');
+    print('initializing My app widegt');
     _requestPermissions();
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
@@ -243,6 +253,7 @@ class _MyAppState extends State<MyApp> {
   void _configureDidReceiveLocalNotificationSubject() {
     didReceiveLocalNotificationSubject.stream
         .listen((ReceivedNotification receivedNotification) async {
+      print('on receive local notifiaction');
       await showDialog(
         context: context,
         builder: (BuildContext context) => CupertinoAlertDialog(
@@ -276,8 +287,10 @@ class _MyAppState extends State<MyApp> {
 
   void _configureSelectNotificationSubject() {
     selectNotificationSubject.stream.listen((String payload) async {
+      print('On Select Notification');
       print('got to desing screen');
-      await Navigator.pushNamed(context, DesignScreen.routeName);
+      locator<NavigationService>().navigateTo(DesignScreen.routeName);
+      // await Navigator.of(context).pushNamed(SplashScreen.routeName);
     });
   }
 
@@ -290,7 +303,8 @@ class _MyAppState extends State<MyApp> {
         .getInitialMessage()
         .then((RemoteMessage message) {
       if (message != null) {
-        print('------------------------print message ----- $message');
+        print(
+            '------------------------initial message -- when opening from terminated state ----- $message');
         // Navigator.pushNamed(context, '/message',
         //     arguments: MessageArguments(message, true));
       }
@@ -307,13 +321,11 @@ class _MyAppState extends State<MyApp> {
             notification.body,
             NotificationDetails(
               android: AndroidNotificationDetails(
-                channel.id,
-                channel.name,
-                channel.description,
-                // TODO add a proper drawable resource to android, for now using
-                //      one that already exists in example app.
-                icon: 'launch_background',
-              ),
+                  channel.id, channel.name, channel.description,
+                  // TODO add a proper drawable resource to android, for now using
+                  //      one that already exists in example app.
+                  icon: 'ic_notification',
+                  color: ColorConstants.TOP_CLIPPER_END_DARK),
             ),
             payload: notification.title);
       }
@@ -523,5 +535,13 @@ Future<void> _configureLocalTimeZone() async {
 /usr/bin/xcrun simctl openurl booted "ss://ob.com/auth/verify/?uid=123&token=abc1"
 ob://oceanbuilders.com/auth/verify/?uid=123&token=abc1
 ob://oceanbuilders.com/auth/confirmation/?token=
-
+ToDo 
+1. Use latest firebase plugins 
+    1. upgrade all other conflicting and cognate libraries to resolve dependency loop.  -- Done
+2. Add Local notifiaction to solve the foreground, backgourd, terminated state related issues.  Set notification icon 
+3. Make sure that notifications are comming with data not only notification message
+4. Show custom notifcations for different purposes and flever
+5. Navigate to rleated screen on Notifiaction tap
+6. Trigger relevant action on notification tap     
+7. Add notification channel
 */
