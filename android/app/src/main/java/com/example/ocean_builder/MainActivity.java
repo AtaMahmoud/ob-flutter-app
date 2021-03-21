@@ -15,7 +15,7 @@ public class MainActivity extends FlutterActivity {
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         super.configureFlutterEngine(flutterEngine);
-        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(),"ob.dev/ocean_builder").setMethodCallHandler(
+        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(),"com.ss.oceanbuilders/res").setMethodCallHandler(
            (call, result) -> {
                if("drawableToUri" == call.method){
                     int resourceId = this.getResources().getIdentifier(call.arguments.toString(),"drawable",this.getPackageName());

@@ -1,6 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 
-import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -32,11 +33,8 @@ import 'package:ocean_builder/core/services/initializer_service.dart';
 import 'package:ocean_builder/core/services/locator.dart';
 import 'package:ocean_builder/core/services/navigation_service.dart';
 import 'package:ocean_builder/router.dart' as obRoute;
-import 'package:ocean_builder/splash/splash_screen.dart';
 import 'package:ocean_builder/ui/screens/designSteps/design_screen.dart';
-import 'package:ocean_builder/ui/screens/menu/landing_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/email_verification_screen.dart';
-import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
@@ -46,26 +44,10 @@ import 'constants/constants.dart';
 import 'core/providers/device_type_provider.dart';
 import 'package:uni_links/uni_links.dart';
 
-/* 
-
-alias countFiles='ls -la | wc -l'
-alias listAvds='cd c:/Users/asad/AppData/Local/Android/Sdk/tools && ./emulator -list-avds'
-alias runPixel='cd c:/Users/asad/AppData/Local/Android/Sdk/tools && ./emulator - avd Pixel_XL_API_30'
-
-
- */
-
 /// Define a top-level named handler which background/terminated messages will
 /// call.
-///
-/// To verify things are working, check out the native platform logs.
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
-  print('Handling a background message ${message.messageId}');
-  print(
-      'background notification handler R-------${message.notification.title} ');
 }
 
 /// Create a [AndroidNotificationChannel] for heads up notifications
@@ -109,6 +91,7 @@ String selectedNotificationPayload;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
   // Set the background messaging handler early on, as a named top-level function
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -122,34 +105,6 @@ Future<void> main() async {
   setupLocator();
   await ConfigReader.initialize();
 
-  // Crashlytics.instance.enableInDevMode = false;
-  // FlutterError.onError = Crashlytics.instance.recordFlutterError;
-  // runApp(
-  //   DevicePreview(
-  //     enabled: false,
-  //     builder:(context){
-  //       // ScreenUtil.init(context,allowFontScaling: true,width: 1080 , height: 1920);
-  //       return MyApp();
-  //       }
-  //     )
-  //   );
-  //   runZoned(() {
-  //   runApp(
-  //     DevicePreview(
-  //       enabled: false,
-
-  //       builder:(context) => MyApp()
-  //       )
-  //     );
-  // }, onError: Crashlytics.instance.recordError);
-
-  // SystemChrome.setSystemUIOverlayStyle(
-  //   const SystemUiOverlayStyle(
-  //     systemNavigationBarColor: Colors.red,
-
-  //   ),
-  // );
-
   // await _configureLocalTimeZone();
 
   final NotificationAppLaunchDetails notificationAppLaunchDetails =
@@ -159,9 +114,6 @@ Future<void> main() async {
 
   if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
     selectedNotificationPayload = notificationAppLaunchDetails.payload;
-    // initialRoute = 'SecondPage.routeName';
-    print(
-        'didNotificationLaunchApp----------------------${selectedNotificationPayload}');
   }
 
   const AndroidInitializationSettings initializationSettingsAndroid =
@@ -180,6 +132,8 @@ Future<void> main() async {
 
   final InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+
+  // let's initilaize flutter location notification
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
     onSelectNotification: (payload) {
@@ -190,11 +144,6 @@ Future<void> main() async {
       selectNotificationSubject.add(payload);
     },
   );
-
-// flutterLocalNotificationsPlugin.initialize(initializationSettings,
-  // onSelectNotification: onSelectNotification)
-
-  print('running app--------------');
 
   runApp(
     MaterialApp(
@@ -221,6 +170,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  MethodChannel platform = MethodChannel('com.ss.oceanbuilders/res');
   bool isConnected;
   String _initialLink;
   Uri _initialUri;
@@ -231,7 +181,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    print('initializing My app widegt');
+    _configureLocalTimeZone(platform);
     _requestPermissions();
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
@@ -253,7 +203,8 @@ class _MyAppState extends State<MyApp> {
   void _configureDidReceiveLocalNotificationSubject() {
     didReceiveLocalNotificationSubject.stream
         .listen((ReceivedNotification receivedNotification) async {
-      print('on receive local notifiaction');
+      print(
+          '_configureDidReceiveLocalNotificationSubject notifiaction -------------${receivedNotification.payload}');
       await showDialog(
         context: context,
         builder: (BuildContext context) => CupertinoAlertDialog(
@@ -287,8 +238,7 @@ class _MyAppState extends State<MyApp> {
 
   void _configureSelectNotificationSubject() {
     selectNotificationSubject.stream.listen((String payload) async {
-      print('On Select Notification');
-      print('got to desing screen');
+      print('got to x screen with payload $payload');
       locator<NavigationService>().navigateTo(DesignScreen.routeName);
       // await Navigator.of(context).pushNamed(SplashScreen.routeName);
     });
@@ -296,7 +246,7 @@ class _MyAppState extends State<MyApp> {
 
   void _setUpFirebaseCloudMessageing() {
     FirebaseMessaging.instance.getToken().then((token) {
-      print('fcm token----------------------------------');
+      print('FCM token----------------------------------');
       print(token);
     });
     FirebaseMessaging.instance
@@ -304,39 +254,76 @@ class _MyAppState extends State<MyApp> {
         .then((RemoteMessage message) {
       if (message != null) {
         print(
-            '------------------------initial message -- when opening from terminated state ----- $message');
-        // Navigator.pushNamed(context, '/message',
-        //     arguments: MessageArguments(message, true));
+            '------------------------initial message -- when opening from terminated state ----- ${message.data.toString()}');
       }
     });
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification notification = message.notification;
       AndroidNotification android = message.notification?.android;
-      print('notification message --- ${notification.title}');
       if (notification != null && android != null) {
-        flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                  channel.id, channel.name, channel.description,
-                  // TODO add a proper drawable resource to android, for now using
-                  //      one that already exists in example app.
-                  icon: 'ic_notification',
-                  color: ColorConstants.TOP_CLIPPER_END_DARK),
-            ),
-            payload: notification.title);
+        _showLocalNotification(message);
       }
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('A new onMessageOpenedApp event was published!');
-      print('message --------------- ${message.notification.title}');
-      // Navigator.pushNamed(context, '/message',
-      //     arguments: MessageArguments(message, true));
     });
+  }
+
+  void _showLocalNotification(RemoteMessage message) {
+    final Int64List vibrationPattern = Int64List(4);
+    vibrationPattern[0] = 0;
+    vibrationPattern[1] = 1000;
+    vibrationPattern[2] = 5000;
+    vibrationPattern[3] = 2000;
+    var notification = message.notification;
+    flutterLocalNotificationsPlugin.show(
+        notification.hashCode,
+        notification.title,
+        notification.body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+              channel.id, channel.name, channel.description,
+              icon: 'ic_notification',
+              largeIcon: const DrawableResourceAndroidBitmap('ic_launcher'),
+              color: ColorConstants.TOP_CLIPPER_END_DARK),
+        ),
+        payload: jsonEncode(message.data));
+  }
+
+  Future<void> _showSoundUriNotification(
+      RemoteNotification notification) async {
+    /// this calls a method over a platform channel implemented within the
+    /// example app to return the Uri for the default alarm sound and uses
+    /// as the notification sound
+    final String alarmUri = await platform.invokeMethod<String>('getAlarmUri');
+    final UriAndroidNotificationSound uriSound =
+        UriAndroidNotificationSound(alarmUri);
+    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+            'uri channel id', 'uri channel name', 'uri channel description',
+            sound: uriSound,
+            styleInformation: const DefaultStyleInformation(true, true));
+    final NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(notification.hashCode,
+        notification.title, notification.body, platformChannelSpecifics);
+  }
+
+  Future<void> _showPublicNotification() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+            'your channel id', 'your channel name', 'your channel description',
+            importance: Importance.max,
+            priority: Priority.high,
+            ticker: 'ticker',
+            visibility: NotificationVisibility.public);
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(0, 'public notification title',
+        'public notification body', platformChannelSpecifics,
+        payload: 'item x');
   }
 
   @override
@@ -449,17 +436,7 @@ class _MyAppState extends State<MyApp> {
     // Attach a listener to the Uri links stream
     _sub = getUriLinksStream().listen((Uri uri) {
       if (!mounted) return;
-      print(
-          'got uri in first listener : ${uri?.path} ${uri?.queryParametersAll}');
       _latestUri = uri;
-      // setState(() {
-      //   _latestUri = uri;
-      //   _latestLink = uri?.toString() ?? 'Unknown';
-      // });
-
-      // setState(() {
-      //   _parseDeepLinkingUri(uri);
-      // });
       _parseDeepLinkingUri(uri);
     }, onError: (Object err) {
       if (!mounted) return;
@@ -468,13 +445,6 @@ class _MyAppState extends State<MyApp> {
         _latestLink = 'Failed to get latest link: $err.';
       });
     });
-
-    // // Attach a second listener to the stream
-    // getUriLinksStream().listen((Uri uri) {
-    //   print('got uri: ${uri?.path} ${uri?.queryParametersAll}');
-    // }, onError: (Object err) {
-    //   print('got err: $err');
-    // });
 
     // Get the latest Uri
     // Platform messages may fail, so we use a try/catch PlatformException.
@@ -523,11 +493,14 @@ class _MyAppState extends State<MyApp> {
 } // End of MyApp
 
 //--- local notification helper methods are here
-Future<void> _configureLocalTimeZone() async {
+Future<void> _configureLocalTimeZone(platform) async {
   tz.initializeTimeZones();
-  final String timeZoneName = 'GMT';
-  // await platform.invokeMethod<String>('getTimeZoneName');
-  // tz.setLocalLocation(tz.getLocation(timeZoneName));
+
+  final String timeZoneName =
+      await platform.invokeMethod<String>('getTimeZoneName');
+
+  print('current timezone name ----$timeZoneName');
+  tz.setLocalLocation(tz.getLocation(timeZoneName));
 }
 
 /*
@@ -535,13 +508,13 @@ Future<void> _configureLocalTimeZone() async {
 /usr/bin/xcrun simctl openurl booted "ss://ob.com/auth/verify/?uid=123&token=abc1"
 ob://oceanbuilders.com/auth/verify/?uid=123&token=abc1
 ob://oceanbuilders.com/auth/confirmation/?token=
-ToDo 
+Notifiation ToDo 
 1. Use latest firebase plugins 
     1. upgrade all other conflicting and cognate libraries to resolve dependency loop.  -- Done
-2. Add Local notifiaction to solve the foreground, backgourd, terminated state related issues.  Set notification icon 
-3. Make sure that notifications are comming with data not only notification message
-4. Show custom notifcations for different purposes and flever
-5. Navigate to rleated screen on Notifiaction tap
-6. Trigger relevant action on notification tap     
-7. Add notification channel
+2. Add Local notifiaction to solve the foreground, backgourd, terminated state related issues.  Set notification icon -- Done
+3. Make sure that notifications are comming with data not only notification message -- Done
+4. Show custom notifcations for different purposes and flever -- Pending
+5. Navigate to rleated screen on Notifiaction tap -- Done
+6. Trigger relevant action on notification tap     -- Done
+7. Add notification channel -- Pending
 */
