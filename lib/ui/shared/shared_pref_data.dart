@@ -1,6 +1,6 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SharedPrefHelper {
   static getFirstInstallStatus() async {
@@ -73,19 +73,15 @@ class SharedPrefHelper {
     return authToken;
   }
 
-    static setEmail(String email) async {
+  static setEmail(String email) async {
     final storage = new FlutterSecureStorage();
-    await storage.write(
-        key: SharedPreferanceKeys.KEY_EMAIL,
-        value: email);
+    await storage.write(key: SharedPreferanceKeys.KEY_EMAIL, value: email);
   }
 
   static Future<String> getEmail() async {
     String email = '';
     final storage = new FlutterSecureStorage();
-    email = await storage.read(
-        key: SharedPreferanceKeys.KEY_EMAIL);
+    email = await storage.read(key: SharedPreferanceKeys.KEY_EMAIL);
     return email;
   }
-
 }

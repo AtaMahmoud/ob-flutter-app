@@ -1,4 +1,4 @@
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,7 +9,6 @@ import 'package:ocean_builder/core/models/user_ocean_builder.dart';
 import 'package:ocean_builder/core/providers/ocean_builder_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/custom_clipper/custom_clipper.dart';
-import 'package:ocean_builder/helper/method_helper.dart';
 import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';

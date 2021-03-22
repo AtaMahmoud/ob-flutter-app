@@ -44,7 +44,8 @@ dependencies:
     git:
       url: https://github.com/btastic/flutter_native_image.git
       ref: fix/ios_compression
-  flushbar: ^1.10.2
+  # flushbar: ^1.10.2
+  another_flushbar: ^1.10.17
   flutter_svg: ^0.19.3
   flutter_screenutil: ^1.1.0
   rflutter_alert: ^1.0.3
@@ -70,7 +71,7 @@ dependencies:
   #connectivity: ^0.4.4
   dio: ^4.0.0-prev2
   shared_preferences: ^0.5.7+2
-  flutter_secure_storage: ^3.3.3
+  flutter_secure_storage: ^4.1.0
   data_connection_checker: ^0.3.4
   flutter_inner_drawer: "^0.5.5+3"
   flutter_swiper: ^1.1.6

@@ -1,4 +1,4 @@
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -488,6 +488,7 @@ class _OBSelectionScreenWidgetModalState
           fontSize: 86.sp,
           fontWeight: FontWeight.bold),
     );
+    print('seapod.qRCodeImageUrl');
     Alert(
         context: context,
         title: "SeaPod Information",

@@ -490,6 +490,8 @@ class _MyAppState extends State<MyApp> {
         EmailVerificationData(
             isDeepLinkData: true, verificationCode: authCode));
   }
+
+  
 } // End of MyApp
 
 //--- local notification helper methods are here
@@ -517,4 +519,5 @@ Notifiation ToDo
 5. Navigate to rleated screen on Notifiaction tap -- Done
 6. Trigger relevant action on notification tap     -- Done
 7. Add notification channel -- Pending
+8. Handle various types of notification 
 */
