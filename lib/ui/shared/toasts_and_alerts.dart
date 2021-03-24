@@ -1,4 +1,4 @@
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ocean_builder/constants/constants.dart';
@@ -80,7 +80,7 @@ showInfoBar(String title, String msg, BuildContext context) {
     flushbarStyle: FlushbarStyle.FLOATING,
     backgroundColor: Colors.white,
     margin: EdgeInsets.all(8),
-    borderRadius: 8,
+    borderRadius: BorderRadius.circular(8),
     isDismissible: true,
     duration: Duration(seconds: 3),
     icon: Icon(
@@ -115,7 +115,7 @@ showInfoBarWithDissmissCallback(
     flushbarStyle: FlushbarStyle.FLOATING,
     backgroundColor: Colors.white,
     margin: EdgeInsets.all(8),
-    borderRadius: 8,
+    borderRadius: BorderRadius.circular(8),
     isDismissible: true,
     duration: Duration(seconds: 5),
     icon: Icon(
@@ -126,8 +126,7 @@ showInfoBarWithDissmissCallback(
       ColorConstants.TOP_CLIPPER_START,
       ColorConstants.TOP_CLIPPER_END
     ]),
-  )
-    ..onStatusChanged = (FlushbarStatus status) {
+    onStatusChanged: (FlushbarStatus status) {
       switch (status) {
         case FlushbarStatus.SHOWING:
           {
@@ -151,8 +150,8 @@ showInfoBarWithDissmissCallback(
             break;
           }
       }
-    }
-    ..show(context);
+    },
+  )..show(context);
 }
 
 String parseErrorTitle(String errorCode) {

@@ -15,25 +15,25 @@ class GrantAccessValidationBloc extends Object
   var messageController = BehaviorSubject<String>();
   var permissionController = BehaviorSubject<String>();
 
-  Observable<String> get firstName =>
+  Stream<String> get firstName =>
       firstNameController.stream.transform(stringNonNullValidator);
 
-  Observable<String> get email =>
-      emailController.stream.transform(emailValidator);
+  Stream<String> get email => emailController.stream.transform(emailValidator);
 
-  Observable<String> get vasselCode =>
+  Stream<String> get vasselCode =>
       vasselCodeController.stream.transform(vasselCodeValidator);
 
-  Observable<String> get requestAccessAs =>
+  Stream<String> get requestAccessAs =>
       requestAccessAsController.stream.transform(requestAccessAsValidator);
 
-  Observable<String> get requestAccessTime =>
+  Stream<String> get requestAccessTime =>
       requestAccessTimeController.stream.transform(requestAccessForValidator);
 
-  Observable<String> get checkIn =>
+  Stream<String> get checkIn =>
       checkInController.stream.transform(stringNonNullValidator);
 
-  Observable<String> get message => messageController.stream.transform(stringNonNullValidator);    
+  Stream<String> get message =>
+      messageController.stream.transform(stringNonNullValidator);
 
   Function(String) get firstNameChanged => firstNameController.sink.add;
 
@@ -51,14 +51,14 @@ class GrantAccessValidationBloc extends Object
 
   Function(String) get messageChanged => messageController.sink.add;
 
-  Observable<bool> get registrationCheck =>
-      Observable.combineLatest2(firstName, email, (firstName, email) => true);
+  Stream<bool> get registrationCheck =>
+      Rx.combineLatest2(firstName, email, (firstName, email) => true);
 
-  Observable<String> get permission => permissionController.stream;
+  Stream<String> get permission => permissionController.stream;
 
-  Function(String) get permissionChanged => permissionController.sink.add;    
+  Function(String) get permissionChanged => permissionController.sink.add;
 
-  Observable<bool> get requestAccessCheck => Observable.combineLatest4(
+  Stream<bool> get requestAccessCheck => Rx.combineLatest4(
       requestAccessAs,
       requestAccessTime,
       vasselCode,

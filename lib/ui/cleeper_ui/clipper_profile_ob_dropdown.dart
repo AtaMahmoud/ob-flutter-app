@@ -1,4 +1,4 @@
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -162,6 +162,12 @@ class _ClipperProfileOBDropdownState extends State<ClipperProfileOBDropdown> {
   _showUpdateOBNameDialog(UserOceanBuilder uob) async {
     SeaPod seapod = await _oceanBuilderProvider.getSeaPod(
         uob.oceanBuilderId, _userProvider);
+    print('######-----${seapod.qRCodeImageUrl}');
+    var qrCodeImageUri =
+        'https://oceanbuilders.herokuapp.com/qrcodes/${seapod.vessleCode}.png';
+
+    print(
+        '-----------------------------------------------------$qrCodeImageUri');
 
     _obNameController = TextEditingController(text: '');
     var alertStyle = AlertStyle(
@@ -184,7 +190,7 @@ class _ClipperProfileOBDropdownState extends State<ClipperProfileOBDropdown> {
               padding: EdgeInsets.all(16.h),
               child: Center(
                 child: Image.network(
-                  seapod.qRCodeImageUrl,
+                  qrCodeImageUri,
                   fit: BoxFit.scaleDown,
                 ),
               ),

@@ -16,31 +16,31 @@ class RegistrationValidationBloc extends Object
   var requestAccessTimeController = BehaviorSubject<String>();
   var checkInController = BehaviorSubject<String>();
 
-  Observable<String> get firstName =>
+  Stream<String> get firstName =>
       firstNameController.stream.transform(stringNonNullValidator);
 
-  Observable<String> get lastName =>
+  Stream<String> get lastName =>
       lastNameController.stream.transform(stringNonNullValidator);
 
-  Observable<String> get email =>
+  Stream<String> get email =>
       emailController.stream.transform(emailValidator);
 
-  Observable<String> get phone =>
+  Stream<String> get phone =>
       phoneController.stream.transform(phoneValidator);
 
-  Observable<String> get country =>
+  Stream<String> get country =>
       countryController.stream.transform(countryValidator);
 
-  Observable<String> get vasselCode =>
+  Stream<String> get vasselCode =>
       vasselCodeController.stream.transform(vasselCodeValidator);
 
-  Observable<String> get requestAccessAs =>
+  Stream<String> get requestAccessAs =>
       requestAccessAsController.stream.transform(requestAccessAsValidator);
 
-  Observable<String> get requestAccessTime =>
+  Stream<String> get requestAccessTime =>
       requestAccessTimeController.stream.transform(requestAccessForValidator);
 
-  Observable<String> get checkIn =>
+  Stream<String> get checkIn =>
       checkInController.stream.transform(stringNonNullValidator);
 
   Function(String) get firstNameChanged => firstNameController.sink.add;
@@ -63,7 +63,7 @@ class RegistrationValidationBloc extends Object
 
   Function(String) get checkInChanged => checkInController.sink.add;
 
-  Observable<bool> get registrationCheck => Observable.combineLatest5(
+  Stream<bool> get registrationCheck => Rx.combineLatest5(
       firstName,
       lastName,
       email,
@@ -71,38 +71,38 @@ class RegistrationValidationBloc extends Object
       country,
       (firstName, lastName, email, phone, country) => true);
 
-  Observable<bool> get invitationRegistrationCheck => Observable.combineLatest4(
+  Stream<bool> get invitationRegistrationCheck => Rx.combineLatest4(
       firstName,
       lastName,
       phone,
       country,
       (firstName, lastName, phone, country) => true);
 
-  Observable<bool> get editProfileInputCheck =>
-      Observable.combineLatest4(firstName, lastName, email, phone,
+  Stream<bool> get editProfileInputCheck =>
+      Rx.combineLatest4(firstName, lastName, email, phone,
           (firstName, lastName, email, phone) {
         return true;
       });
 
-  Observable<bool> get requestAccessCheck => Observable.combineLatest3(
+  Stream<bool> get requestAccessCheck => Rx.combineLatest3(
       requestAccessAs,
       vasselCode,
       checkIn,
       (requestAccessAs, vasselCode, checkIn) => true);
 
-  Observable<bool> get requestAccessCheckWithAccesstime =>
-      Observable.combineLatest4(
+  Stream<bool> get requestAccessCheckWithAccesstime =>
+      Rx.combineLatest4(
           requestAccessAs,
           vasselCode,
           requestAccessTime,
           checkIn,
           (requestAccessAs, vasselCode, requestAccessTime, checkIn) => true);
 
-  Observable<bool> get acceptInvitationCheck =>
-      vasselCode.isEmpty.asObservable();
+  Stream<bool> get acceptInvitationCheck =>
+      vasselCode.isEmpty.asStream();
 
-  Observable<bool> get infoCheck =>
-      Observable.combineLatest5(firstName, lastName, email, phone, country,
+  Stream<bool> get infoCheck =>
+      Rx.combineLatest5(firstName, lastName, email, phone, country,
           (firstName, lastName, email, phone, country) {
         // // print(firstName);
         // // print(lastName);
@@ -112,8 +112,8 @@ class RegistrationValidationBloc extends Object
         return true;
       });
 
-  Observable<bool> get profileCheck =>
-      Observable.combineLatest4(firstName, lastName, email, phone,
+  Stream<bool> get profileCheck =>
+      RegExpMatch.combineLatest4(firstName, lastName, email, phone,
           (firstName, lastName, email, phone) {
         // // print(firstName);
         // // print(lastName);

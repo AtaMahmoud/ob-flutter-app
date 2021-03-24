@@ -1,4 +1,4 @@
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -42,6 +42,7 @@ class _OBSelectionScreenWidgetModalState
   TextEditingController _obNameController;
   String _changedObName = 'defaultName';
 
+// remove this from here and call the utils
   Flushbar _flush;
 
   String _currentlySelectedObId;
@@ -480,6 +481,8 @@ class _OBSelectionScreenWidgetModalState
     SeaPod seapod =
         await _oceanBuilderProvider.getSeaPod(uob.oceanBuilderId, userProvider);
     _obNameController = TextEditingController(text: '');
+    print(
+        '----------qrcode url of ${seapod.obName}-------------${seapod.qRCodeImageUrl}');
     var alertStyle = AlertStyle(
       isCloseButton: false,
       isOverlayTapDismiss: true,

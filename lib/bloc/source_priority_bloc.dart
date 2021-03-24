@@ -8,7 +8,7 @@ class SourcePriorityBloc extends Object with Validator
 
   var priorityController = BehaviorSubject<String>();
 
-  Observable<String> get topProprity =>
+  Stream<String> get topProprity =>
       priorityController.stream;
 
   Function(String) get topProprityChanged =>

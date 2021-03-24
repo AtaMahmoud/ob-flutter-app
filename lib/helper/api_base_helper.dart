@@ -237,7 +237,7 @@ class ApiBaseHelper {
     String errorDescription = "";
     if (error is DioError) {
       switch (error.type) {
-        case DioErrorType.CANCEL:
+        case DioErrorType.cancel:
           errorDescription = "Request to API server was cancelled";
           break;
         case DioErrorType.SEND_TIMEOUT:

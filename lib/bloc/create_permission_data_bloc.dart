@@ -8,7 +8,7 @@ class CreatePermissionDataBloc extends Object with Validator
 
   var permissionSetNameController = BehaviorSubject<String>();
 
-  Observable<String> get permissionSetName =>
+  Stream<String> get permissionSetName =>
       permissionSetNameController.stream;//.transform(requestAccessForValidator);
 
   Function(String) get permissionSetNameChanged =>

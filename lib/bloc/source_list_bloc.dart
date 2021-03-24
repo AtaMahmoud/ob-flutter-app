@@ -25,59 +25,59 @@ class SourceListBloc extends Object with Validator implements BlocBase {
 
   var temperatureSourceController = BehaviorSubject<String>();
 
-  Observable<String> get temperatureSource =>
+  Stream<String> get temperatureSource =>
       temperatureSourceController.stream.transform(stringNonNullValidator);
 
   Function(String) get temperatureSourceChanged =>
       temperatureSourceController.sink.add;
 
-  Observable<String> get bpuSource =>
+  Stream<String> get bpuSource =>
       bpuSourceController.stream.transform(stringNonNullValidator);
 
   Function(String) get bpuSourceChanged => bpuSourceController.sink.add;
 
-  Observable<String> get windDirectionSource =>
+  Stream<String> get windDirectionSource =>
       windDirectionSourceController.stream.transform(stringNonNullValidator);
 
   Function(String) get windDirectionSourceChanged =>
       windDirectionSourceController.sink.add;
 
-  Observable<String> get windGustsSource =>
+  Stream<String> get windGustsSource =>
       windGustsSourceController.stream.transform(stringNonNullValidator);
 
   Function(String) get windGustsSourceChanged =>
       windGustsSourceController.sink.add;
 
-  Observable<String> get windSpeedSource =>
+  Stream<String> get windSpeedSource =>
       windSpeedSourceController.stream.transform(stringNonNullValidator);
 
   Function(String) get windSpeedSourceChanged =>
       windSpeedSourceController.sink.add;
 
-  Observable<String> get uvRadiationSource =>
+  Stream<String> get uvRadiationSource =>
       uvRadiationSourceController.stream.transform(stringNonNullValidator);
 
   Function(String) get uvRadiationSourceChanged =>
       uvRadiationSourceController.sink.add;
 
-  Observable<String> get solarRadiationSource =>
+  Stream<String> get solarRadiationSource =>
       solarRadiationSourceController.stream.transform(stringNonNullValidator);
 
   Function(String) get solarRadiationSourceChanged =>
       solarRadiationSourceController.sink.add;
 
-  Observable<String> get humiditySource =>
+  Stream<String> get humiditySource =>
       humiditySourceController.stream.transform(stringNonNullValidator);
 
   Function(String) get humiditySourceChanged =>
       humiditySourceController.sink.add;
 
-  Observable<String> get weatherSource =>
+  Stream<String> get weatherSource =>
       weatherSourceController.stream.transform(stringNonNullValidator);
 
   Function(String) get weatherSourceChanged => weatherSourceController.sink.add;
 
-  Observable<String> get marineSource =>
+  Stream<String> get marineSource =>
       marineSourceController.stream.transform(stringNonNullValidator);
 
   Function(String) get marineSourceChanged => marineSourceController.sink.add;

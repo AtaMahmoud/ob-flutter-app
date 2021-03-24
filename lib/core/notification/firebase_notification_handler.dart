@@ -1,4 +1,4 @@
-import 'dart:convert';
+/* import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -18,7 +18,7 @@ class FirebaseNotifications {
   int counter = 0;
   void setUpFirebase() {
     print('setup firebase message caleed $counter++');
-    _firebaseMessaging = FirebaseMessaging();
+    _firebaseMessaging = FirebaseMessaging.instance;
     _firebaseCloudMessagingListeners();
   }
 
@@ -257,3 +257,4 @@ class FirebaseNotifications {
     });
   }
 }
+ */

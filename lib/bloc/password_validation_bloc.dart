@@ -10,14 +10,15 @@ class PasswordValidationBloc extends Object with Validator implements BlocBase {
 
   String pass;
 
-  Observable<String> get password => passwordController.stream.transform(passwordValidator);
+  Stream<String> get password =>
+      passwordController.stream.transform(passwordValidator);
 
-  Observable<String> get confirmPassword => confirmPasswordController.stream.transform(passwordValidator);
+  Stream<String> get confirmPassword =>
+      confirmPasswordController.stream.transform(passwordValidator);
 
-  Observable<bool> get showPassword => showPasswordController.stream;
+  Stream<bool> get showPassword => showPasswordController.stream;
 
-  Observable<bool> get showConfirmPassword =>
-      showConfirmPasswordController.stream;
+  Stream<bool> get showConfirmPassword => showConfirmPasswordController.stream;
 
   passwordChanged(String password) {
     pass = password;
@@ -25,17 +26,14 @@ class PasswordValidationBloc extends Object with Validator implements BlocBase {
   }
 
   confirmPasswordChanged(String confirmPassword) {
-     confirmPasswordController.sink.add(confirmPassword);
-     if(confirmPassword.length >= 8){
-
+    confirmPasswordController.sink.add(confirmPassword);
+    if (confirmPassword.length >= 8) {
       if (confirmPassword == pass) {
         confirmPasswordController.sink.add(confirmPassword);
       } else {
         confirmPasswordController.sink.addError('Passwords did\'t match!');
       }
-      
-     }
-    
+    }
   }
 
   showPasswordChanged(bool show) => showPasswordController.sink.add(show);
@@ -43,9 +41,7 @@ class PasswordValidationBloc extends Object with Validator implements BlocBase {
   showConfirmPasswordChanged(bool show) =>
       showConfirmPasswordController.sink.add(show);
 
-  Observable<bool> get passwordCheck => Observable.combineLatest2(
-      password,
-      confirmPassword,
+  Stream<bool> get passwordCheck => Rx.combineLatest2(password, confirmPassword,
       (password, confirmPassword) => password == confirmPassword);
 
   @override
