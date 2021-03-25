@@ -39,8 +39,6 @@ class _GuestRequestResponseScreenState
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   GuestRequestValidationBloc _bloc = GuestRequestValidationBloc();
 
-  String requestAccessTime;
-
   bool isFromNotificationTray = false;
 
   String permissionSet;
@@ -49,17 +47,26 @@ class _GuestRequestResponseScreenState
 
   bool _isGuestSelected = false;
 
+  String _emailAddress;
+  String _contactNumber;
+  String _seapodNVesselCode;
+  DateTime _accesFromDate;
+  String requestAccessTime;
+
   @override
   void initState() {
     super.initState();
-    Duration d = Duration(milliseconds: widget.accessRequest.period);
-    // debugPrint('acces request time in days-- ' + d.inDays.toString());
+    Duration d = Duration(milliseconds: widget.accessRequest.period ?? 0);
+    debugPrint('acces request time in days-- ' + d.inDays.toString());
     String accessFor;
     if (d.inDays <= 15) {
-      if (d.inDays == 1)
+      if (d.inDays == 0) {
+        accessFor = '1 DAY';
+      } else if (d.inDays == 1) {
         accessFor = '${d.inDays} DAY';
-      else
+      } else {
         accessFor = '${d.inDays} DAYS';
+      }
     } else if (d.inDays == 30) {
       accessFor = '1 MONTH';
     } else if (d.inDays == 90) {
@@ -70,6 +77,8 @@ class _GuestRequestResponseScreenState
       accessFor = '1 YEAR';
     } else if (d.inDays == 1800) {
       accessFor = 'PERMANENT ACCESS';
+    } else {
+      accessFor = '1 MONTH';
     }
     int index = ListHelper.getAccessTimeList().indexOf(accessFor);
     // debugPrint('index   ' + index.toString());
@@ -112,6 +121,23 @@ class _GuestRequestResponseScreenState
     _bloc.permissionController.listen((onData) {
       permissionSet = onData;
     });
+    _emailAddress = widget.accessRequest.user?.email ?? '';
+    _contactNumber = widget.accessRequest.user?.mobileNumber ?? '';
+    _seapodNVesselCode = widget.accessRequest.seaPod?.name ?? '-';
+    print(' _seapodNVesselCode ----- $_seapodNVesselCode');
+    if (widget.accessRequest.seaPod?.vessleCode != null) {
+      _seapodNVesselCode =
+          _seapodNVesselCode + widget.accessRequest.seaPod?.vessleCode;
+    }
+    // _seapodNVesselCode =
+    // _seapodNVesselCode r+ 'widget.accessRequest.seaPod?.vessleCode ';
+    print(' _seapodNVesselCode ----- $_seapodNVesselCode');
+    if (widget.accessRequest.checkIn == 0) {
+      _accesFromDate = DateTime.now();
+    } else {
+      _accesFromDate = DateTime.fromMicrosecondsSinceEpoch(
+          widget.accessRequest.checkIn ?? 0);
+    }
   }
 
   @override
@@ -162,7 +188,7 @@ class _GuestRequestResponseScreenState
         Platform.isIOS ? (153.5) / 813 : (153.5 + 16) / 813;
     double height = MediaQuery.of(context).size.height * topClipperRatio;
 
-    String vesselCode = widget.accessRequest.seaPod.vessleCode;
+    // String vesselCode = widget.accessRequest.seaPod.vessleCode;
 
     // String reqMsg = '${widget.accessRequest.user.name} has requested access to your SeaPod ${widget.accessRequest.seaPod.name}(${widget.accessRequest.seaPod.vessleCode}) for ';
 
@@ -305,19 +331,18 @@ class _GuestRequestResponseScreenState
         delegate: SliverChildListDelegate([
       _messageRow(widget.accessRequest.reqMessage),
       SpaceH64(),
-      _itemRow('Email Address', '${widget.accessRequest.user.email}'),
+      _itemRow('Email Address', _emailAddress),
       SpaceH64(),
-      _itemRow('Contact Number', '${widget.accessRequest.user.mobileNumber}'),
+      _itemRow('Contact Number', _contactNumber),
       SpaceH64(),
-      _itemRow('SEAPOD NAME /\nVESSEL CODE',
-          '${widget.accessRequest.seaPod.name} /\n ${widget.accessRequest.seaPod.vessleCode}'),
+      _itemRow('SEAPOD NAME /\nVESSEL CODE', _seapodNVesselCode),
       SpaceH64(),
       _accessAsRow(),
       SpaceH64(),
       _accessForRow(
           'Access From',
-          DateFormat('MM/dd/yyyy').format(DateTime.fromMicrosecondsSinceEpoch(
-              widget.accessRequest.checkIn)), //widget.accessRequest.checkIn,
+          DateFormat('MM/dd/yyyy')
+              .format(_accesFromDate), //widget.accessRequest.checkIn,
           ' Access For',
           'accessForValue'),
       SpaceH64(),
@@ -366,10 +391,12 @@ class _GuestRequestResponseScreenState
           // SizedBox(
           //   height: util.setHeight(32)
           //   ),
-          Text(itemValue,
-              style: TextStyle(
-                  color: ColorConstants.COLOR_NOTIFICATION_ITEM,
-                  fontSize: 42.sp))
+          Expanded(
+            child: Text(itemValue,
+                style: TextStyle(
+                    color: ColorConstants.COLOR_NOTIFICATION_ITEM,
+                    fontSize: 42.sp)),
+          )
         ],
       ),
     );
@@ -462,10 +489,11 @@ class _GuestRequestResponseScreenState
   _approvalButtons(UserProvider userProvider) {
     bool isOwner = userProvider.authenticatedUser == null ||
         userProvider.authenticatedUser.userID
-                .compareTo(widget.accessRequest.user.id) !=
+                .compareTo(widget.accessRequest.user?.id ?? '0') !=
             0;
 
     return isOwner &&
+            widget.accessRequest.status != null &&
             widget.accessRequest.status
                 .contains(NotificationConstants.initiated)
         ? Padding(

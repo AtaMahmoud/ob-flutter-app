@@ -2,6 +2,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ocean_builder/constants/constants.dart';
+import 'package:ocean_builder/core/models/access_request.dart';
 import 'package:ocean_builder/core/models/notification.dart';
 import 'package:ocean_builder/core/providers/user_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
@@ -16,6 +17,65 @@ import 'package:ocean_builder/ui/screens/sign_in_up/your_obs_screen.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+
+showInAppNotification(String routeName, AccessEvent fcmNotificationData,
+    BuildContext context) async {
+  MethodHelper.parseNotifications(GlobalContext.currentScreenContext);
+
+  var textStyle = TextStyle(color: Colors.white, fontSize: 16);
+  // var accessEvent = await Provider.of<UserProvider>(context, listen: false)
+  //     .getAccessRequest(fcmNotificationData.id);
+  // accessEvent.reqMessage = fcmNotificationData.reqMessage;
+  // accessEvent.accesEventType = fcmNotificationData.accesEventType;
+
+  Flushbar flush;
+  flush = Flushbar<bool>(
+    messageText: Text(
+      fcmNotificationData.reqMessage,
+      style: textStyle,
+    ),
+    onTap: (Flushbar f) {
+      f.dismiss();
+      if (routeName.compareTo(GuestRequestResponseScreen.routeName) == 0) {
+        locator<NavigationService>().navigateWithAccessEvent(
+            GuestRequestResponseScreen.routeName,
+            accessEvent: fcmNotificationData);
+      } else if (routeName.compareTo(YourObsScreen.routeName) == 0) {
+        locator<NavigationService>().navigateWithAccessEvent(
+            YourObsScreen.routeName,
+            accessEvent: fcmNotificationData);
+      } else if (routeName.compareTo(InvitationResponseScreen.routeName) == 0) {
+        locator<NavigationService>().navigateWithAccessEvent(
+            InvitationResponseScreen.routeName,
+            accessEvent: fcmNotificationData);
+      }
+    },
+    flushbarStyle: FlushbarStyle.FLOATING,
+    // margin: EdgeInsets.all(8),
+    // borderRadius: 8,
+    icon: Icon(
+      Icons.info_outline,
+      color: Colors.white,
+    ),
+    backgroundGradient: LinearGradient(colors: [
+      ColorConstants.TOP_CLIPPER_START,
+      ColorConstants.TOP_CLIPPER_END
+    ]),
+    flushbarPosition: FlushbarPosition.TOP,
+    isDismissible: false,
+    mainButton: FlatButton(
+      padding: EdgeInsets.zero,
+      child: Text(
+        AppStrings.dismiss,
+        style: textStyle,
+      ),
+      onPressed: () async {
+        await MethodHelper.selectOnlyOBasSelectedOB();
+        flush.dismiss(true);
+      },
+    ),
+  )..show(GlobalContext.currentScreenContext);
+}
 
 // FcmNotification fcmNotificationData
 showInAppNotificationFirebase(

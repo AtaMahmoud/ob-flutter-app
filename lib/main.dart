@@ -12,6 +12,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive/hive.dart';
 import 'package:ocean_builder/configs/config_reader.dart';
+import 'package:ocean_builder/core/models/access_request.dart' as ar;
+import 'package:ocean_builder/core/models/notification.dart';
 import 'package:ocean_builder/core/providers/color_picker_data_provider.dart';
 import 'package:ocean_builder/core/providers/connection_status_provider.dart';
 import 'package:ocean_builder/core/providers/current_ob_id_provider.dart';
@@ -34,7 +36,11 @@ import 'package:ocean_builder/core/services/locator.dart';
 import 'package:ocean_builder/core/services/navigation_service.dart';
 import 'package:ocean_builder/router.dart' as obRoute;
 import 'package:ocean_builder/ui/screens/designSteps/design_screen.dart';
+import 'package:ocean_builder/ui/screens/notification/guest_request_response_screen.dart';
+import 'package:ocean_builder/ui/screens/notification/invitation_response_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/email_verification_screen.dart';
+import 'package:ocean_builder/ui/screens/sign_in_up/your_obs_screen.dart';
+import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
@@ -239,7 +245,8 @@ class _MyAppState extends State<MyApp> {
   void _configureSelectNotificationSubject() {
     selectNotificationSubject.stream.listen((String payload) async {
       print('got to x screen with payload $payload');
-      locator<NavigationService>().navigateTo(DesignScreen.routeName);
+      // locator<NavigationService>().navigateTo(DesignScreen.routeName);
+      _handleNotification(payload);
       // await Navigator.of(context).pushNamed(SplashScreen.routeName);
     });
   }
@@ -269,6 +276,65 @@ class _MyAppState extends State<MyApp> {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('A new onMessageOpenedApp event was published!');
     });
+  }
+
+  // handle notification
+
+  _handleNotification(payload) async {
+    NotificationData notificationData =
+        NotificationData.fromJson(jsonDecode(payload));
+    debugPrint(
+        'notification data -----' + notificationData.toJson().toString());
+
+    FcmNotification fcmNotification = FcmNotification();
+    fcmNotification.data = notificationData;
+    fcmNotification.notification = NotificationTitleData(
+        title: 'Notification Title', body: 'Nnotification message');
+    ar.AccessEvent accessEvent = ar.AccessEvent();
+    accessEvent.reqMessage = fcmNotification.notification.body;
+    accessEvent.accesEventType = 'Access Request';
+    // get notification details froms server
+/*     accessEvent = await Provider.of<UserProvider>(context, listen: false)
+        .getAccessRequest(fcmNotification.data.id);
+    accessEvent.reqMessage = fcmNotification.notification.body;
+    accessEvent.accesEventType = 'Access Request'; */
+
+//     Provider.of<UserProvider>(context, listen: false)
+//         .getAccessRequest(fcmNotification.data.id)
+//         .then((accessRequest) {
+//       if (accessRequest != null) {
+//         accessRequest.reqMessage = fcmNotification.notification.body;
+//         accessRequest.accesEventType = 'Access Request';
+
+//         // debugPrint('access request fetched from server -==------------------------------------ ${accessRequest.id}');
+// /*         Navigator.of(context).pushNamed(GuestRequestResponseScreen.routeName,
+//             arguments: accessRequest); */
+//       }
+//     });
+
+    if (fcmNotification.data.notificationType
+            .toUpperCase()
+            .compareTo(NotificationConstants.request) ==
+        0) {
+      showInAppNotification(
+          GuestRequestResponseScreen.routeName, accessEvent, context);
+    } else if (fcmNotification.data.notificationType
+            .toUpperCase()
+            .compareTo(NotificationConstants.response) ==
+        0) {
+      showInAppNotification(YourObsScreen.routeName, accessEvent, context);
+    } else if (fcmNotification.data.notificationType
+            .toUpperCase()
+            .compareTo(NotificationConstants.invitation) ==
+        0) {
+      showInAppNotification(
+          InvitationResponseScreen.routeName, accessEvent, context);
+    } else if (fcmNotification.data.notificationType
+            .toUpperCase()
+            .compareTo(NotificationConstants.invitationResponse) ==
+        0) {
+      showInAppNotification(YourObsScreen.routeName, accessEvent, context);
+    }
   }
 
   void _showLocalNotification(RemoteMessage message) {
@@ -328,6 +394,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    GlobalContext.currentScreenContext = context;
     ScreenUtil.init(context, allowFontScaling: true);
     service.SystemChrome.setPreferredOrientations([
       service.DeviceOrientation.portraitUp,
@@ -490,8 +557,6 @@ class _MyAppState extends State<MyApp> {
         EmailVerificationData(
             isDeepLinkData: true, verificationCode: authCode));
   }
-
-  
 } // End of MyApp
 
 //--- local notification helper methods are here
