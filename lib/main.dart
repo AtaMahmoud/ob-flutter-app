@@ -35,7 +35,6 @@ import 'package:ocean_builder/core/services/initializer_service.dart';
 import 'package:ocean_builder/core/services/locator.dart';
 import 'package:ocean_builder/core/services/navigation_service.dart';
 import 'package:ocean_builder/router.dart' as obRoute;
-import 'package:ocean_builder/ui/screens/designSteps/design_screen.dart';
 import 'package:ocean_builder/ui/screens/notification/guest_request_response_screen.dart';
 import 'package:ocean_builder/ui/screens/notification/invitation_response_screen.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/email_verification_screen.dart';
@@ -261,7 +260,7 @@ class _MyAppState extends State<MyApp> {
         .then((RemoteMessage message) {
       if (message != null) {
         print(
-            '------------------------initial message -- when opening from terminated state ----- ${message.data.toString()}');
+            '------------------------initial message -- when opening from terminated state ----- ${jsonEncode(message).toString()}');
       }
     });
 
@@ -275,14 +274,21 @@ class _MyAppState extends State<MyApp> {
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('A new onMessageOpenedApp event was published!');
+      print('   --------${message.toString()}');
+      _handleNotification(message.data);
     });
   }
 
   // handle notification
 
   _handleNotification(payload) async {
+    print('   --- $payload');
+    print('-----------------------');
+    payload = payload.toString().replaceAll('\\', '');
+    print('   --- $payload');
+    // json.encode(payload).toString();
     NotificationData notificationData =
-        NotificationData.fromJson(jsonDecode(payload));
+        NotificationData.fromJson(jsonDecode(payload)['payload']);
     debugPrint(
         'notification data -----' + notificationData.toJson().toString());
 
