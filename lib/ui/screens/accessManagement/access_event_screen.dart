@@ -91,7 +91,7 @@ class _AccessEventScreenState extends State<AccessEventScreen> {
 
   Positioned _titleBar() {
     return Positioned(
-      top: ScreenUtil.statusBarHeight,
+      top: ScreenUtil().statusBarHeight,
       left: 0,
       right: 0,
       child: Container(

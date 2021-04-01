@@ -2,8 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:mqtt_client/mqtt_client.dart';
-import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:ocean_builder/bloc/generic_bloc.dart';
 import 'package:ocean_builder/bloc/iot_topic_bloc.dart';
 import 'package:ocean_builder/configs/app_configurations.dart';

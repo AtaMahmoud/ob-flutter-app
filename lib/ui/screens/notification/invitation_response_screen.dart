@@ -124,7 +124,7 @@ class _InvitationResponseScreenState extends State<InvitationResponseScreen> {
       onWillPop: () async => false,
       child: Scaffold(
         key: _scaffoldKey,
-        resizeToAvoidBottomPadding: true,
+        resizeToAvoidBottomInset: true,
         drawer: HomeDrawer(
           isSecondLevel: true,
           screenIndex: DrawerIndex.NOTIFICATIONS,
@@ -155,7 +155,7 @@ class _InvitationResponseScreenState extends State<InvitationResponseScreen> {
 
   Positioned _topBar(BuildContext context) {
     return Positioned(
-      top: ScreenUtil.statusBarHeight,
+      top: ScreenUtil().statusBarHeight,
       left: 0,
       right: 0,
       child: Container(

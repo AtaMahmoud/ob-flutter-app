@@ -136,7 +136,7 @@ class _MarineScreenState extends State<MarineScreen> {
 
   _sourceSelectionPositioned() {
     return Positioned(
-        top: ScreenUtil.statusBarHeight + 8.h,
+        top: ScreenUtil().statusBarHeight + 8.h,
         right: 32.h,
         child:
             UIHelper.sourceSelectorButtons(_sourcePriorityBloc.topProprity, () {

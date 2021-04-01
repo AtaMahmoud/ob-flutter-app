@@ -9,7 +9,7 @@ import 'package:ocean_builder/ui/shared/popup.dart';
 import 'package:rxdart/rxdart.dart';
 
 Widget getServerDropdown(List<MqttSettingsItem> list,
-    Observable<MqttSettingsItem> stream, changed, bool addPadding,
+    Stream<MqttSettingsItem> stream, changed, bool addPadding,
     {String label = 'Label'}) {
   return StreamBuilder<MqttSettingsItem>(
       stream: stream,

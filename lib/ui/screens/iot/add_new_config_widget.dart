@@ -526,7 +526,7 @@ class _AddMqttConfigState extends State<AddMqttConfig> {
   }
 
   Widget _getTopicsDropdown(
-      List<String> list, Observable<String> stream, changed, bool addPadding,
+      List<String> list, Stream<String> stream, changed, bool addPadding,
       {String label = 'Label'}) {
     // print('get topic list --- ${list.toString()}');
     return StreamBuilder<String>(

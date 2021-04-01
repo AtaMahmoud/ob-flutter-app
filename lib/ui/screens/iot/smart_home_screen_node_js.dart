@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
-import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:ocean_builder/bloc/generic_bloc.dart';
 import 'package:ocean_builder/bloc/iot_topic_bloc.dart';
 import 'package:ocean_builder/constants/constants.dart';
@@ -263,7 +262,7 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
               padding: EdgeInsets.all(16.w),
               child: Text(
                 'Clear Filters',
-                style: TextStyle(color:ColorConstants.ACCESS_MANAGEMENT_TITLE),
+                style: TextStyle(color: ColorConstants.ACCESS_MANAGEMENT_TITLE),
                 // textScaleFactor: 1.5,
               ),
             ),
@@ -284,14 +283,13 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
               roomName,
               sensorName,
               sensorDataList[index].value.toString(),
-             _parseTimeStamp(sensorDataList[index].tiemStamp.toString())
-              );
+              _parseTimeStamp(sensorDataList[index].tiemStamp.toString()));
         }, childCount: sensorDataList.length),
       ),
     );
   }
 
-  _parseTimeStamp(String timeStamp){
+  _parseTimeStamp(String timeStamp) {
     // dd/MM/yy\nH:m:s:
     return new DateFormat.yMd().add_jm().format(DateTime.parse(timeStamp));
   }
@@ -317,7 +315,7 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
   Align _sensorTableTitle(String text) {
     return Align(
       alignment: Alignment.centerLeft,
-          child: Text(
+      child: Text(
         text,
         textScaleFactor: 1.5,
         style: TextStyle(
@@ -374,7 +372,7 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
   }
 
   Widget _getTopicsDropdown(
-      List<String> list, Observable<String> stream, changed, bool addPadding,
+      List<String> list, Stream<String> stream, changed, bool addPadding,
       {String label = 'Label'}) {
     return StreamBuilder<String>(
         stream: stream,
