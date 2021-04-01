@@ -8,7 +8,7 @@ class IotTopicBloc extends Object
 
   var topicController = BehaviorSubject<String>();
 
-  Observable<String> get selectedTopic =>
+  Stream<String> get selectedTopic =>
       topicController.stream;
 
   Function(String) get selectedTopicChanged =>

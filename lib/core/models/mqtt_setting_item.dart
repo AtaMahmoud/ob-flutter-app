@@ -1,9 +1,7 @@
 import 'package:hive/hive.dart';
-import 'package:to_string/to_string.dart';
 
 part 'mqtt_setting_item.g.dart';
 
-@ToString()
 @HiveType(typeId: 1)
 class MqttSettingsItem {
   @HiveField(0)

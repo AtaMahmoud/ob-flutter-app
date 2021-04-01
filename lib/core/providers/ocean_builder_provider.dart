@@ -450,10 +450,10 @@ class OceanBuilderProvider extends BaseProvider {
   Future<String> scan() async {
     String qrcode;
     try {
-      String barcode = await BarcodeScanner.scan();
-      qrcode = barcode;
+      var barcode = await BarcodeScanner.scan();
+      qrcode = barcode.rawContent;
     } on PlatformException catch (e) {
-      if (e.code == BarcodeScanner.CameraAccessDenied) {
+      if (e.code == BarcodeScanner.cameraAccessDenied) {
         // 'The user did not grant the camera permission!'
         qrcode = null;
       } else {

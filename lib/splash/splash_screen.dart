@@ -55,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
-    ScreenUtil.init(context);
+    ScreenUtil();
     _selectedOBIdProvider = Provider.of<SelectedOBIdProvider>(context);
 
     _headerManager.initalizeBasicHeaders(context);

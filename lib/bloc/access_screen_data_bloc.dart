@@ -10,17 +10,17 @@ class AccessScreenDataBloc extends Object with Validator
   var accessAsController = BehaviorSubject<String>();
   var permissionController = BehaviorSubject<String>();
 
-  Observable<String> get accessTime =>
+  Stream<String> get accessTime =>
       accessTimeController.stream;//.transform(requestAccessForValidator);
 
   Function(String) get accessTimeChanged =>
       accessTimeController.sink.add;
 
-  Observable<String> get accessAs =>    accessAsController.stream;
+  Stream<String> get accessAs =>    accessAsController.stream;
 
   Function(String) get accessAsChanged => accessAsController.sink.add; 
 
-  Observable<String> get permission => permissionController.stream;
+  Stream<String> get permission => permissionController.stream;
 
   Function(String) get permissionChanged => permissionController.sink.add;
 

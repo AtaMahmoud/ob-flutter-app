@@ -113,7 +113,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, allowFontScaling: true);
+    ScreenUtil();
     service.SystemChrome.setPreferredOrientations([
       service.DeviceOrientation.portraitUp,
       service.DeviceOrientation.portraitDown,

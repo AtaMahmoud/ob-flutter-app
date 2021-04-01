@@ -18,7 +18,7 @@ class FirebaseNotifications {
   int counter = 0;
   void setUpFirebase() {
     print('setup firebase message caleed $counter++');
-    _firebaseMessaging = FirebaseMessaging();
+    _firebaseMessaging = FirebaseMessaging.instance;
     _firebaseCloudMessagingListeners();
   }
 
@@ -63,14 +63,14 @@ class FirebaseNotifications {
   }
 
   void _firebaseCloudMessagingListeners() {
-    if (Platform.isIOS) _iOSPermission();
+    // if (Platform.isIOS) _iOSPermission();
 
     _firebaseMessaging.getToken().then((token) {
       print('fcm token----------------------------------');
       print(token);
     });
 
-    _firebaseMessaging.configure(
+/*     _firebaseMessaging.configure(
       onBackgroundMessage: myBackgroundMessageHandler,
 
       // ----------------------------------------------- onMessage -----------------------------------------------------
@@ -245,15 +245,15 @@ class FirebaseNotifications {
               fcmNotification: fcmNotificationData);
         }
       },
-    );
+    ); */
   }
 
-  void _iOSPermission() {
+/*   void _iOSPermission() {
     _firebaseMessaging.requestNotificationPermissions(
         IosNotificationSettings(sound: true, badge: true, alert: true));
     _firebaseMessaging.onIosSettingsRegistered
         .listen((IosNotificationSettings settings) {
       // print("Settings registered: $settings");
     });
-  }
+  } */
 }

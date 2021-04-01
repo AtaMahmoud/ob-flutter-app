@@ -12,7 +12,7 @@ class HeadersManager {
       HeadersManager._internal();
   HeadersManager._internal();
 
-  final FirebaseMessaging _fcm = FirebaseMessaging();
+  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
 
   static HeadersManager getInstance() => _headersManagerSingleton;
 
@@ -27,7 +27,6 @@ class HeadersManager {
     if (_essentialHeaders.isNotEmpty) _headers.addAll(_essentialHeaders);
 
     if (_authUserHeaders.isNotEmpty) _headers.addAll(_authUserHeaders);
-
 
     // debugPrint('returnning header ----------------  $_headers');
 
@@ -57,36 +56,35 @@ class HeadersManager {
     };
     // debugPrint('esseltial headers ---  $_essentialHeaders');
   }
-  
+
   //TODO : initalize this after login or registration
-  void initalizeBasicHeaders(BuildContext context)async{
-     _basicHeaders = await _getHeadersFromSharedPrefs();
+  void initalizeBasicHeaders(BuildContext context) async {
+    _basicHeaders = await _getHeadersFromSharedPrefs();
     if (_basicHeaders.isEmpty || _basicHeaders.length != 2) {
       String language = Localizations.localeOf(context).languageCode;
       _basicHeaders = await _getBasicHeaders(language);
       _saveHeadersToSharedPrefs(_basicHeaders);
     }
 
-     // debugPrint('basic headers ---  $_basicHeaders');
+    // debugPrint('basic headers ---  $_basicHeaders');
   }
+
   Future<void> initalizeAuthenticatedUserHeaders() async {
     String authToken = await SharedPrefHelper.getAuthKey();
-    if(authToken!=null){
+    if (authToken != null) {
       _authUserHeaders.addAll({
-      "x-auth-token": authToken,
-    });
+        "x-auth-token": authToken,
+      });
     }
 
-SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-        if (sharedPreferences.containsKey("hardwareId")) {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    if (sharedPreferences.containsKey("hardwareId")) {
+      _authUserHeaders.addAll({
+        "hardwareId": sharedPreferences.getString('hardwareId'),
+      });
+    }
 
-                _authUserHeaders.addAll({
-      "hardwareId": sharedPreferences.getString('hardwareId'),
-    });
-          
-          }
-
-      // debugPrint('auth headers ---  $_authUserHeaders');
+    // debugPrint('auth headers ---  $_authUserHeaders');
   }
 
   void _saveHeadersToSharedPrefs(Map<String, dynamic> deviceData) async {
@@ -101,10 +99,8 @@ SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
     Map<String, String> resultMap = {};
     if (sharedPreferences.containsKey("hardwareId")) {
-      resultMap['hardwareId'] =
-          sharedPreferences.getString('hardwareId');
-      resultMap["model"] =
-          sharedPreferences.getString("model");
+      resultMap['hardwareId'] = sharedPreferences.getString('hardwareId');
+      resultMap["model"] = sharedPreferences.getString("model");
     }
 
     return resultMap;

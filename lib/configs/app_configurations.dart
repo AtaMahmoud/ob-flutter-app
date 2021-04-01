@@ -1,5 +1,4 @@
 import 'package:ocean_builder/configs/config_reader.dart';
-import 'package:reorderables/generated/i18n.dart';
 
 class Config {
   static const int CONNECTION_TIME_OUT = 10000 * 5;
@@ -152,5 +151,4 @@ class Config {
   // node server
 
   static var IOT_SERVER_API_KEY = ConfigReader.getIotServerApiKey();
-
 }

@@ -10,7 +10,7 @@ class PermissionEditBloc extends Object with Validator
 
 
 
-  Observable<bool> get permissionEdited =>
+  Stream<bool> get permissionEdited =>
       permissionEditController.stream;
 
   Function(bool) get permissionChanged => 

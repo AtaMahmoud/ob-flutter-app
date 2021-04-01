@@ -10,19 +10,19 @@ class GuestRequestValidationBloc extends Object with Validator
   var requestAccessAsController = BehaviorSubject<String>();
   var permissionController = BehaviorSubject<String>();
 
-  Observable<String> get requestAccessTime =>
+  Stream<String> get requestAccessTime =>
       requestAccessTimeController.stream.transform(requestAccessForValidator);
 
   Function(String) get requestAccessTimeChanged =>
       requestAccessTimeController.sink.add;
 
-  Observable<String> get requestAccessAs =>
+  Stream<String> get requestAccessAs =>
       requestAccessAsController.stream.transform(requestAccessAsValidator);  
 
   Function(String) get requestAccessAsChanged =>
       requestAccessAsController.sink.add;   
 
-  Observable<String> get permission => permissionController.stream;
+  Stream<String> get permission => permissionController.stream;
 
   Function(String) get permissionChanged => permissionController.sink.add;         
 

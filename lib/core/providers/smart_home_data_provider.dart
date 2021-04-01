@@ -1,12 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:mqtt_client/mqtt_client.dart';
-import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:ocean_builder/configs/app_configurations.dart';
-import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/models/iot_event_data.dart';
 import 'package:ocean_builder/core/repositories/smart_home_node_repository.dart';
-import 'package:ocean_builder/ui/screens/iot/smart_home_screen.dart';
-import 'package:ocean_builder/ui/shared/toasts_and_alerts.dart';
 
 enum MQTTAppConnectionState { connected, disconnected, connecting }
 

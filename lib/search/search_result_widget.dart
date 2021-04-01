@@ -35,8 +35,8 @@ class SearchResultsListView extends StatelessWidget {
     // print('------suggestedItems---------------- ${suggestedItems.length}');
 
     return Container(
-      margin:
-          EdgeInsets.only(top: fsb.height + fsb.margins.vertical + paddingTop),
+      margin: EdgeInsets.only(
+          top: fsb.widget.height + fsb.widget.margins.vertical + paddingTop),
       child: Stack(
         children: [
           resutlItems.length == 0 ? _wdgtStartSearching(context) : Container(),

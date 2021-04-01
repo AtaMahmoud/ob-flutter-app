@@ -3,17 +3,12 @@ import 'package:rxdart/rxdart.dart';
 
 import 'bloc_provider.dart';
 
-class SourcePriorityBloc extends Object with Validator
-    implements BlocBase {
-
+class SourcePriorityBloc extends Object with Validator implements BlocBase {
   var priorityController = BehaviorSubject<String>();
 
-  Observable<String> get topProprity =>
-      priorityController.stream;
+  Stream<String> get topProprity => priorityController.stream;
 
-  Function(String) get topProprityChanged =>
-      priorityController.sink.add;
-
+  Function(String) get topProprityChanged => priorityController.sink.add;
 
   @override
   void dispose() {

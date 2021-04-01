@@ -8,7 +8,7 @@ class ManagePermissionScreenDataBloc extends Object with Validator
 
   var selectedSeapodController = BehaviorSubject<String>();
 
-  Observable<String> get selectedSeaPodId =>
+  Stream<String> get selectedSeaPodId =>
       selectedSeapodController.stream;//.transform(requestAccessForValidator);
 
   Function(String) get selectedSeaPodIdChanged =>
