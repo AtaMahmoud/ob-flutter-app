@@ -536,7 +536,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   _pickProfilePicture() async {
     double radius = 512.w;
     // Step 1: Retrieve image from picker
-    final File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    final PickedFile image = await ImagePicker().getImage(source: ImageSource.gallery);
 // Step 2: Check for valid file
     if (image == null) return;
     ImageProperties properties =

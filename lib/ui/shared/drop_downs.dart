@@ -4,7 +4,7 @@ import 'package:ocean_builder/constants/constants.dart';
 import 'package:rxdart/rxdart.dart';
 
 Widget getDropdown(
-    List<String> list, Observable<String> stream, changed, bool addPadding,
+    List<String> list, Stream<String> stream, changed, bool addPadding,
     {String label = 'Label'}) {
   ScreenUtil _util = ScreenUtil();
   return StreamBuilder<String>(

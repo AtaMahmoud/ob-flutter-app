@@ -163,7 +163,7 @@ class UIHelper {
 
   static Widget getBorderedTextField(
       BuildContext context,
-      Observable<String> stream,
+      Stream<String> stream,
       changed,
       String label,
       TextEditingController controller,
@@ -235,7 +235,7 @@ class UIHelper {
 
   static Widget getRegistrationTextField(
       BuildContext context,
-      Observable<String> stream,
+      Stream<String> stream,
       changed,
       String label,
       TextEditingController controller,
@@ -291,8 +291,8 @@ class UIHelper {
 
   static Widget getPasswordTextField(
       BuildContext context,
-      Observable<String> stream,
-      Observable<bool> showStream,
+      Stream<String> stream,
+      Stream<bool> showStream,
       String label,
       TextEditingController controller,
       TextInputType inputType,
@@ -362,7 +362,7 @@ class UIHelper {
   }
 
   static Widget getRegistrationDropdown(
-      List<String> list, Observable<String> stream, changed, bool addPadding) {
+      List<String> list, Stream<String> stream, changed, bool addPadding) {
     return StreamBuilder<String>(
         stream: stream,
         builder: (context, snapshot) {
@@ -407,7 +407,7 @@ class UIHelper {
   }
 
   static Widget getUnderlinedDropdown(
-      List<String> list, Observable<String> stream, changed, bool addPadding) {
+      List<String> list, Stream<String> stream, changed, bool addPadding) {
     return StreamBuilder<String>(
         stream: stream,
         builder: (context, snapshot) {
@@ -458,7 +458,7 @@ class UIHelper {
   }
 
   static Widget getCountryDropdown(
-      List<String> list, Observable<String> stream, changed, bool addPadding) {
+      List<String> list, Stream<String> stream, changed, bool addPadding) {
     return StreamBuilder<String>(
         stream: stream,
         builder: (context, snapshot) {
@@ -515,7 +515,7 @@ class UIHelper {
   static Widget getProfileOBUnitPhone(
       BuildContext context,
       String title,
-      Observable<String> stream,
+      Stream<String> stream,
       changed,
       TextEditingController controller,
       TextInputType inputType,
@@ -615,7 +615,7 @@ class UIHelper {
   static Widget getProfileOBUnit(
       BuildContext context,
       String title,
-      Observable<String> stream,
+      Stream<String> stream,
       changed,
       TextEditingController controller,
       TextInputType inputType,
@@ -718,7 +718,7 @@ class UIHelper {
   static Widget getProfileEmergencyUnit(
       BuildContext context,
       String hint,
-      Observable<String> stream,
+      Stream<String> stream,
       changed,
       TextEditingController controller,
       TextInputType inputType,

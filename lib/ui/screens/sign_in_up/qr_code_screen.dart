@@ -85,7 +85,7 @@ class _QRcodeScreenState extends State<QRcodeScreen> {
     try {
       List<Barcode> _currentBarcodeLabels;
 
-      ImagePicker.pickImage(source: ImageSource.gallery).then((file) async {
+      ImagePicker().getImage(source: ImageSource.gallery).then((file) async {
         ImageProperties properties =
             await FlutterNativeImage.getImageProperties(file.path);
 

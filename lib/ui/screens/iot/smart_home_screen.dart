@@ -33,8 +33,6 @@ class SmartHomeScreen extends StatefulWidget {
 }
 
 class _SmartHomeScreenState extends State<SmartHomeScreen> {
-  Future<MqttServerClient> _mqttServerClientFuture;
-  MqttServerClient _mqttServerClient;
   SmartHomeDataProvider _smartHomeDataProvider;
   bool _isConnected = false;
   bool _isConnecting = false;
@@ -113,11 +111,11 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
     });
 
     _iotTopicBloc.topicController.listen((event) {
-      if (_mqttServerClient.connectionStatus.returnCode ==
+/*       if (_mqttServerClient.connectionStatus.returnCode ==
           MqttConnectReturnCode.connectionAccepted) {
         _mqttServerClient.subscribe(event, MqttQos.exactlyOnce);
         _currentlySubscribedTopic = event;
-      }
+      } */
     });
 
     _iotServerBloc.controller.listen((event) {
@@ -141,7 +139,7 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
             return new IotTopic(topic: topic);
           }).toList();
         }
-        _connectWithMqttBroker(_selectedServer);
+        // _connectWithMqttBroker(_selectedServer);
       } else {
         // setState(() {
         //   _selectedServer = null;
@@ -150,7 +148,7 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
     });
   }
 
-  _connectWithMqttBroker(MqttSettingsItem config) {
+/*   _connectWithMqttBroker(MqttSettingsItem config) {
     _mqttServerClientFuture = _smartHomeDataProvider.connect(
         mqttServer: config.mqttServer,
         mqttIdentifier: config.mqttIdentifier,
@@ -189,7 +187,7 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
         );
       }
     });
-  }
+  } */
 
   @override
   void dispose() {
@@ -469,7 +467,7 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
             InkWell(
               onTap: () {
                 // send message to all topics
-                final builder1 = MqttClientPayloadBuilder();
+/*                 final builder1 = MqttClientPayloadBuilder();
                 // builder1.addInt(1);
                 if (_isLedOn) {
                   builder1.addString("0");
@@ -482,7 +480,7 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
                     "test/message", MqttQos.exactlyOnce, builder1.payload,
                     retain: true);
                 _mqttServerClient.subscribe(
-                    "test/message/status", MqttQos.exactlyOnce);
+                    "test/message/status", MqttQos.exactlyOnce); */
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -533,7 +531,7 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
           children: [
             InkWell(
               onTap: () {
-                // send message to all topics
+/*                 // send message to all topics
                 final builder1 = MqttClientPayloadBuilder();
                 // builder1.addInt(1);
                 if (!ledStatus) {
@@ -550,7 +548,7 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
                       retain: false);
                 } else {
                   debugPrint('mqttaApp not connected');
-                }
+                } */
               },
               child: Ink(
                 child: Container(
@@ -667,7 +665,7 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
   }
 
   Widget _getTopicsDropdown(
-      List<String> list, Observable<String> stream, changed, bool addPadding,
+      List<String> list, Stream<String> stream, changed, bool addPadding,
       {String label = 'Label'}) {
     ScreenUtil _util = ScreenUtil();
     return StreamBuilder<String>(
