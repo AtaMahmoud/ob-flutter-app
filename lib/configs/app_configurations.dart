@@ -3,6 +3,7 @@ import 'package:ocean_builder/configs/config_reader.dart';
 class Config {
   static const int CONNECTION_TIME_OUT = 10000 * 5;
   static const int READ_TIME_OUT = 10000 * 5;
+  static const String BASE_URL = 'https://oceanbuilders.herokuapp.com';
 
   static String STORM_GLASS_API_KEY = ConfigReader.getStormGlassApiKey();
 

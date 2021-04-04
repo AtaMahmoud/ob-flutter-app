@@ -137,14 +137,28 @@ class TextFieldHints {
   static String YOUR_SEAPOD_NAME = 'Your SeaPod Name';
 
   static String NAME_YOUR_SEAPOD = 'NAME YOUR SEAPOD';
+
+  static String MQTT_SERVER = 'Server';
+
+  static String MQTT_PORT = 'Port';
+
+  static String MQTT_IDENTIFIER = 'Identifier';
+
+  static String MQTT_USER = 'User';
+
+  static String MQTT_PASSWORD = 'Password';
+
+  static String MQTT_TOPIC = 'Topic';
 }
 
 class InputTypes {
   static const NUMBER =
       TextInputType.numberWithOptions(decimal: false, signed: false);
   static const EMAIL = TextInputType.emailAddress;
-  
+
   static const PHONE = TextInputType.phone;
+
+  static const TEXT = TextInputType.text;
 }
 
 class InfoTexts {
@@ -188,6 +202,7 @@ class ButtonText {
 class ScreenTitle {
   static const LANDING_SCREEN = 'Landing Screen';
   static const HOME = 'Home';
+  static const SMART_HOME = 'Smart Home';
   static const DASHBOARD = 'Dashboard';
   static const REGISTER = 'Register';
   static const LOGIN = 'Login';
@@ -252,6 +267,10 @@ class ScreenTitle {
   static String CREATE_PERMISSION = 'Create New';
   static String EDIT_PERMISSION = 'Edit Permissions';
   static String CUSTOMIZE_PERMISSION = 'Customize Permissions';
+
+  static String SMART_HOME_SETTINGS = 'Smart Home Settings';
+
+  static String LIGHTS = 'Lights';
 }
 
 class ListHelper {
@@ -1248,6 +1267,13 @@ class AppStrings {
   static String humidity = 'Humidity';
 
   static String chanceOfRain = 'Chance of Rain';
+
+  static String smartHome = 'Smart Home';
+
+  static String smartHome_local_server = 'Smart Home(Server)';
+
+  static String smartHomeMessage =
+      'Get latest update\nand control your\nseapod devices';
 
   static String checkYourInbox = 'Check your inbox';
 
