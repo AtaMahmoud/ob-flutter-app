@@ -6,6 +6,7 @@ import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/providers/user_data_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/ui/screens/designSteps/design_screen.dart';
+import 'package:ocean_builder/ui/screens/iot/light_control_screen.dart';
 import 'package:ocean_builder/ui/screens/iot/smart_home_screen.dart';
 import 'package:ocean_builder/ui/screens/iot/smart_home_screen_node_js.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/login_screen.dart';
@@ -65,6 +66,17 @@ class _LandingScreenState extends State<LandingScreen> {
                 : _loginToDashboard(),
             _requestOrAcceptAccess(),
             _design(),
+            InkWell(
+              child: Padding(
+                padding: EdgeInsets.all(32.w),
+                child: UIHelper.imageTextColumn(
+                    ImagePaths.svgSeapod, ScreenTitle.LIGHTS),
+              ),
+              onTap: () {
+                Navigator.of(context)
+                    .pushNamed(LightControllerScreen.routeName);
+              },
+            ),
             InkWell(
               child: Padding(
                 padding: EdgeInsets.all(ScreenUtil().setWidth(32)),
@@ -140,7 +152,6 @@ class _LandingScreenState extends State<LandingScreen> {
       enableSkipLogin: true,
     );
   }
-
 
   _showAddOBDialog(UserProvider userProvider, BuildContext cntxt) {
     Alert(

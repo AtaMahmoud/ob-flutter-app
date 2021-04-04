@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:ocean_builder/core/providers/base_provider.dart';
+import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/core/repositories/smart_home_node_repository.dart';
 import 'package:ocean_builder/ui/screens/iot/model/light.dart';
+import 'package:ocean_builder/ui/screens/iot/repo/light_control_repo.dart';
 
-
-
-class LightControlDataProvider extends BaseProvider{
-
-
+class LightControlDataProvider extends BaseProvider {
   String _receivedText = '';
   String _historyText = '';
   List<Light> _lightDataList = [];
@@ -22,7 +20,6 @@ class LightControlDataProvider extends BaseProvider{
     _historyText = _historyText + '\n\n' + _receivedText;
     notifyListeners();
   }
-
 
   void setSensorData(Light sensorData) {
     _lightDataList.add(sensorData);
@@ -39,84 +36,72 @@ class LightControlDataProvider extends BaseProvider{
   List<Light> get sensorDataList => _lightDataList;
   String get ledControl => _ledStatus;
 
-
 // nodejs server
 
-  SmartHomeServerRepository _smartHomeServerRepository =
-      SmartHomeServerRepository();
+  LightControlRepo _smartHomeServerRepository = LightControlRepo();
 
-  Future<List<Light>> fetchAllTopicsData() async {
+  Future<List<Light>> getAllLigts() async {
     notifyListeners();
-    List<Light> allTopicData = [];
+    List<Light> lights = [];
     try {
-      allTopicData = await _smartHomeServerRepository.getAllTopicData();
+      lights = await _smartHomeServerRepository.getLights();
       notifyListeners();
     } catch (e) {
       print(e.toString());
       notifyListeners();
     }
-    return allTopicData;
+    return lights;
   }
 
-  Future<List<Light>> fetchAllSensorData() async {
+  Future<Light> getLightById(int id) async {
     notifyListeners();
-    List<Light> allSensorData = [];
+    Light light = Light();
     try {
-      allSensorData = await _smartHomeServerRepository.getAllSensorData();
+      light = await _smartHomeServerRepository.getLightById(id);
       notifyListeners();
     } catch (e) {
       print(e.toString());
       notifyListeners();
     }
-    return allSensorData;
+    return light;
   }
 
-  Future<List<Light>> fetchSensorDataById(int id) async {
+  Future<ResponseStatus> addnewLight(Light light) async {
     notifyListeners();
-    List<Light> allSensorData = [];
+    var response;
     try {
-      allSensorData = await _smartHomeServerRepository.getSensorDataById(id);
+      response = await _smartHomeServerRepository.addLight(light);
       notifyListeners();
     } catch (e) {
       print(e.toString());
       notifyListeners();
     }
-    return allSensorData;
+    return response;
   }
 
-  Future<List<Light>> fetchSensorDataByTopic(String topic) async {
+  Future<ResponseStatus> updateLight(Light light) async {
     notifyListeners();
-    List<Light> allSensorData = [];
-    topic = topic.replaceAll(new RegExp(r'\/'), '%2F');
-    debugPrint('Parsed topic ----- $topic');
+    var response;
     try {
-      allSensorData =
-          await _smartHomeServerRepository.getSensorDataByTopic(topic);
+      response = await _smartHomeServerRepository.updateLight(light);
       notifyListeners();
     } catch (e) {
       print(e.toString());
       notifyListeners();
     }
-    return allSensorData;
+    return response;
   }
 
-  Future<List<Light>> fetchSensorDataBetweenDates(
-      String topic, String startDate, String endDate) async {
-    notifyListeners(); 
-    List<Light> allSensorData = [];
-    topic = topic.replaceAll(new RegExp(r'\/'), '%2F');
-    debugPrint('Parsed topic ----- $topic');
-
+  Future<ResponseStatus> deleteLight(int id) async {
+    notifyListeners();
+    ResponseStatus responseStatus;
     try {
-      allSensorData = await _smartHomeServerRepository
-          .getTopicsDataBetweenDates(topic, startDate, endDate);
+      responseStatus = await _smartHomeServerRepository.deleteLight(id);
       notifyListeners();
     } catch (e) {
       print(e.toString());
       notifyListeners();
     }
-    return allSensorData;
+    return responseStatus;
   }
-
-  
 }

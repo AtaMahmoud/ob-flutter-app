@@ -35,6 +35,7 @@ import 'package:ocean_builder/core/services/locator.dart';
 import 'package:ocean_builder/core/services/navigation_service.dart';
 import 'package:ocean_builder/router.dart' as obRoute;
 import 'package:ocean_builder/splash/splash_screen.dart';
+import 'package:ocean_builder/ui/screens/iot/light_control_data_provider.dart';
 import 'package:ocean_builder/ui/screens/sign_in_up/email_verification_screen.dart';
 import 'package:ocean_builder/ui/shared/no_internet_flush_bar.dart';
 import 'package:ocean_builder/ui/widgets/ui_helper.dart';
@@ -184,14 +185,17 @@ class _MyAppState extends State<MyApp> {
           create: (context) => SmartHomeDataProvider(),
         ),
         ChangeNotifierProvider(
+          create: (context) => LightControlDataProvider(),
+        ),
+        ChangeNotifierProvider(
           create: (context) => MqttSettingsProvider(),
         )
         // Provider<FirebaseAnalytics>.value(value: analytics),
         // Provider<FirebaseAnalyticsObserver>.value(value: observer),
       ],
       child: ScreenUtilInit(
-        designSize: Size(1080, 1960),
-        allowFontScaling: false,
+          designSize: Size(1080, 1960),
+          allowFontScaling: false,
           builder: () => MaterialApp(
                 debugShowCheckedModeBanner: false,
                 title: 'Ocean Builders',

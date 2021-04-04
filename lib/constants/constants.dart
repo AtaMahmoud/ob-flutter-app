@@ -269,6 +269,8 @@ class ScreenTitle {
   static String CUSTOMIZE_PERMISSION = 'Customize Permissions';
 
   static String SMART_HOME_SETTINGS = 'Smart Home Settings';
+
+  static String LIGHTS = 'Lights';
 }
 
 class ListHelper {

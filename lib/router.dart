@@ -35,6 +35,7 @@ import 'package:ocean_builder/ui/screens/designSteps/livingroom_wall_color_scree
 import 'package:ocean_builder/ui/screens/designSteps/master_bedroom_floor_finishing_screen.dart';
 import 'package:ocean_builder/ui/screens/designSteps/master_bedroom_wall_color_screen.dart';
 import 'package:ocean_builder/ui/screens/designSteps/power_screen.dart';
+import 'package:ocean_builder/ui/screens/iot/light_control_screen.dart';
 import 'package:ocean_builder/ui/screens/iot/smart_home_settings_screen.dart';
 import 'package:ocean_builder/ui/screens/iot/smart_home_screen.dart';
 import 'package:ocean_builder/ui/screens/iot/smart_home_screen_node_js.dart';
@@ -96,6 +97,10 @@ class Router {
       case SmartHomeScreenNodeServer.routeName:
         return CupertinoPageRoute(
             builder: (_) => SmartHomeScreenNodeServer(),
+            settings: RouteSettings(name: SmartHomeScreenNodeServer.routeName));
+      case LightControllerScreen.routeName:
+        return CupertinoPageRoute(
+            builder: (_) => LightControllerScreen(),
             settings: RouteSettings(name: SmartHomeScreenNodeServer.routeName));
       // case SwiperContainerScreen.routeName:
       //   return CupertinoPageRoute(
