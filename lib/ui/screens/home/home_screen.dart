@@ -2,7 +2,6 @@ import 'dart:math';
 
 // import 'package:firebase_analytics/firebase_analytics.dart';
 // import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_circular_slider/flutter_circular_slider.dart';
 import 'package:flutter_inner_drawer/inner_drawer.dart';

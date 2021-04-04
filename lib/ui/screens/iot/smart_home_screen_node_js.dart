@@ -60,7 +60,7 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
       //     Provider.of<SmartHomeDataProvider>(context).fetchSensorDataById(1);
       // _last3dayssensorData = Provider.of<SmartHomeDataProvider>(context)
       //     .fetchSensorDataLast3Days();
-      Provider.of<SmartHomeDataProvider>(context)
+      Provider.of<SmartHomeDataProvider>(context,listen: false)
           .fetchAllTopicsData()
           .then((topicList) {
         _topicList = topicList;
@@ -76,10 +76,10 @@ class _SmartHomeScreenNodeServerState extends State<SmartHomeScreenNodeServer> {
           _toDateTime.length > 0 &&
           topic != null &&
           topic.length > 1) {
-        _sensorDataBetweenDates = Provider.of<SmartHomeDataProvider>(context)
+        _sensorDataBetweenDates = Provider.of<SmartHomeDataProvider>(context,listen: false)
             .fetchSensorDataBetweenDates(topic, _fromDateTime, _toDateTime);
       } else if (topic != null && topic.length > 1) {
-        _sensorDataById = Provider.of<SmartHomeDataProvider>(context)
+        _sensorDataById = Provider.of<SmartHomeDataProvider>(context,listen: false)
             .fetchSensorDataByTopic(topic);
       }
     });

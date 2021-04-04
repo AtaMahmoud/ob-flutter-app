@@ -270,7 +270,7 @@ packages:
     source: hosted
     version: "6.1.0"
   firebase_core:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: firebase_core
       url: "https://pub.flutter-io.cn"
@@ -290,20 +290,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.2"
-  firebase_crashlytics:
-    dependency: "direct main"
-    description:
-      name: firebase_crashlytics
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "1.0.0"
-  firebase_crashlytics_platform_interface:
-    dependency: transitive
-    description:
-      name: firebase_crashlytics_platform_interface
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "2.0.0"
   firebase_messaging:
     dependency: "direct main"
     description:

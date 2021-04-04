@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'dart:async';
-
+import 'package:firebase_core/firebase_core.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' as service;
 import 'package:flutter/services.dart';
@@ -51,6 +52,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Load the JSON config into memory
   await ConfigReader.initialize();
+  await Firebase.initializeApp();
   new FirebaseNotifications().setUpFirebase();
   setupLocator();
 
@@ -113,7 +115,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil();
     service.SystemChrome.setPreferredOrientations([
       service.DeviceOrientation.portraitUp,
       service.DeviceOrientation.portraitDown,
@@ -188,17 +189,20 @@ class _MyAppState extends State<MyApp> {
         // Provider<FirebaseAnalytics>.value(value: analytics),
         // Provider<FirebaseAnalyticsObserver>.value(value: observer),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Ocean Builders',
-        // navigatorObservers: <NavigatorObserver>[
-        // observer
-        // ],
-        theme: ThemeData(fontFamily: 'Archivo'),
-        navigatorKey: locator<NavigationService>().navigatorKey,
-        initialRoute: obRoute.initialRoute,
-        onGenerateRoute: obRoute.Router.generateRoute,
-      ),
+      child: ScreenUtilInit(
+        designSize: Size(1080, 1960),
+        allowFontScaling: false,
+          builder: () => MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'Ocean Builders',
+                // navigatorObservers: <NavigatorObserver>[
+                // observer
+                // ],
+                theme: ThemeData(fontFamily: 'Archivo'),
+                navigatorKey: locator<NavigationService>().navigatorKey,
+                initialRoute: obRoute.initialRoute,
+                onGenerateRoute: obRoute.Router.generateRoute,
+              )),
     );
   }
 

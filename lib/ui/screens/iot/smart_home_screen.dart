@@ -199,7 +199,7 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
   @override
   Widget build(BuildContext context) {
     GlobalContext.currentScreenContext = context;
-    _smartHomeDataProvider = Provider.of<SmartHomeDataProvider>(context);
+    _smartHomeDataProvider = Provider.of<SmartHomeDataProvider>(context,listen: false);
     _mqttSettingsProvider =
         Provider.of<MqttSettingsProvider>(context, listen: false);
     return Scaffold(
@@ -229,9 +229,9 @@ class _SmartHomeScreenState extends State<SmartHomeScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    _selectedServer != null && _isConnected
-                        ? _controllContainer()
-                        : Container(),
+                    /* _selectedServer != null && _isConnected
+                        ?  */_controllContainer()
+                       /*  : Container() */,
                     BottomClipper(ButtonText.BACK, '', goBack, () {},
                         isNextEnabled: false),
                   ],
