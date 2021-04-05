@@ -95,7 +95,7 @@ class _WeatherMoreWidgetState extends State<WeatherMoreWidget> {
 
   Positioned _topBar() {
     return Positioned(
-      top: ScreenUtil.statusBarHeight,
+      top: ScreenUtil().statusBarHeight,
       left: 0,
       right: 0,
       child: Container(
@@ -184,7 +184,7 @@ class _WeatherMoreWidgetState extends State<WeatherMoreWidget> {
 
   _startSpace() {
     return UIHelper.getTopEmptyContainerWithColor(
-        ScreenUtil.statusBarHeight * 4, Colors.white);
+        ScreenUtil().statusBarHeight * 4, Colors.white);
   }
 
   Widget _shortTermLongTerm() {

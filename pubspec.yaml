@@ -11,7 +11,7 @@ description: Ocean Builder Project.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.7.0+15
+version: 0.7.0+16
 
 environment:
   sdk: ">=2.6.0 <3.0.0"
@@ -47,7 +47,7 @@ dependencies:
   # flushbar: ^1.10.2
   another_flushbar: ^1.10.17
   flutter_svg: ^0.19.3
-  flutter_screenutil: ^1.1.0
+  flutter_screenutil: ^4.0.4+1
   rflutter_alert: ^1.0.3
   flutter_statusbarcolor: ^0.2.3
   flutter_3d_obj: ^0.0.6

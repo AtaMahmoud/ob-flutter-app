@@ -66,7 +66,7 @@ class _CameraScreenState extends State<CameraScreen> {
               CustomScrollView(
                 slivers: <Widget>[
                   UIHelper.getTopEmptyContainerWithColor(
-                      ScreenUtil.statusBarHeight * 3, Colors.white),
+                      ScreenUtil().statusBarHeight * 3, Colors.white),
                   _selectRoomText(),
                   _cameraSlider(),
                   _camerasRow(),
@@ -83,7 +83,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
   Positioned _topBar() {
     return Positioned(
-      top: ScreenUtil.statusBarHeight,
+      top: ScreenUtil().statusBarHeight,
       left: 0,
       right: 0,
       child: Container(

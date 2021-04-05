@@ -39,6 +39,8 @@ class Config {
   static const REG_WITH_SEAPOD_CREATION =
       'https://oceanbuilders.herokuapp.com/v1/api/auth';
 
+  static var IOT_SERVER_API_KEY;
+
   static String EMAIL_CONFIRMATION(String token) =>
       'https://oceanbuilders.herokuapp.com/v1/api/auth/confirmation/$token';
 

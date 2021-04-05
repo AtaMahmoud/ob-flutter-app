@@ -41,7 +41,7 @@ class _BottomClipperState extends State<BottomClipper> {
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
                     0.0,
-                    ((screenSize.height * bottomClipperRatio) - 15) / 2,
+                    ((screenSize.height * bottomClipperRatio) - 4) / 2,
                     0.0,
                     48.h),
                 // padding: EdgeInsets.symmetric(vertical: 72.h),

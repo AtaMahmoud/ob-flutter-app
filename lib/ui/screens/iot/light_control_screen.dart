@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper.dart';
 import 'package:ocean_builder/ui/screens/iot/light_control_data_provider.dart';
@@ -37,8 +38,9 @@ class _LightControllerScreenState extends State<LightControllerScreen> {
                 ),
                 Expanded(
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 64.w),
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
                     child: CustomScrollView(
+                      scrollDirection: Axis.vertical,
                       slivers: [
                         SliverToBoxAdapter(
                           child: SpaceH32(),
@@ -52,42 +54,23 @@ class _LightControllerScreenState extends State<LightControllerScreen> {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
                                 return SliverToBoxAdapter(
-                                  child: Center(
-                                    child: Container(
-                                      padding: EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          color:
-                                              ColorConstants.TOP_CLIPPER_START),
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                  ),
+                                  child: _progressIndicitaorView(),
                                 );
                               }
 
-                              if (snapshot.hasData) {
-                                return Container(
-                                  child: GridView.builder(
-                                    itemCount: snapshot.data.length,
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: (orientation ==
-                                                    Orientation.portrait)
-                                                ? 2
-                                                : 3),
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return new Card(
-                                        child: new GridTile(
-                                          footer: new Text(
-                                              snapshot.data[index].desc),
-                                          child: new Text(snapshot.data[index]
-                                              .ata), //just for testing, will fill with image later
-                                        ),
-                                      );
-                                    },
-                                  ),
+                              if (snapshot.hasData &&
+                                  snapshot.data.length > 0) {
+                                return SliverGrid(
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: (orientation ==
+                                                  Orientation.portrait)
+                                              ? 2
+                                              : 3),
+                                  delegate: SliverChildBuilderDelegate(
+                                      (BuildContext context, int index) {
+                                    return _lightItemView(snapshot, index);
+                                  }, childCount: snapshot.data.length),
                                 );
                               }
 
@@ -109,6 +92,55 @@ class _LightControllerScreenState extends State<LightControllerScreen> {
                   )
                 : Container()
           ],
+        ),
+      ),
+    );
+  }
+
+  Center _progressIndicitaorView() {
+    return Center(
+      child: Container(
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: ColorConstants.TOP_CLIPPER_START_DARK.withOpacity(.9)),
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  Card _lightItemView(AsyncSnapshot<List<Light>> snapshot, int index) {
+    return new Card(
+      shape: BeveledRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      color: ColorConstants.BCKG_COLOR_END,
+      child: new GridTile(
+        child: Column(
+          children: [
+            Container(
+                padding: EdgeInsets.all(4),
+                child: SvgPicture.asset(
+                  ImagePaths.svgBulbLarge,
+                  width: 192.w,
+                  // height: 48.w,
+                  color: Color(snapshot.data[index].color),
+                  fit: BoxFit.cover,
+                  cacheColorFilter: true,
+                  allowDrawingOutsideViewBox: true,
+                  alignment: Alignment.center,
+                  matchTextDirection: true,
+                )),
+            Container(
+                child: Padding(
+              padding: const EdgeInsets.only(top: 32.0),
+              child: new Text(snapshot.data[index].ata),
+            )),
+          ],
+        ),
+        footer: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: new Text(snapshot.data[index].status.toString()),
         ),
       ),
     );

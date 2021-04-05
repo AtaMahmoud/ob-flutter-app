@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:ocean_builder/core/providers/base_provider.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
-import 'package:ocean_builder/core/repositories/smart_home_node_repository.dart';
 import 'package:ocean_builder/ui/screens/iot/model/light.dart';
+import 'package:ocean_builder/ui/screens/iot/repo/device_control_repo.dart';
+import 'package:ocean_builder/ui/screens/iot/repo/light_control__demo_repo.dart';
 import 'package:ocean_builder/ui/screens/iot/repo/light_control_repo.dart';
 
 class LightControlDataProvider extends BaseProvider {
@@ -37,18 +37,18 @@ class LightControlDataProvider extends BaseProvider {
   String get ledControl => _ledStatus;
 
 // nodejs server
-
-  LightControlRepo _smartHomeServerRepository = LightControlRepo();
+// use demo data provider for now
+  DeviceControlRepo _smartHomeServerRepository = LightControlDemoRepo();
 
   Future<List<Light>> getAllLigts() async {
-    notifyListeners();
+    // notifyListeners();
     List<Light> lights = [];
     try {
       lights = await _smartHomeServerRepository.getLights();
       notifyListeners();
     } catch (e) {
       print(e.toString());
-      notifyListeners();
+      // notifyListeners();
     }
     return lights;
   }

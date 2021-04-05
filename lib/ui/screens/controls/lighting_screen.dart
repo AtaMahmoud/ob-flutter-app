@@ -143,11 +143,11 @@ class _LightingScreenState extends State<LightingScreen> {
     _bloc.lightSceneController.listen((onData) {
       _renameTextController.text = onData;
       // isSeaPodSourceSelected
-      if(_selectedScene == null)
-      isSeaPodSourceSelected = false;
+      if (_selectedScene == null)
+        isSeaPodSourceSelected = false;
       else
-      isSeaPodSourceSelected =
-          _selectedScene.source.compareTo('seapod') == 0 ?? false;
+        isSeaPodSourceSelected =
+            _selectedScene.source.compareTo('seapod') == 0 ?? false;
     });
   }
 
@@ -201,7 +201,7 @@ class _LightingScreenState extends State<LightingScreen> {
               CustomScrollView(
                 slivers: <Widget>[
                   UIHelper.getTopEmptyContainerWithColor(
-                      ScreenUtil.statusBarHeight + 160.h, Colors.white),
+                      ScreenUtil().statusBarHeight + 160.h, Colors.white),
                   SliverPadding(
                     padding: EdgeInsets.only(
                       top: 8.h,
@@ -249,7 +249,7 @@ class _LightingScreenState extends State<LightingScreen> {
 
   Positioned _topBar() {
     return Positioned(
-      top: ScreenUtil.statusBarHeight,
+      top: ScreenUtil().statusBarHeight,
       left: 0,
       right: 0,
       child: Container(

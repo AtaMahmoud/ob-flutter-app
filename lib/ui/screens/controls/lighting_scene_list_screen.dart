@@ -161,7 +161,7 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
 
   Positioned _topBar() {
     return Positioned(
-      top: ScreenUtil.statusBarHeight,
+      top: ScreenUtil().statusBarHeight,
       left: 0,
       right: 0,
       child: Container(
@@ -279,7 +279,7 @@ class _LightingSceneListScreenState extends State<LightingSceneListScreen> {
 
   _topEmptyContainerWithColor() {
     return UIHelper.getTopEmptyContainerWithColor(
-        ScreenUtil.statusBarHeight + 160.h, Colors.white);
+        ScreenUtil().statusBarHeight + 160.h, Colors.white);
   }
 
   _rowItem(int index) {

@@ -6,8 +6,9 @@ import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/helper/api_base_helper.dart';
 import 'package:ocean_builder/helper/app_exception.dart';
 import 'package:ocean_builder/ui/screens/iot/model/light.dart';
+import 'package:ocean_builder/ui/screens/iot/repo/device_control_repo.dart';
 
-class LightControlRepo {
+class LightControlRepo extends DeviceControlRepo {
   ApiBaseHelper _apiBaseHelper = ApiBaseHelper();
 
   String _crudLight = '${Config.BASE_URL}/api/light';

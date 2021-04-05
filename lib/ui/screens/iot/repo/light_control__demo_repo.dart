@@ -1,13 +1,15 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:ocean_builder/configs/app_configurations.dart';
 import 'package:ocean_builder/core/providers/user_provider.dart';
 import 'package:ocean_builder/helper/api_base_helper.dart';
 import 'package:ocean_builder/helper/app_exception.dart';
 import 'package:ocean_builder/ui/screens/iot/model/light.dart';
+import 'package:ocean_builder/ui/screens/iot/repo/device_control_repo.dart';
 
-class LightControlDemoRepo {
+class LightControlDemoRepo extends DeviceControlRepo {
   List<Light> lightList = [
     Light(
         id: 1,
@@ -15,7 +17,7 @@ class LightControlDemoRepo {
         desc: "Middle Hallway",
         type: "strip",
         group: "hallways",
-        color: 0x000000,
+        color: Colors.red.value,
         ata: "ATA 32 00-100-125"),
     Light(
         id: 2,
@@ -23,7 +25,7 @@ class LightControlDemoRepo {
         desc: "Middle Hallway",
         type: "strip",
         group: "hallways",
-        color: 0x000000,
+        color: Colors.green.value,
         ata: "ATA 32 00-100-125"),
     Light(
         id: 3,
@@ -31,7 +33,7 @@ class LightControlDemoRepo {
         desc: "Middle Hallway",
         type: "strip",
         group: "hallways",
-        color: 0x000000,
+        color: Colors.blue.value,
         ata: "ATA 32 00-100-125"),
     Light(
         id: 4,
@@ -39,7 +41,39 @@ class LightControlDemoRepo {
         desc: "Middle Hallway",
         type: "strip",
         group: "hallways",
-        color: 0x000000,
+        color: Colors.orange.value,
+        ata: "ATA 32 00-100-125"),
+    Light(
+        id: 5,
+        status: true,
+        desc: "Middle Hallway",
+        type: "strip",
+        group: "hallways",
+        color: Colors.yellow.value,
+        ata: "ATA 32 00-100-125"),
+    Light(
+        id: 6,
+        status: true,
+        desc: "Middle Hallway",
+        type: "strip",
+        group: "hallways",
+        color: Colors.cyan.value,
+        ata: "ATA 32 00-100-125"),
+    Light(
+        id: 7,
+        status: true,
+        desc: "Middle Hallway",
+        type: "strip",
+        group: "hallways",
+        color: Colors.amber.value,
+        ata: "ATA 32 00-100-125"),
+    Light(
+        id: 8,
+        status: true,
+        desc: "Middle Hallway",
+        type: "strip",
+        group: "hallways",
+        color: Colors.brown.value,
         ata: "ATA 32 00-100-125"),
   ];
   Future<List<Light>> getLights() async {
