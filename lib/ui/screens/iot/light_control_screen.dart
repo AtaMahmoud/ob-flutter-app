@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ocean_builder/constants/constants.dart';
+import 'package:ocean_builder/core/colorpicker/flutter_hsvcolor_picker.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper.dart';
 import 'package:ocean_builder/ui/screens/iot/light_control_data_provider.dart';
 import 'package:ocean_builder/ui/screens/iot/model/light.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
 import 'package:ocean_builder/ui/widgets/space_widgets.dart';
 import 'package:provider/provider.dart';
+import 'dart:math' as math;
 
 class LightControllerScreen extends StatefulWidget {
   static const String routeName = '/light_screen';
@@ -69,7 +71,7 @@ class _LightControllerScreenState extends State<LightControllerScreen> {
                                               : 3),
                                   delegate: SliverChildBuilderDelegate(
                                       (BuildContext context, int index) {
-                                    return _lightItemView(snapshot, index);
+                                    return LightIItem(snapshot.data[index]);
                                   }, childCount: snapshot.data.length),
                                 );
                               }
@@ -109,7 +111,32 @@ class _LightControllerScreenState extends State<LightControllerScreen> {
     );
   }
 
-  Card _lightItemView(AsyncSnapshot<List<Light>> snapshot, int index) {
+  goBack() {
+    Navigator.pop(context);
+  }
+}
+
+class LightIItem extends StatefulWidget {
+  final Light light;
+  const LightIItem(
+    this.light, {
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _LightIItemState createState() => _LightIItemState();
+}
+
+class _LightIItemState extends State<LightIItem> {
+  Light light;
+  @override
+  void initState() {
+    super.initState();
+    this.light = widget.light;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return new Card(
       shape: BeveledRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -117,36 +144,112 @@ class _LightControllerScreenState extends State<LightControllerScreen> {
       color: ColorConstants.BCKG_COLOR_END,
       child: new GridTile(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            SpaceH32(),
+            Expanded(
+              flex: 4,
+              child: Container(
+                  child: SvgPicture.asset(
+                ImagePaths.svgBulbLarge,
+                color: light.status ? Color(light.color) : Colors.grey,
+                fit: BoxFit.fitHeight,
+                cacheColorFilter: true,
+                allowDrawingOutsideViewBox: true,
+                alignment: Alignment.center,
+                matchTextDirection: true,
+              )),
+            ),
             Container(
-                padding: EdgeInsets.all(4),
-                child: SvgPicture.asset(
-                  ImagePaths.svgBulbLarge,
-                  width: 192.w,
-                  // height: 48.w,
-                  color: Color(snapshot.data[index].color),
-                  fit: BoxFit.cover,
-                  cacheColorFilter: true,
-                  allowDrawingOutsideViewBox: true,
-                  alignment: Alignment.center,
-                  matchTextDirection: true,
-                )),
-            Container(
-                child: Padding(
-              padding: const EdgeInsets.only(top: 32.0),
-              child: new Text(snapshot.data[index].ata),
-            )),
+              child: Listener(
+                onPointerUp: (event) {
+                  this.light.status = !this.light.status;
+                  Provider.of<LightControlDataProvider>(context, listen: false)
+                      .updateLight(this.light)
+                      .then((value) {
+                    setState(() {});
+                  });
+                },
+                child: CustomPaint(
+                  size: Size.square(32),
+                  painter: new SwitchPainter(isSwitchOn: this.light.status),
+                ),
+              ),
+            ),
+            SpaceH32()
+            // Container(
+            //     child: Center(
+            //   child: Padding(
+            //     padding: const EdgeInsets.only(top: 32.0),
+            //     child: new Text(light.ata),
+            //   ),
+            // )),
           ],
         ),
         footer: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: new Text(snapshot.data[index].status.toString()),
+          child: new Text(light.id.toString()),
         ),
       ),
     );
   }
+}
 
-  goBack() {
-    Navigator.pop(context);
+class SwitchPainter extends CustomPainter {
+  bool isSwitchOn = true;
+  SwitchPainter({this.isSwitchOn});
+  @override
+  void paint(Canvas canvas, Size size) {
+    var arcPaint = Paint()
+      ..color = Colors.black.withAlpha(50)
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    var controllBarPaint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+    Path path = new Path();
+    path.moveTo(size.width * .4, 0);
+    path.lineTo(size.width * .6, 0);
+    path.lineTo(size.width * .6, size.height);
+    path.lineTo(size.width * .4, size.height);
+    path.close();
+
+    Path swithcOffPath = new Path();
+    swithcOffPath.moveTo(size.width * .4, size.height * .7);
+    swithcOffPath.lineTo(size.width * .6, size.height * .7);
+    swithcOffPath.lineTo(size.width * .6, size.height);
+    swithcOffPath.lineTo(size.width * .4, size.height);
+    swithcOffPath.close();
+
+    Path swithcOnPath = new Path();
+
+    swithcOnPath.moveTo(size.width * .4, size.height * .3);
+    swithcOnPath.lineTo(size.width * .6, size.height * .3);
+    swithcOnPath.lineTo(size.width * .6, 0);
+    swithcOnPath.lineTo(size.width * .4, 0);
+
+    swithcOnPath.close();
+
+    if (isSwitchOn) {
+      // canvas.save();
+      // canvas.rotate(math.pi * 2);
+      canvas.drawPath(swithcOnPath, controllBarPaint);
+      canvas.drawShadow(swithcOnPath, Colors.black.withAlpha(255), 2.0, true);
+      // canvas.restore();
+    } else {
+      canvas.drawPath(swithcOffPath, controllBarPaint);
+      canvas.drawShadow(swithcOffPath, Colors.black.withAlpha(255), 2.0, true);
+    }
+
+    canvas.drawPath(path, arcPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
   }
 }

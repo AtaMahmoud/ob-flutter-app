@@ -7,8 +7,8 @@ class SharedPrefHelper {
     final prefs = await SharedPreferences.getInstance();
     bool isFirstRun = false;
     if (prefs.getBool('first_run') ?? true) {
-      // FlutterSecureStorage storage = FlutterSecureStorage();
-      // await storage.deleteAll();
+      FlutterSecureStorage storage = FlutterSecureStorage();
+      await storage.deleteAll();
       isFirstRun = true;
       prefs.setBool('first_run', false);
     } else {

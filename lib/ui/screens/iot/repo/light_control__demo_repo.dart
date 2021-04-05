@@ -9,73 +9,74 @@ import 'package:ocean_builder/helper/app_exception.dart';
 import 'package:ocean_builder/ui/screens/iot/model/light.dart';
 import 'package:ocean_builder/ui/screens/iot/repo/device_control_repo.dart';
 
+List<Light> lightList = [
+  Light(
+      id: 1,
+      status: true,
+      desc: "Middle Hallway",
+      type: "strip",
+      group: "hallways",
+      color: Colors.red.value,
+      ata: "ATA 32 00-100-125"),
+  Light(
+      id: 2,
+      status: false,
+      desc: "Middle Hallway",
+      type: "strip",
+      group: "hallways",
+      color: Colors.green.value,
+      ata: "ATA 32 00-100-125"),
+  Light(
+      id: 3,
+      status: true,
+      desc: "Middle Hallway",
+      type: "strip",
+      group: "hallways",
+      color: Colors.blue.value,
+      ata: "ATA 32 00-100-125"),
+  Light(
+      id: 4,
+      status: false,
+      desc: "Middle Hallway",
+      type: "strip",
+      group: "hallways",
+      color: Colors.orange.value,
+      ata: "ATA 32 00-100-125"),
+  Light(
+      id: 5,
+      status: true,
+      desc: "Middle Hallway",
+      type: "strip",
+      group: "hallways",
+      color: Colors.yellow.value,
+      ata: "ATA 32 00-100-125"),
+  Light(
+      id: 6,
+      status: false,
+      desc: "Middle Hallway",
+      type: "strip",
+      group: "hallways",
+      color: Colors.cyan.value,
+      ata: "ATA 32 00-100-125"),
+  Light(
+      id: 7,
+      status: true,
+      desc: "Middle Hallway",
+      type: "strip",
+      group: "hallways",
+      color: Colors.amber.value,
+      ata: "ATA 32 00-100-125"),
+  Light(
+      id: 8,
+      status: true,
+      desc: "Middle Hallway",
+      type: "strip",
+      group: "hallways",
+      color: Colors.brown.value,
+      ata: "ATA 32 00-100-125"),
+];
+
 class LightControlDemoRepo extends DeviceControlRepo {
-  List<Light> lightList = [
-    Light(
-        id: 1,
-        status: true,
-        desc: "Middle Hallway",
-        type: "strip",
-        group: "hallways",
-        color: Colors.red.value,
-        ata: "ATA 32 00-100-125"),
-    Light(
-        id: 2,
-        status: true,
-        desc: "Middle Hallway",
-        type: "strip",
-        group: "hallways",
-        color: Colors.green.value,
-        ata: "ATA 32 00-100-125"),
-    Light(
-        id: 3,
-        status: true,
-        desc: "Middle Hallway",
-        type: "strip",
-        group: "hallways",
-        color: Colors.blue.value,
-        ata: "ATA 32 00-100-125"),
-    Light(
-        id: 4,
-        status: true,
-        desc: "Middle Hallway",
-        type: "strip",
-        group: "hallways",
-        color: Colors.orange.value,
-        ata: "ATA 32 00-100-125"),
-    Light(
-        id: 5,
-        status: true,
-        desc: "Middle Hallway",
-        type: "strip",
-        group: "hallways",
-        color: Colors.yellow.value,
-        ata: "ATA 32 00-100-125"),
-    Light(
-        id: 6,
-        status: true,
-        desc: "Middle Hallway",
-        type: "strip",
-        group: "hallways",
-        color: Colors.cyan.value,
-        ata: "ATA 32 00-100-125"),
-    Light(
-        id: 7,
-        status: true,
-        desc: "Middle Hallway",
-        type: "strip",
-        group: "hallways",
-        color: Colors.amber.value,
-        ata: "ATA 32 00-100-125"),
-    Light(
-        id: 8,
-        status: true,
-        desc: "Middle Hallway",
-        type: "strip",
-        group: "hallways",
-        color: Colors.brown.value,
-        ata: "ATA 32 00-100-125"),
-  ];
   Future<List<Light>> getLights() async {
     return lightList;
   }
