@@ -13,6 +13,8 @@ List<Light> lightList = [
   Light(
       id: 1,
       status: true,
+      name: 'change name',
+      brightnessLevel: .50,
       desc: "Middle Hallway",
       type: "strip",
       group: "hallways",
@@ -21,6 +23,8 @@ List<Light> lightList = [
   Light(
       id: 2,
       status: false,
+      name: 'change name',
+      brightnessLevel: .50,
       desc: "Middle Hallway",
       type: "strip",
       group: "hallways",
@@ -30,6 +34,8 @@ List<Light> lightList = [
       id: 3,
       status: true,
       desc: "Middle Hallway",
+      name: 'change name',
+      brightnessLevel: .50,
       type: "strip",
       group: "hallways",
       color: Colors.blue.value,
@@ -37,6 +43,8 @@ List<Light> lightList = [
   Light(
       id: 4,
       status: false,
+      name: 'change name',
+      brightnessLevel: .50,
       desc: "Middle Hallway",
       type: "strip",
       group: "hallways",
@@ -45,6 +53,8 @@ List<Light> lightList = [
   Light(
       id: 5,
       status: true,
+      name: 'change name',
+      brightnessLevel: .50,
       desc: "Middle Hallway",
       type: "strip",
       group: "hallways",
@@ -53,6 +63,8 @@ List<Light> lightList = [
   Light(
       id: 6,
       status: false,
+      name: 'change name',
+      brightnessLevel: .50,
       desc: "Middle Hallway",
       type: "strip",
       group: "hallways",
@@ -61,6 +73,8 @@ List<Light> lightList = [
   Light(
       id: 7,
       status: true,
+      name: 'change name',
+      brightnessLevel: .50,
       desc: "Middle Hallway",
       type: "strip",
       group: "hallways",
@@ -69,6 +83,8 @@ List<Light> lightList = [
   Light(
       id: 8,
       status: true,
+      name: 'change name',
+      brightnessLevel: .50,
       desc: "Middle Hallway",
       type: "strip",
       group: "hallways",
