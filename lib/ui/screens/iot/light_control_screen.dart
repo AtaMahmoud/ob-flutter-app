@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ocean_builder/bloc/generic_bloc.dart';
 import 'package:ocean_builder/constants/constants.dart';
 import 'package:ocean_builder/core/colorpicker/flutter_hsvcolor_picker.dart';
 import 'package:ocean_builder/ui/cleeper_ui/bottom_clipper.dart';
@@ -23,8 +24,18 @@ class LightControllerScreen extends StatefulWidget {
   _LightControllerScreenState createState() => _LightControllerScreenState();
 }
 
+GenericBloc<String> lghtNamebloc = GenericBloc('');
+TextEditingController lightNameController = TextEditingController();
+
 class _LightControllerScreenState extends State<LightControllerScreen> {
   var _isLoading = false;
+
+  @override
+  void dispose() {
+    lghtNamebloc.dispose();
+    lightNameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,10 +132,25 @@ class LightIItem extends StatefulWidget {
 
 class _LightIItemState extends State<LightIItem> {
   List<Light> lights;
+
+  FocusNode _obNameNode;
+
+  String _changedLightName;
   @override
   void initState() {
+    print('init get called');
     super.initState();
     this.lights = widget.lights;
+
+    lghtNamebloc.controller.listen((onData) {
+      _changedLightName = onData;
+      print('changed light name -- $_changedLightName');
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -227,10 +253,16 @@ class _LightIItemState extends State<LightIItem> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Container(
-                  child: SvgPicture.asset(
-                    ImagePaths.svgIcMore,
-                    color: textColor,
+                InkWell(
+                  onTap: () {
+                    _showLightDetailsDialog(light);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    child: SvgPicture.asset(
+                      ImagePaths.svgIcMore,
+                      color: textColor,
+                    ),
                   ),
                 ),
                 CustomSwitch(
@@ -251,7 +283,6 @@ class _LightIItemState extends State<LightIItem> {
   }
 
   _showLightDetailsDialog(Light uob) async {
-    _obNameController = TextEditingController(text: '');
     var alertStyle = AlertStyle(
       isCloseButton: false,
       titleStyle: TextStyle(
@@ -259,26 +290,15 @@ class _LightIItemState extends State<LightIItem> {
           fontSize: 86.sp,
           fontWeight: FontWeight.bold),
     );
+
     Alert(
-        context: context,
+        context: GlobalContext.currentScreenContext,
         title: "Light Information",
         style: alertStyle,
         content: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SpaceH32(),
-            Padding(
-              padding: EdgeInsets.all(16.h),
-              child: Center(
-                child: SvgPicture.asset(
-                  ImagePaths.svgBulbLarge,
-                  fit: BoxFit.scaleDown,
-                ),
-              ),
-            ),
-            SpaceH32(),
-            UIHelper.getTitleSubtitleWidget('Vesseel Code', seapod.vessleCode),
             SpaceH32(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -291,36 +311,36 @@ class _LightIItemState extends State<LightIItem> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: UIHelper.getRegistrationTextField(
-                  context,
-                  _bloc.firstName,
-                  _bloc.firstNameChanged,
-                  uob.oceanBuilderName, //TextFieldHints.FIRST_NAME,
-                  _obNameController,
+                  GlobalContext.currentScreenContext,
+                  lghtNamebloc.stream,
+                  lghtNamebloc.sink.add,
+                  uob.name,
+                  lightNameController,
                   null,
                   null,
                   false,
-                  TextInputAction.next,
+                  TextInputAction.done,
                   _obNameNode,
                   () => {}),
             ),
             SpaceH32(),
-            UIHelper.getTitleSubtitleWidget('ID', uob.oceanBuilderId),
+            UIHelper.getTitleSubtitleWidget('ID', uob.id.toString()),
             SpaceH32(),
-            UIHelper.getTitleSubtitleWidget('User Type', uob.userType),
+            UIHelper.getTitleSubtitleWidget('ATA', uob.ata),
             SpaceH32(),
-            uob.accessTime.inHours != 0
-                ? UIHelper.getTitleSubtitleWidget('Access Duration',
-                    '${uob.accessTime.inDays.toString()} days')
-                : Container(),
+            UIHelper.getTitleSubtitleWidget('Group', uob.group.toString()),
             SpaceH32(),
-            uob.checkInDate != null
-                ? UIHelper.getTitleSubtitleWidget('Check in Date',
-                    DateFormat('yMMMMd').format(uob.checkInDate))
-                : Container(),
+            UIHelper.getTitleSubtitleWidget(
+                'Status', '${uob.status ? 'On' : 'Off'}'),
             SpaceH32(),
-            uob.reqStatus.contains('INITIATED')
-                ? UIHelper.getTitleSubtitleWidget('Status', 'Pending approval')
-                : Container(),
+            UIHelper.getTitleSubtitleWidget(
+                'Color', Color(uob.color).toString()),
+            SpaceH32(),
+            UIHelper.getTitleSubtitleWidget(
+                'Brightness Level', '${(uob.brightnessLevel * 100).round()}%'),
+            SpaceH32(),
+            UIHelper.getTitleSubtitleWidget('Description', uob.desc.toString()),
+            SpaceH32(),
           ],
         ),
         buttons: [
@@ -330,8 +350,10 @@ class _LightIItemState extends State<LightIItem> {
               style: TextStyle(color: Colors.white, fontSize: 20),
             ),
             onPressed: () async {
-              Navigator.of(context, rootNavigator: true).pop();
-              _showWarning(uob);
+              Navigator.of(GlobalContext.currentScreenContext,
+                      rootNavigator: true)
+                  .pop();
+              // _showWarning(uob);
             },
             gradient: LinearGradient(colors: [
               ColorConstants.BOTTOM_CLIPPER_START,
@@ -345,7 +367,9 @@ class _LightIItemState extends State<LightIItem> {
               style: TextStyle(color: Colors.white, fontSize: 20),
             ),
             onPressed: () {
-              Navigator.of(context, rootNavigator: true).pop();
+              Navigator.of(GlobalContext.currentScreenContext,
+                      rootNavigator: true)
+                  .pop();
             },
             // color: Color.fromRGBO(0, 179, 134, 1.0),
             gradient: LinearGradient(colors: [
