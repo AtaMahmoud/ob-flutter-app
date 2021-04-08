@@ -47,7 +47,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Load the JSON config into memory
   await ConfigReader.initialize();
-  new FirebaseNotifications().setUpFirebase();
   setupLocator();
 
   // Crashlytics.instance.enableInDevMode = false;
@@ -110,7 +109,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, allowFontScaling: true);
     service.SystemChrome.setPreferredOrientations([
       service.DeviceOrientation.portraitUp,
       service.DeviceOrientation.portraitDown,
@@ -189,16 +187,19 @@ class _MyAppState extends State<MyApp> {
           create: (context) => SearchHistoryProvider(),
         )
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Ocean Builders',
-        // navigatorObservers: <NavigatorObserver>[
-        // observer
-        // ],
-        theme: ThemeData(fontFamily: 'Archivo'),
-        navigatorKey: locator<NavigationService>().navigatorKey,
-        initialRoute: obRoute.initialRoute,
-        onGenerateRoute: obRoute.Router.generateRoute,
+      child: ScreenUtilInit(
+        allowFontScaling: false,
+        builder: () => MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Ocean Builders',
+          // navigatorObservers: <NavigatorObserver>[
+          // observer
+          // ],
+          theme: ThemeData(fontFamily: 'Archivo'),
+          navigatorKey: locator<NavigationService>().navigatorKey,
+          initialRoute: obRoute.initialRoute,
+          onGenerateRoute: obRoute.Router.generateRoute,
+        ),
       ),
     );
   }

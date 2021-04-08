@@ -67,8 +67,8 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                   _startSpace(),
                   _profilePicture(),
                   SliverPadding(
-                    padding: EdgeInsets.symmetric(
-                        vertical: 48.h, horizontal: 8.0),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 48.h, horizontal: 8.0),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
                         _horizontalLine(),
@@ -97,7 +97,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
 
   Positioned _titleBar() {
     return Positioned(
-      top: ScreenUtil.statusBarHeight,
+      top: ScreenUtil().statusBarHeight,
       left: 0,
       right: 0,
       child: Container(
@@ -121,7 +121,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                     ),
                     child: ImageIcon(
                       AssetImage(ImagePaths.icHamburger),
-                      size:50.w,
+                      size: 50.w,
                       color: ColorConstants.WEATHER_MORE_ICON_COLOR,
                     ),
                   ),

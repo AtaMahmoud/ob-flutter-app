@@ -188,7 +188,7 @@ class _InvitationResponseScreenState extends State<InvitationResponseScreen> {
 
   Positioned _topBar(BuildContext context) {
     return Positioned(
-      top: ScreenUtil.statusBarHeight,
+      top: ScreenUtil().statusBarHeight,
       left: 0,
       right: 0,
       child: Container(

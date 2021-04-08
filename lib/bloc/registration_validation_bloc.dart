@@ -113,7 +113,7 @@ class RegistrationValidationBloc extends Object
       });
 
   Stream<bool> get profileCheck =>
-      RegExpMatch.combineLatest4(firstName, lastName, email, phone,
+      Rx.combineLatest4(firstName, lastName, email, phone,
           (firstName, lastName, email, phone) {
         // // print(firstName);
         // // print(lastName);

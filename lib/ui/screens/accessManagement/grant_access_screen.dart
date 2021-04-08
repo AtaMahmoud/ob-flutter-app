@@ -410,7 +410,7 @@ class _GrantAccessScreenWidgetState extends State<GrantAccessScreenWidget> {
   Widget _getEditTextUnit(
       BuildContext context,
       String title,
-      Observable<String> stream,
+      Stream<String> stream,
       changed,
       TextEditingController controller,
       TextInputType inputType,

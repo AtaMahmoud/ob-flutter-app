@@ -205,7 +205,7 @@ class _LightingScreenState extends State<LightingScreen> {
               CustomScrollView(
                 slivers: <Widget>[
                   UIHelper.getTopEmptyContainerWithColor(
-                      ScreenUtil.statusBarHeight + 160.h, Colors.white),
+                      ScreenUtil().statusBarHeight + 160.h, Colors.white),
                   SliverPadding(
                     padding: EdgeInsets.only(
                       top: 8.h,
@@ -253,7 +253,7 @@ class _LightingScreenState extends State<LightingScreen> {
 
   Positioned _topBar() {
     return Positioned(
-      top: ScreenUtil.statusBarHeight,
+      top: ScreenUtil().statusBarHeight,
       left: 0,
       right: 0,
       child: Container(
@@ -563,7 +563,7 @@ class _LightingScreenState extends State<LightingScreen> {
   }
 
   Widget _getDropdown(
-      List<String> list, Observable<String> stream, changed, bool addPadding,
+      List<String> list, Stream<String> stream, changed, bool addPadding,
       {String label = 'Label', String dropdownType}) {
     if (dropdownType.contains('scene')) {
       if (!_newSceneAddedToList) list.add('New Scene');
@@ -657,7 +657,7 @@ class _LightingScreenState extends State<LightingScreen> {
   }
 
   Widget _getLightSceneDropdown(
-      List<Scene> list, Observable<String> stream, changed, bool addPadding,
+      List<Scene> list, Stream<String> stream, changed, bool addPadding,
       {String label = 'Label'}) {
     String lastSeaPodSceneId = '';
     String lastSeaPodSceneName = '';

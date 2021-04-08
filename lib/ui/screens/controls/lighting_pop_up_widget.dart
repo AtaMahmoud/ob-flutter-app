@@ -327,7 +327,7 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
   }
 
   Widget _getDropdown(
-      List<Scene> list, Observable<String> stream, changed, bool addPadding,
+      List<Scene> list, Stream<String> stream, changed, bool addPadding,
       {String label = 'Label'}) {
     return StreamBuilder<String>(
         stream: stream,
@@ -354,17 +354,14 @@ class _LightingPopupContentState extends State<LightingPopupContent> {
                       size: 96.w,
                       color: snapshot.hasData
                           ? ColorConstants.ACCESS_MANAGEMENT_TITLE
-                          : ColorConstants
-                              .ACCESS_MANAGEMENT_SUBTITLE 
-                      ),
+                          : ColorConstants.ACCESS_MANAGEMENT_SUBTITLE),
                   value: snapshot.hasData ? snapshot.data : list[0].name,
                   isExpanded: true,
                   underline: Container(),
                   style: TextStyle(
                     color: snapshot.hasData
                         ? ColorConstants.ACCESS_MANAGEMENT_TITLE
-                        : ColorConstants
-                            .ACCESS_MANAGEMENT_SUBTITLE, 
+                        : ColorConstants.ACCESS_MANAGEMENT_SUBTITLE,
                     fontSize: 36.sp,
                     fontWeight: FontWeight.w400,
                   ),

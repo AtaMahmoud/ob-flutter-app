@@ -72,7 +72,7 @@ class _EarthStationScreenState extends State<EarthStationScreen> {
       children: <Widget>[
         Container(
           padding: EdgeInsets.only(
-            top: ScreenUtil.statusBarHeight + ScreenUtil().setHeight(16),
+            top: ScreenUtil().statusBarHeight + ScreenUtil().setHeight(16),
             bottom: ScreenUtil().setHeight(16)
           ),
               color: ColorConstants.TOP_CLIPPER_START,

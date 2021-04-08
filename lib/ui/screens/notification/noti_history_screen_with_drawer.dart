@@ -343,7 +343,7 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
 
   Positioned _topBar() {
     return Positioned(
-      top: ScreenUtil.statusBarHeight,
+      top: ScreenUtil().statusBarHeight,
       left: 0,
       right: 0,
       child: Container(

@@ -43,10 +43,10 @@ class _WebViewDarkskyState extends State<WebViewDarksky> {
   }
 
   @override
-  void initState() { 
+  void initState() {
     super.initState();
     // SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
-  }    
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,17 +63,15 @@ class _WebViewDarkskyState extends State<WebViewDarksky> {
       // ),
       // We're using a Builder here so we have a context that is below the Scaffold
       // to allow calling Scaffold.of(context) so we can show a snackbar.
-      body: Builder(
-        builder: (BuildContext context) {
+      body: Builder(builder: (BuildContext context) {
         return IndexedStack(
           index: _stackToView,
           children: <Widget>[
             Padding(
-              padding:EdgeInsets.only(
-                top: ScreenUtil.statusBarHeight
-              ),
+              padding: EdgeInsets.only(top: ScreenUtil().statusBarHeight),
               child: WebView(
-                initialUrl: 'https://openweathermap.org/weathermap?basemap=map&cities=true&layer=temperature&lat=30&lon=-20&zoom=5',//'https://openweathermap.org/weathermap?basemap=map&cities=false&layer=clouds&lat=9.616966&lon=-79.591037&zoom=8',//'https://www.wunderground.com/wundermap',//'https://maps.darksky.net/@temperature,9.616966,-79.591037,11?marker=9.616966,-79.5910378&marker-name=SeaPod',7
+                initialUrl:
+                    'https://openweathermap.org/weathermap?basemap=map&cities=true&layer=temperature&lat=30&lon=-20&zoom=5', //'https://openweathermap.org/weathermap?basemap=map&cities=false&layer=clouds&lat=9.616966&lon=-79.591037&zoom=8',//'https://www.wunderground.com/wundermap',//'https://maps.darksky.net/@temperature,9.616966,-79.591037,11?marker=9.616966,-79.5910378&marker-name=SeaPod',7
                 javascriptMode: JavascriptMode.unrestricted,
                 onWebViewCreated: (WebViewController webViewController) {
                   _controller.complete(webViewController);
@@ -99,19 +97,17 @@ class _WebViewDarkskyState extends State<WebViewDarksky> {
                   _handleLoad('finished');
                 },
                 gestureNavigationEnabled: false,
-                
               ),
             ),
             Container(
-            color: Colors.white,
-            child: Center(
-              child: CircularProgressIndicator(),
+              color: Colors.white,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
-          ),
           ],
         );
-      }
-      ),
+      }),
       // floatingActionButton: favoriteButton(),
     );
   }
