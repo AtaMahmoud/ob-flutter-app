@@ -10,8 +10,11 @@ import 'package:ocean_builder/ui/screens/iot/model/light.dart';
 import 'package:ocean_builder/ui/widgets/appbar.dart';
 import 'package:ocean_builder/ui/widgets/custom_switch.dart';
 import 'package:ocean_builder/ui/widgets/space_widgets.dart';
+import 'package:ocean_builder/ui/widgets/ui_helper.dart';
 import 'package:provider/provider.dart';
 import 'dart:math' as math;
+
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class LightControllerScreen extends StatefulWidget {
   static const String routeName = '/light_screen';
@@ -245,6 +248,113 @@ class _LightIItemState extends State<LightIItem> {
         ),
       ),
     );
+  }
+
+  _showLightDetailsDialog(Light uob) async {
+    _obNameController = TextEditingController(text: '');
+    var alertStyle = AlertStyle(
+      isCloseButton: false,
+      titleStyle: TextStyle(
+          color: ColorConstants.TOP_CLIPPER_START,
+          fontSize: 86.sp,
+          fontWeight: FontWeight.bold),
+    );
+    Alert(
+        context: context,
+        title: "Light Information",
+        style: alertStyle,
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SpaceH32(),
+            Padding(
+              padding: EdgeInsets.all(16.h),
+              child: Center(
+                child: SvgPicture.asset(
+                  ImagePaths.svgBulbLarge,
+                  fit: BoxFit.scaleDown,
+                ),
+              ),
+            ),
+            SpaceH32(),
+            UIHelper.getTitleSubtitleWidget('Vesseel Code', seapod.vessleCode),
+            SpaceH32(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text('Name',
+                  style: TextStyle(
+                      color: ColorConstants.TOP_CLIPPER_START,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18)),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: UIHelper.getRegistrationTextField(
+                  context,
+                  _bloc.firstName,
+                  _bloc.firstNameChanged,
+                  uob.oceanBuilderName, //TextFieldHints.FIRST_NAME,
+                  _obNameController,
+                  null,
+                  null,
+                  false,
+                  TextInputAction.next,
+                  _obNameNode,
+                  () => {}),
+            ),
+            SpaceH32(),
+            UIHelper.getTitleSubtitleWidget('ID', uob.oceanBuilderId),
+            SpaceH32(),
+            UIHelper.getTitleSubtitleWidget('User Type', uob.userType),
+            SpaceH32(),
+            uob.accessTime.inHours != 0
+                ? UIHelper.getTitleSubtitleWidget('Access Duration',
+                    '${uob.accessTime.inDays.toString()} days')
+                : Container(),
+            SpaceH32(),
+            uob.checkInDate != null
+                ? UIHelper.getTitleSubtitleWidget('Check in Date',
+                    DateFormat('yMMMMd').format(uob.checkInDate))
+                : Container(),
+            SpaceH32(),
+            uob.reqStatus.contains('INITIATED')
+                ? UIHelper.getTitleSubtitleWidget('Status', 'Pending approval')
+                : Container(),
+          ],
+        ),
+        buttons: [
+          DialogButton(
+            child: Text(
+              'Update',
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            onPressed: () async {
+              Navigator.of(context, rootNavigator: true).pop();
+              _showWarning(uob);
+            },
+            gradient: LinearGradient(colors: [
+              ColorConstants.BOTTOM_CLIPPER_START,
+              ColorConstants.BOTTOM_CLIPPER_END
+            ], begin: Alignment.topRight, end: Alignment.bottomLeft),
+            radius: BorderRadius.circular(4.0),
+          ),
+          DialogButton(
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            onPressed: () {
+              Navigator.of(context, rootNavigator: true).pop();
+            },
+            // color: Color.fromRGBO(0, 179, 134, 1.0),
+            gradient: LinearGradient(colors: [
+              ColorConstants.BOTTOM_CLIPPER_START,
+              ColorConstants.BOTTOM_CLIPPER_END
+            ], begin: Alignment.topRight, end: Alignment.bottomLeft),
+            radius: BorderRadius.circular(4.0),
+          ),
+        ]).show();
   }
 }
 
