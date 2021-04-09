@@ -1197,4 +1197,48 @@ class UIHelper {
       },
     );
   }
+
+  static basicEditText(
+      {context, controller, changed, inputType, nextNode, node, maxLength,label}) {
+    return TextField(
+      autofocus: false,
+      controller: controller,
+      onChanged: changed,
+      keyboardType: inputType,
+      keyboardAppearance: Brightness.light,
+      textAlign: TextAlign.start,
+      scrollPadding: EdgeInsets.only(bottom: 100),
+      textInputAction:
+          nextNode != null ? TextInputAction.next : TextInputAction.done,
+      focusNode: node,
+      onEditingComplete: () => nextNode != null
+          ? FocusScope.of(context).requestFocus(nextNode)
+          : FocusScope.of(context).unfocus(),
+          decoration: InputDecoration(
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
+                    width: 1),
+              ),
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color: ColorConstants.ACCESS_MANAGEMENT_INPUT_BORDER,
+                    width: 1),
+              ),
+              labelText: label,
+              labelStyle: TextStyle(
+                  color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
+                  fontSize: 43.69.sp),
+              contentPadding: EdgeInsets.only(left: 48.w, top: 48.h)),
+          style: TextStyle(
+            fontSize: 43.69.sp,
+            fontWeight: FontWeight.w400,
+            color: ColorConstants.ACCESS_MANAGEMENT_TITLE,
+          ),
+      inputFormatters: [
+        new LengthLimitingTextInputFormatter(maxLength),
+      ],
+    );
+  }
 }

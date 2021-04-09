@@ -24,16 +24,12 @@ class LightControllerScreen extends StatefulWidget {
   _LightControllerScreenState createState() => _LightControllerScreenState();
 }
 
-GenericBloc<String> lghtNamebloc = GenericBloc('');
-TextEditingController lightNameController = TextEditingController();
-
 class _LightControllerScreenState extends State<LightControllerScreen> {
   var _isLoading = false;
 
   @override
   void dispose() {
-    lghtNamebloc.dispose();
-    lightNameController.dispose();
+
     super.dispose();
   }
 
@@ -136,20 +132,24 @@ class _LightIItemState extends State<LightIItem> {
   FocusNode _obNameNode;
 
   String _changedLightName;
+
+  TextEditingController lightNameController = TextEditingController();
+
   @override
   void initState() {
     print('init get called');
     super.initState();
     this.lights = widget.lights;
 
-    lghtNamebloc.controller.listen((onData) {
+/*     lghtNamebloc.controller.listen((onData) {
       _changedLightName = onData;
       print('changed light name -- $_changedLightName');
-    });
+    }); */
   }
 
   @override
   void dispose() {
+        
     super.dispose();
   }
 
@@ -282,7 +282,8 @@ class _LightIItemState extends State<LightIItem> {
     );
   }
 
-  _showLightDetailsDialog(Light uob) async {
+  _showLightDetailsDialog(Light light) async {
+    lightNameController = TextEditingController(text: light.name);
     var alertStyle = AlertStyle(
       isCloseButton: false,
       titleStyle: TextStyle(
@@ -300,21 +301,30 @@ class _LightIItemState extends State<LightIItem> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             SpaceH32(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text('Name',
-                  style: TextStyle(
-                      color: ColorConstants.TOP_CLIPPER_START,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 18)),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16),
+            child: UIHelper.basicEditText(
+                context: context,
+                label: 'Light Name',
+                controller: lightNameController,
+                node: FocusNode(),
+                inputType: TextInputType.numberWithOptions(),
+                changed: (value) {
+                  print(value);
+                  setState(() {
+                    light.name = value;
+                  });
+                },
+                nextNode: FocusNode(),
+                maxLength: 128),
             ),
-            Padding(
+            
+/*             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: UIHelper.getRegistrationTextField(
                   GlobalContext.currentScreenContext,
                   lghtNamebloc.stream,
                   lghtNamebloc.sink.add,
-                  uob.name,
+                  light.name,
                   lightNameController,
                   null,
                   null,
@@ -322,24 +332,25 @@ class _LightIItemState extends State<LightIItem> {
                   TextInputAction.done,
                   _obNameNode,
                   () => {}),
-            ),
+            ), */
             SpaceH32(),
-            UIHelper.getTitleSubtitleWidget('ID', uob.id.toString()),
+            UIHelper.getTitleSubtitleWidget('ID', light.id.toString()),
             SpaceH32(),
-            UIHelper.getTitleSubtitleWidget('ATA', uob.ata),
+            UIHelper.getTitleSubtitleWidget('ATA', light.ata),
             SpaceH32(),
-            UIHelper.getTitleSubtitleWidget('Group', uob.group.toString()),
-            SpaceH32(),
-            UIHelper.getTitleSubtitleWidget(
-                'Status', '${uob.status ? 'On' : 'Off'}'),
+            UIHelper.getTitleSubtitleWidget('Group', light.group.toString()),
             SpaceH32(),
             UIHelper.getTitleSubtitleWidget(
-                'Color', Color(uob.color).toString()),
+                'Status', '${light.status ? 'On' : 'Off'}'),
             SpaceH32(),
             UIHelper.getTitleSubtitleWidget(
-                'Brightness Level', '${(uob.brightnessLevel * 100).round()}%'),
+                'Color', Color(light.color).toString()),
             SpaceH32(),
-            UIHelper.getTitleSubtitleWidget('Description', uob.desc.toString()),
+            UIHelper.getTitleSubtitleWidget('Brightness Level',
+                '${(light.brightnessLevel * 100).round()}%'),
+            SpaceH32(),
+            UIHelper.getTitleSubtitleWidget(
+                'Description', light.desc.toString()),
             SpaceH32(),
           ],
         ),
